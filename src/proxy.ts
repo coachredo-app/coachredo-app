@@ -49,7 +49,7 @@ export async function proxy(request: NextRequest) {
       .eq('user_id', user.id)
       .single()
 
-    if (!access?.has_access && pathname !== '/access') {
+    if (!access?.has_access && pathname !== '/access' && pathname !== '/api/access/redeem') {
       return NextResponse.redirect(new URL('/access', request.url))
     }
 
