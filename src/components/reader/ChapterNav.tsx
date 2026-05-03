@@ -8,19 +8,18 @@ interface Props {
   exercises: Exercise[]
   nextHref: string
   nextLabel: string
-  isIntro?: boolean
-  /** For intro: all PNL gates revealed signals completion */
-  totalPnlGates?: number
-  revealedPnlCount?: number
+  /** Override: force canProceed state (used by intro) */
+  canProceed?: boolean
+  /** Hint shown when locked (used by intro) */
+  lockedHint?: string
 }
 
 export default function ChapterNav({
   exercises,
   nextHref,
   nextLabel,
-  isIntro,
-  totalPnlGates = 0,
-  revealedPnlCount = 0,
+  canProceed: canProceedOverride,
+  lockedHint,
 }: Props) {
   const router = useRouter()
   const { isExerciseDone, completeChapter, progress, chapterKey } = useReader()
@@ -28,10 +27,7 @@ export default function ChapterNav({
   const obligatoire = exercises.filter(e => e.obligatoire)
   const allExercisesDone = obligatoire.every(e => isExerciseDone(e.id))
 
-  // For intro: no exercises, just need all PNL gates revealed
-  const canProceed = isIntro
-    ? revealedPnlCount >= totalPnlGates
-    : allExercisesDone
+  const canProceed = canProceedOverride !== undefined ? canProceedOverride : allExercisesDone
 
   const alreadyCompleted = progress.chapters[chapterKey]?.completed === true
 
@@ -41,17 +37,16 @@ export default function ChapterNav({
     router.push(nextHref)
   }
 
-  const remaining = isIntro
-    ? totalPnlGates - revealedPnlCount
-    : obligatoire.filter(e => !isExerciseDone(e.id)).length
+  const remaining = obligatoire.filter(e => !isExerciseDone(e.id)).length
+  const hint = lockedHint ?? (remaining > 0
+    ? `${remaining} exercice${remaining > 1 ? 's' : ''} obligatoire${remaining > 1 ? 's' : ''} restant${remaining > 1 ? 's' : ''}.`
+    : null)
 
   return (
     <div className="mt-12 pb-16 px-0">
-      {!canProceed && remaining > 0 && (
+      {!canProceed && hint && (
         <p className="text-center text-sm mb-4" style={{ color: '#6b7280' }}>
-          {isIntro
-            ? 'Continue la lecture pour débloquer la suite.'
-            : `${remaining} exercice${remaining > 1 ? 's' : ''} obligatoire${remaining > 1 ? 's' : ''} restant${remaining > 1 ? 's' : ''}.`}
+          {hint}
         </p>
       )}
 

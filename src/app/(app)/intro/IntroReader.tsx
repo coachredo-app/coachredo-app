@@ -7,17 +7,10 @@ import type { Intro } from '@/lib/content/types'
 
 const GOLD = '#c9a84c'
 
-// Count PNL gates in intro
-function countPnlGates(intro: Intro): number {
-  return intro.contenu.filter(
-    b => b.type === 'pnl_pause' || b.type === 'pnl_activation'
-  ).length
-}
-
 export default function IntroReader({ intro }: { intro: Intro }) {
-  const { pnlRevealed } = useReader()
-  const totalPnl = countPnlGates(intro)
-  const revealedCount = pnlRevealed.size
+  const { revealedBlockCount } = useReader()
+  const totalBlocks = intro.contenu.length
+  const allRevealed = revealedBlockCount >= totalBlocks
 
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#0a0d1a' }}>
@@ -44,9 +37,8 @@ export default function IntroReader({ intro }: { intro: Intro }) {
           exercises={[]}
           nextHref="/chapter/1"
           nextLabel="Commencer le Chapitre 1 →"
-          isIntro
-          totalPnlGates={totalPnl}
-          revealedPnlCount={revealedCount}
+          canProceed={allRevealed}
+          lockedHint="Continue la lecture pour débloquer la suite."
         />
       </div>
     </main>

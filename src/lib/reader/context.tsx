@@ -11,6 +11,7 @@ import {
   loadProgress,
   saveExerciseResponse,
   markChapterComplete,
+  saveRevealedCount,
   type LocalProgress,
 } from './progress'
 import {
@@ -26,10 +27,9 @@ function empty(): LocalProgress {
 interface ReaderContextValue {
   chapterKey: string
   responses: Record<string, unknown>
-  pnlRevealed: Set<string>
+  revealedBlockCount: number
+  revealNextBlock: () => void
   saveResponse: (exerciseId: string, value: unknown) => void
-  revealPnl: (key: string) => void
-  isPnlRevealed: (key: string) => boolean
   isExerciseDone: (exerciseId: string) => boolean
   completeChapter: () => void
   progress: LocalProgress
@@ -46,21 +46,28 @@ export function ReaderProvider({
   chapterKey: string
 }) {
   const [progress, setProgress] = useState<LocalProgress>(empty)
-  const [pnlRevealed, setPnlRevealed] = useState<Set<string>>(new Set())
+  const [revealedBlockCount, setRevealedBlockCount] = useState(1)
   const [mounted, setMounted] = useState(false)
 
-  // chapterNum is NaN for "intro" — used to skip Supabase sync for non-numbered chapters
   const chapterNum = parseInt(chapterKey, 10)
 
   useEffect(() => {
     const local = loadProgress()
     setProgress(local)
+    setRevealedBlockCount(local.chapters[chapterKey]?.revealedCount ?? 1)
     setMounted(true)
-    // Merge Supabase data on top of localStorage (Supabase wins on conflicts)
     fetchAndMergeProgress(local).then(merged => setProgress(merged))
-  }, [])
+  }, [chapterKey])
 
   const responses = progress.chapters[chapterKey]?.exercises ?? {}
+
+  const revealNextBlock = useCallback(() => {
+    setRevealedBlockCount(prev => {
+      const next = prev + 1
+      saveRevealedCount(chapterKey, next)
+      return next
+    })
+  }, [chapterKey])
 
   const saveResponse = useCallback(
     (exerciseId: string, value: unknown) => {
@@ -71,15 +78,6 @@ export function ReaderProvider({
       }
     },
     [chapterKey, chapterNum]
-  )
-
-  const revealPnl = useCallback((key: string) => {
-    setPnlRevealed(prev => new Set([...prev, key]))
-  }, [])
-
-  const isPnlRevealed = useCallback(
-    (key: string) => pnlRevealed.has(key),
-    [pnlRevealed]
   )
 
   const isExerciseDone = useCallback(
@@ -100,10 +98,9 @@ export function ReaderProvider({
       value={{
         chapterKey,
         responses,
-        pnlRevealed,
+        revealedBlockCount,
+        revealNextBlock,
         saveResponse,
-        revealPnl,
-        isPnlRevealed,
         isExerciseDone,
         completeChapter,
         progress,

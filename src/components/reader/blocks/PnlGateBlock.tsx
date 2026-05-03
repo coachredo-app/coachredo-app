@@ -1,24 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { useReader } from '@/lib/reader/context'
 import type { PnlPauseBlock, PnlActivationBlock } from '@/lib/content/types'
 
 interface Props {
   block: PnlPauseBlock | PnlActivationBlock
-  pnlKey: string
+  isRevealed: boolean
+  onReveal: () => void
 }
 
-export default function PnlGateBlock({ block, pnlKey }: Props) {
-  const { isPnlRevealed, revealPnl } = useReader()
-  const revealed = isPnlRevealed(pnlKey)
+export default function PnlGateBlock({ block, isRevealed, onReveal }: Props) {
   const [animating, setAnimating] = useState(false)
   const isActivation = block.type === 'pnl_activation'
 
   function handleClick() {
     setAnimating(true)
     setTimeout(() => {
-      revealPnl(pnlKey)
+      onReveal()
       setAnimating(false)
     }, 200)
   }
@@ -38,7 +36,7 @@ export default function PnlGateBlock({ block, pnlKey }: Props) {
         {block.value}
       </p>
 
-      {!revealed ? (
+      {!isRevealed ? (
         <button
           onClick={handleClick}
           disabled={animating}
