@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-planb-bg:      #0a0d1a;
+  --color-planb-surface: #111827;
+  --color-planb-border:  #1f2937;
+  --color-planb-gold:    #c9a84c;
+  --color-planb-gold-dim:#a07c30;
+  --color-planb-text:    #e5e7eb;
+  --color-planb-muted:   #6b7280;
+  --color-planb-error:   #ef4444;
+  --color-planb-success: #22c55e;
+}
+
+body {
+  background-color: #0a0d1a;
+  color: #e5e7eb;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
