@@ -11,7 +11,7 @@ import {
   loadProgress,
   saveExerciseResponse,
   markChapterComplete,
-  saveRevealedCount,
+  saveCurrentStep,
   type LocalProgress,
 } from './progress'
 import {
@@ -27,8 +27,9 @@ function empty(): LocalProgress {
 interface ReaderContextValue {
   chapterKey: string
   responses: Record<string, unknown>
-  revealedBlockCount: number
-  revealNextBlock: () => void
+  currentStep: number
+  goNext: () => void
+  goPrev: () => void
   saveResponse: (exerciseId: string, value: unknown) => void
   isExerciseDone: (exerciseId: string) => boolean
   completeChapter: () => void
@@ -46,7 +47,7 @@ export function ReaderProvider({
   chapterKey: string
 }) {
   const [progress, setProgress] = useState<LocalProgress>(empty)
-  const [revealedBlockCount, setRevealedBlockCount] = useState(1)
+  const [currentStep, setCurrentStep] = useState(0)
   const [mounted, setMounted] = useState(false)
 
   const chapterNum = parseInt(chapterKey, 10)
@@ -54,17 +55,25 @@ export function ReaderProvider({
   useEffect(() => {
     const local = loadProgress()
     setProgress(local)
-    setRevealedBlockCount(local.chapters[chapterKey]?.revealedCount ?? 1)
+    setCurrentStep(local.chapters[chapterKey]?.currentStep ?? 0)
     setMounted(true)
     fetchAndMergeProgress(local).then(merged => setProgress(merged))
   }, [chapterKey])
 
   const responses = progress.chapters[chapterKey]?.exercises ?? {}
 
-  const revealNextBlock = useCallback(() => {
-    setRevealedBlockCount(prev => {
+  const goNext = useCallback(() => {
+    setCurrentStep(prev => {
       const next = prev + 1
-      saveRevealedCount(chapterKey, next)
+      saveCurrentStep(chapterKey, next)
+      return next
+    })
+  }, [chapterKey])
+
+  const goPrev = useCallback(() => {
+    setCurrentStep(prev => {
+      const next = Math.max(0, prev - 1)
+      saveCurrentStep(chapterKey, next)
       return next
     })
   }, [chapterKey])
@@ -98,8 +107,9 @@ export function ReaderProvider({
       value={{
         chapterKey,
         responses,
-        revealedBlockCount,
-        revealNextBlock,
+        currentStep,
+        goNext,
+        goPrev,
         saveResponse,
         isExerciseDone,
         completeChapter,

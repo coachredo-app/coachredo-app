@@ -1,8 +1,18 @@
 'use client'
 
+import { useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { useReader } from '@/lib/reader/context'
-import type { ContentBlock, Exercise } from '@/lib/content/types'
-import TextBlock from './blocks/TextBlock'
+import type {
+  ContentBlock,
+  Exercise,
+  TextBlock as TText,
+  StoryBlock as TStory,
+  QuoteBlock as TQuote,
+  TransitionBlock as TTransition,
+  PnlPauseBlock,
+  PnlActivationBlock,
+} from '@/lib/content/types'
 import QuoteBlock from './blocks/QuoteBlock'
 import TransitionBlock from './blocks/TransitionBlock'
 import PnlGateBlock from './blocks/PnlGateBlock'
@@ -10,79 +20,190 @@ import ExerciseRenderer from './ExerciseRenderer'
 
 const GOLD = '#c9a84c'
 
+// ── Step model ────────────────────────────────────────────────
+type Step =
+  | { kind: 'text'; block: TText | TStory }
+  | { kind: 'quote'; block: TQuote }
+  | { kind: 'transition'; block: TTransition }
+  | { kind: 'gate'; block: PnlPauseBlock | PnlActivationBlock }
+  | { kind: 'exercise'; exercise: Exercise; section?: string }
+
+function buildSteps(blocks: ContentBlock[], exercises: Exercise[]): Step[] {
+  const steps: Step[] = []
+  for (const block of blocks) {
+    if (block.type === 'text' || block.type === 'story') {
+      steps.push({ kind: 'text', block })
+    } else if (block.type === 'quote') {
+      steps.push({ kind: 'quote', block })
+    } else if (block.type === 'transition') {
+      steps.push({ kind: 'transition', block })
+    } else if (block.type === 'pnl_pause' || block.type === 'pnl_activation') {
+      steps.push({ kind: 'gate', block })
+    } else if (block.type === 'exercise_inline') {
+      const exercise = exercises.find(e => e.id === block.ref)
+      if (exercise) steps.push({ kind: 'exercise', exercise, section: block.section })
+    }
+  }
+  return steps
+}
+
+// ── Props ─────────────────────────────────────────────────────
 interface Props {
   blocks: ContentBlock[]
   exercises: Exercise[]
+  nextHref: string
+  nextLabel: string
+  backHref: string
+  backLabel: string
+  chapterLabel?: string
 }
 
-export default function BlockRenderer({ blocks, exercises }: Props) {
-  const { revealedBlockCount, revealNextBlock, isExerciseDone } = useReader()
+export default function BlockRenderer({
+  blocks,
+  exercises,
+  nextHref,
+  nextLabel,
+  backHref,
+  backLabel,
+  chapterLabel,
+}: Props) {
+  const router = useRouter()
+  const { currentStep, goNext, goPrev, isExerciseDone, completeChapter, progress, chapterKey } = useReader()
 
-  const visibleCount = Math.min(revealedBlockCount, blocks.length)
-  const visibleBlocks = blocks.slice(0, visibleCount)
-  const isFinished = revealedBlockCount >= blocks.length
-  const lastBlock = visibleBlocks[visibleBlocks.length - 1]
+  const steps = useMemo(() => buildSteps(blocks, exercises), [blocks, exercises])
+  const totalSteps = steps.length
+  const stepIndex = Math.min(currentStep, totalSteps - 1)
+  const step = steps[stepIndex]
 
-  // Determine if "Continuer" should show and whether it's enabled
-  const isPnlGate = lastBlock?.type === 'pnl_pause' || lastBlock?.type === 'pnl_activation'
-  const showContinuer = !isFinished && lastBlock && !isPnlGate
+  const isFirst = stepIndex === 0
+  const isLast = stepIndex === totalSteps - 1
+  const isGate = step?.kind === 'gate'
 
-  let continuerDisabled = false
-  if (showContinuer && lastBlock?.type === 'exercise_inline') {
-    const exercise = exercises.find(e => e.id === (lastBlock as { ref: string }).ref)
-    continuerDisabled = !!exercise?.obligatoire && !isExerciseDone((lastBlock as { ref: string }).ref)
+  // "Continuer" disabled for unsaved obligatoire exercises
+  let canAdvance = true
+  if (step?.kind === 'exercise' && step.exercise.obligatoire) {
+    canAdvance = isExerciseDone(step.exercise.id)
   }
 
+  const alreadyCompleted = progress.chapters[chapterKey]?.completed === true
+
+  function handleNext() {
+    if (!canAdvance) return
+    if (isLast) {
+      if (!alreadyCompleted) completeChapter()
+      router.push(nextHref)
+    } else {
+      goNext()
+    }
+  }
+
+  function handleBack() {
+    if (isFirst) {
+      router.push(backHref)
+    } else {
+      goPrev()
+    }
+  }
+
+  const progressPct = totalSteps > 0 ? ((stepIndex + 1) / totalSteps) * 100 : 0
+
   return (
-    <div>
-      {visibleBlocks.map((block, i) => {
-        const isLastVisible = i === visibleCount - 1
-        // PNL gate: revealed if it's not the frontier block
-        const pnlRevealed = !isLastVisible
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: '#0a0d1a' }}>
 
-        if (block.type === 'text' || block.type === 'story') {
-          return <TextBlock key={i} block={block} />
-        }
-        if (block.type === 'quote') {
-          return <QuoteBlock key={i} block={block} />
-        }
-        if (block.type === 'transition') {
-          return <TransitionBlock key={i} block={block} />
-        }
-        if (block.type === 'pnl_pause' || block.type === 'pnl_activation') {
-          return (
+      {/* Progress bar */}
+      <div className="flex-none" style={{ height: '2px', backgroundColor: '#1f2937' }}>
+        <div
+          style={{
+            height: '100%',
+            width: `${progressPct}%`,
+            backgroundColor: GOLD,
+            transition: 'width 0.3s ease',
+          }}
+        />
+      </div>
+
+      {/* Top bar */}
+      <div className="flex-none flex items-center justify-between px-5 pt-5 pb-3">
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-1 text-sm transition-opacity"
+          style={{ color: '#6b7280' }}
+        >
+          ← {isFirst ? backLabel : 'Retour'}
+        </button>
+
+        <div className="flex items-center gap-3">
+          {chapterLabel && (
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
+              {chapterLabel}
+            </span>
+          )}
+          <span className="text-xs tabular-nums" style={{ color: '#4b5563' }}>
+            {stepIndex + 1} / {totalSteps}
+          </span>
+        </div>
+      </div>
+
+      {/* Step content — flex-1, internal scroll only if overflow */}
+      <div className="flex-1 overflow-y-auto flex items-center justify-center px-6 py-4">
+        <div className="w-full max-w-lg">
+          {step?.kind === 'text' && (
+            <div>
+              {step.block.section && (
+                <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: GOLD }}>
+                  {step.block.section}
+                </p>
+              )}
+              <p
+                className="text-base leading-relaxed whitespace-pre-line"
+                style={{
+                  color: step.block.type === 'story' ? '#9ca3af' : '#d1d5db',
+                  fontStyle: step.block.type === 'story' ? 'italic' : 'normal',
+                }}
+              >
+                {step.block.value}
+              </p>
+            </div>
+          )}
+
+          {step?.kind === 'quote' && <QuoteBlock block={step.block} />}
+
+          {step?.kind === 'transition' && <TransitionBlock block={step.block} />}
+
+          {step?.kind === 'gate' && (
             <PnlGateBlock
-              key={i}
-              block={block}
-              isRevealed={pnlRevealed}
-              onReveal={revealNextBlock}
+              block={step.block}
+              isRevealed={false}
+              onReveal={handleNext}
             />
-          )
-        }
-        if (block.type === 'exercise_inline') {
-          const exercise = exercises.find(e => e.id === block.ref)
-          if (!exercise) return null
-          return (
-            <ExerciseRenderer key={i} exercise={exercise} section={block.section} />
-          )
-        }
-        return null
-      })}
+          )}
 
-      {showContinuer && (
-        <div className="mt-8 mb-4 flex justify-center">
+          {step?.kind === 'exercise' && (
+            <ExerciseRenderer exercise={step.exercise} section={step.section} />
+          )}
+        </div>
+      </div>
+
+      {/* Bottom nav — hidden for gate steps (gate has its own button) */}
+      {!isGate && (
+        <div className="flex-none px-6 pb-8 pt-3">
+          {!canAdvance && (
+            <p className="text-center text-xs mb-3" style={{ color: '#6b7280' }}>
+              Complète l'exercice pour continuer
+            </p>
+          )}
           <button
-            onClick={continuerDisabled ? undefined : revealNextBlock}
-            disabled={continuerDisabled}
-            className="px-8 py-3 rounded-xl text-sm font-semibold transition-all active:scale-95"
+            onClick={handleNext}
+            disabled={!canAdvance}
+            className="w-full py-4 rounded-2xl font-bold text-base tracking-wide transition-all active:scale-95"
             style={{
-              backgroundColor: continuerDisabled ? 'transparent' : GOLD,
-              color: continuerDisabled ? '#4b5563' : '#0a0d1a',
-              border: `1.5px solid ${continuerDisabled ? '#1f2937' : GOLD}`,
-              cursor: continuerDisabled ? 'not-allowed' : 'pointer',
+              backgroundColor: canAdvance ? GOLD : '#1f2937',
+              color: canAdvance ? '#0a0d1a' : '#4b5563',
+              cursor: canAdvance ? 'pointer' : 'not-allowed',
+              boxShadow: canAdvance ? '0 4px 20px rgba(201,168,76,0.25)' : 'none',
             }}
           >
-            {continuerDisabled ? 'Complète l\'exercice pour continuer' : 'Continuer →'}
+            {isLast ? nextLabel : 'Continuer →'}
           </button>
         </div>
       )}

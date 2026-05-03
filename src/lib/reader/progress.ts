@@ -3,7 +3,7 @@ const STORAGE_KEY = 'planb_progress'
 export interface ChapterProgress {
   completed: boolean
   exercises: Record<string, unknown>
-  revealedCount?: number
+  currentStep?: number
 }
 
 export interface LocalProgress {
@@ -63,12 +63,12 @@ export function isChapterUnlocked(num: number, p: LocalProgress): boolean {
   return p.chapters[String(num - 1)]?.completed === true
 }
 
-export function saveRevealedCount(chapterKey: string, count: number): void {
+export function saveCurrentStep(chapterKey: string, step: number): void {
   const p = loadProgress()
   if (!p.chapters[chapterKey]) {
     p.chapters[chapterKey] = { completed: false, exercises: {} }
   }
-  p.chapters[chapterKey].revealedCount = count
+  p.chapters[chapterKey].currentStep = step
   saveProgress(p)
 }
 
