@@ -17,6 +17,7 @@ import QuoteBlock from './blocks/QuoteBlock'
 import TransitionBlock from './blocks/TransitionBlock'
 import PnlGateBlock from './blocks/PnlGateBlock'
 import ExerciseRenderer from './ExerciseRenderer'
+import { useAmbientSound } from '@/lib/reader/useAmbientSound'
 
 const GOLD = '#c9a84c'
 
@@ -69,6 +70,7 @@ export default function BlockRenderer({
 }: Props) {
   const router = useRouter()
   const { currentStep, goNext, goPrev, isExerciseDone, completeChapter, progress, chapterKey } = useReader()
+  const { muted, toggle: toggleSound } = useAmbientSound()
 
   const steps = useMemo(() => buildSteps(blocks, exercises), [blocks, exercises])
   const totalSteps = steps.length
@@ -141,6 +143,14 @@ export default function BlockRenderer({
           <span className="text-xs tabular-nums" style={{ color: '#4b5563' }}>
             {stepIndex + 1} / {totalSteps}
           </span>
+          <button
+            onClick={toggleSound}
+            title={muted ? 'Activer la musique' : 'Couper la musique'}
+            className="text-base transition-opacity"
+            style={{ opacity: muted ? 0.35 : 1, color: GOLD }}
+          >
+            {muted ? '🔇' : '🎵'}
+          </button>
         </div>
       </div>
 
