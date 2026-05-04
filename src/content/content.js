@@ -233,118 +233,116 @@ const CHAPTER_1 = {
 
 const CHAPTER_2 = {
   num: 2,
-  titre: "Trouver ton idée réaliste",
-  duree_estimee: "12-15 min",
-  completion_message: "Excellent. Tu as maintenant une idée de départ claire et réaliste.",
-  chapter_progress_label: "Chapitre 2 · 5 exercices",
+  titre: "Trouver ton idée",
+  duree_estimee: "10-12 min",
+  completion_message: "Tu as un point de départ concret. C'est tout ce dont tu as besoin pour avancer.",
+  chapter_progress_label: "Chapitre 2 · 3 exercices",
   progression_rule: "all_exercises",
 
   contenu: [
 
+    // Écran 1
     {
       type: "text",
-      section: "Sortir du flou",
-      value: "Tu n'as pas besoin de trouver l'idée parfaite.\nTu as besoin de trouver une idée simple, réaliste et faisable avec ta situation actuelle."
+      section: "Prise de conscience",
+      value: "Maintenant que tu vois plus clair…\nune autre question arrive naturellement.\n\nD'accord.\n\nMais concrètement… je fais quoi ?\n\nParce que comprendre, c'est une chose.\nAgir… c'en est une autre."
     },
 
-    {
-      type: "quote",
-      value: "Une bonne idée n'est pas forcément impressionnante.\nElle est claire, utile et possible à lancer."
-    },
-
+    // Écran 2
     {
       type: "text",
-      value: "Beaucoup de personnes restent bloquées parce qu'elles cherchent l'idée du siècle.\nMais en réalité, les petits business qui démarrent vite sont souvent simples : un service utile, un besoin local, une compétence déjà présente."
+      value: "C'est exactement ici que beaucoup de personnes s'arrêtent.\n\nElles veulent avancer… mais elles attendent le \"bon moment\".\nOu la \"bonne idée\".\n\nEt pendant ce temps… rien ne bouge.",
+      cta_label: "Je comprends"
     },
 
+    // Écran 3
     {
-      type: "pnl_pause",
-      value: "Respire un instant.\nEt demande-toi : qu'est-ce que je sais déjà faire que d'autres trouvent utile ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je suis prêt(e) à explorer ✓"
+      type: "text",
+      value: "Elles pensent qu'il faut :\n\nune idée parfaite\nune idée originale\nune idée jamais vue\n\nEt tant qu'elles ne l'ont pas…\nelles n'avancent pas.",
+      cta_label: "Ça me parle"
     },
 
+    // Écran 4
+    {
+      type: "text",
+      value: "La vérité est plus simple.\n\nTu n'as pas besoin d'une idée parfaite.\n\nTu as besoin d'une idée testable.\nUne idée que tu peux essayer rapidement."
+    },
+
+    // Écran 5
+    {
+      type: "text",
+      value: "Une idée imparfaite mais testée\nvaut toujours mieux\nqu'une idée parfaite… qui reste dans ta tête.\n\nCe n'est pas l'idée qui te fait avancer.\nC'est le fait de la tester.",
+      cta_label: "Je comprends"
+    },
+
+    // Écran 6 — fusionné (ex écrans 6+7)
+    {
+      type: "text",
+      value: "Tu n'es pas à zéro.\n\nTu as déjà des choses que tu peux utiliser.\n\nDes compétences. Des habitudes. Des facilités.\n\nCe qui te semble normal…\npeut avoir une vraie valeur pour quelqu'un d'autre.",
+      cta_label: "Je vois"
+    },
+
+    // Écran 7 — exercice
     {
       type: "exercise_inline",
       ref: "ch2_ex1"
     },
 
+    // Écran 8
     {
       type: "text",
-      section: "Les 3 angles",
-      value: "Pour trouver une idée réaliste, on va croiser 3 angles :\n\n1. Ce que tu sais faire naturellement\n2. Les besoins autour de toi\n3. Ce qui se vend déjà dans ton environnement"
+      value: "Ce que tu viens d'écrire…\nc'est déjà une base.\n\nBeaucoup de personnes cherchent une idée loin…\nalors qu'elle commence souvent ici."
     },
 
+    // Écran 9 — fusionné (ex écrans 10+11)
     {
-      type: "quote",
-      value: "Ton idée se trouve souvent au croisement de tes capacités, des besoins réels et du marché."
+      type: "text",
+      value: "Regarde maintenant autour de toi.\n\nTon entourage. Ton quartier. Ton quotidien.\n\nIl y a des problèmes non résolus.\nDes besoins. Des choses que les gens cherchent à simplifier.\n\nEt chaque problème… peut devenir une opportunité.",
+      cta_label: "Je comprends"
     },
 
+    // Écran 10 — exercice
     {
       type: "exercise_inline",
       ref: "ch2_ex2"
     },
 
+    // Écran 11
     {
       type: "text",
-      value: "Maintenant, observe ton entourage.\nLes besoins sont souvent visibles : manque de temps, manque d'organisation, besoin de visibilité, besoin de service, besoin de simplification."
+      value: "Une idée simple naît souvent ici.\n\nEntre ce que tu sais faire…\net un problème réel."
     },
 
+    // Écran 12
+    {
+      type: "text",
+      value: "Pas besoin que ce soit grand.\nPas besoin que ce soit révolutionnaire.\n\nJuste… quelque chose que tu peux tester\navec ce que tu as, là où tu es.",
+      cta_label: "Je comprends"
+    },
+
+    // Écran 13 — exercice final
     {
       type: "exercise_inline",
       ref: "ch2_ex3"
     },
 
-    {
-      type: "story",
-      section: "Déclic terrain",
-      value: "Natacha, à Abidjan, pensait ne pas avoir de talent particulier.\n\nElle disait : \"Je suis juste bonne avec les chiffres.\"\n\nMais chaque mois, elle aidait ses amies à organiser leur budget, éviter les dettes et mieux gérer leurs dépenses.\n\nUn jour, une amie lui dit :\n\"Pourquoi tu ne proposes pas ça comme service ? Beaucoup de personnes ont besoin de ça.\"\n\nCe jour-là, Natacha a compris quelque chose : ce qui lui semblait normal pouvait avoir de la valeur pour les autres."
-    },
-
-    {
-      type: "quote",
-      value: "Ce qui est facile pour toi peut être précieux pour quelqu'un d'autre."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch2_ex4"
-    },
-
+    // Écran 14 — célébration
     {
       type: "text",
-      section: "Choisir avec méthode",
-      value: "Tu as maintenant plusieurs idées.\nMais tu ne vas pas choisir au hasard.\n\nOn va utiliser une matrice de décision simple pour identifier l'idée la plus réaliste."
+      value: "Ce que tu viens de faire…\npeu de personnes le font vraiment.\n\nTu as un point de départ réel.\n\nPas une idée dans ta tête.\nUne idée concrète sur papier.\n\nEt c'est ça qui change tout."
     },
 
+    // Écran 15 — récap émotionnel
     {
       type: "text",
-      value: "Chaque idée sera notée selon plusieurs critères importants : budget nécessaire, facilité de démarrage, demande locale, compétence personnelle, potentiel de revenu et temps disponible."
+      value: "Tu viens de comprendre quelque chose d'essentiel :\n\ntu n'as pas besoin d'attendre.\n\nTu peux partir de ce que tu as déjà…\net de ce que tu vois autour de toi.\n\nEt commencer petit…\nc'est souvent la meilleure façon de commencer.",
+      cta_label: "Je continue"
     },
 
+    // Écran 16 — transition
     {
-      type: "quote",
-      value: "Un débutant ne doit pas choisir l'idée la plus brillante.\nIl doit choisir l'idée qu'il peut vraiment lancer."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch2_ex5"
-    },
-
-    {
-      type: "pnl_activation",
-      section: "Décision",
-      value: "Regarde ton idée recommandée.\nNe cherche pas la perfection.\nCherche le premier mouvement.",
-      display: "centered",
-      interaction: "button",
-      button_label: "J'accepte mon idée de départ ✓"
-    },
-
-    {
-      type: "transition",
-      value: "Maintenant que ton idée est choisie, on va passer à l'étape suivante : organiser ton temps pour avancer sans te disperser."
+      type: "text",
+      value: "Maintenant…\ncomment transformer cette idée\nen quelque chose de concret ?"
     }
 
   ],
@@ -354,133 +352,49 @@ const CHAPTER_2 = {
     {
       id: "ch2_ex1",
       type: "list",
-      question: "Liste 5 idées de Plan B possibles, même si elles ne sont pas parfaites.",
-      fields: 5,
-      fields_labels: ["Idée 1", "Idée 2", "Idée 3", "Idée 4", "Idée 5"],
+      question: "Écris 3 choses que tu sais faire, même simples.",
+      fields: 3,
+      fields_labels: ["Chose 1", "Chose 2", "Chose 3"],
       placeholders: [
-        "Ex: aider des commerçants avec WhatsApp...",
-        "Ex: vendre des repas faits maison...",
-        "Ex: créer des visuels simples...",
-        "Ex: service de livraison locale...",
-        "Ex: coaching budget personnel..."
+        "Ex: expliquer, cuisiner, réparer, organiser...",
+        "Ex: parler, contacter, vendre, aider...",
+        "Ex: créer, compter, écouter, coudre..."
       ],
-      aide: "Ne juge pas tes idées maintenant. Écris d'abord. Le tri viendra après.",
-      erreur: "Ne cherche pas l'idée parfaite dès le départ.",
-      success_message: "Très bien. Tu as ouvert le champ des possibilités.",
+      aide: "Parler, vendre, organiser, aider, réparer, expliquer, contacter… Rien n'est trop simple.",
+      erreur: "Ne minimise pas ce qui te semble facile.",
+      success_message: "Bien. Tu viens de voir ta propre valeur.",
       obligatoire: true
     },
 
     {
       id: "ch2_ex2",
-      type: "text_group",
-      question: "Identifie tes forces naturelles.",
-      fields: [
-        {
-          id: "force_simple",
-          label: "Ce qui te semble simple à faire",
-          placeholder: "Ex: expliquer, organiser, cuisiner, vendre, écouter..."
-        },
-        {
-          id: "force_remarquee",
-          label: "Ce que les autres remarquent souvent chez toi",
-          placeholder: "Ex: tu expliques bien, tu es organisé(e), tu aides facilement..."
-        },
-        {
-          id: "force_energie",
-          label: "Ce qui te donne de l'énergie quand tu le fais",
-          placeholder: "Ex: parler aux gens, créer, conseiller, réparer..."
-        }
+      type: "list",
+      question: "Donne 2 problèmes que tu vois souvent autour de toi.",
+      fields: 2,
+      fields_labels: ["Problème 1", "Problème 2"],
+      placeholders: [
+        "Ex: les commerçants manquent de visibilité en ligne...",
+        "Ex: les gens n'ont pas le temps de cuisiner..."
       ],
-      aide: "Une force naturelle est souvent quelque chose que tu fais sans effort, mais que les autres trouvent utile.",
-      erreur: "Ne minimise pas ce qui te semble facile. C'est parfois là que se cache ta valeur.",
-      success_message: "Parfait. Tu commences à voir ce que tu peux utiliser.",
+      aide: "Livraison, temps, organisation, produits introuvables, manque de service… Observe ton quotidien.",
+      erreur: "Ne cherche pas un problème complexe. Observe ce que les gens disent autour de toi.",
+      success_message: "Très bien. Ces besoins réels sont ton terrain de jeu.",
       obligatoire: true
     },
 
     {
       id: "ch2_ex3",
       type: "list",
-      question: "Quels sont 3 besoins réels que tu observes autour de toi ?",
-      fields: 3,
-      fields_labels: ["Besoin 1", "Besoin 2", "Besoin 3"],
+      question: "Propose 2 idées simples que tu pourrais tester.",
+      fields: 2,
+      fields_labels: ["Idée 1", "Idée 2"],
       placeholders: [
-        "Ex: les commerçants manquent de visibilité...",
-        "Ex: les salariés n'ont pas le temps de cuisiner...",
-        "Ex: les étudiants ont besoin d'aide pour s'organiser..."
+        "Ex: aider les commerçants à être visibles sur WhatsApp...",
+        "Ex: préparer des repas à la commande pour les salariés..."
       ],
-      aide: "Regarde ton quartier, ton travail, ta famille, tes amis, les groupes WhatsApp ou Facebook.",
-      erreur: "Ne choisis pas un besoin imaginaire. Observe ce que les gens demandent déjà.",
-      success_message: "Très bien. Une idée rentable commence par un besoin réel.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch2_ex4",
-      type: "selection",
-      question: "Parmi tes idées, sélectionne les 3 idées les plus réalistes à analyser.",
-      source: "ch2_ex1",
-      max_selection: 3,
-      aide: "Choisis les idées que tu peux lancer avec peu de budget, rapidement, et sans bouleverser ta vie.",
-      erreur: "Ne choisis pas l'idée qui impressionne le plus. Choisis celle que tu peux tester.",
-      success_message: "Très bien. On va maintenant comparer ces idées avec méthode.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch2_ex5",
-      type: "weighted_decision_matrix",
-      question: "Évalue tes 3 idées pour choisir la plus réaliste.",
-      source: "ch2_ex4",
-      scoring_scale: 5,
-      tie_breaking: "first",
-      criteria: [
-        {
-          id: "budget",
-          label: "Budget nécessaire",
-          weight: 5,
-          helper: "Plus le budget est faible, meilleure est la note.",
-          scale_low_label: "Budget élevé",
-          scale_high_label: "Aucun budget nécessaire"
-        },
-        {
-          id: "facilite",
-          label: "Facilité de démarrage",
-          weight: 5,
-          helper: "Note haut si tu peux commencer rapidement."
-        },
-        {
-          id: "demande_locale",
-          label: "Demande locale",
-          weight: 5,
-          helper: "Note haut si tu vois déjà des gens qui ont ce besoin."
-        },
-        {
-          id: "competence",
-          label: "Compétence personnelle",
-          weight: 4,
-          helper: "Note haut si tu as déjà une base ou une facilité."
-        },
-        {
-          id: "revenu",
-          label: "Potentiel de revenu",
-          weight: 4,
-          helper: "Note haut si l'idée peut générer de l'argent rapidement."
-        },
-        {
-          id: "temps",
-          label: "Temps disponible",
-          weight: 3,
-          helper: "Plus l'idée s'adapte à ton emploi du temps, meilleure est la note.",
-          scale_low_label: "Demande beaucoup de temps",
-          scale_high_label: "S'adapte parfaitement"
-        }
-      ],
-      result_label: "Idée recommandée",
-      result_rank: true,
-      result_explanation_template: "{{idee_nom}} est recommandée avec un score de {{score}} points. Elle semble la plus réaliste et faisable selon ta situation actuelle.",
-      aide: "Note chaque critère de 1 à 5. Ne cherche pas la perfection. Cherche l'idée la plus lançable.",
-      erreur: "Ne note pas selon ton rêve. Note selon ta réalité actuelle.",
-      success_message: "Décision prise. Tu as maintenant une idée de départ claire.",
+      aide: "Pas parfaites. Juste faisables avec ce que tu as.",
+      erreur: "Ne cherche pas la grande idée. Cherche l'idée que tu peux tester cette semaine.",
+      success_message: "Voilà. Tu as un point de départ concret.",
       obligatoire: true
     }
 
@@ -2463,8 +2377,6 @@ export const REQUIRED_EXERCISE_IDS = [
   "ch2_ex1",
   "ch2_ex2",
   "ch2_ex3",
-  "ch2_ex4",
-  "ch2_ex5",
   "ch3_ex1",
   "ch3_ex2",
   "ch3_ex3",
