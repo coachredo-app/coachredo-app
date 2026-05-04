@@ -60,6 +60,11 @@ export function markChapterComplete(chapterKey: string): LocalProgress {
 
 export function isChapterUnlocked(num: number, p: LocalProgress): boolean {
   if (num === 1) return p.introCompleted
+  // If the user has already started this chapter, never re-lock it
+  const existing = p.chapters[String(num)]
+  if (existing && ((existing.currentStep ?? 0) > 0 || Object.keys(existing.exercises).length > 0)) {
+    return true
+  }
   return p.chapters[String(num - 1)]?.completed === true
 }
 
