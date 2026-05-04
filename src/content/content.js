@@ -37,59 +37,47 @@ const INTRO = {
 
     {
       type: "text",
-      section: "Bienvenue",
-      value: "Bienvenue dans Plan B Rentable.\n\nSi tu es ici, ce n'est pas un hasard.\n\nTu veux avancer.\nTu veux améliorer ta situation.\nTu veux créer quelque chose de plus pour toi.\n\nEt c'est exactement pour ça que ce parcours existe."
+      section: "Avant de commencer",
+      value: "Il y a des moments dans la vie…\noù tu sens que quelque chose doit changer.\n\nTu avances. Tu fais ce que tu peux.\nTu gères tes responsabilités.\n\nMais au fond…\ntu sais que tu peux faire plus.\n\nOu autrement."
     },
 
     {
       type: "text",
       section: "Mot du coach",
-      value: "Je suis Coach Redouane.\n\nDepuis plusieurs années, j'accompagne des personnes qui veulent changer leur situation sans tout quitter du jour au lendemain.\n\nJ'ai vu une chose :\n\nCe n'est pas un manque d'opportunité qui bloque.\nC'est un manque de clarté et de passage à l'action.\n\nCe parcours est conçu pour ça :\nte donner une direction simple\net t'aider à passer à l'action étape par étape."
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Un seul instant.\n\nQuelle est la vraie raison qui t'a amené ici ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je sais pourquoi ✓"
+      value: "Je suis Coach Redouane.\n\nSi j'ai créé ce parcours, ce n'est pas pour te vendre un rêve.\n\nC'est parce que j'ai vu beaucoup de personnes capables…\nmais bloquées par le manque de méthode, de clarté et de passage à l'action.\n\nMon objectif ici est simple :\nt'aider à commencer avec ce que tu as, là où tu es."
     },
 
     {
       type: "text",
-      section: "Pourquoi maintenant",
-      value: "Beaucoup de personnes attendent le bon moment.\n\nPlus de temps.\nPlus d'argent.\nPlus de confiance.\n\nMais ce moment n'arrive jamais.\n\nLa réalité est simple :\n\nLe bon moment, c'est quand tu décides de commencer.\n\nMême petit.\nMême imparfait.\nMais réel."
-    },
-
-    {
-      type: "quote",
-      value: "Tu n'as pas besoin d'être prêt.\nTu as besoin de commencer."
+      value: "Ce que tu vas faire ici… n'est pas magique.\n\nPas de promesse d'argent rapide.\nPas de méthode miracle.\n\nC'est une façon de voir les choses différemment.\nEt de reprendre le contrôle, étape par étape.",
+      cta_label: "Je comprends"
     },
 
     {
       type: "text",
-      section: "Comment ça marche",
-      value: "Ce parcours est structuré en 10 chapitres — environ 2 heures au total.\n\nTu vas avancer progressivement :\n\ncomprendre ta situation\ntrouver une idée\npasser à l'action\nconstruire une offre\nparler au marché\nvendre\n\nÀ la fin de ce parcours, tu auras :\nune idée validée\nune offre construite\nun message clair\nun premier prix\nune première action lancée\n\nChaque étape est simple.\nMais importante.\n\nNe saute pas les étapes.\n\nMême si ça paraît facile.\nC'est la progression qui fait le résultat."
+      value: "Tu n'as pas besoin de tout changer aujourd'hui.\n\nTu n'as pas besoin d'avoir beaucoup d'argent.\n\nTu n'as même pas besoin d'avoir toutes les réponses.\n\nTu as juste besoin de commencer… correctement.",
+      cta_label: "Je t'écoute"
     },
 
     {
       type: "text",
-      section: "Ce parcours n'est pas",
-      value: "Ce parcours n'est pas une solution magique.\n\nTu ne vas pas devenir riche en quelques jours.\n\nTu ne vas pas réussir sans agir.\n\nCe parcours demande :\ndu temps\nde l'effort\nde la régularité\n\nMais si tu fais ce qui est demandé…\nles résultats arrivent.\n\nPas instantanément.\nMais réellement."
+      section: "Pour que ça marche",
+      value: "Prends ton temps.\n\nLis.\nRéfléchis.\nRéponds aux questions.\n\nEt surtout… sois honnête avec toi-même.\n\nCe parcours ne fonctionne pas si tu lis seulement.\n\nIl fonctionne si tu fais.",
+      cta_label: "D'accord"
     },
 
     {
       type: "text",
-      section: "Règles du parcours",
-      value: "Pour que ce parcours fonctionne, respecte ces règles :\n\n1. Va jusqu'au bout de chaque étape\n2. Réponds aux exercices sérieusement\n3. Ne cherche pas la perfection\n4. Passe à l'action rapidement\n5. Continue même quand c'est difficile\n\nCe parcours ne fonctionne pas si tu lis seulement.\n\nIl fonctionne si tu fais."
+      value: "Ce que tu vas découvrir…\n\nne va peut-être pas toujours te mettre à l'aise.\n\nMais c'est souvent comme ça\nque les choses commencent à changer.",
+      cta_label: "Je suis prêt(e)"
     },
 
     {
       type: "pnl_activation",
-      value: "Tu es prêt(e).\n\nTu peux commencer.\n\nEt tout commence maintenant.",
+      value: "Ce qui va suivre va peut-être te faire voir ta situation autrement.\n\nEt c'est exactement le but.",
       display: "centered",
       interaction: "button",
-      button_label: "Commencer le parcours ✓"
+      button_label: "Commencer →"
     }
 
   ]
@@ -113,38 +101,20 @@ const CHAPTER_1 = {
 
   contenu: [
 
+    // ── Bloc 1 — Immersion ──────────────────────────────────────
+
     {
       type: "text",
       section: "Prise de conscience",
-      value: "Il y a une partie de toi qui croit être en sécurité.\nEt une autre… plus silencieuse… qui sait que tout peut basculer."
+      value: "Il y a quelque chose que beaucoup de personnes ne réalisent pas tout de suite.\n\nTu avances. Tu fais ce que tu peux avec ce que tu as.\nTu gères tes responsabilités.\n\nEt avec le temps, tu t'habitues à cette stabilité.\nElle devient normale. Elle devient… rassurante.",
+      cta_label: "Je t'écoute"
     },
 
     {
       type: "text",
-      value: "Tu avances. Tu fais de ton mieux.\nMais au fond, une question reste là :\n\nEt si tout s'arrêtait demain ?"
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Prends 5 secondes. Ne réfléchis pas. Ressens.",
-      display: "centered",
-      interaction: "button",
-      button_label: "J'ai ressenti ✓"
-    },
-
-    {
-      type: "text",
-      value: "Dans beaucoup de situations, nous confondons stabilité et dépendance.\nUn revenu unique peut sembler rassurant… jusqu'au moment où il disparaît."
-    },
-
-    {
-      type: "text",
-      value: "En Afrique, beaucoup portent des responsabilités familiales importantes.\nQuand le revenu s'arrête, ce n'est pas seulement toi qui es impacté."
-    },
-
-    {
-      type: "quote",
-      value: "La sécurité n'est pas ce que tu gagnes.\nC'est ce que tu construis en parallèle."
+      section: "Ce qu'on nous a appris",
+      value: "On nous a appris que stabilité = sécurité.\n\nTrouver un travail. S'y accrocher.\nEt espérer que tout continue le plus longtemps possible.\n\nMais cette idée mérite d'être questionnée.\n\nParce qu'au fond, si ton revenu s'arrête aujourd'hui…\ncombien de temps tu tiens ?",
+      cta_label: "Réfléchir"
     },
 
     {
@@ -152,20 +122,32 @@ const CHAPTER_1 = {
       ref: "ch1_ex1"
     },
 
+    // ── Bloc 2 — Histoire Mamadou ───────────────────────────────
+
     {
       type: "story",
       section: "Réalité terrain",
-      value: "Mamadou, à Dakar, travaillait depuis plus de 10 ans dans la même entreprise.\n\nChaque mois, il assurait : loyer, famille, obligations.\nTout semblait stable.\n\nJusqu'au jour où l'entreprise annonce une restructuration.\n\nEn quelques semaines, tout change.\n\nCe n'était pas qu'une perte de salaire.\nC'était une perte de repères.\n\nQuelques mois plus tard, il dira :\n\n\"Si j'avais commencé quelque chose à côté plus tôt… même petit… ça aurait tout changé.\""
+      value: "Je vais te parler de Mamadou.\n\nIl vit à Dakar. Ça fait plus de 10 ans qu'il travaille dans la même entreprise.\n\nSérieux. Régulier. Respecté.\n\nChaque mois, son salaire tombe.\nIl aide sa famille. Il avance… comme il peut.\n\nEt comme beaucoup…\nil pensait être en sécurité."
     },
 
     {
-      type: "text",
-      value: "Ce genre de situation n'est pas rare.\n\nCe n'est pas une question d'échec.\nC'est une question de préparation."
+      type: "story",
+      value: "Jusqu'au jour où son entreprise a commencé à parler de \"réorganisation\".\n\nAu début, personne ne s'inquiète vraiment.\n\nPuis les premières rumeurs arrivent.\n\nPuis les premiers départs.",
+      cta_label: "Je comprends"
     },
 
     {
-      type: "quote",
-      value: "Le problème n'est pas ton travail.\nLe problème, c'est de dépendre d'une seule source."
+      type: "story",
+      value: "Ce jour-là…\n\nMamadou se pose une question qu'il n'avait jamais vraiment affrontée :\n\n\"Si ça s'arrête… je fais quoi ?\"\n\nEt c'est là qu'il réalise quelque chose de dur.\n\nIl a travaillé pendant des années…\nsans jamais construire une alternative.\nSans jamais préparer un Plan B.",
+      cta_label: "Je réalise"
+    },
+
+    {
+      type: "pnl_pause",
+      value: "Et si c'était toi… demain ?\n\nTon revenu. Tes repères.\nTon équilibre. Ta sécurité.\n\nEt si tout ça… dépendait d'une seule chose ?",
+      display: "centered",
+      interaction: "button",
+      button_label: "Ça me concerne"
     },
 
     {
@@ -173,28 +155,19 @@ const CHAPTER_1 = {
       ref: "ch1_ex2"
     },
 
-    {
-      type: "text",
-      value: "Ce que tu viens d'écrire n'est pas une faiblesse.\nC'est une information."
-    },
+    // ── Bloc 3 — Le vrai problème ───────────────────────────────
 
     {
-      type: "pnl_activation",
-      section: "Décision personnelle",
-      value: "Et à partir de maintenant, tu ne pourras plus ignorer ce que tu sais.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je suis prêt(e) à avancer ✓"
+      type: "text",
+      section: "Le vrai problème",
+      value: "Tu n'as pas besoin de tout changer.\n\nTu n'as pas besoin de quitter ton travail.\nNi de tout recommencer de zéro.\n\nCe que tu as construit a de la valeur.\n\nMais aujourd'hui…\nce n'est plus suffisant.\n\nParce que dépendre d'une seule source,\nc'est rester exposé.",
+      cta_label: "Je comprends"
     },
 
     {
       type: "text",
-      value: "Tu n'as pas besoin de tout changer.\nTu as besoin d'ajouter une option."
-    },
-
-    {
-      type: "quote",
-      value: "Un Plan B n'est pas un luxe.\nC'est une protection."
+      value: "Ce dont tu as besoin,\nce n'est pas de tout remplacer.\n\nC'est d'ajouter une option.\n\nUne deuxième possibilité.\nUne sécurité en plus.\n\nParce qu'un Plan B\nn'est pas un luxe.\n\nC'est une protection.",
+      cta_label: "D'accord"
     },
 
     {
@@ -203,8 +176,15 @@ const CHAPTER_1 = {
     },
 
     {
-      type: "transition",
-      value: "Maintenant que tu vois clair, on va passer à l'étape suivante.\n\nTrouver une idée simple, réaliste et faisable."
+      type: "text",
+      section: "Chapitre 1 — Terminé",
+      value: "Tu viens de faire quelque chose\nque beaucoup de personnes évitent toute leur vie.\n\nRegarder la réalité en face.\n\nTu as compris une chose essentielle :\n\nCe n'est pas ton travail le problème.\nC'est de dépendre d'une seule source.\n\nEt maintenant, tu vois plus clair.",
+      cta_label: "C'est parti"
+    },
+
+    {
+      type: "text",
+      value: "Tu es prêt pour la suite.\n\nDans le prochain chapitre,\non va passer à quelque chose de concret :\n\nTrouver une idée simple,\nréaliste\net faisable pour toi.\n\nPas une idée parfaite.\nUne idée que tu peux réellement lancer."
     }
 
   ],

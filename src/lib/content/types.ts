@@ -8,6 +8,7 @@ export interface TextBlock {
   type: 'text'
   value: string
   section?: string
+  cta_label?: string
 }
 
 export interface QuoteBlock {
@@ -19,6 +20,7 @@ export interface StoryBlock {
   type: 'story'
   value: string
   section?: string
+  cta_label?: string
 }
 
 export interface PnlPauseBlock {

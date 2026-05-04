@@ -157,7 +157,7 @@ export default function BlockRenderer({
               <p
                 className="text-base leading-relaxed whitespace-pre-line"
                 style={{
-                  color: step.block.type === 'story' ? '#9ca3af' : '#d1d5db',
+                  color: '#d1d5db',
                   fontStyle: step.block.type === 'story' ? 'italic' : 'normal',
                 }}
               >
@@ -203,7 +203,9 @@ export default function BlockRenderer({
               boxShadow: canAdvance ? '0 4px 20px rgba(201,168,76,0.25)' : 'none',
             }}
           >
-            {isLast ? nextLabel : 'Continuer →'}
+            {isLast
+              ? nextLabel
+              : (step?.kind === 'text' && step.block.cta_label) ? step.block.cta_label : 'Continuer →'}
           </button>
         </div>
       )}
