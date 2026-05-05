@@ -33,7 +33,7 @@ export async function proxy(request: NextRequest) {
 
   // Authenticated user on auth pages → redirect to app
   if (user && authRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL('/intro', request.url))
+    return NextResponse.redirect(new URL('/resume', request.url))
   }
 
   // No session on protected routes → redirect to login
@@ -55,7 +55,7 @@ export async function proxy(request: NextRequest) {
 
     // Already has access but visiting /access → redirect to app
     if (access?.has_access && pathname === '/access') {
-      return NextResponse.redirect(new URL('/intro', request.url))
+      return NextResponse.redirect(new URL('/resume', request.url))
     }
 
     // Quiz gate: all 42 required exercises must be saved in Supabase (completion_percentage = 100).

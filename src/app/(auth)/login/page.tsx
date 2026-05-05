@@ -26,7 +26,7 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/intro')
+    router.push('/resume')
     router.refresh()
   }
 
