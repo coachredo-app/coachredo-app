@@ -262,16 +262,10 @@ const CHAPTER_2 = {
       cta_label: "Ça me parle"
     },
 
-    // Écran 4
+    // Écran 4 — fusionné (ex 4+5)
     {
       type: "text",
-      value: "La vérité est plus simple.\n\nTu n'as pas besoin d'une idée parfaite.\n\nTu as besoin d'une idée testable.\nUne idée que tu peux essayer rapidement."
-    },
-
-    // Écran 5
-    {
-      type: "text",
-      value: "Une idée imparfaite mais testée\nvaut toujours mieux\nqu'une idée parfaite… qui reste dans ta tête.\n\nCe n'est pas l'idée qui te fait avancer.\nC'est le fait de la tester.",
+      value: "La vérité est plus simple.\n\nTu n'as pas besoin d'une idée parfaite.\nTu as besoin d'une idée testable.\n\nUne idée imparfaite mais testée\nvaut toujours mieux\nqu'une idée parfaite qui reste dans ta tête.\n\nCe n'est pas l'idée qui te fait avancer.\nC'est le fait de la tester.",
       cta_label: "Je comprends"
     },
 
@@ -288,16 +282,10 @@ const CHAPTER_2 = {
       ref: "ch2_ex1"
     },
 
-    // Écran 8
+    // Écran 7 — fusionné (ex 8+9)
     {
       type: "text",
-      value: "Ce que tu viens d'écrire…\nc'est déjà une base.\n\nBeaucoup de personnes cherchent une idée loin…\nalors qu'elle commence souvent ici."
-    },
-
-    // Écran 9 — fusionné (ex écrans 10+11)
-    {
-      type: "text",
-      value: "Regarde maintenant autour de toi.\n\nTon entourage. Ton quartier. Ton quotidien.\n\nIl y a des problèmes non résolus.\nDes besoins. Des choses que les gens cherchent à simplifier.\n\nEt chaque problème… peut devenir une opportunité.",
+      value: "Ce que tu viens d'écrire… c'est déjà une base.\n\nMaintenant, regarde autour de toi.\n\nTon entourage. Ton quartier. Ton quotidien.\n\nChaque problème non résolu…\nchaque besoin sans réponse…\npeut devenir une opportunité.",
       cta_label: "Je comprends"
     },
 
@@ -307,16 +295,10 @@ const CHAPTER_2 = {
       ref: "ch2_ex2"
     },
 
-    // Écran 11
+    // Écran 9 — fusionné (ex 11+12)
     {
       type: "text",
-      value: "Une idée simple naît souvent ici.\n\nEntre ce que tu sais faire…\net un problème réel."
-    },
-
-    // Écran 12
-    {
-      type: "text",
-      value: "Pas besoin que ce soit grand.\nPas besoin que ce soit révolutionnaire.\n\nJuste… quelque chose que tu peux tester\navec ce que tu as, là où tu es.",
+      value: "Une idée simple naît souvent ici.\n\nEntre ce que tu sais faire…\net un problème réel.\n\nPas besoin que ce soit grand.\nJuste quelque chose que tu peux tester\navec ce que tu as, là où tu es.",
       cta_label: "Je comprends"
     },
 
