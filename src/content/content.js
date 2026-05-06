@@ -387,101 +387,88 @@ const CHAPTER_3 = {
   num: 3,
   titre: "Organiser ton temps et passer à l'action",
   duree_estimee: "10-12 min",
-  completion_message: "Parfait. Tu as maintenant un plan simple et une routine pour agir chaque jour.",
-  chapter_progress_label: "Chapitre 3 · 4 exercices",
+  completion_message: "Tu as maintenant un plan d'action concret. Pas parfait. Mais réel.",
+  chapter_progress_label: "Chapitre 3 · 3 exercices",
   progression_rule: "all_exercises",
 
   contenu: [
 
+    // Écran 1
     {
       type: "text",
-      section: "Réalité du temps",
-      value: "Tu n'as pas besoin de plus de temps.\nTu as besoin de mieux utiliser le temps que tu as déjà."
+      section: "Passer à l'action",
+      value: "Tu as maintenant une idée.\n\nPeut-être simple.\nPeut-être imparfaite.\n\nMais réelle.\n\nEt maintenant…\nla vraie difficulté commence."
     },
 
-    {
-      type: "quote",
-      value: "Le temps ne se trouve pas.\nIl se crée."
-    },
-
+    // Écran 2
     {
       type: "text",
-      value: "Entre le travail, la famille et les obligations, il est normal de penser que tu n'as pas de temps.\nMais en réalité, il existe toujours des moments exploitables."
+      value: "Beaucoup de personnes ne passent jamais à l'action.\n\nPas parce qu'elles ne veulent pas.\n\nMais parce qu'elles pensent ne pas avoir le temps.\n\n\"Je vais commencer quand j'aurai plus de temps.\"\n\nCette phrase semble logique…\nmais en réalité, elle bloque tout.",
+      cta_label: "Je comprends"
     },
 
+    // Écran 3
     {
-      type: "pnl_pause",
-      value: "Arrête-toi un instant.\nPense à ta journée d'hier.\nOù as-tu perdu du temps ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je suis prêt(e) à analyser ✓"
+      type: "text",
+      value: "Tu n'auras jamais \"plus de temps\".\n\nTu auras toujours :\ndu travail\ndes obligations\nde la fatigue\n\nLa différence…\nc'est ce que tu fais avec le temps que tu as."
     },
 
+    // Écran 4
+    {
+      type: "text",
+      value: "Regarde honnêtement ta journée.\n\nEntre les réseaux, les discussions,\nles moments perdus sans t'en rendre compte…\n\nil y a toujours du temps qui disparaît.\n\nPas parce que tu es paresseux.\n\nMais parce que tu ne l'as jamais organisé.",
+      cta_label: "Réfléchir"
+    },
+
+    // Écran 5 — exercice
     {
       type: "exercise_inline",
       ref: "ch3_ex1"
     },
 
+    // Écran 6
     {
       type: "text",
-      section: "Créer ton créneau",
-      value: "Ton Plan B n'a pas besoin de 5 heures par jour.\nIl a besoin de régularité.\n\nMême 30 à 60 minutes par jour peuvent changer ta situation sur 90 jours."
+      value: "Ce temps…\nc'est ton point de départ.\n\nPas parfait.\nPas idéal.\n\nMais suffisant pour commencer.\n\nLe vrai problème, ce n'est pas le manque de temps.\n\nC'est vouloir tout faire d'un coup…\n\net finir par ne rien faire."
     },
 
+    // Écran 7
     {
-      type: "quote",
-      value: "Ce n'est pas l'intensité qui change ta vie.\nC'est la constance."
+      type: "text",
+      value: "Ton objectif n'est pas de lancer un business parfait.\n\nTon objectif…\nc'est de faire UNE action simple.\n\nUne action qui te rapproche de la réalité.\n\nUne action que tu peux faire aujourd'hui.",
+      cta_label: "Je comprends"
     },
 
+    // Écran 8 — exercice
     {
       type: "exercise_inline",
       ref: "ch3_ex2"
     },
 
-    {
-      type: "story",
-      section: "Discipline terrain",
-      value: "Karim travaillait toute la journée et pensait ne jamais avoir le temps.\n\nIl a commencé avec seulement 30 minutes chaque soir.\n\nPas parfait.\nPas spectaculaire.\nMais constant.\n\nAprès quelques semaines, il avait déjà avancé plus que les gens qui attendaient le bon moment."
-    },
-
-    {
-      type: "quote",
-      value: "Un petit effort répété vaut plus qu'un grand effort occasionnel."
-    },
-
+    // Écran 9
     {
       type: "text",
-      section: "Plan simple",
-      value: "Tu n'as pas besoin d'un plan compliqué.\nTu as besoin d'un plan que tu peux suivre même les jours difficiles."
+      value: "Ce qui fait la différence…\nce n'est pas la motivation.\n\nC'est la régularité.\n\nMême 30 minutes par jour…\n\nrépétées chaque jour\n\npeuvent changer beaucoup de choses."
     },
 
+    // Écran 10 — exercice
     {
       type: "exercise_inline",
       ref: "ch3_ex3"
     },
 
+    // Écran 11
     {
       type: "text",
-      section: "Passer à l'action",
-      value: "Le plus grand piège est d'attendre d'être prêt.\n\nTu ne seras jamais totalement prêt.\n\nL'action vient avant la confiance."
+      value: "Tu viens de faire quelque chose d'important.\n\nTu n'as pas juste une idée.\n\nTu as un plan d'action.\n\nEt surtout…\ntu as compris une chose essentielle :\n\ntu n'as pas besoin de plus de temps.\n\nTu as besoin de mieux utiliser celui que tu as.",
+      cta_label: "Je continue"
     },
 
+    // Écran 12 — transition
     {
-      type: "pnl_activation",
-      value: "À partir d'aujourd'hui, tu avances chaque jour, même petit.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je m'engage à agir chaque jour ✓"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch3_ex4"
-    },
-
-    {
-      type: "transition",
-      value: "Maintenant que tu es organisé, on va passer à l'étape suivante : tester ton idée dans la réalité."
+      type: "text",
+      value: "Maintenant…\nil est temps de passer à l'étape suivante :\n\nstructurer ton idée correctement.",
+      cta_label: "Construire mon plan →"
     }
 
   ],
@@ -490,75 +477,34 @@ const CHAPTER_3 = {
 
     {
       id: "ch3_ex1",
-      type: "list",
-      question: "Identifie 3 moments dans ta journée où tu perds du temps.",
-      fields: 3,
-      fields_labels: ["Moment 1", "Moment 2", "Moment 3"],
-      placeholders: [
-        "Ex: scroll sur téléphone...",
-        "Ex: télévision sans objectif...",
-        "Ex: temps non structuré après le travail..."
-      ],
-      aide: "Sois honnête avec toi-même. Le but est de voir clair.",
-      erreur: "Ne minimise pas ces moments.",
-      success_message: "Parfait. Tu viens d'identifier du temps récupérable.",
+      type: "text",
+      question: "Combien de minutes par jour pourrais-tu réellement utiliser pour ton projet ?",
+      placeholder: "Ex: 30 minutes le soir après le travail...",
+      aide: "Même 30 minutes comptent. Sois réaliste.",
+      erreur: "Ne vise pas trop haut. Commence par ce qui est tenable.",
+      success_message: "C'est ton point de départ. Pas parfait, mais suffisant.",
       obligatoire: true
     },
 
     {
       id: "ch3_ex2",
-      type: "selection",
-      question: "Choisis ton créneau quotidien pour ton Plan B.",
-      options: [
-        "Matin avant le travail",
-        "Pause déjeuner",
-        "Soir après le travail",
-        "Week-end uniquement",
-        "Horaires variables"
-      ],
-      additional_input: true,
-      additional_placeholder: "Précise ton créneau si nécessaire...",
-      aide: "Choisis un moment réaliste que tu peux tenir chaque jour.",
-      erreur: "Ne choisis pas un créneau idéal mais impossible.",
-      success_message: "Très bien. Tu as maintenant ton créneau.",
+      type: "text",
+      question: "Quelle est la première action simple que tu peux faire avec ton idée ?",
+      placeholder: "Ex: contacter quelqu'un, proposer mon service, tester une vente...",
+      aide: "Contacter quelqu'un, proposer ton service, tester une vente… Une seule action.",
+      erreur: "Ne cherche pas l'action parfaite. Cherche l'action possible.",
+      success_message: "Voilà ton premier mouvement. Tout commence là.",
       obligatoire: true
     },
 
     {
       id: "ch3_ex3",
-      type: "text_group",
-      question: "Définis ton plan d'action simple.",
-      fields: [
-        {
-          id: "action_quotidienne",
-          label: "Action quotidienne",
-          placeholder: "Ex: contacter 3 personnes, créer 1 contenu..."
-        },
-        {
-          id: "duree",
-          label: "Durée quotidienne",
-          placeholder: "Ex: 30 minutes, 1 heure..."
-        },
-        {
-          id: "objectif_7j",
-          label: "Objectif sur 7 jours",
-          placeholder: "Ex: tester mon offre avec 2 personnes, envoyer 5 messages..."
-        }
-      ],
-      aide: "Reste simple. Un plan compliqué ne sera pas suivi.",
-      erreur: "Ne vise pas un résultat financier en 7 jours. Vise une première action concrète : un test, un contact, une conversation.",
-      success_message: "Parfait. Ton plan est clair et réalisable.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch3_ex4",
-      type: "commitment",
-      question: "Engage-toi à suivre ce plan pendant 7 jours.",
-      confirmation_text: "Je m'engage à suivre mon plan pendant 7 jours",
-      aide: "Ce n'est pas une promesse parfaite. C'est un engagement à avancer.",
-      erreur: "Ce n'est pas un contrat parfait. C'est juste un premier engagement envers toi-même.",
-      success_message: "Engagement validé. C'est le début du mouvement.",
+      type: "text",
+      question: "À quel moment de ta journée peux-tu travailler sur ton projet ?",
+      placeholder: "Ex: le matin entre 6h et 7h, ou le soir après 21h...",
+      aide: "Un créneau régulier, même court. La régularité prime sur la durée.",
+      erreur: "Choisis un moment que tu peux vraiment tenir, pas l'idéal.",
+      success_message: "Ton créneau est posé. C'est le début de la discipline.",
       obligatoire: true
     }
 
@@ -2362,7 +2308,6 @@ export const REQUIRED_EXERCISE_IDS = [
   "ch3_ex1",
   "ch3_ex2",
   "ch3_ex3",
-  "ch3_ex4",
   "ch4_ex1",
   "ch4_ex2",
   "ch4_ex3",
