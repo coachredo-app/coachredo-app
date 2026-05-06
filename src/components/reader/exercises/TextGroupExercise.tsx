@@ -7,7 +7,10 @@ import type { TextGroupExercise as T } from '@/lib/content/types'
 
 export default function TextGroupExercise({ exercise }: { exercise: T }) {
   const { responses, saveResponse } = useReader()
-  const saved = responses[exercise.id] as Record<string, string> | undefined
+  const raw = responses[exercise.id]
+  const saved = raw && typeof raw === 'object' && !Array.isArray(raw)
+    ? (raw as Record<string, string>)
+    : undefined
   const [values, setValues] = useState<Record<string, string>>(saved ?? {})
   const [editing, setEditing] = useState(!saved)
 

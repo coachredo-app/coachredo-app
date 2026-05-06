@@ -28,7 +28,11 @@ export function loadProgress(): LocalProgress {
 
 export function saveProgress(data: LocalProgress): void {
   if (typeof window === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  } catch {
+    // quota exceeded (e.g. iOS private browsing) — progress not saved but no crash
+  }
 }
 
 export function saveExerciseResponse(

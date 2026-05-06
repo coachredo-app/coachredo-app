@@ -15,7 +15,8 @@ interface ListExerciseData extends T {
 export default function ListExercise({ exercise }: { exercise: T }) {
   const ex = exercise as ListExerciseData
   const { responses, saveResponse } = useReader()
-  const saved = responses[exercise.id] as string[] | undefined
+  const raw = responses[exercise.id]
+  const saved = Array.isArray(raw) ? (raw as string[]) : undefined
 
   // Determine number of fields and their labels/placeholders
   const fieldCount = ex.fields ?? ex.min_items ?? 3

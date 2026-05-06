@@ -7,7 +7,9 @@ import type { TextExercise as T } from '@/lib/content/types'
 
 export default function TextExercise({ exercise }: { exercise: T }) {
   const { responses, saveResponse } = useReader()
-  const saved = responses[exercise.id] as string | undefined
+  // Normalize: old localStorage may have array/object from previous exercise types
+  const raw = responses[exercise.id]
+  const saved = typeof raw === 'string' ? raw : undefined
   const [value, setValue] = useState(saved ?? '')
   const [editing, setEditing] = useState(!saved)
 
