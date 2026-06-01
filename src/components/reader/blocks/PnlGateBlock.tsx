@@ -30,7 +30,7 @@ export default function PnlGateBlock({ block, isRevealed, onReveal }: Props) {
       }}
     >
       <p
-        className="text-base leading-relaxed whitespace-pre-line mb-6"
+        className="reader-text text-base leading-relaxed whitespace-pre-line mb-6"
         style={{ color: '#e5e7eb' }}
       >
         {block.value}

@@ -193,7 +193,7 @@ export default function BilanPage() {
   }
 
   return (
-    <div className="flex flex-col overflow-x-hidden" style={{ backgroundColor: '#0a0d1a', height: '100dvh' }}>
+    <div className="reader-fixed" style={{ backgroundColor: '#0a0d1a' }}>
 
       {/* Barre de progression */}
       <div className="flex-none" style={{ height: '2px', backgroundColor: '#1f2937' }}>
@@ -225,8 +225,8 @@ export default function BilanPage() {
       </div>
 
       {/* Contenu — scrollable si besoin */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-8">
-        <div className="w-full max-w-lg mx-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-8" style={{ touchAction: 'pan-y' }}>
+        <div className="w-full max-w-lg mx-auto min-w-0">
 
           {/* Intro */}
           {step.kind === 'intro' && (
@@ -314,7 +314,7 @@ export default function BilanPage() {
       {/* Bouton Continuer — toujours visible et prioritaire */}
       <div
         className="flex-none px-4 sm:px-6 pt-3"
-        style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+        style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 2rem))' }}
       >
         <button
           onClick={handleNext}

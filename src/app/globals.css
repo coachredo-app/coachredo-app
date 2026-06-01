@@ -48,12 +48,37 @@
 }
 
 /* ── Base styles ────────────────────────────────────────────── */
+
+/* Bloquer tout overflow horizontal — nécessaire sur iOS Safari */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-cr-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Classe utilitaire reader — conteneur ancré aux 4 coins du viewport */
+.reader-fixed {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Texte reader — empêche tout débordement de mot long */
+.reader-text {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  hyphens: auto;
 }
 
 /* Préserver le dark mode du reader existant sous /(app) */

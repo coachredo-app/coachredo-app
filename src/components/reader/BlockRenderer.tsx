@@ -110,10 +110,7 @@ export default function BlockRenderer({
   const progressPct = totalSteps > 0 ? ((stepIndex + 1) / totalSteps) * 100 : 0
 
   return (
-    <div
-      className="flex flex-col overflow-x-hidden"
-      style={{ backgroundColor: '#0a0d1a', height: '100dvh' }}
-    >
+    <div className="reader-fixed" style={{ backgroundColor: '#0a0d1a' }}>
 
       {/* Progress bar */}
       <div className="flex-none" style={{ height: '2px', backgroundColor: '#1f2937' }}>
@@ -131,13 +128,13 @@ export default function BlockRenderer({
       <div className="flex-none flex items-center justify-between px-4 pt-5 pb-3">
         <button
           onClick={handleBack}
-          className="flex items-center gap-1 text-sm transition-opacity shrink-0"
+          className="flex items-center gap-1 text-sm shrink-0"
           style={{ color: '#6b7280' }}
         >
           ← {isFirst ? backLabel : 'Retour'}
         </button>
 
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-2 min-w-0 overflow-hidden">
           {chapterLabel && (
             <span
               className="hidden sm:inline text-xs font-semibold uppercase tracking-widest truncate max-w-[180px]"
@@ -152,7 +149,7 @@ export default function BlockRenderer({
           <button
             onClick={toggleSound}
             title={muted ? 'Activer la musique' : 'Couper la musique'}
-            className="text-base transition-opacity shrink-0"
+            className="text-base shrink-0"
             style={{ opacity: muted ? 0.35 : 1, color: GOLD }}
           >
             {muted ? '🔇' : '🎵'}
@@ -160,52 +157,51 @@ export default function BlockRenderer({
         </div>
       </div>
 
-      {/* Step content — flex-1, internal scroll only if overflow */}
-      <div className="flex-1 overflow-y-auto flex items-center justify-center px-4 sm:px-6 py-4">
-        <div className="w-full max-w-lg">
-          {step?.kind === 'text' && (
-            <div>
-              {step.block.section && (
-                <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: GOLD }}>
-                  {step.block.section}
+      {/* Step content — seul zone scrollable, uniquement vertical */}
+      <div
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
+        style={{ touchAction: 'pan-y' }}
+      >
+        <div className="flex items-start justify-center min-h-full px-4 sm:px-6 py-6">
+          <div className="w-full max-w-lg min-w-0">
+
+            {step?.kind === 'text' && (
+              <div>
+                {step.block.section && (
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: GOLD }}>
+                    {step.block.section}
+                  </p>
+                )}
+                <p
+                  className="reader-text text-sm sm:text-base leading-relaxed whitespace-pre-line"
+                  style={{
+                    color: '#d1d5db',
+                    fontStyle: step.block.type === 'story' ? 'italic' : 'normal',
+                  }}
+                >
+                  {step.block.value}
                 </p>
-              )}
-              <p
-                className="text-sm sm:text-base leading-relaxed whitespace-pre-line"
-                style={{
-                  color: '#d1d5db',
-                  fontStyle: step.block.type === 'story' ? 'italic' : 'normal',
-                  overflowWrap: 'anywhere',
-                }}
-              >
-                {step.block.value}
-              </p>
-            </div>
-          )}
+              </div>
+            )}
 
-          {step?.kind === 'quote' && <QuoteBlock block={step.block} />}
+            {step?.kind === 'quote' && <QuoteBlock block={step.block} />}
+            {step?.kind === 'transition' && <TransitionBlock block={step.block} />}
+            {step?.kind === 'gate' && (
+              <PnlGateBlock block={step.block} isRevealed={false} onReveal={handleNext} />
+            )}
+            {step?.kind === 'exercise' && (
+              <ExerciseRenderer exercise={step.exercise} section={step.section} />
+            )}
 
-          {step?.kind === 'transition' && <TransitionBlock block={step.block} />}
-
-          {step?.kind === 'gate' && (
-            <PnlGateBlock
-              block={step.block}
-              isRevealed={false}
-              onReveal={handleNext}
-            />
-          )}
-
-          {step?.kind === 'exercise' && (
-            <ExerciseRenderer exercise={step.exercise} section={step.section} />
-          )}
+          </div>
         </div>
       </div>
 
-      {/* Bottom nav — hidden for gate steps (gate has its own button) */}
+      {/* Bottom nav — jamais caché, safe-area-inset pour iPhone */}
       {!isGate && (
         <div
           className="flex-none px-4 sm:px-6 pt-3"
-          style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+          style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}
         >
           {!canAdvance && (
             <p className="text-center text-xs mb-3" style={{ color: '#6b7280' }}>
