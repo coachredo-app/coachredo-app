@@ -162,7 +162,7 @@ export default function BlockRenderer({
         className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
         style={{ touchAction: 'pan-y' }}
       >
-        <div className="flex items-start justify-center min-h-full px-4 sm:px-6 py-6">
+        <div className="flex items-start justify-center min-h-full px-5 sm:px-8 py-4">
           <div className="w-full max-w-lg min-w-0">
 
             {step?.kind === 'text' && (
@@ -173,7 +173,7 @@ export default function BlockRenderer({
                   </p>
                 )}
                 <p
-                  className="reader-text text-sm sm:text-base leading-relaxed whitespace-pre-line"
+                  className="reader-text text-base sm:text-lg leading-[1.8] whitespace-pre-line"
                   style={{
                     color: '#d1d5db',
                     fontStyle: step.block.type === 'story' ? 'italic' : 'normal',
