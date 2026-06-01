@@ -5,8 +5,8 @@ const GOLD = '#c9a84c'
 export default function BilanConfirmationPage() {
   return (
     <main
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ backgroundColor: '#0a0d1a' }}
+      className="flex items-center justify-center px-4 sm:px-6 py-16 overflow-x-hidden"
+      style={{ backgroundColor: '#0a0d1a', minHeight: '100dvh' }}
     >
       <div className="w-full max-w-sm text-center">
 

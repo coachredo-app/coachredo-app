@@ -32,6 +32,12 @@ export const metadata: Metadata = {
   ),
 }
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
+
 /**
  * Root layout minimal — ne rend pas <html>/<body> car les layouts enfants
  * ([locale]/layout.tsx) le font en gérant le lang dynamiquement.
@@ -46,7 +52,7 @@ export default function RootLayout({
     <html
       className={`${jakarta.variable} ${dmSerif.variable} ${lora.variable}`}
     >
-      <body className="antialiased">{children}</body>
+      <body className="antialiased overflow-x-hidden">{children}</body>
     </html>
   )
 }

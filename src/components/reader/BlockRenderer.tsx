@@ -110,7 +110,10 @@ export default function BlockRenderer({
   const progressPct = totalSteps > 0 ? ((stepIndex + 1) / totalSteps) * 100 : 0
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: '#0a0d1a' }}>
+    <div
+      className="flex flex-col overflow-x-hidden"
+      style={{ backgroundColor: '#0a0d1a', height: '100dvh' }}
+    >
 
       {/* Progress bar */}
       <div className="flex-none" style={{ height: '2px', backgroundColor: '#1f2937' }}>
@@ -125,28 +128,31 @@ export default function BlockRenderer({
       </div>
 
       {/* Top bar */}
-      <div className="flex-none flex items-center justify-between px-5 pt-5 pb-3">
+      <div className="flex-none flex items-center justify-between px-4 pt-5 pb-3">
         <button
           onClick={handleBack}
-          className="flex items-center gap-1 text-sm transition-opacity"
+          className="flex items-center gap-1 text-sm transition-opacity shrink-0"
           style={{ color: '#6b7280' }}
         >
           ← {isFirst ? backLabel : 'Retour'}
         </button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 min-w-0">
           {chapterLabel && (
-            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
+            <span
+              className="hidden sm:inline text-xs font-semibold uppercase tracking-widest truncate max-w-[180px]"
+              style={{ color: GOLD }}
+            >
               {chapterLabel}
             </span>
           )}
-          <span className="text-xs tabular-nums" style={{ color: '#4b5563' }}>
+          <span className="text-xs tabular-nums shrink-0" style={{ color: '#4b5563' }}>
             {stepIndex + 1} / {totalSteps}
           </span>
           <button
             onClick={toggleSound}
             title={muted ? 'Activer la musique' : 'Couper la musique'}
-            className="text-base transition-opacity"
+            className="text-base transition-opacity shrink-0"
             style={{ opacity: muted ? 0.35 : 1, color: GOLD }}
           >
             {muted ? '🔇' : '🎵'}
@@ -155,7 +161,7 @@ export default function BlockRenderer({
       </div>
 
       {/* Step content — flex-1, internal scroll only if overflow */}
-      <div className="flex-1 overflow-y-auto flex items-center justify-center px-6 py-4">
+      <div className="flex-1 overflow-y-auto flex items-center justify-center px-4 sm:px-6 py-4">
         <div className="w-full max-w-lg">
           {step?.kind === 'text' && (
             <div>
@@ -165,10 +171,11 @@ export default function BlockRenderer({
                 </p>
               )}
               <p
-                className="text-base leading-relaxed whitespace-pre-line"
+                className="text-sm sm:text-base leading-relaxed whitespace-pre-line"
                 style={{
                   color: '#d1d5db',
                   fontStyle: step.block.type === 'story' ? 'italic' : 'normal',
+                  overflowWrap: 'anywhere',
                 }}
               >
                 {step.block.value}
@@ -196,7 +203,10 @@ export default function BlockRenderer({
 
       {/* Bottom nav — hidden for gate steps (gate has its own button) */}
       {!isGate && (
-        <div className="flex-none px-6 pb-8 pt-3">
+        <div
+          className="flex-none px-4 sm:px-6 pt-3"
+          style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+        >
           {!canAdvance && (
             <p className="text-center text-xs mb-3" style={{ color: '#6b7280' }}>
               Complète l'exercice pour continuer
@@ -205,7 +215,7 @@ export default function BlockRenderer({
           <button
             onClick={handleNext}
             disabled={!canAdvance}
-            className="w-full py-4 rounded-2xl font-bold text-base tracking-wide transition-all active:scale-95"
+            className="w-full py-4 rounded-2xl font-bold text-sm sm:text-base tracking-wide transition-all active:scale-95"
             style={{
               backgroundColor: canAdvance ? GOLD : '#1f2937',
               color: canAdvance ? '#0a0d1a' : '#4b5563',

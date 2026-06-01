@@ -5,8 +5,8 @@ const GOLD = '#c9a84c'
 export default function TransitionPage() {
   return (
     <main
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ backgroundColor: '#0a0d1a' }}
+      className="flex items-center justify-center px-4 sm:px-6 py-16 overflow-x-hidden"
+      style={{ backgroundColor: '#0a0d1a', minHeight: '100dvh' }}
     >
       <div className="w-full max-w-sm">
 
@@ -42,7 +42,7 @@ export default function TransitionPage() {
         {/* CTA */}
         <Link
           href="/bilan"
-          className="block w-full py-4 rounded-2xl font-bold text-base tracking-wide text-center transition-all active:scale-95"
+          className="block w-full py-4 rounded-2xl font-bold text-sm sm:text-base tracking-wide text-center transition-all active:scale-95"
           style={{
             backgroundColor: GOLD,
             color: '#0a0d1a',
