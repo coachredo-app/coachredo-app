@@ -11,7 +11,7 @@ export default async function ChapterPage({ params }: Props) {
   const { num } = await params
   const chapterNum = parseInt(num, 10)
 
-  if (isNaN(chapterNum) || chapterNum < 1 || chapterNum > 10) {
+  if (isNaN(chapterNum) || chapterNum < 1 || chapterNum > 7) {
     notFound()
   }
 

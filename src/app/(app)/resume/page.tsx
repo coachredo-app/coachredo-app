@@ -17,15 +17,15 @@ export default function ResumePage() {
     }
 
     // Find first incomplete chapter
-    for (let num = 1; num <= 10; num++) {
+    for (let num = 1; num <= 7; num++) {
       if (!p.chapters[String(num)]?.completed) {
         router.replace(`/chapter/${num}`)
         return
       }
     }
 
-    // All chapters done
-    router.replace('/quiz')
+    // All chapters done → page de transition
+    router.replace('/transition')
   }, [router])
 
   return (

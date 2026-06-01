@@ -20,11 +20,11 @@ export async function POST(request: Request) {
   // Check code validity
   const { data: accessCode } = await service
     .from('access_codes')
-    .select('code, is_active, used_by')
+    .select('code, access_type, used_by')
     .eq('code', code)
     .single()
 
-  if (!accessCode || !accessCode.is_active) {
+  if (!accessCode) {
     return NextResponse.json({ error: 'Code invalide ou expiré.' }, { status: 400 })
   }
 
@@ -38,15 +38,15 @@ export async function POST(request: Request) {
     .update({ used_by: user.id, used_at: new Date().toISOString() })
     .eq('code', code)
 
-  // Grant access — update the row created by the trigger
+  // Grant access — upsert in case trigger row is missing for legacy users
   await service
     .from('book_access')
-    .update({
+    .upsert({
+      user_id: user.id,
       has_access: true,
       access_granted_at: new Date().toISOString(),
       access_method: 'code',
-    })
-    .eq('user_id', user.id)
+    }, { onConflict: 'user_id' })
 
   return NextResponse.json({ success: true })
 }

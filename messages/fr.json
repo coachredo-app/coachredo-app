@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "planB": "Plan B Rentable",
+    "account": "Mon compte",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "loginTitle": "Accède à ton espace",
+    "loginSubtitle": "Entre ton email pour recevoir un lien de connexion.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "ton@email.com",
+    "submitButton": "Recevoir mon lien",
+    "loading": "Envoi en cours...",
+    "verifyTitle": "Vérifie ta boite mail",
+    "verifyMessage": "On t'a envoyé un lien de connexion. Clique dessus pour accéder à ton espace.",
+    "verifyNote": "Le lien est valable 1 heure.",
+    "backToLogin": "Essayer avec un autre email"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Bienvenue",
+    "myProducts": "Mes parcours",
+    "planBTitle": "Plan B Rentable",
+    "planBDesc": "Construis ton indépendance économique.",
+    "accessBook": "Lire le livre",
+    "accessBilan": "Bilan de clarté",
+    "accessProgramme": "Programme 90 jours",
+    "locked": "Verrouillé",
+    "inProgress": "En cours",
+    "completed": "Terminé"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue.",
+    "back": "Retour"
+  }
+}

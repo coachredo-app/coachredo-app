@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "planB": "Plan B Profitable",
+    "account": "My account",
+    "logout": "Log out"
+  },
+  "auth": {
+    "loginTitle": "Access your space",
+    "loginSubtitle": "Enter your email to receive a magic link.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "submitButton": "Send my link",
+    "loading": "Sending...",
+    "verifyTitle": "Check your inbox",
+    "verifyMessage": "We sent you a login link. Click it to access your space.",
+    "verifyNote": "The link is valid for 1 hour.",
+    "backToLogin": "Try with a different email"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Welcome",
+    "myProducts": "My programs",
+    "planBTitle": "Plan B Profitable",
+    "planBDesc": "Build your economic independence.",
+    "accessBook": "Read the book",
+    "accessBilan": "Clarity assessment",
+    "accessProgramme": "90-day program",
+    "locked": "Locked",
+    "inProgress": "In progress",
+    "completed": "Completed"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred.",
+    "back": "Back"
+  }
+}

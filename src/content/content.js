@@ -1,31 +1,9 @@
 // ============================================================
-// PLAN B RENTABLE — content.js
-// Fichier unifié — généré depuis les fichiers validés
+// PLAN B RENTABLE — content.js — V2
+// 7 chapitres narratifs · 2 intermèdes · sans exercices
 // ============================================================
-//
-// ── TYPES D'EXERCICES ────────────────────────────────────────
-// text               → réponse texte libre
-// list               → liste d'items
-// text_group         → groupe de champs texte (fields: [])
-// selection          → choix unique (options: [] statique | source: string dynamique)
-// commitment         → engagement avec confirmation (bouton/case)
-// weighted_decision_matrix → matrice de décision pondérée
-// generated_summary  → résumé généré depuis plusieurs exercices
-//
-// ── TYPES DE BLOCS CONTENU ───────────────────────────────────
-// text, quote, story, pnl_pause, pnl_activation, exercise_inline, transition
-//
-// ── OBJET RACINE ─────────────────────────────────────────────
-// PLAN_B_CONTENT.intro           → section "Avant de commencer"
-// PLAN_B_CONTENT.chapters        → array CHAPTER_1..CHAPTER_10
-// PLAN_B_CONTENT.quiz.config     → configuration du quiz
-// PLAN_B_CONTENT.quiz.pool       → banque de 28 questions
-// PLAN_B_CONTENT.quiz.results    → messages résultats (3 niveaux)
-// PLAN_B_CONTENT.quiz.admin      → config réinitialisation admin
-//
-// REQUIRED_EXERCISE_IDS          → 42 IDs obligatoires pour déblocage quiz
 
-// ── SECTION : AVANT DE COMMENCER ─────────────────────────────
+// ── INTRO : AVANT DE COMMENCER ───────────────────────────────
 
 const INTRO = {
   id: "avant_de_commencer",
@@ -38,2241 +16,473 @@ const INTRO = {
     {
       type: "text",
       section: "Avant de commencer",
-      value: "Il y a des moments dans la vie…\noù tu sens que quelque chose doit changer.\n\nTu avances. Tu fais ce que tu peux.\nTu gères tes responsabilités.\n\nMais au fond…\ntu sais que tu peux faire plus.\n\nOu autrement."
-    },
-
-    {
-      type: "text",
-      section: "Mot du coach",
-      value: "Je suis Coach Redouane.\n\nSi j'ai créé ce parcours, ce n'est pas pour te vendre un rêve.\n\nC'est parce que j'ai vu beaucoup de personnes capables…\nmais bloquées par le manque de méthode, de clarté et de passage à l'action.\n\nMon objectif ici est simple :\nt'aider à commencer avec ce que tu as, là où tu es."
-    },
-
-    {
-      type: "text",
-      value: "Ce que tu vas faire ici… n'est pas magique.\n\nPas de promesse d'argent rapide.\nPas de méthode miracle.\n\nC'est une façon de voir les choses différemment.\nEt de reprendre le contrôle, étape par étape.",
-      cta_label: "Je comprends"
-    },
-
-    {
-      type: "text",
-      value: "Tu n'as pas besoin de tout changer aujourd'hui.\n\nTu n'as pas besoin d'avoir beaucoup d'argent.\n\nTu n'as même pas besoin d'avoir toutes les réponses.\n\nTu as juste besoin de commencer… correctement.",
+      value: "Il y a des choses qu'on n'avoue pas facilement.\n\nLes projets commencés et jamais terminés. Les carnets remplis d'idées qu'on ne rouvre plus. Les moments où on se dit que cette fois, c'est différent — et puis la semaine passe, l'année suit, et rien n'a vraiment changé.",
       cta_label: "Je t'écoute"
     },
 
     {
       type: "text",
-      section: "Pour que ça marche",
-      value: "Prends ton temps.\n\nLis.\nRéfléchis.\nRéponds aux questions.\n\nEt surtout… sois honnête avec toi-même.\n\nCe parcours ne fonctionne pas si tu lis seulement.\n\nIl fonctionne si tu fais.",
-      cta_label: "D'accord"
+      value: "J'ai connu ça. Pas une fois. Plusieurs.\n\nPas par manque d'envie. Pas par manque d'idées. Mais parce que je ne voyais pas encore clairement ce que je cherchais à construire, ni pourquoi c'était le bon moment pour le faire."
     },
 
     {
       type: "text",
-      value: "Ce que tu vas découvrir…\n\nne va peut-être pas toujours te mettre à l'aise.\n\nMais c'est souvent comme ça\nque les choses commencent à changer.",
-      cta_label: "Je suis prêt(e)"
+      section: "Mot du coach",
+      value: "Ce livre n'est pas né d'un chemin tout tracé. Il est né d'une accumulation — d'erreurs, d'observations, de conversations avec des gens qui voulaient avancer et ne savaient pas comment. Des personnes sérieuses, capables, qui avaient tout pour construire quelque chose — et qui n'arrivaient pourtant pas à se mettre en mouvement.\n\nLa réponse n'était presque jamais le manque de potentiel. C'était le manque de clarté."
+    },
+
+    {
+      type: "text",
+      value: "Je n'écris pas ce livre pour te dire quoi faire. Je ne connais pas ta situation, tes contraintes, ni ce que tu portes en ce moment. Ce que je sais, c'est que tu as ouvert ces pages pour une raison. Et que cette raison mérite d'être prise au sérieux.\n\nTout ce que j'espère, c'est qu'il t'aide à voir un peu plus clair. À la fin de cette lecture, quelques questions t'attendront pour prolonger ce que tu auras commencé à regarder.",
+      cta_label: "Redouane Agaja"
     },
 
     {
       type: "pnl_activation",
-      value: "Ce qui va suivre va peut-être te faire voir ta situation autrement.\n\nEt c'est exactement le but.",
+      value: "Tu n'as pas besoin d'être prêt.\nIl suffit d'être honnête avec toi-même le temps de cette lecture.",
       display: "centered",
       interaction: "button",
       button_label: "Commencer →"
     }
 
   ]
-};
+}
 
-// ── CHAPITRES ─────────────────────────────────────────────────
+// ── CHAPITRE 1 ───────────────────────────────────────────────
 
 const CHAPTER_1 = {
   num: 1,
-  titre: "Sécurité ou illusion ? Reprendre le contrôle",
-  duree_estimee: "5 min",
-  completion_message: "Excellent. Tu viens de poser les fondations. Tu es prêt(e) pour la suite.",
-  chapter_progress_label: "Chapitre 1 · 3 exercices",
+  titre: "Pourquoi as-tu l'impression de tourner en rond ?",
+  duree_estimee: "7 min",
+  completion_message: "Chapitre 1 terminé.",
+  chapter_progress_label: "Chapitre 1",
   progression_rule: "all_exercises",
-
-  // Convention rendu texte :
-  // \n  → retour à la ligne simple
-  // \n\n → nouveau paragraphe (espace visuel)
-  // section → label visible léger affiché uniquement au début d'une nouvelle section
-  // interaction: "button" → bouton explicite à cliquer pour continuer
 
   contenu: [
 
-    // ── Bloc 1 — Immersion ──────────────────────────────────────
-
     {
       type: "text",
-      section: "Prise de conscience",
-      value: "Il y a quelque chose que beaucoup de personnes ne réalisent pas tout de suite.\n\nTu avances. Tu fais ce que tu peux avec ce que tu as.\nTu gères tes responsabilités.\n\nEt avec le temps, tu t'habitues à cette stabilité.\nElle devient normale. Elle devient… rassurante.",
-      cta_label: "Je t'écoute"
+      section: "Chapitre 1",
+      value: "Il y a des semaines qui commencent toutes de la même façon.\n\nLa même promesse muette qu'on se fait à soi-même. Cette semaine, c'est différent. Cette semaine, on avance vraiment. Parfois ça arrive un dimanche soir, téléphone en main, après une vidéo qui parle de liberté et de projets construits depuis zéro. Parfois un lundi matin, juste avant que la journée reprenne. Le sentiment est sincère. L'intention aussi. Et puis les obligations reviennent, et la semaine se termine comme les précédentes — avec cette impression d'avoir fait des choses, mais pas la chose."
     },
 
     {
       type: "text",
-      section: "Ce qu'on nous a appris",
-      value: "On nous a appris que stabilité = sécurité.\n\nTrouver un travail. S'y accrocher.\nEt espérer que tout continue le plus longtemps possible.\n\nMais cette idée mérite d'être questionnée.\n\nParce qu'au fond, si ton revenu s'arrête aujourd'hui…\ncombien de temps tu tiens ?",
-      cta_label: "Réfléchir"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch1_ex1"
-    },
-
-    // ── Bloc 2 — Histoire Mamadou ───────────────────────────────
-
-    {
-      type: "story",
-      section: "Réalité terrain",
-      value: "Je vais te parler de Mamadou.\n\nIl vit à Dakar. Ça fait plus de 10 ans qu'il travaille dans la même entreprise.\n\nSérieux. Régulier. Respecté.\n\nChaque mois, son salaire tombe.\nIl aide sa famille. Il avance… comme il peut.\n\nEt comme beaucoup…\nil pensait être en sécurité."
-    },
-
-    {
-      type: "story",
-      value: "Jusqu'au jour où son entreprise a commencé à parler de \"réorganisation\".\n\nAu début, personne ne s'inquiète vraiment.\n\nPuis les premières rumeurs arrivent.\n\nPuis les premiers départs.",
-      cta_label: "Je comprends"
-    },
-
-    {
-      type: "story",
-      value: "Ce jour-là…\n\nMamadou se pose une question qu'il n'avait jamais vraiment affrontée :\n\n\"Si ça s'arrête… je fais quoi ?\"\n\nEt c'est là qu'il réalise quelque chose de dur.\n\nIl a travaillé pendant des années…\nsans jamais construire une alternative.\nSans jamais préparer un Plan B.",
-      cta_label: "Je réalise"
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Et si c'était toi… demain ?\n\nTon revenu. Tes repères.\nTon équilibre. Ta sécurité.\n\nEt si tout ça… dépendait d'une seule chose ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Ça me concerne"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch1_ex2"
-    },
-
-    // ── Bloc 3 — Le vrai problème ───────────────────────────────
-
-    {
-      type: "text",
-      section: "Le vrai problème",
-      value: "Tu n'as pas besoin de tout changer.\n\nTu n'as pas besoin de quitter ton travail.\nNi de tout recommencer de zéro.\n\nCe que tu as construit a de la valeur.\n\nMais aujourd'hui…\nce n'est plus suffisant.\n\nParce que dépendre d'une seule source,\nc'est rester exposé.",
-      cta_label: "Je comprends"
+      value: "Tu n'es probablement pas quelqu'un qui manque de volonté. Ni d'idées. Si tu faisais le compte de ce que tu as voulu commencer ces dernières années — les projets pensés, les directions entrevues, les déclics ressentis — la liste serait probablement plus longue que tu ne l'imagines.\n\nLe problème n'est pas là."
     },
 
     {
       type: "text",
-      value: "Ce dont tu as besoin,\nce n'est pas de tout remplacer.\n\nC'est d'ajouter une option.\n\nUne deuxième possibilité.\nUne sécurité en plus.\n\nParce qu'un Plan B\nn'est pas un luxe.\n\nC'est une protection.",
-      cta_label: "D'accord"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch1_ex3"
+      value: "Le problème, c'est ce cycle que beaucoup connaissent mais que peu arrivent à nommer. On attend que les études ouvrent des portes — et les portes tardent. On regarde des vidéos le soir, dans le noir, sur quelqu'un qui raconte comment il a lancé quelque chose depuis zéro. On like. On sauvegarde. On crée même parfois un compte quelque part pour le projet — deux publications, puis plus rien. On note une idée dans son téléphone à 23h en se disant que là, c'est la bonne. Et puis rien. La semaine suivante, une autre idée, le même demi-élan."
     },
 
     {
       type: "text",
-      section: "Chapitre 1 — Terminé",
-      value: "Tu viens de faire quelque chose\nque beaucoup de personnes évitent toute leur vie.\n\nRegarder la réalité en face.\n\nTu as compris une chose essentielle :\n\nCe n'est pas ton travail le problème.\nC'est de dépendre d'une seule source.\n\nEt maintenant, tu vois plus clair.",
-      cta_label: "C'est parti"
+      value: "Ce n'est pas de la paresse. C'est de la dispersion. Et la dispersion ressemble à la stagnation vue de l'extérieur — mais ce n'est pas la même chose. La personne dispersée cherche vraiment. Elle n'a juste pas encore trouvé dans quelle direction creuser.\n\nCe qui complique les choses, c'est que certains autour de toi semblent avancer. Il y a ces conversations où quelqu'un de ton entourage parle de ce qu'il est en train de construire, avec cet air de quelqu'un qui sait où il va. Tu félicites. Tu encourages. Et sur le chemin du retour, tu te demandes en silence ce qui te retient."
     },
 
     {
       type: "text",
-      value: "Tu es prêt pour la suite.\n\nDans le prochain chapitre,\non va passer à quelque chose de concret :\n\nTrouver une idée simple,\nréaliste\net faisable pour toi.\n\nPas une idée parfaite.\nUne idée que tu peux réellement lancer."
+      value: "La réponse que tu t'es peut-être donnée : tu n'es pas encore assez prêt. Ou tu attends le bon moment, la bonne information, les bonnes conditions. Ou — dans les moments plus difficiles — tu te demandes si tu n'es simplement pas fait pour ça.\n\nPeut-être que tu as même essayé quelque chose de concret. Tu en as parlé autour de toi — à un ami, à un proche — avec l'enthousiasme du début. Et puis ça n'a pas marché comme tu l'espérais, ou tu t'es retrouvé seul à porter quelque chose de trop lourd. Tu as arrêté. Et tu n'as pas eu très envie d'en reparler."
+    },
+
+    {
+      type: "text",
+      value: "Ce n'est pas un défaut. C'est une protection normale. Mais cette protection, si on n'y fait pas attention, peut finir par ressembler à une prison.\n\nJ'ai connu cet endroit. Des projets commencés avec énergie, abandonnés quelques semaines plus tard sans raison bien claire. Pas par manque de sérieux — plutôt par manque de boussole."
+    },
+
+    {
+      type: "text",
+      value: "Et voici ce que j'ai fini par comprendre, et ce que beaucoup de personnes que j'ai accompagnées ont compris à un moment ou un autre : tourner en rond n'est presque jamais un problème de motivation. C'est presque toujours un problème de clarté.\n\nLa motivation, on l'a. Elle vient et elle repart, c'est sa nature. Mais la clarté — savoir ce qu'on veut construire, pourquoi c'est important maintenant, et par où commencer concrètement — c'est quelque chose de différent. Et c'est ce qui manque le plus souvent quand on a l'impression de ne pas avancer.\n\nCe n'est pas un aveu de faiblesse. C'est une information — peut-être la plus utile de ce chapitre. La clarté, ça se construit.\n\nMais quelque chose, souvent, nous en empêche. Quelque chose qu'on prend, la plupart du temps, pour une force."
     }
 
   ],
 
-  exercices: [
+  exercices: []
+}
 
-    {
-      id: "ch1_ex1",
-      type: "text",
-      question: "Si ton revenu s'arrête aujourd'hui, combien de jours peux-tu tenir sans stress ?",
-      placeholder: "Exemple : 30 jours, 60 jours...",
-      aide: "Sois honnête. Ce chiffre n'est pas un jugement, c'est ton point de départ.",
-      erreur: "Ne réponds pas avec une estimation idéale. Réponds avec la réalité.",
-      success_message: "Parfait. Tu viens de voir ta réalité clairement.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch1_ex2",
-      type: "list",
-      question: "Quels sont les 3 impacts réels si ton revenu s'arrête ?",
-      fields: 3,
-      fields_labels: ["Impact 1", "Impact 2", "Impact 3"],
-      placeholders: [
-        "Ex: Loyer impayé...",
-        "Ex: École des enfants...",
-        "Ex: Stress familial..."
-      ],
-      aide: "Pense à ta famille, tes charges, ton stress.",
-      success_message: "Très bien. Tu comprends maintenant les conséquences réelles.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch1_ex3",
-      type: "text",
-      question: "Complète cette phrase :\nJe choisis de ne plus dépendre uniquement de...",
-      placeholder: "Écris ce qui te vient naturellement",
-      aide: "Ne réfléchis pas trop. Écris ce que tu ressens.",
-      success_message: "Décision prise. C'est le début du changement.",
-      obligatoire: true
-    }
-
-  ]
-};
+// ── CHAPITRE 2 ───────────────────────────────────────────────
 
 const CHAPTER_2 = {
   num: 2,
-  titre: "Trouver ton idée",
-  duree_estimee: "10-12 min",
-  completion_message: "Tu as un point de départ concret. C'est tout ce dont tu as besoin pour avancer.",
-  chapter_progress_label: "Chapitre 2 · 3 exercices",
+  titre: "Le piège de la fausse sécurité",
+  duree_estimee: "7 min",
+  completion_message: "Chapitre 2 terminé.",
+  chapter_progress_label: "Chapitre 2",
   progression_rule: "all_exercises",
 
   contenu: [
 
-    // Écran 1
     {
       type: "text",
-      section: "Prise de conscience",
-      value: "Maintenant que tu vois plus clair…\nune autre question arrive naturellement.\n\nD'accord.\n\nMais concrètement… je fais quoi ?\n\nParce que comprendre, c'est une chose.\nAgir… c'en est une autre."
+      section: "Chapitre 2",
+      value: "Il y a quelque chose de rassurant dans la routine.\n\nL'heure du réveil qui ne change pas. Le trajet qu'on connaît par cœur. La journée qui se déroule à peu près comme la précédente. Ce n'est pas une mauvaise vie — et il serait faux de le prétendre. C'est une vie qui tient. Qui a ses repères, ses certitudes, ses petites victoires quotidiennes. Et dans un monde où les incertitudes sont nombreuses, il y a une vraie valeur dans quelque chose qui tient.\n\nLe problème n'est pas la routine elle-même. C'est ce qu'elle cache parfois, si on ne regarde pas trop près."
     },
 
-    // Écran 2
     {
       type: "text",
-      value: "C'est exactement ici que beaucoup de personnes s'arrêtent.\n\nElles veulent avancer… mais elles attendent le \"bon moment\".\nOu la \"bonne idée\".\n\nEt pendant ce temps… rien ne bouge.",
-      cta_label: "Je comprends"
+      value: "Il y a des soirs où une question traverse l'esprit sans prévenir. Pas une question urgente — plutôt quelque chose de sourd, qu'on entend entre deux pensées, juste avant de s'endormir.\n\nEst-ce que c'est ça ?\n\nPas « est-ce que c'est bien ? » ou « est-ce que c'est mal ? » — juste : est-ce que c'est ça, la trajectoire ? Est-ce que dans cinq ans, dans dix ans, la vie ressemblera à ça — en un peu plus grand, en un peu plus lourd, mais fondamentalement pareille ?\n\nLa question ne dure jamais longtemps. Le sommeil arrive, le lendemain recommence, et on n'y pense plus vraiment jusqu'à la prochaine fois."
     },
 
-    // Écran 3
     {
       type: "text",
-      value: "Elles pensent qu'il faut :\n\nune idée parfaite\nune idée originale\nune idée jamais vue\n\nEt tant qu'elles ne l'ont pas…\nelles n'avancent pas.",
-      cta_label: "Ça me parle"
+      value: "Le temps a une façon étrange de passer dans la stabilité. Pas comme quand on traverse quelque chose de difficile — là, chaque jour se remarque, chaque semaine laisse une trace. Dans la routine, les semaines glissent. On réalise en novembre qu'on avait dit « cette année, je fais quelque chose » en janvier. Et l'année n'est pas perdue — les choses ont avancé, la vie a continué. Mais rien n'a vraiment bougé non plus, dans le sens où on avait vaguement imaginé que ça bougerait.\n\nC'est une fatigue particulière, ça. Pas l'épuisement d'avoir trop fait. Plutôt la lassitude tranquille d'avoir tourné suffisamment longtemps dans le même périmètre."
     },
 
-    // Écran 4 — fusionné (ex 4+5)
     {
       type: "text",
-      value: "La vérité est plus simple.\n\nTu n'as pas besoin d'une idée parfaite.\nTu as besoin d'une idée testable.\n\nUne idée imparfaite mais testée\nvaut toujours mieux\nqu'une idée parfaite qui reste dans ta tête.\n\nCe n'est pas l'idée qui te fait avancer.\nC'est le fait de la tester.",
-      cta_label: "Je comprends"
+      value: "Puis il y a des moments qui changent le regard, sans qu'on l'ait cherché.\n\nUn collègue dont le contrat ne se renouvelle pas. Une restructuration dont on entend parler dans un couloir. Quelqu'un qu'on connaît, sérieux et compétent, qui se retrouve à devoir tout reprendre de zéro à un âge où il ne l'avait pas prévu. Ce n'est pas forcément sa propre situation. Mais quelque chose dans ces nouvelles met mal à l'aise, plus que de raison. Parce qu'elles rappellent quelque chose qu'on avait préféré laisser dans l'angle mort : une partie de ta vie est dans les mains de quelqu'un d'autre.\n\nCombien de temps est-ce que tu pourrais tenir si ce revenu-là s'arrêtait demain ?"
     },
 
-    // Écran 6 — fusionné (ex écrans 6+7)
     {
       type: "text",
-      value: "Tu n'es pas à zéro.\n\nTu as déjà des choses que tu peux utiliser.\n\nDes compétences. Des habitudes. Des facilités.\n\nCe qui te semble normal…\npeut avoir une vraie valeur pour quelqu'un d'autre.",
-      cta_label: "Je vois"
+      value: "Pas longtemps, pour la plupart des gens. Le salaire arrive, et il repart presque aussi vite. Il couvre. Il ne protège pas toujours. Ce n'est pas une honte — c'est la réalité de beaucoup de personnes sérieuses, qui ont fait ce qu'on attendait d'elles : les études, le diplôme, le poste qu'elles ont mis du temps à obtenir. Mais un cadre qu'on n'a pas construit soi-même est un cadre dont on ne contrôle pas tous les paramètres.\n\nIl m'a fallu du temps pour regarder cette réalité en face. Pas par naïveté — plutôt parce que la nommer obligeait à reconnaître quelque chose que je préférais ignorer. La sécurité que j'avais était réelle. Mais elle était aussi un argument commode pour ne pas avoir à choisir."
     },
 
-    // Écran 7 — exercice
-    {
-      type: "exercise_inline",
-      ref: "ch2_ex1"
-    },
-
-    // Écran 7 — fusionné (ex 8+9)
     {
       type: "text",
-      value: "Ce que tu viens d'écrire… c'est déjà une base.\n\nMaintenant, regarde autour de toi.\n\nTon entourage. Ton quartier. Ton quotidien.\n\nChaque problème non résolu…\nchaque besoin sans réponse…\npeut devenir une opportunité.",
-      cta_label: "Je comprends"
-    },
-
-    // Écran 10 — exercice
-    {
-      type: "exercise_inline",
-      ref: "ch2_ex2"
-    },
-
-    // Écran 9 — fusionné (ex 11+12)
-    {
-      type: "text",
-      value: "Une idée simple naît souvent ici.\n\nEntre ce que tu sais faire…\net un problème réel.\n\nPas besoin que ce soit grand.\nJuste quelque chose que tu peux tester\navec ce que tu as, là où tu es.",
-      cta_label: "Je comprends"
-    },
-
-    // Écran 13 — exercice final
-    {
-      type: "exercise_inline",
-      ref: "ch2_ex3"
-    },
-
-    // Écran 14 — célébration
-    {
-      type: "text",
-      value: "Ce que tu viens de faire…\npeu de personnes le font vraiment.\n\nTu as un point de départ réel.\n\nPas une idée dans ta tête.\nUne idée concrète sur papier.\n\nEt c'est ça qui change tout."
-    },
-
-    // Écran 15 — récap émotionnel
-    {
-      type: "text",
-      value: "Tu viens de comprendre quelque chose d'essentiel :\n\ntu n'as pas besoin d'attendre.\n\nTu peux partir de ce que tu as déjà…\net de ce que tu vois autour de toi.\n\nEt commencer petit…\nc'est souvent la meilleure façon de commencer.",
-      cta_label: "Je continue"
-    },
-
-    // Écran 16 — transition
-    {
-      type: "text",
-      value: "Maintenant…\ncomment transformer cette idée\nen quelque chose de concret ?"
+      value: "Ce que cette réflexion amène, quand on s'y laisse aller honnêtement, ce n'est pas la panique. Ce n'est pas non plus l'envie de tout quitter du jour au lendemain. C'est quelque chose de plus discret et de plus urgent à la fois : l'envie de dépendre un peu moins. D'avoir quelque chose à soi, même de petit, même d'imparfait, qui ne dépende pas d'une décision prise ailleurs.\n\nUn Plan B n'est pas forcément un projet révolutionnaire. Pour beaucoup de gens qui ont réfléchi honnêtement à leur situation, ce n'est pas un rêve de richesse ni une promesse de liberté totale. C'est quelque chose de plus simple — une façon de respirer un peu mieux. De ne plus avoir cette sensation sourde que tout repose sur une seule chose sur laquelle on n'a pas vraiment la main.\n\nIl reste une question, pourtant. Si cette réalité est visible — si on peut la sentir, la nommer, la reconnaître dans une soirée honnête avec soi-même — pourquoi est-ce qu'elle dure ?\n\nParce que ce qui nous retient n'est presque jamais à l'extérieur."
     }
 
   ],
 
-  exercices: [
+  exercices: []
+}
 
-    {
-      id: "ch2_ex1",
-      type: "list",
-      question: "Écris 3 choses que tu sais faire, même simples.",
-      fields: 3,
-      fields_labels: ["Chose 1", "Chose 2", "Chose 3"],
-      placeholders: [
-        "Ex: expliquer, cuisiner, réparer, organiser...",
-        "Ex: parler, contacter, vendre, aider...",
-        "Ex: créer, compter, écouter, coudre..."
-      ],
-      aide: "Parler, vendre, organiser, aider, réparer, expliquer, contacter… Rien n'est trop simple.",
-      erreur: "Ne minimise pas ce qui te semble facile.",
-      success_message: "Bien. Tu viens de voir ta propre valeur.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch2_ex2",
-      type: "list",
-      question: "Donne 2 problèmes que tu vois souvent autour de toi.",
-      fields: 2,
-      fields_labels: ["Problème 1", "Problème 2"],
-      placeholders: [
-        "Ex: les commerçants manquent de visibilité en ligne...",
-        "Ex: les gens n'ont pas le temps de cuisiner..."
-      ],
-      aide: "Livraison, temps, organisation, produits introuvables, manque de service… Observe ton quotidien.",
-      erreur: "Ne cherche pas un problème complexe. Observe ce que les gens disent autour de toi.",
-      success_message: "Très bien. Ces besoins réels sont ton terrain de jeu.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch2_ex3",
-      type: "list",
-      question: "Propose 2 idées simples que tu pourrais tester.",
-      fields: 2,
-      fields_labels: ["Idée 1", "Idée 2"],
-      placeholders: [
-        "Ex: aider les commerçants à être visibles sur WhatsApp...",
-        "Ex: préparer des repas à la commande pour les salariés..."
-      ],
-      aide: "Pas parfaites. Juste faisables avec ce que tu as.",
-      erreur: "Ne cherche pas la grande idée. Cherche l'idée que tu peux tester cette semaine.",
-      success_message: "Voilà. Tu as un point de départ concret.",
-      obligatoire: true
-    }
-
-  ]
-};
+// ── CHAPITRE 3 ───────────────────────────────────────────────
 
 const CHAPTER_3 = {
   num: 3,
-  titre: "Organiser ton temps et passer à l'action",
-  duree_estimee: "10-12 min",
-  completion_message: "Tu as maintenant un plan d'action concret. Pas parfait. Mais réel.",
-  chapter_progress_label: "Chapitre 3 · 3 exercices",
+  titre: "Ce qui te bloque n'est pas toujours ce que tu crois",
+  duree_estimee: "8 min",
+  completion_message: "Chapitre 3 terminé.",
+  chapter_progress_label: "Chapitre 3",
   progression_rule: "all_exercises",
 
   contenu: [
 
-    // Écran 1
     {
       type: "text",
-      section: "Passer à l'action",
-      value: "Tu as maintenant une idée.\n\nPeut-être simple.\nPeut-être imparfaite.\n\nMais réelle.\n\nEt maintenant…\nla vraie difficulté commence."
+      section: "Chapitre 3",
+      value: "On sait toujours exactement ce qui nous retient.\n\nOu du moins, on le croit.\n\nLe temps qu'on n'a pas. L'argent qu'il faudrait. Le réseau qui manque. Les conditions qui ne sont pas encore réunies. Ce sont des réponses sincères — et souvent, ces obstacles sont bien réels. Il serait faux de les balayer d'un revers de main."
     },
 
-    // Écran 2
     {
       type: "text",
-      value: "Beaucoup de personnes ne passent jamais à l'action.\n\nPas parce qu'elles ne veulent pas.\n\nMais parce qu'elles pensent ne pas avoir le temps.\n\n\"Je vais commencer quand j'aurai plus de temps.\"\n\nCette phrase semble logique…\nmais en réalité, elle bloque tout.",
-      cta_label: "Je comprends"
+      value: "Mais il y en a un autre, moins souvent nommé, qui est peut-être plus déterminant que tous les autres réunis. Pas parce qu'il est plus grand. Parce qu'il est à l'intérieur — et qu'il porte des déguisements très convaincants.\n\nIl prend surtout deux formes. Les deux savent très bien se faire passer pour autre chose."
     },
 
-    // Écran 3
     {
       type: "text",
-      value: "Tu n'auras jamais \"plus de temps\".\n\nTu auras toujours :\ndu travail\ndes obligations\nde la fatigue\n\nLa différence…\nc'est ce que tu fais avec le temps que tu as."
+      value: "Le premier s'appelle le perfectionnisme.\n\nIl ressemble à du sérieux. Il se présente comme de la rigueur, de l'exigence, du respect pour le travail bien fait. Et ce n'est pas entièrement faux — il y a quelque chose de réel dans cette intention. Mais dans la pratique, le perfectionnisme fait une chose très précise : il reporte indéfiniment le moment de commencer."
     },
 
-    // Écran 4
     {
       type: "text",
-      value: "Regarde honnêtement ta journée.\n\nEntre les réseaux, les discussions,\nles moments perdus sans t'en rendre compte…\n\nil y a toujours du temps qui disparaît.\n\nPas parce que tu es paresseux.\n\nMais parce que tu ne l'as jamais organisé.",
-      cta_label: "Réfléchir"
+      value: "Il y a toujours quelque chose à approfondir encore. Une compétence à consolider. Un plan à affiner. Un détail à régler avant d'y aller vraiment. Et pendant ce temps, le projet reste en attente — pas abandonné, juste pas encore lancé.\n\nLe dossier existe. Il a un nom. Il y a peut-être même quelques pages de notes dedans, prises un soir d'élan. Mais il n'a pas été ouvert depuis un moment. Et chaque fois qu'on y pense, on se dit que ce n'est pas encore le bon moment — qu'il faut d'abord que..."
     },
 
-    // Écran 5 — exercice
-    {
-      type: "exercise_inline",
-      ref: "ch3_ex1"
-    },
-
-    // Écran 6
     {
       type: "text",
-      value: "Ce temps…\nc'est ton point de départ.\n\nPas parfait.\nPas idéal.\n\nMais suffisant pour commencer.\n\nLe vrai problème, ce n'est pas le manque de temps.\n\nC'est vouloir tout faire d'un coup…\n\net finir par ne rien faire."
+      value: "Il y en a un autre, plus profond et moins souvent avoué.\n\nCe n'est pas la peur d'échouer. Beaucoup de gens, dans l'honnêteté, pourraient vivre avec l'échec — un projet qui ne marche pas, une tentative qui tourne court. Ce qu'ils imaginent moins facilement, c'est décevoir."
     },
 
-    // Écran 7
     {
       type: "text",
-      value: "Ton objectif n'est pas de lancer un business parfait.\n\nTon objectif…\nc'est de faire UNE action simple.\n\nUne action qui te rapproche de la réalité.\n\nUne action que tu peux faire aujourd'hui.",
-      cta_label: "Je comprends"
+      value: "Décevoir ceux qui ont cru en eux. Ceux qui ont investi, d'une façon ou d'une autre, dans ce qu'ils sont devenus. Ceux dont le regard a de l'importance. Ce n'est pas une faiblesse — c'est souvent une forme d'amour retourné. Mais cet amour-là peut se transformer en poids, sans qu'on l'ait cherché.\n\nAlors on ne parle pas du projet. Pas encore. On attend qu'il ait une forme, qu'il soit présentable, qu'il tienne debout avant d'être montré. Si ça ne marche pas, au moins personne ne l'aura su. Si ça marche, on pourra en parler. Cette prudence a du sens. Mais elle isole aussi — et elle prive parfois d'un soutien qui aurait changé quelque chose."
     },
 
-    // Écran 8 — exercice
-    {
-      type: "exercise_inline",
-      ref: "ch3_ex2"
-    },
-
-    // Écran 9
     {
       type: "text",
-      value: "Ce qui fait la différence…\nce n'est pas la motivation.\n\nC'est la régularité.\n\nMême 30 minutes par jour…\n\nrépétées chaque jour\n\npeuvent changer beaucoup de choses."
+      value: "Reconnaître ces mécanismes n'est pas confortable. Parce qu'ils ne ressemblent pas à de la peur au premier regard. Ils ressemblent à de la prudence, à de la préparation, à du sérieux. Et c'est précisément ce qui les rend difficiles à voir.\n\nMais il y a quelque chose d'important à comprendre sur eux : ils ne sont pas là par hasard. Ils ont été construits pour protéger quelque chose de réel — une image de soi, une relation, une réputation dans un cercle où les regards comptent. Cette protection a eu sa raison d'être."
     },
 
-    // Écran 10 — exercice
-    {
-      type: "exercise_inline",
-      ref: "ch3_ex3"
-    },
-
-    // Écran 11
     {
       type: "text",
-      value: "Tu viens de faire quelque chose d'important.\n\nTu n'as pas juste une idée.\n\nTu as un plan d'action.\n\nEt surtout…\ntu as compris une chose essentielle :\n\ntu n'as pas besoin de plus de temps.\n\nTu as besoin de mieux utiliser celui que tu as.",
-      cta_label: "Je continue"
+      value: "Le problème n'est pas qu'elle existe. Le problème, c'est quand elle devient si confortable qu'on finit par la confondre avec qui on est.\n\nAttendre d'être totalement prêt est parfois une manière élégante de repousser la peur. Pas toujours — parfois la préparation est vraiment de la préparation. Mais il y a un moment où la différence devient possible à voir, si on se donne la permission de regarder honnêtement.\n\nCe n'est pas une invitation à tout lâcher ni à tout risquer. C'est regarder ses propres mécanismes avec un peu de curiosité, plutôt qu'avec de la sévérité."
     },
 
-    // Écran 12 — transition
     {
       type: "text",
-      value: "Maintenant…\nil est temps de passer à l'étape suivante :\n\nstructurer ton idée correctement.",
-      cta_label: "Construire mon plan →"
+      value: "Non pas « je me bloque à cause de la peur. » Mais : « voilà comment fonctionne cette partie de moi — et voilà ce que ça me coûte peut-être. »\n\nCette distinction semble petite. Elle change beaucoup de choses.\n\nParce qu'à partir du moment où on commence à voir ses propres mécanismes avec honnêteté, quelque chose change dans les questions qu'on se pose.\n\nOn ne se demande plus seulement : « qu'est-ce qui me retient ? » On commence à se demander : « qu'est-ce que j'ai déjà, pour commencer à avancer ? »"
+    },
+
+    {
+      type: "quote",
+      value: "Il arrive qu'une idée change quelque chose sans qu'on sache encore quoi. Elle s'installe sans bruit, sans cérémonie. On continue à vivre à peu près comme avant — les mêmes journées, les mêmes habitudes. Et pourtant quelque chose ne se voit plus tout à fait de la même façon.\n\nC'est souvent aussi discret que ça."
     }
 
   ],
 
-  exercices: [
+  exercices: []
+}
 
-    {
-      id: "ch3_ex1",
-      type: "text",
-      question: "Combien de minutes par jour pourrais-tu réellement utiliser pour ton projet ?",
-      placeholder: "Ex: 30 minutes le soir après le travail...",
-      aide: "Même 30 minutes comptent. Sois réaliste.",
-      erreur: "Ne vise pas trop haut. Commence par ce qui est tenable.",
-      success_message: "C'est ton point de départ. Pas parfait, mais suffisant.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch3_ex2",
-      type: "text",
-      question: "Quelle est la première action simple que tu peux faire avec ton idée ?",
-      placeholder: "Ex: contacter quelqu'un, proposer mon service, tester une vente...",
-      aide: "Contacter quelqu'un, proposer ton service, tester une vente… Une seule action.",
-      erreur: "Ne cherche pas l'action parfaite. Cherche l'action possible.",
-      success_message: "Voilà ton premier mouvement. Tout commence là.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch3_ex3",
-      type: "text",
-      question: "À quel moment de ta journée peux-tu travailler sur ton projet ?",
-      placeholder: "Ex: le matin entre 6h et 7h, ou le soir après 21h...",
-      aide: "Un créneau régulier, même court. La régularité prime sur la durée.",
-      erreur: "Choisis un moment que tu peux vraiment tenir, pas l'idéal.",
-      success_message: "Ton créneau est posé. C'est le début de la discipline.",
-      obligatoire: true
-    }
-
-  ]
-};
+// ── CHAPITRE 4 ───────────────────────────────────────────────
 
 const CHAPTER_4 = {
   num: 4,
-  titre: "Construire les bases solides de ton activité",
-  duree_estimee: "12-15 min",
-  completion_message: "Excellent. Ton idée devient maintenant une offre claire et compréhensible.",
-  chapter_progress_label: "Chapitre 4 · 5 exercices",
+  titre: "Tu n'as peut-être pas besoin de tout recommencer",
+  duree_estimee: "7 min",
+  completion_message: "Chapitre 4 terminé.",
+  chapter_progress_label: "Chapitre 4",
   progression_rule: "all_exercises",
 
   contenu: [
 
     {
       type: "text",
-      section: "Clarifier ton offre",
-      value: "Avoir une idée, c'est bien.\nMais une idée floue ne se vend pas.\n\nPour commencer, ton activité doit être simple à comprendre."
+      section: "Chapitre 4",
+      value: "Il y a une question qu'on se pose rarement, parce qu'on est trop occupé à regarder ce qu'on n'a pas encore."
     },
 
     {
       type: "quote",
-      value: "Les gens n'achètent pas ce qui est flou.\nIls achètent ce qu'ils comprennent rapidement."
+      value: "Qu'est-ce que j'ai déjà ?"
     },
 
     {
       type: "text",
-      value: "Ton objectif maintenant est de transformer ton idée en une phrase claire :\n\nJ'aide [type de personne] à [résultat concret].\n\nCommence par une première version instinctive. Tu l'amélioreras avec les exercices suivants."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch4_ex1"
+      value: "Pas dans le sens d'un bilan comptable. Plutôt dans le sens d'un regard honnête sur ce qu'on a traversé, construit, appris — souvent sans le nommer comme tel, souvent sans le compter comme une ressource.\n\nLa plupart des gens qui veulent avancer pensent qu'il leur manque quelque chose. Un diplôme de plus. Une formation spécifique. Un capital de départ. Un contact au bon endroit. Et peut-être que ces choses manquent réellement, dans certains cas. Mais il y a presque toujours, en parallèle, un autre inventaire qu'on n'a jamais fait — celui de ce qu'on possède déjà, sans encore l'avoir nommé."
     },
 
     {
       type: "text",
-      section: "Choisir ton public",
-      value: "Tu ne peux pas parler à tout le monde.\nEt ce n'est pas grave.\n\nPlus ton public est clair, plus ton message devient facile."
-    },
-
-    {
-      type: "quote",
-      value: "Quand tu parles à tout le monde, personne ne se sent vraiment concerné."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch4_ex2"
-    },
-
-    {
-      type: "story",
-      section: "Déclic terrain",
-      value: "Yasmine, à Rabat, aimait cuisiner.\nAu départ, elle disait simplement : \"Je peux faire des plats.\"\n\nMais son message était trop vague.\n\nUn jour, elle a observé que beaucoup de salariés autour d'elle mangeaient vite, mal, ou n'avaient pas le temps de préparer leurs repas.\n\nElle a alors clarifié son offre :\n\"J'aide les salariés pressés à manger mieux pendant la semaine avec des repas faits maison prêts à emporter.\"\n\nÀ partir de ce moment, les gens comprenaient immédiatement ce qu'elle proposait."
-    },
-
-    {
-      type: "quote",
-      value: "Une offre claire donne envie d'écouter.\nUne offre floue fatigue l'esprit."
+      value: "Pense à ce qu'on vient te demander.\n\nPas tes supérieurs, pas les institutions — les gens autour de toi. Les amis, les proches, les voisins, les collègues. Pour quel type de problème est-ce qu'on t'appelle ? Quelle situation est-ce qu'on te soumet parce qu'on sait que tu vas trouver une issue ? Quelle question est-ce qu'on te pose parce que ta façon de voir les choses est différente ?\n\nIl y a presque toujours quelque chose. Quelque chose que tu résous naturellement, que tu expliques clairement, que tu navigues sans effort apparent — au point que tu ne le vois même plus comme une compétence. Parce que ce qui vient naturellement ne ressemble pas à un talent. Ça ressemble à de l'évidence."
     },
 
     {
       type: "text",
-      section: "Définir le bénéfice",
-      value: "Les gens n'achètent pas seulement un produit ou un service.\nIls achètent un résultat, un soulagement, une facilité, un gain de temps ou une solution."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch4_ex3"
+      value: "C'est souvent là que se cachent les ressources les plus solides.\n\nIl y a des gens qui savent lire une situation commerciale en quelques minutes, parce qu'ils ont grandi dans un environnement où le commerce était une langue vivante — les conversations à la boutique familiale, les négociations entendues depuis l'enfance, la logique des prix et des marges absorbée sans manuel. Ils ne pensent pas à ça comme une compétence. Pourtant, des consultants facturent cher pour expliquer des choses qu'ils savent intuitivement.\n\nIl y a des gens qui passent d'un registre à l'autre sans effort — une langue ici, un dialecte là, un code culturel différent selon l'interlocuteur. Ils trouvent ça normal. Pourtant, cette capacité à naviguer entre des mondes différents est une forme d'intelligence sociale rare, et souvent décisive dans les contextes où les marchés se croisent."
     },
 
     {
       type: "text",
-      section: "Ton canevas simple",
-      value: "Maintenant, on va rassembler les éléments importants dans un mini-canevas.\n\nTon offre doit être simple, réaliste et compréhensible en moins de 10 secondes."
+      value: "Il y a des gens qui ont géré des situations familiales complexes — des responsabilités prises tôt, des équilibres à tenir, des décisions à prendre sous pression. Ils n'en parlent pas comme d'une formation. Et pourtant.\n\nIl m'a fallu du temps pour voir ça dans ma propre trajectoire. Accompagner des gens dans des projets qui n'avancent pas. Apprendre à tenir une conversation difficile sans imposer de réponse. Comprendre comment quelqu'un prend une décision — ou pourquoi il ne la prend pas. Ces choses-là, je ne les rangeais pas du côté des compétences. Je les rangeais du côté de la vie. Ce n'est que plus tard que j'ai compris que ce qu'on traverse forme aussi, même quand ça ne ressemble pas à une école."
     },
 
     {
-      type: "exercise_inline",
-      ref: "ch4_ex4"
-    },
-
-    {
-      type: "exercise_inline",
-      section: "Offre validée",
-      ref: "ch4_ex5"
-    },
-
-    {
-      type: "pnl_activation",
-      value: "Relis ton offre.\nSi une personne peut comprendre rapidement ce que tu proposes, tu as déjà gagné en clarté.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Mon offre est claire ✓"
-    },
-
-    {
-      type: "transition",
-      value: "Maintenant que ton offre est claire, on va passer à l'étape suivante : créer une version simple à tester rapidement."
+      type: "text",
+      value: "Tu as probablement plus que ce que tu comptes.\n\nEt la différence entre quelqu'un qui commence avec peu et quelqu'un qui commence avec plus n'est pas toujours là où on croit. Elle est parfois dans la façon dont on regarde ce qu'on a déjà — et ce qu'on décide d'en faire.\n\nIl s'agit peut-être juste de regarder ce qu'on est déjà — avec un peu plus de justesse que d'habitude.\n\nCe regard-là, une fois qu'on le pose, change quelque chose dans la façon dont on observe ce qui nous entoure.\n\nCe qu'on appelle une opportunité commence à ressembler à quelque chose de différent."
     }
 
   ],
 
-  exercices: [
+  exercices: []
+}
 
-    {
-      id: "ch4_ex1",
-      type: "text",
-      question: "Écris une première version instinctive de ton offre :\nJ'aide [qui] à [obtenir quoi].",
-      placeholder: "Ex: J'aide les commerçants locaux à mieux présenter leurs produits sur WhatsApp.",
-      aide: "C'est un brouillon. Ne cherche pas la perfection. Tu affineras cette phrase avec les exercices suivants.",
-      erreur: "Évite les phrases vagues comme : j'aide tout le monde, je fais un peu de tout.",
-      success_message: "Bon départ. On va maintenant affiner cette phrase étape par étape.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch4_ex2",
-      type: "text_group",
-      question: "Clarifie ton public principal.",
-      fields: [
-        {
-          id: "public_principal",
-          label: "À qui tu t'adresses ?",
-          placeholder: "Ex: petits commerçants, étudiants, salariés, mamans occupées..."
-        },
-        {
-          id: "probleme_public",
-          label: "Quel problème ont-ils ?",
-          placeholder: "Ex: ils manquent de visibilité, de temps, d'organisation..."
-        },
-        {
-          id: "ou_les_trouver",
-          label: "Où peux-tu les trouver ?",
-          placeholder: "Ex: WhatsApp, Facebook, quartier, travail, marché..."
-        }
-      ],
-      aide: "Choisis un public que tu peux réellement atteindre facilement.",
-      erreur: "Ne choisis pas un public trop large. Commence avec un groupe précis.",
-      success_message: "Parfait. Ton public devient plus clair.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch4_ex3",
-      type: "text_group",
-      question: "Définis le bénéfice concret de ton offre.",
-      fields: [
-        {
-          id: "benefice_principal",
-          label: "Quel résultat concret ton client obtient ?",
-          placeholder: "Ex: plus de visibilité, gain de temps, meilleure organisation..."
-        },
-        {
-          id: "soulagement",
-          label: "Quel problème tu lui enlèves ?",
-          placeholder: "Ex: il ne sait pas quoi publier, il manque de temps..."
-        },
-        {
-          id: "raison_acheter",
-          label: "Pourquoi il devrait payer pour ça ?",
-          placeholder: "Ex: parce que ça l'aide à vendre plus facilement..."
-        }
-      ],
-      aide: "Un bon bénéfice doit être simple et concret.",
-      erreur: "Ne vends pas seulement ce que tu fais. Explique ce que ça change pour le client.",
-      success_message: "Excellent. Tu clarifies maintenant la vraie valeur de ton offre.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch4_ex4",
-      type: "text_group",
-      question: "Remplis ton mini-canevas d'offre.",
-      fields: [
-        {
-          id: "offre",
-          label: "Mon offre",
-          placeholder: "Ex: création d'annonces WhatsApp pour commerçants"
-        },
-        {
-          id: "public",
-          label: "Mon public",
-          placeholder: "Ex: petits commerçants locaux"
-        },
-        {
-          id: "benefice",
-          label: "Le bénéfice",
-          placeholder: "Ex: mieux présenter leurs produits et attirer plus de clients"
-        },
-        {
-          id: "prix_depart",
-          label: "Prix de départ réaliste",
-          placeholder: "Ex: 5 000 FCFA"
-        }
-      ],
-      aide: "Utilise ce que tu as écrit dans l'exercice précédent, en une version plus simple et plus claire. Ton prix de départ doit être simple, accessible et facile à tester.",
-      erreur: "Ne sous-estime pas ta valeur, mais commence avec un prix testable. Entre 5 000 et 20 000 FCFA pour un premier service, c'est souvent raisonnable.",
-      success_message: "Très bien. Ton offre a maintenant une structure simple.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch4_ex5",
-      type: "generated_summary",
-      question: "Voici la phrase finale de ton offre.",
-      source: ["ch4_ex1", "ch4_ex2", "ch4_ex3", "ch4_ex4"],
-      template: "J'aide {{public}} à {{benefice}} grâce à {{offre}}. Prix de départ : {{prix_depart}}.",
-      variables_map: {
-        public:      { exercise: "ch4_ex2", field: "public_principal" },
-        benefice:    { exercise: "ch4_ex4", field: "benefice" },
-        offre:       { exercise: "ch4_ex4", field: "offre" },
-        prix_depart: { exercise: "ch4_ex4", field: "prix_depart" }
-      },
-      editable: true,
-      result_preview: true,
-      aide: "Tu peux modifier cette phrase pour qu'elle soit plus naturelle.",
-      erreur: "Si la phrase est trop longue, simplifie-la. Elle doit être comprise en moins de 10 secondes.",
-      success_message: "Offre validée. Tu peux maintenant la tester.",
-      obligatoire: true
-    }
-
-  ]
-};
+// ── CHAPITRE 5 ───────────────────────────────────────────────
 
 const CHAPTER_5 = {
   num: 5,
-  titre: "Répéter ce qui marche",
-  duree_estimee: "10-12 min",
-  completion_message: "Bien. Tu as maintenant une action à répéter. C'est là que tout commence vraiment.",
-  chapter_progress_label: "Chapitre 5 · 4 exercices",
+  titre: "Les opportunités ne ressemblent pas toujours à ce qu'on imagine",
+  duree_estimee: "8 min",
+  completion_message: "Chapitre 5 terminé.",
+  chapter_progress_label: "Chapitre 5",
   progression_rule: "all_exercises",
 
   contenu: [
 
     {
       type: "text",
-      section: "Réalité terrain",
-      value: "Beaucoup de personnes commencent une activité avec de l'énergie.\nMais elles changent trop vite.\n\nUn jour elles font ça.\nLe lendemain, autre chose.\nLa semaine suivante, encore une nouvelle idée."
+      section: "Chapitre 5",
+      value: "La plupart des gens cherchent une opportunité comme on cherche un objet perdu.\n\nQuelque chose de spécifique, qui existe quelque part, qu'il s'agirait de trouver avant les autres. Une idée originale. Un marché inexploré. Un moment parfait. Et pendant qu'on cherche cet objet-là, on passe à côté de choses visibles depuis longtemps — parce qu'elles ne ressemblent pas à ce qu'on avait imaginé trouver."
     },
 
     {
       type: "text",
-      value: "Résultat :\nAucun système. Aucune stabilité. Aucun résultat visible."
+      value: "Il y a quelque chose de curieux dans la façon dont les opportunités apparaissent, quand on commence vraiment à y faire attention.\n\nElles ne se présentent presque jamais comme des révélations. Elles ressemblent plutôt à des frictions — à des moments où quelque chose ne fonctionne pas bien, où quelque chose manque, où quelqu'un cherche ce qu'il ne trouve pas facilement. Des moments qu'on a appris à ignorer parce qu'ils font partie du paysage habituel."
+    },
+
+    {
+      type: "text",
+      value: "Il y a des problèmes qu'on finit par ne plus voir dans son quotidien. Pas les grands — ceux qu'on attend que d'autres résolvent. Les petits. Ceux qu'on contourne depuis si longtemps qu'ils sont devenus invisibles. La chose qu'on ne trouve nulle part et pour laquelle on improvise à chaque fois. Le service qu'on obtient seulement si on connaît quelqu'un. L'information qu'il faut assembler soi-même à partir de trois sources différentes parce qu'elle n'existe pas organisée quelque part. L'attente qu'on a acceptée sans vraiment comprendre pourquoi elle existe encore.\n\nCes frictions-là ont quelque chose en commun : elles sont là depuis longtemps, et personne ne les a encore résolues sérieusement."
+    },
+
+    {
+      type: "text",
+      value: "Il y a quelques années, quelqu'un dans un quartier que je connais a commencé à faire quelque chose de très simple.\n\nIl remarquait depuis longtemps que les gens autour de lui payaient des prix très différents pour les mêmes choses — selon qui ils connaissaient, selon le moment, selon le quartier. Cette information circulait. Elle existait de bouche à oreille depuis toujours. Mais elle n'était organisée nulle part."
+    },
+
+    {
+      type: "text",
+      value: "Il a commencé à l'organiser. Simplement. Sans grande infrastructure, sans capital de départ. Juste l'acte de collecter ce que tout le monde savait partiellement, et de le rendre accessible à ceux qui en avaient besoin.\n\nCe n'était pas une idée brillante. C'était une observation qu'il avait faite pendant des mois, avant de décider de faire quelque chose avec.\n\nUne opportunité est souvent un problème que quelqu'un a décidé de prendre au sérieux.\n\nÇa peut aussi être un étudiant qui aide régulièrement ses camarades à naviguer dans des démarches que personne n'a encore organisées pour eux — et qui réalise que cette capacité à trouver, synthétiser, rendre accessible ce que d'autres cherchent en vain, ça vaut quelque chose."
+    },
+
+    {
+      type: "text",
+      value: "Ce qui change quand on commence à regarder avec cette question — quel problème est-ce que j'observe régulièrement, sans qu'il soit encore bien résolu ? — c'est qu'on cesse de chercher une idée. On commence à observer. On s'interroge sur ce qui complique inutilement la vie des gens autour de soi. Sur ce qu'ils font de façon détournée alors que ça pourrait être direct. Sur les connexions qui n'existent pas encore entre des choses qui, pourtant, existent déjà.\n\nCe n'est pas un secteur porteur. Ce n'est pas une niche à exploiter. C'est juste un regard différent sur ce qui est déjà là."
+    },
+
+    {
+      type: "text",
+      value: "La difficulté n'est pas de trouver quoi observer. La plupart des gens, quand ils se posent honnêtement cette question, trouvent rapidement plusieurs réponses.\n\nLa difficulté, c'est de se décider à faire quelque chose avec ce qu'on a vu.\n\nCe moment — où voir devient faire — est rarement celui qu'on avait prévu."
     },
 
     {
       type: "quote",
-      value: "Ce n'est pas ce que tu fais une fois qui change ta vie.\nC'est ce que tu répètes."
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Pense à ta dernière semaine.\nAs-tu répété la même action… ou as-tu changé d'approche à chaque fois ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je suis prêt(e) à être honnête ✓"
-    },
-
-    {
-      type: "text",
-      section: "Prise de conscience",
-      value: "Tu n'as pas besoin de faire plus.\nTu as besoin de faire mieux… et surtout de répéter."
-    },
-
-    {
-      type: "text",
-      value: "Beaucoup abandonnent une idée… alors qu'elle commençait juste à fonctionner.\n\nLe problème n'était pas l'idée.\nLe problème, c'était le manque de répétition."
-    },
-
-    {
-      type: "text",
-      value: "Et bonne nouvelle : tu n'as pas besoin de capital pour répéter.\nTu as besoin de constance."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch5_ex1"
-    },
-
-    {
-      type: "story",
-      section: "Déclic terrain",
-      value: "Ibrahima, à Dakar, vendait des chaussures via WhatsApp.\n\nIl postait une photo… puis arrêtait.\nPuis changeait de produit.\nPuis essayait autre chose.\n\nRésultat : aucune vente régulière.\n\nLe jour où il a décidé de :\nPublier une photo chaque jour.\nRépondre à chaque message.\nRépéter le même produit pendant 3 semaines.\n\nLes ventes ont commencé.\n\nCe n'était pas le produit le problème.\nC'était le manque de répétition."
-    },
-
-    {
-      type: "quote",
-      value: "Un signal faible répété vaut plus qu'une grande idée abandonnée."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch5_ex2"
-    },
-
-    {
-      type: "text",
-      value: "Tu viens de faire un choix important.\n\nLa plupart des gens restent bloqués parce qu'ils ne décident pas.\nToi, tu viens de choisir une action.\n\nMaintenant, il ne reste qu'une chose : la répéter."
-    },
-
-    {
-      type: "text",
-      section: "Ce qui marche",
-      value: "Ce qui marche, c'est simple :\nC'est ce qui provoque une réaction, même petite."
-    },
-
-    {
-      type: "text",
-      value: "Les signaux à observer :\n\nQuelqu'un répond à ton message.\nQuelqu'un pose une question sur ton produit.\nQuelqu'un montre de l'intérêt sur ton statut.\nQuelqu'un achète.\n\nMême un seul de ces signaux est une information précieuse.\nCela veut dire : continue, répète, insiste."
-    },
-
-    {
-      type: "text",
-      value: "Commence avec 3 à 5 personnes de confiance.\nTeste. Observe. Répète ce qui provoque une réaction.\n\nTu n'as pas besoin de toucher 1000 personnes pour commencer.\nTu as besoin de convaincre les premières."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch5_ex3"
-    },
-
-    {
-      type: "text",
-      section: "Engagement",
-      value: "Le vrai but de cette étape n'est pas encore de gagner de l'argent.\n\nC'est de te prouver que tu peux avancer.\nQue tu peux être constant.\nQue tu peux créer un système simple."
-    },
-
-    {
-      type: "text",
-      value: "Quand tu répètes une action pendant 7 jours… quelque chose change en toi.\nTu n'attends plus la motivation pour agir.\nTu agis. Et la motivation suit."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch5_ex4"
-    },
-
-    {
-      type: "pnl_activation",
-      value: "La réussite ne vient pas d'une idée parfaite.\nElle vient d'une action répétée jusqu'à ce qu'elle fonctionne.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je m'engage à répéter ✓"
-    },
-
-    {
-      type: "transition",
-      value: "Maintenant que tu sais répéter ce qui marche, on va passer à l'étape suivante : obtenir des retours réels du terrain."
+      value: "Il y a des observations qu'on fait et qu'on repose. On ne sait pas encore quoi en faire — et pourtant quelque chose continue à travailler, silencieusement. Parfois une idée qu'on avait crue mise de côté revient quelques jours plus tard avec un peu plus de forme.\n\nSans qu'on l'ait cherché."
     }
 
   ],
 
-  exercices: [
+  exercices: []
+}
 
-    {
-      id: "ch5_ex1",
-      type: "text",
-      question: "Qu'est-ce que tu as déjà fait qui a provoqué une réaction ?\n(message, intérêt, question, vente)",
-      placeholder: "Ex: quelqu'un m'a demandé le prix / quelqu'un a répondu à mon statut...",
-      aide: "Ne cherche pas grand. Même un petit signal compte.",
-      erreur: "Ne dis pas que rien n'a marché. Il y a toujours un début. Cherche le moindre signe d'intérêt.",
-      success_message: "Bien. Tu viens d'identifier un signal réel. C'est ton point de départ.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch5_ex2",
-      type: "text",
-      question: "Parmi ce que tu as testé, qu'est-ce que tu peux répéter dès maintenant ?",
-      placeholder: "Ex: publier mes produits sur WhatsApp tous les jours...",
-      aide: "Choisis une action simple et faisable. Pas besoin de budget.",
-      erreur: "Ne choisis pas 10 actions. Une seule action répétée vaut plus que dix actions abandonnées.",
-      success_message: "Parfait. Tu as identifié ton action à répéter.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch5_ex3",
-      type: "text_group",
-      question: "Crée ta routine simple de répétition.",
-      fields: [
-        {
-          id: "action",
-          label: "Action à répéter",
-          placeholder: "Ex: publier sur WhatsApp, contacter 3 personnes..."
-        },
-        {
-          id: "frequence",
-          label: "Fréquence",
-          placeholder: "Ex: tous les jours, 5 fois par semaine..."
-        },
-        {
-          id: "duree",
-          label: "Pendant combien de temps",
-          placeholder: "Ex: 7 jours, 2 semaines..."
-        }
-      ],
-      aide: "La clé est la régularité, pas la perfection. Une action imparfaite répétée vaut mieux qu'une action parfaite jamais faite.",
-      erreur: "Ne choisis pas quelque chose de compliqué. Si tu ne peux pas le faire même fatigué, ce n'est pas la bonne routine.",
-      success_message: "Ta routine est définie. Tiens-la.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch5_ex4",
-      type: "text",
-      question: "Écris ton engagement :\nPendant X jours, je vais répéter cette action sans changer.",
-      placeholder: "Ex: Pendant 7 jours, je publie tous les jours sans abandonner.",
-      aide: "Engage-toi sur une durée courte mais réelle. 7 jours, c'est suffisant pour commencer.",
-      erreur: "Ne dis pas \"je vais essayer\". Décide. Un engagement flou ne tient pas.",
-      success_message: "Engagement pris. Reviens dans 7 jours avec tes observations.",
-      obligatoire: true
-    }
-
-  ]
-};
+// ── CHAPITRE 6 ───────────────────────────────────────────────
 
 const CHAPTER_6 = {
   num: 6,
-  titre: "Recommandations et témoignages",
-  duree_estimee: "10-12 min",
-  completion_message: "Très bien. Tu commences à construire ta crédibilité. Tes premiers témoignages font partie de ton système.",
-  chapter_progress_label: "Chapitre 6 · 4 exercices",
+  titre: "Commencer avant d'être prêt",
+  duree_estimee: "7 min",
+  completion_message: "Chapitre 6 terminé.",
+  chapter_progress_label: "Chapitre 6",
   progression_rule: "all_exercises",
 
   contenu: [
 
     {
       type: "text",
-      section: "Réalité terrain",
-      value: "Tu n'as pas besoin de 1000 clients pour avancer.\n\nTu as besoin de quelques personnes satisfaites.\n\nParce que dans la réalité…\nune personne satisfaite peut t'en amener 2, 3, ou plus."
-    },
-
-    {
-      type: "quote",
-      value: "Un client satisfait vaut plus que 10 prospects silencieux."
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Pense à une personne à qui tu as déjà rendu service.\nMême gratuitement.\n\nÉtait-elle satisfaite ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Oui, je vois ✓"
+      section: "Chapitre 6",
+      value: "On commence quand on est prêt.\n\nQuand on a les compétences nécessaires. Quand les conditions sont réunies. Quand le plan est solide et la peur s'est calmée suffisamment pour avancer sans trop de risques.\n\nC'est une pensée raisonnable. Le problème, c'est qu'elle peut s'étirer indéfiniment."
     },
 
     {
       type: "text",
-      section: "Prise de conscience",
-      value: "Beaucoup de personnes font une erreur :\n\nElles attendent d'avoir un \"business parfait\" avant de demander un retour ou un témoignage.\n\nMauvaise stratégie.\n\nTu peux commencer dès maintenant.\nMême avec une petite action.\nMême avec un premier client."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch6_ex1"
-    },
-
-    {
-      type: "story",
-      section: "Déclic terrain",
-      value: "Fatou, à Abidjan, faisait des coiffures à domicile.\n\nAu début, elle ne demandait rien à ses clientes.\n\nPuis un jour, elle a simplement demandé :\n\"Si tu es satisfaite, peux-tu m'envoyer un petit message ?\"\n\nElle a reçu :\nDes messages.\nDes vocaux.\nDes photos.\n\nElle a commencé à les publier sur son statut WhatsApp.\n\nRésultat : plus de confiance, plus de clientes.\n\nElle n'avait pas changé son service.\nElle avait juste rendu sa valeur visible."
-    },
-
-    {
-      type: "quote",
-      value: "Les gens font confiance aux autres clients, pas à toi."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch6_ex2"
+      value: "L'attente a une façon particulière de se justifier à elle-même. Il y a toujours une bonne raison de ne pas encore commencer — une raison différente de celle du mois précédent, mais une raison. Et les mois s'accumulent avec une régularité silencieuse, jusqu'au moment où on réalise que le « bientôt » dure depuis plus longtemps qu'on ne l'avait prévu.\n\nCe n'est pas de la mauvaise foi. C'est une façon de se protéger qui a l'apparence de la sagesse."
     },
 
     {
       type: "text",
-      section: "Construire ta crédibilité",
-      value: "Un témoignage, c'est une preuve réelle.\n\nPas besoin de montage compliqué.\nJuste du vrai."
+      value: "Ce qu'on comprend moins facilement, c'est que la confiance ne précède pas l'action. Elle en est le résultat.\n\nOn ne commence pas parce qu'on est prêt. On devient prêt parce qu'on a commencé. On n'apprend pas à marcher en regardant marcher. On tombe, on se relève, on ajuste. La confiance dans l'équilibre se construit comme ça — pas avant."
     },
 
     {
       type: "text",
-      value: "Les types de preuves simples que tu peux collecter dès maintenant :\n\nUn message WhatsApp de satisfaction.\nUne capture d'écran d'un retour positif.\nUne note vocale d'un client heureux.\nUne photo avant et après.\n\nChaque preuve que tu collectes renforce ta crédibilité.\nChaque preuve publiée travaille pour toi."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch6_ex3"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch6_ex4"
+      value: "Ça signifie qu'une première tentative imparfaite a plus de valeur réelle qu'un plan parfait qui n'a jamais été testé. Que l'imperfection du début n'est pas un problème à corriger avant de commencer — c'est une étape normale dans presque tout ce qui finit par bien fonctionner. Et que celui qui se dit « je ne suis pas encore prêt » n'est peut-être pas en train d'être prudent. Il est peut-être en train d'attendre une sensation qui n'arrive qu'après."
     },
 
     {
       type: "text",
-      value: "Tu viens de lancer quelque chose de très important.\n\nLa plupart des gens n'osent jamais demander un retour.\n\nToi, tu passes à l'action.\n\nEt c'est exactement comme ça que les premières opportunités arrivent."
+      value: "Il y a des gens qui ont déjà commencé, sans l'avoir vraiment nommé.\n\nUn premier message envoyé à quelqu'un qui pourrait être intéressé. Une première offre formulée en deux phrases, sans logo, sans site. Un premier test posé simplement pour voir ce qui se passe.\n\nUne prestation rendue régulièrement, une compétence facturée de temps en temps, quelque chose qu'on fait « en parallèle » depuis des mois sans lui donner de nom parce qu'on attend que ça ressemble davantage à quelque chose. Il y a peut-être un numéro enregistré dans son téléphone sous « client », sans que le mot ait jamais été prononcé à voix haute. Ou une somme reçue pour quelque chose fait naturellement, notée quelque part, dans une case qu'on n'a pas encore su nommer."
     },
 
     {
       type: "text",
-      section: "Engagement",
-      value: "Le vrai but ici n'est pas seulement d'avoir des témoignages.\n\nC'est de renforcer ta confiance.\n\nQuand tu vois que les gens sont satisfaits…\ntu comprends que tu peux continuer.\n\nChaque client satisfait devient une pièce de ton système."
+      value: "C'est déjà quelque chose. Même si ça ne ressemble pas encore à ce qu'on avait imaginé.\n\nIl y a eu des mois comme ça. Quelque chose en cours, sans encore savoir si ça allait vraiment devenir quelque chose. Je continuais."
     },
 
     {
-      type: "pnl_activation",
-      value: "Tu n'as pas besoin d'être parfait.\nTu as besoin d'être utile.\n\nEt les gens le verront.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je passe à l'action ✓"
-    },
-
-    {
-      type: "transition",
-      value: "Maintenant que tu commences à avoir des retours et de la crédibilité, on va structurer ta discipline pour avancer chaque jour."
+      type: "text",
+      value: "Commencer avant d'être prêt ne signifie pas commencer sans réfléchir. Ça signifie ne pas confondre la réflexion avec l'attente, ni la prudence avec l'immobilité.\n\nIl y a un moment — pas un moment parfait, juste un moment suffisant — où il devient possible de faire une première chose concrète. Pas le plan entier. Pas la version finale. Juste quelque chose de réel, même petit, même imparfait, qui a l'avantage d'exister.\n\nCe qui se construit ensuite est rarement ce qu'on avait prévu. Mais au moins, c'est réel."
     }
 
   ],
 
-  exercices: [
+  exercices: []
+}
 
-    {
-      id: "ch6_ex1",
-      type: "text",
-      question: "As-tu déjà aidé quelqu'un ou rendu un service ?\nQui et comment ?",
-      placeholder: "Ex: oui, j'ai aidé un ami à organiser son commerce / une connaissance avec ses réseaux...",
-      aide: "Même quelque chose de petit compte. Un service gratuit, une aide, un conseil.",
-      erreur: "Ne dis pas non trop vite. Cherche bien dans les dernières semaines ou les derniers mois.",
-      success_message: "Parfait. Tu as déjà une base réelle sur laquelle construire.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch6_ex2",
-      type: "text",
-      question: "Écris un message simple pour demander un témoignage.",
-      placeholder: "Ex: Salut, si tu es satisfait(e), peux-tu m'envoyer un petit message pour dire ce que tu penses ?",
-      aide: "Sois naturel. Pas besoin de phrases compliquées. Un message court et sincère suffit.",
-      erreur: "Ne fais pas un message trop long. Plus c'est court, plus les gens répondent.",
-      success_message: "Excellent. Tu peux envoyer ce message dès aujourd'hui.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch6_ex3",
-      type: "text_group",
-      question: "Organise ta collecte de preuves.",
-      fields: [
-        {
-          id: "type_preuve",
-          label: "Type de preuve que tu vas collecter",
-          placeholder: "Ex: messages WhatsApp, photos, captures d'écran..."
-        },
-        {
-          id: "ou_stocker",
-          label: "Où tu vas les garder",
-          placeholder: "Ex: dossier dans le téléphone, album photo, WhatsApp..."
-        },
-        {
-          id: "comment_utiliser",
-          label: "Comment tu vas les utiliser",
-          placeholder: "Ex: publier sur statut WhatsApp, montrer aux nouveaux clients..."
-        }
-      ],
-      aide: "Organise dès le début. Une preuve bien rangée est une preuve utilisable.",
-      erreur: "Ne laisse pas les témoignages se perdre dans tes messages. Range-les dès que tu les reçois.",
-      success_message: "Parfait. Tu construis ton système de crédibilité.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch6_ex4",
-      type: "text",
-      question: "À combien de personnes vas-tu demander un témoignage aujourd'hui ou cette semaine ?",
-      placeholder: "Ex: 2 personnes — mon ancienne cliente et mon ami que j'ai aidé...",
-      aide: "Commence petit, mais commence. Une seule réponse positive peut changer ton énergie.",
-      erreur: "Ne dis pas plus tard. Aujourd'hui, c'est le bon moment.",
-      success_message: "Action lancée. Va leur envoyer le message que tu as écrit.",
-      obligatoire: true
-    }
-
-  ]
-};
+// ── CHAPITRE 7 ───────────────────────────────────────────────
 
 const CHAPTER_7 = {
   num: 7,
-  titre: "Routine et discipline",
-  duree_estimee: "10-12 min",
-  completion_message: "Bien. Tu as maintenant une routine et un système. La discipline se construit jour après jour.",
-  chapter_progress_label: "Chapitre 7 · 4 exercices",
-  progression_rule: "all_exercises",
-  streak_tracking: true,
-  streak_days: 7,
-
-  contenu: [
-
-    {
-      type: "text",
-      section: "Réalité terrain",
-      value: "Au début, tu es motivé.\n\nTu veux avancer.\nTu veux réussir.\n\nMais après quelques jours…\nla motivation baisse.\n\nC'est normal."
-    },
-
-    {
-      type: "quote",
-      value: "La motivation commence le travail.\nLa discipline le termine."
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Repense aux derniers jours.\n\nAs-tu toujours respecté ce que tu avais prévu ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je suis honnête ✓"
-    },
-
-    {
-      type: "text",
-      section: "Prise de conscience",
-      value: "La vérité est simple :\n\nTu ne peux pas compter sur ta motivation.\n\nElle change.\nElle dépend de ton humeur.\nDe ta fatigue.\nDe ta journée.\n\nMais la discipline…\nelle se construit."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch7_ex1"
-    },
-
-    {
-      type: "story",
-      section: "Déclic terrain",
-      value: "Aminata, à Dakar, voulait lancer son activité.\n\nElle était motivée au début.\n\nPuis la fatigue.\nLe travail.\nLa famille.\n\nElle a commencé à arrêter… puis reprendre… puis arrêter encore.\n\nJusqu'au jour où elle a décidé une chose simple :\n30 minutes par jour.\nPas plus.\nMais tous les jours.\n\nMême fatiguée.\nMême sans envie.\n\nQuelques semaines plus tard…\nelle avançait plus que jamais."
-    },
-
-    {
-      type: "quote",
-      value: "Ce n'est pas ce que tu fais quand tu es motivé qui compte.\nC'est ce que tu fais quand tu ne l'es pas."
-    },
-
-    {
-      type: "text",
-      section: "Construire ton système",
-      value: "La discipline n'est pas compliquée.\n\nC'est juste :\nfaire la même action, chaque jour, même quand c'est difficile.\n\nPas parfait.\nPas long.\nMais régulier."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch7_ex2"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch7_ex3"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch7_ex4"
-    },
-
-    {
-      type: "text",
-      section: "Engagement",
-      value: "À partir de maintenant, tu n'es plus quelqu'un qui essaie.\n\nTu es quelqu'un qui agit.\n\nMême quand c'est difficile.\nMême quand ce n'est pas parfait."
-    },
-
-    {
-      type: "pnl_activation",
-      value: "Tu n'as pas besoin d'être motivé.\nTu as besoin d'être constant.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je deviens discipliné ✓"
-    },
-
-    {
-      type: "transition",
-      value: "Maintenant que tu avances chaque jour, on va passer à l'étape suivante : rendre ton message plus clair pour attirer plus de clients."
-    }
-
-  ],
-
-  exercices: [
-
-    {
-      id: "ch7_ex1",
-      type: "text",
-      question: "Qu'est-ce qui t'empêche aujourd'hui d'être régulier ?",
-      placeholder: "Ex: fatigue, manque de temps, distractions...",
-      aide: "Sois honnête. C'est le point de départ pour construire quelque chose de solide.",
-      erreur: "Ne blâme pas seulement l'extérieur. Cherche ce que tu peux contrôler dans ta situation.",
-      success_message: "Bien. Tu identifies le vrai obstacle. C'est la première étape pour le dépasser.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch7_ex2",
-      type: "text",
-      question: "Quelle est l'action la plus simple que tu peux faire chaque jour ?",
-      placeholder: "Ex: publier sur WhatsApp, contacter 2 personnes, répondre aux messages...",
-      aide: "Plus c'est simple, plus tu vas tenir. Cherche l'action minimale qui produit un résultat.",
-      erreur: "Ne choisis pas une action difficile ou qui dépend d'autres facteurs. Choisis ce que tu contrôles seul.",
-      success_message: "Parfait. C'est ton action de base. Elle devient ta fondation.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch7_ex3",
-      type: "text_group",
-      question: "Crée ton système simple.",
-      fields: [
-        {
-          id: "heure",
-          label: "Quand ?",
-          placeholder: "Ex: 20h chaque soir, 6h du matin..."
-        },
-        {
-          id: "lieu",
-          label: "Où ?",
-          placeholder: "Ex: chambre, bureau, transports..."
-        },
-        {
-          id: "action",
-          label: "Action",
-          placeholder: "Ex: publier sur WhatsApp, envoyer 2 messages..."
-        }
-      ],
-      aide: "Un bon système enlève les décisions inutiles. Tu ne te demandes plus quoi faire — tu le fais.",
-      erreur: "Ne laisse pas de flou. Plus c'est précis, plus ça fonctionne. Un créneau vague n'est jamais respecté.",
-      success_message: "Ton système est prêt. Il ne reste plus qu'à l'activer.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch7_ex4",
-      type: "text",
-      question: "Écris ton engagement :\nJe vais faire cette action chaque jour pendant 7 jours, même sans motivation.",
-      placeholder: "Ex: Je publie chaque jour pendant 7 jours sans exception.",
-      aide: "La discipline commence par une décision claire. Pas une intention — une décision.",
-      erreur: "Ne dis pas \"je vais essayer\". Décide. Un engagement flou ne tient pas.",
-      success_message: "Engagement validé. Tu viens de décider. Maintenant, tiens-le.",
-      obligatoire: true
-    }
-
-  ]
-};
-
-const CHAPTER_8 = {
-  num: 8,
-  titre: "Un message clair qui attire",
-  duree_estimee: "12-15 min",
-  completion_message: "Bien. Tu as maintenant un message clair et tu es prêt(e) à le tester sur le terrain.",
-  chapter_progress_label: "Chapitre 8 · 4 exercices",
-  progression_rule: "all_exercises",
-  // message_sent_tracking: true  → À activer plus tard : suivre si l'utilisateur a vraiment envoyé son message
-
-  contenu: [
-
-    {
-      type: "text",
-      section: "Réalité terrain",
-      value: "Beaucoup de personnes ont une bonne offre…\n\nMais personne ne comprend ce qu'elles proposent.\n\nRésultat :\nPas de réponse.\nPas de clients.\n\nPas parce que l'offre est mauvaise.\nParce que le message n'est pas clair."
-    },
-
-    {
-      type: "quote",
-      value: "Si les gens ne comprennent pas, ils n'achètent pas."
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Si quelqu'un voit ton message aujourd'hui…\ncomprendra-t-il immédiatement ce que tu proposes ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je réfléchis ✓"
-    },
-
-    {
-      type: "text",
-      section: "Prise de conscience",
-      value: "Si tu n'es pas sûr(e)… c'est normal.\nLa plupart des gens ne savent pas encore comment parler de leur offre.\n\nC'est exactement pour ça qu'on est là."
-    },
-
-    {
-      type: "text",
-      value: "Ton message doit être :\nsimple\nclair\nrapide à comprendre\n\nEn moins de 5 secondes.\n\nSi la personne doit réfléchir pour comprendre…\nelle passe."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch8_ex1"
-    },
-
-    {
-      type: "text",
-      value: "Maintenant, observe ce qui se passe quand quelqu'un décide de simplifier son message."
-    },
-
-    {
-      type: "story",
-      section: "Déclic terrain",
-      value: "Ousmane, à Dakar, proposait ses services depuis plusieurs semaines.\n\nSon message était long.\nCompliqué.\nFlou.\n\nIl disait : \"Je suis dans le digital, je peux faire des choses pour aider les entreprises à se développer sur les réseaux sociaux et à améliorer leur communication en ligne.\"\n\nPersonne ne répondait.\n\nPuis il a tout simplifié :\n\"Je crée des visuels simples pour aider les commerçants à vendre sur WhatsApp.\"\n\nUne seule phrase.\nClaire. Directe. Précise.\n\nLes gens ont commencé à répondre."
-    },
-
-    {
-      type: "quote",
-      value: "Un message simple vaut plus qu'un message intelligent mais compliqué."
-    },
-
-    {
-      type: "text",
-      section: "Construire ton message",
-      value: "Ton message doit répondre à 3 questions seulement :\n\n1. Pour qui ?\n2. Tu fais quoi ?\n3. Quel résultat ?\n\nC'est tout.\n\nSi tu réponds à ces 3 questions en une phrase…\nton message est prêt."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch8_ex2"
-    },
-
-    {
-      type: "text",
-      value: "Maintenant, il faut rendre ce message naturel.\n\nSur WhatsApp, les gens ne lisent pas des publicités.\nIls lisent des messages d'humains.\n\nParle comme tu parles. Simplement."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch8_ex3"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch8_ex4"
-    },
-
-    {
-      type: "text",
-      section: "Engagement",
-      value: "Tu n'as pas besoin d'un message parfait.\n\nTu as besoin d'un message clair.\n\nEt c'est en l'envoyant que tu vas l'améliorer.\n\nChaque réponse que tu reçois t'apprend quelque chose.\nChaque silence aussi."
-    },
-
-    {
-      type: "pnl_activation",
-      value: "Tu ne vas pas attendre.\nTu vas envoyer ton message.\n\nC'est comme ça que tout commence.",
-      display: "centered",
-      interaction: "button",
-      button_label: "J'envoie mon message ✓"
-    },
-
-    {
-      type: "transition",
-      value: "Maintenant que tu sais parler de ton offre, on va voir comment fixer un prix juste et vendre sans bloquer."
-    }
-
-  ],
-
-  exercices: [
-
-    {
-      id: "ch8_ex1",
-      type: "text",
-      question: "Écris ton message actuel.\n(Ce que tu dirais à quelqu'un si tu lui présentais ton activité.)",
-      placeholder: "Ex: je fais du marketing, je propose des services, je vends des produits...",
-      aide: "Écris ce que tu dis aujourd'hui, même si ce n'est pas parfait. Sois naturel.",
-      erreur: "Ne réfléchis pas trop. Ce n'est pas le message final — c'est le point de départ.",
-      success_message: "Parfait. On a ton message de départ. On va maintenant le transformer.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch8_ex2",
-      type: "text",
-      question: "Réécris ton message de manière simple :\nJ'aide [qui] à [résultat] grâce à [offre].",
-      placeholder: "Ex: J'aide les commerçants à vendre plus sur WhatsApp grâce à des visuels simples.",
-      aide: "Une seule phrase. Clair. Direct. Réponds aux 3 questions : pour qui, tu fais quoi, quel résultat.",
-      erreur: "Ne rajoute pas trop d'informations. Si ta phrase dépasse 2 lignes, elle est encore trop longue.",
-      success_message: "Excellent. Ton message devient compréhensible en moins de 5 secondes.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch8_ex3",
-      type: "text",
-      question: "Transforme ton message en version WhatsApp — naturelle et courte.",
-      placeholder: "Ex: Salut, j'aide les commerçants à vendre plus sur WhatsApp avec des visuels simples. Si ça t'intéresse, dis-moi.",
-      aide: "Parle comme si tu écrivais à un ami. Pas de formules de politesse excessives. Pas de majuscules partout.",
-      erreur: "Ne fais pas un message trop formel ou trop long. Un message WhatsApp naturel est court, direct, humain.",
-      success_message: "Très bien. Ce message peut être envoyé aujourd'hui.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch8_ex4",
-      type: "text",
-      question: "À combien de personnes vas-tu envoyer ce message ?\n(Et quand ?)",
-      placeholder: "Ex: 3 personnes aujourd'hui — mon ami commerçant, ma cousine, mon collègue...",
-      aide: "Commence petit mais commence. Si personne ne répond, ce n'est pas un échec — c'est une information. Ajuste le message et réessaie.",
-      erreur: "Ne dis pas plus tard. Le meilleur moment pour envoyer ton message, c'est maintenant.",
-      success_message: "Action lancée. Va envoyer ton message avant de passer à la suite.",
-      obligatoire: true
-    }
-
-  ]
-};
-
-const CHAPTER_9 = {
-  num: 9,
-  titre: "Fixer ton prix et vendre sans bloquer",
-  duree_estimee: "12-15 min",
-  completion_message: "Bien. Tu as maintenant un prix, une phrase de vente et une première cible. Tu es prêt(e) à vendre.",
-  chapter_progress_label: "Chapitre 9 · 5 exercices",
+  titre: "Construire quelque chose de réel",
+  duree_estimee: "6 min",
+  completion_message: "Chapitre 7 terminé.",
+  chapter_progress_label: "Chapitre 7",
   progression_rule: "all_exercises",
 
   contenu: [
 
     {
       type: "text",
-      section: "Réalité terrain",
-      value: "Beaucoup de personnes arrivent à ce stade…\n\nElles ont :\nune idée\nune offre\nun message\n\nMais elles bloquent ici :\nle prix.\n\nPas parce que leur offre ne vaut rien.\nParce qu'elles ont peur de demander."
-    },
-
-    {
-      type: "quote",
-      value: "Ce n'est pas le prix qui bloque.\nC'est la peur de demander."
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Quand tu penses à demander de l'argent…\nqu'est-ce que tu ressens ?",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je suis honnête ✓"
+      section: "Chapitre 7",
+      value: "Il y a une différence entre comprendre quelque chose et décider de faire quelque chose avec ce qu'on a compris.\n\nLes deux sont nécessaires. Mais ce sont deux mouvements différents — et le passage de l'un à l'autre est l'endroit où beaucoup de choses se jouent."
     },
 
     {
       type: "text",
-      section: "Prise de conscience",
-      value: "Ce que tu ressens est normal.\n\nLa plupart des débutants ressentent la même chose :\n\n\"Je ne suis pas encore prêt.\"\n\"Je ne suis pas expert.\"\n\"Les gens ne vont pas payer.\"\n\nCes pensées sont des réflexes naturels.\nPas des vérités."
+      value: "Ce qui reste après avoir traversé ces chapitres n'est pas forcément une clarté parfaite. C'est peut-être juste une façon légèrement différente de regarder sa propre situation. Un déplacement discret dans la façon de se voir — pas un bouleversement, juste une nuance.\n\nC'est souvent de là que quelque chose commence."
     },
 
     {
       type: "text",
-      value: "La vérité est simple :\n\nSi tu aides quelqu'un à résoudre un problème…\ntu mérites d'être payé.\n\nLes gens ne paient pas ton diplôme.\nIls ne paient pas ton expérience.\nIls paient le résultat que tu leur apportes."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch9_ex1"
+      value: "Construire quelque chose de réel ne ressemble presque jamais à ce qu'on imagine depuis l'extérieur.\n\nÇa ressemble à des débuts hésitants. À des ajustements en cours de route. À des moments où l'on n'est pas sûr d'avancer dans la bonne direction, et où l'on continue quand même — parce que rester immobile n'est pas gratuit non plus."
     },
 
     {
       type: "text",
-      value: "Maintenant, regarde ce qui se passe quand quelqu'un dépasse ce blocage."
-    },
-
-    {
-      type: "story",
-      section: "Déclic terrain",
-      value: "Moussa, à Bamako, aidait des commerçants à prendre des photos de leurs produits.\n\nAu début, il le faisait gratuitement.\nIl pensait ne pas être assez bon pour être payé.\n\nPuis un jour, un client lui a demandé :\n\"Combien tu prends ?\"\n\nIl a hésité.\nPuis il a dit : \"3 000 FCFA.\"\n\nLe client a accepté immédiatement.\n\nCe jour-là, Moussa a compris quelque chose d'important :\n\nCe n'était pas une question de perfection.\nC'était une question de valeur."
-    },
-
-    {
-      type: "quote",
-      value: "Les gens ne paient pas la perfection.\nIls paient une solution."
+      value: "Il m'a fallu du temps pour comprendre ça autrement qu'en théorie. Recommencer après avoir arrêté n'a jamais ressemblé à un nouveau départ propre. Ça ressemblait à reprendre quelque chose de maladroit, avec les traces de ce qui avait déjà été tenté. Et c'est exactement comme ça que ça s'est construit."
     },
 
     {
       type: "text",
-      section: "Ton prix",
-      value: "Ton prix doit être :\nsimple\nréaliste\nfacile à accepter\n\nTu n'as pas besoin du prix parfait.\nTu as besoin d'un prix test.\n\nUn prix que tu peux dire à voix haute, sans baisser les yeux."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch9_ex2"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch9_ex3"
+      value: "Ce que ça donne, dans la réalité, c'est rarement spectaculaire au début. Des choses qui fonctionnent. D'autres qui ne fonctionnent pas. Une démarche faite la semaine dernière, rangée sans en faire grand cas. Une conversation tenue, un premier essai posé quelque part. Sur le moment, ça ne ressemble pas à grand-chose. Une progression qui n'a pas la régularité qu'on aurait voulu — mais qui existe, réellement, quand on y revient quelques mois plus tard.\n\nEt c'est cette réalité-là — imparfaite, non linéaire, souvent silencieuse — qui finit par produire quelque chose de solide."
     },
 
     {
       type: "text",
-      value: "Maintenant que tu connais ta valeur et ton prix…\nil te faut une phrase simple pour le proposer.\n\nPas un discours.\nPas une présentation.\nUne phrase."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch9_ex4"
-    },
-
-    {
-      type: "text",
-      value: "Tu as une phrase.\nTu as un prix.\n\nIl reste une seule chose :\nchoisir la première personne à qui tu vas la dire."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch9_ex5"
-    },
-
-    {
-      type: "text",
-      section: "Engagement",
-      value: "Tu n'as pas besoin d'être parfait pour vendre.\n\nTu as besoin d'être utile.\nEt d'oser proposer.\n\nUn refus n'est pas un jugement.\nC'est une information.\nEt chaque refus te rapproche d'un oui."
-    },
-
-    {
-      type: "pnl_activation",
-      value: "Tu ne vas pas attendre.\n\nTu vas proposer ton offre avec ton prix.\n\nC'est comme ça que les premières ventes arrivent.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je propose mon offre ✓"
-    },
-
-    {
-      type: "transition",
-      value: "Maintenant que tu peux vendre, on va voir comment trouver encore plus de clients autour de toi."
+      value: "La lecture s'arrête ici.\n\nCe qui suit n'est pas une évaluation. C'est simplement quelques questions — pour voir ce qui a bougé, ce qui mérite d'être regardé de plus près. Elles n'attendent pas de réponse parfaite."
     }
 
   ],
 
-  exercices: [
+  exercices: []
+}
 
-    {
-      id: "ch9_ex1",
-      type: "text",
-      question: "Qu'est-ce qui te bloque aujourd'hui pour demander un prix ?",
-      placeholder: "Ex: peur du refus, sentiment de ne pas mériter, manque de confiance...",
-      aide: "Écris ce que tu ressens vraiment. Il n'y a pas de mauvaise réponse ici.",
-      erreur: "Ne dis pas je ne sais pas. Tu ressens quelque chose. Prends le temps de l'identifier.",
-      success_message: "Bien. Tu mets des mots sur ton blocage. C'est la première étape pour le dépasser.",
-      obligatoire: true
+// ── QUIZ (stub — non utilisé dans le flow V2) ─────────────────
+
+const QUIZ = {
+  config: {
+    total_questions: 0,
+    passing_score: 0,
+    categories: [],
+    selection_per_category: {},
+    shuffle_questions: false,
+    shuffle_options: false,
+    feedback_mode: "instant",
+    points_per_question: 1,
+    max_attempts: 1,
+    retry_cooldown_hours: 24,
+    max_attempts_reached_message: "—"
+  },
+  pool: [],
+  results: {
+    success: {
+      title: "—",
+      message: "—",
+      action: "—",
+      cta_label: "—"
     },
-
-    {
-      id: "ch9_ex2",
-      type: "text",
-      question: "Quel est un prix simple et réaliste pour commencer ?",
-      placeholder: "Ex: 2 000 FCFA, 5 000 FCFA, 10 000 FCFA...",
-      aide: "Choisis un prix que tu es à l'aise de proposer aujourd'hui. Pas le prix idéal — le prix que tu peux dire sans bloquer.",
-      erreur: "Ne cherche pas le prix parfait. Un prix trop bas vaut mieux qu'un prix jamais proposé. Tu augmenteras plus tard.",
-      success_message: "Très bien. Tu as maintenant un prix de départ. Il évoluera avec ton expérience.",
-      obligatoire: true
+    near_miss: {
+      title: "—",
+      message: "—",
+      action: "—",
+      cta_label: "—"
     },
-
-    {
-      id: "ch9_ex3",
-      type: "text",
-      question: "Pourquoi ton service vaut ce prix ?",
-      placeholder: "Ex: ça aide à vendre plus, ça fait gagner du temps, ça résout un vrai problème...",
-      aide: "Pense au résultat pour le client, pas à ton niveau. Ce que tu apportes a de la valeur.",
-      erreur: "Ne te sous-estime pas. Si ton service aide quelqu'un, il vaut le prix que tu demandes.",
-      success_message: "Excellent. Tu comprends ta valeur. Garde cette réponse en tête quand tu hésites.",
-      obligatoire: true
+    fail: {
+      title: "—",
+      message: "—",
+      action: "—",
+      cta_label: "—"
     },
-
-    {
-      id: "ch9_ex4",
-      type: "text",
-      question: "Écris ta phrase pour proposer ton service avec ton prix.",
-      placeholder: "Ex: Je peux t'aider à améliorer tes visuels pour 3 000 FCFA. Tu veux qu'on essaie ?",
-      aide: "Simple. Direct. Sans justification compliquée. Tu proposes une solution, pas une excuse.",
-      erreur: "Ne t'excuse pas de proposer un prix. Ne dis pas \"c'est peut-être trop cher mais...\". Propose avec confiance.",
-      success_message: "Parfait. Cette phrase est prête. Tu peux la dire ou l'écrire dès aujourd'hui.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch9_ex5",
-      type: "text",
-      question: "À qui vas-tu proposer ton offre aujourd'hui ?\n(Prénom ou description)",
-      placeholder: "Ex: mon ami commerçant du quartier, ma collègue qui voulait des visuels...",
-      aide: "Commence avec quelqu'un de simple — quelqu'un que tu connais déjà. Le premier client est souvent dans ton entourage.",
-      erreur: "Ne dis pas plus tard. La première vente ne se fait pas en attendant. Elle se fait en proposant.",
-      success_message: "Action lancée. Va lui envoyer ton message avec ta phrase et ton prix.",
-      obligatoire: true
+    category_chapters: {}
+  },
+  admin: {
+    reset_action: "—",
+    fields_to_reset: [],
+    audit_fields: [],
+    confirmation_required: false,
+    reason_field: {
+      label: "—",
+      placeholder: "—",
+      obligatoire: false
     }
-
-  ]
-};
-
-const CHAPTER_10 = {
-  num: 10,
-  titre: "Ton futur commence maintenant",
-  duree_estimee: "10-12 min",
-  completion_message: "Bien. Tu as terminé le parcours. Tu sais où tu vas et tu sais ce que tu dois faire. Continue chaque jour.",
-  chapter_progress_label: "Chapitre 10 · 4 exercices",
-  progression_rule: "all_exercises",
-
-  contenu: [
-
-    {
-      type: "text",
-      section: "Regard en arrière",
-      value: "Arrête-toi un instant.\n\nRegarde ce que tu viens de faire.\n\nTu es parti de :\ndoutes\nincertitudes\nflou\n\nEt aujourd'hui :\ntu as une idée\nune offre\nun message\nun prix\nune action en cours\n\nCe n'est pas rien."
-    },
-
-    {
-      type: "quote",
-      value: "Ce que tu viens de construire, beaucoup ne le font jamais."
-    },
-
-    {
-      type: "pnl_pause",
-      value: "Prends quelques secondes.\n\nRéalise le chemin que tu viens de parcourir.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je réalise ✓"
-    },
-
-    {
-      type: "text",
-      section: "Prise de conscience",
-      value: "La différence entre toi et beaucoup de personnes :\n\nTu es passé à l'action.\n\nPas parfait.\nPas facile.\nMais réel."
-    },
-
-    {
-      type: "text",
-      value: "Tu as fait ce que la plupart ne font jamais.\n\nTu as commencé.\nTu as continué.\nTu as construit quelque chose.\n\nMême imparfait — c'est réel."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch10_ex1"
-    },
-
-    {
-      type: "text",
-      value: "Observe maintenant ce qui se passe quand quelqu'un décide simplement de commencer."
-    },
-
-    {
-      type: "story",
-      section: "Déclic terrain",
-      value: "Cheikh, à Dakar, avait toujours des idées.\n\nMais il ne passait jamais à l'action.\n\nUn jour, il a décidé de tester.\n\nPetit.\nImparfait.\nMais réel.\n\nQuelques semaines plus tard :\npremiers retours\npremiers clients\nplus de confiance\n\nPas parce qu'il était meilleur que les autres.\n\nParce qu'il a commencé."
-    },
-
-    {
-      type: "quote",
-      value: "Ce n'est pas celui qui sait le plus qui réussit.\nC'est celui qui agit."
-    },
-
-    {
-      type: "text",
-      section: "La suite",
-      value: "Ce que tu as fait n'est pas une fin.\n\nC'est un début.\n\nLe vrai travail commence maintenant :\n\nrépéter\naméliorer\najuster\ncontinuer"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch10_ex2"
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch10_ex3"
-    },
-
-    {
-      type: "text",
-      section: "Engagement",
-      value: "Tu as une direction.\nTu as une action.\n\nIl reste une décision à prendre."
-    },
-
-    {
-      type: "exercise_inline",
-      ref: "ch10_ex4"
-    },
-
-    {
-      type: "text",
-      value: "À partir de maintenant, tu n'es plus quelqu'un qui cherche.\n\nTu es quelqu'un qui construit.\n\nChaque jour.\nPetit à petit.\nMais réellement."
-    },
-
-    {
-      type: "pnl_activation",
-      value: "Tu as commencé.\n\nEt tu ne vas pas t'arrêter.\n\nParce que ton futur dépend de ce que tu fais maintenant.",
-      display: "centered",
-      interaction: "button",
-      button_label: "Je continue ✓"
-    },
-
-    {
-      type: "transition",
-      value: "Tu peux maintenant continuer avec le programme complet 90 jours pour structurer et accélérer tes résultats."
-    }
-
-  ],
-
-  exercices: [
-
-    {
-      id: "ch10_ex1",
-      type: "text",
-      question: "Qu'est-ce que tu as appris sur toi pendant ce parcours ?",
-      placeholder: "Ex: que je peux agir, que j'avais peur pour rien, que je suis capable de tenir...",
-      aide: "Réfléchis à ton évolution, pas seulement aux résultats. Ce que tu as appris sur toi est aussi précieux.",
-      erreur: "Ne minimise pas ton parcours. Tu as fait quelque chose que beaucoup n'ont pas fait.",
-      success_message: "Parfait. Tu prends conscience de ton évolution.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch10_ex2",
-      type: "text",
-      question: "Où veux-tu être dans 30 jours si tu continues à ce rythme ?",
-      placeholder: "Ex: avoir 3 clients, être plus à l'aise à proposer, générer mes premiers revenus...",
-      aide: "Sois réaliste mais ambitieux. 30 jours, c'est court — vise quelque chose d'atteignable avec ce que tu fais déjà.",
-      erreur: "Ne vise pas trop loin. Concentre-toi sur le prochain mois, pas les 5 prochaines années.",
-      success_message: "Très bien. Tu as une direction.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch10_ex3",
-      type: "text",
-      question: "Quelle est la prochaine action que tu vas continuer dès demain ?",
-      placeholder: "Ex: envoyer des messages, publier sur WhatsApp, parler à des clients potentiels...",
-      aide: "Continue ce que tu as déjà commencé. Ne change pas tout — améliore ce qui fonctionne.",
-      erreur: "Ne change pas tout. Ce qui a produit un résultat, même petit, mérite d'être continué.",
-      success_message: "Parfait. Tu restes en mouvement.",
-      obligatoire: true
-    },
-
-    {
-      id: "ch10_ex4",
-      type: "text",
-      question: "Écris ton engagement :\nJe continue, même quand c'est difficile.",
-      placeholder: "Ex: Je continue chaque jour, même sans motivation.",
-      aide: "Ce chapitre n'est pas une fin. C'est un départ. Un engagement écrit tient mieux qu'une intention.",
-      erreur: "Ne dis pas je vais essayer. Décide. Un engagement flou ne tient pas.",
-      success_message: "Engagement validé. Tu ne reviens pas en arrière.",
-      obligatoire: true
-    }
-
-  ]
-};
-
-// ── QUIZ DE VALIDATION ───────────────────────────────────────
-
-const QUIZ_CONFIG = {
-  total_questions: 10,
-  passing_score: 7,
-  categories: ["mindset", "idee", "action", "vente"],
-  selection_per_category: {
-    mindset: 3,
-    idee: 2,
-    action: 3,
-    vente: 2
-  },
-  shuffle_questions: true,
-  shuffle_options: true,
-  feedback_mode: "instant",
-  points_per_question: 1,
-  max_attempts: 3,
-  retry_cooldown_hours: 24,
-  max_attempts_reached_message: "Tu as utilisé tes 3 tentatives. Contacte-nous pour obtenir un accompagnement personnalisé."
-};
-
-// ── POOL : 28 QUESTIONS — 617 400 COMBINAISONS POSSIBLES ─────
-
-const QUIZ_POOL = [
-
-  // ═══════════════════════════════════════════
-  // MINDSET — 8 questions (sélection : 3)
-  // Tests : posture, discipline, résilience
-  // ═══════════════════════════════════════════
-
-  {
-    id: "m1",
-    category: "mindset",
-    question: "Quelle est la vraie différence entre motivation et discipline ?",
-    options: [
-      "La motivation est stable, la discipline change",
-      "La discipline permet d'agir même sans motivation",
-      "Les deux sont identiques",
-      "La motivation suffit pour réussir"
-    ],
-    correct: "La discipline permet d'agir même sans motivation",
-    explanation: "La motivation varie. La discipline permet d'agir même quand elle disparaît."
-  },
-
-  {
-    id: "m2",
-    category: "mindset",
-    question: "Pourquoi attendre le bon moment pour commencer est une erreur ?",
-    options: [
-      "Parce que le bon moment n'existe pas — il se crée par l'action",
-      "Parce que c'est trop long d'attendre",
-      "Parce que tout le monde attend",
-      "Parce que c'est trop compliqué"
-    ],
-    correct: "Parce que le bon moment n'existe pas — il se crée par l'action",
-    explanation: "Le bon moment n'arrive jamais. Il est créé par l'action."
-  },
-
-  {
-    id: "m3",
-    category: "mindset",
-    question: "Que signifie vraiment passer à l'action ?",
-    options: [
-      "Lire et réfléchir longuement avant de commencer",
-      "Planifier jusqu'à être totalement prêt",
-      "Faire, même de manière imparfaite",
-      "Attendre d'avoir toutes les ressources nécessaires"
-    ],
-    correct: "Faire, même de manière imparfaite",
-    explanation: "L'action vient avant la perfection. Un résultat imparfait vaut mieux qu'un projet jamais lancé."
-  },
-
-  {
-    id: "m4",
-    category: "mindset",
-    question: "Quel est le principal blocage au démarrage d'une activité ?",
-    options: [
-      "Le manque d'argent",
-      "Le manque d'idées",
-      "Le manque de clarté et de passage à l'action",
-      "Le manque de temps"
-    ],
-    correct: "Le manque de clarté et de passage à l'action",
-    explanation: "Le vrai blocage est mental, pas matériel. La clarté vient en agissant."
-  },
-
-  {
-    id: "m5",
-    category: "mindset",
-    question: "Pourquoi la répétition est-elle plus importante que l'inspiration ?",
-    options: [
-      "Parce qu'elle permet de gagner du temps",
-      "Parce que c'est ce qui produit des résultats concrets",
-      "Parce que tout le monde répète",
-      "Parce qu'elle évite les erreurs"
-    ],
-    correct: "Parce que c'est ce qui produit des résultats concrets",
-    explanation: "Ce n'est pas l'idée brillante qui change les choses. C'est l'action répétée jusqu'à ce qu'elle fonctionne."
-  },
-
-  {
-    id: "m6",
-    category: "mindset",
-    question: "Tu proposes ton offre à quelqu'un et il refuse. Que fais-tu ?",
-    options: [
-      "Tu arrêtes de proposer pendant quelques semaines",
-      "Tu changes d'activité",
-      "Tu analyses la réaction et tu continues à proposer",
-      "Tu baisses immédiatement ton prix"
-    ],
-    correct: "Tu analyses la réaction et tu continues à proposer",
-    explanation: "Un refus n'est pas un échec. C'est une information. Chaque refus te rapproche d'un oui."
-  },
-
-  {
-    id: "m7",
-    category: "mindset",
-    question: "Tu n'as aucune envie de travailler ce soir. Que fais-tu ?",
-    options: [
-      "Tu regardes des vidéos de motivation avant de commencer",
-      "Tu attends demain pour être en forme",
-      "Tu fais quand même ton action du jour, même petite",
-      "Tu prends une pause de quelques jours pour récupérer"
-    ],
-    correct: "Tu fais quand même ton action du jour, même petite",
-    explanation: "La discipline, c'est agir sans motivation. C'est ce qui distingue ceux qui avancent."
-  },
-
-  {
-    id: "m8",
-    category: "mindset",
-    question: "Ça fait 3 semaines que tu travailles et tu n'as toujours pas de client. Quelle est la bonne réaction ?",
-    options: [
-      "Changer complètement d'activité",
-      "Faire une pause pour réfléchir",
-      "Continuer, ajuster le message, rester régulier",
-      "Investir dans la publicité payante immédiatement"
-    ],
-    correct: "Continuer, ajuster le message, rester régulier",
-    explanation: "Les premiers résultats arrivent après la régularité, pas avant. Ajuste — ne cède pas."
-  },
-
-  // ═══════════════════════════════════════════
-  // IDEE — 6 questions (sélection : 2)
-  // Tests : validation, choix, critères
-  // ═══════════════════════════════════════════
-
-  {
-    id: "i1",
-    category: "idee",
-    question: "Une bonne idée de Plan B doit avant tout être :",
-    options: [
-      "Complexe et innovante",
-      "Simple et faisable avec ce que tu as aujourd'hui",
-      "Unique au monde",
-      "Très technique"
-    ],
-    correct: "Simple et faisable avec ce que tu as aujourd'hui",
-    explanation: "Une idée simple est plus facile à lancer, à tester et à améliorer."
-  },
-
-  {
-    id: "i2",
-    category: "idee",
-    question: "Une bonne idée se trouve à l'intersection de :",
-    options: [
-      "Argent + chance",
-      "Compétence + besoin réel + marché accessible",
-      "Réseau + publicité",
-      "Temps + motivation"
-    ],
-    correct: "Compétence + besoin réel + marché accessible",
-    explanation: "Sans ces trois éléments réunis, une idée reste une idée."
-  },
-
-  {
-    id: "i3",
-    category: "idee",
-    question: "Pourquoi utiliser une matrice de décision pour choisir son idée ?",
-    options: [
-      "Pour compliquer le processus de décision",
-      "Pour choisir rationnellement l'idée la plus réaliste",
-      "Pour gagner du temps sans réfléchir",
-      "Pour éviter d'avoir trop d'idées"
-    ],
-    correct: "Pour choisir rationnellement l'idée la plus réaliste",
-    explanation: "La matrice enlève l'émotion du choix et met en avant ce qui est vraiment faisable."
-  },
-
-  {
-    id: "i4",
-    category: "idee",
-    question: "Que faut-il absolument éviter au début ?",
-    options: [
-      "Tester une idée rapidement",
-      "Changer constamment d'idée avant d'obtenir un résultat",
-      "Parler de son idée à des clients potentiels",
-      "Commencer avec une offre simple"
-    ],
-    correct: "Changer constamment d'idée avant d'obtenir un résultat",
-    explanation: "Changer d'idée à répétition empêche de voir les résultats. C'est la régularité qui révèle le potentiel."
-  },
-
-  {
-    id: "i5",
-    category: "idee",
-    question: "Quelle est la principale raison de commencer avec une offre simple ?",
-    options: [
-      "Pour paraître professionnel immédiatement",
-      "Pour tester rapidement la réaction du marché",
-      "Pour impressionner les concurrents",
-      "Pour garantir de gagner de l'argent dès le début"
-    ],
-    correct: "Pour tester rapidement la réaction du marché",
-    explanation: "On ne sait pas ce qui fonctionne avant de tester. Commencer simple permet d'apprendre vite."
-  },
-
-  {
-    id: "i6",
-    category: "idee",
-    question: "Quel est le signe concret qu'une idée mérite d'être développée ?",
-    options: [
-      "Elle est très originale et personne ne l'a jamais faite",
-      "Quelqu'un a montré un intérêt concret ou est prêt à payer",
-      "Elle est difficile à copier",
-      "Elle nécessite un investissement important"
-    ],
-    correct: "Quelqu'un a montré un intérêt concret ou est prêt à payer",
-    explanation: "Une idée validée par le marché vaut plus que mille idées validées par soi-même."
-  },
-
-  // ═══════════════════════════════════════════
-  // ACTION — 7 questions (sélection : 3)
-  // Tests : routine, terrain, premiers clients
-  // ═══════════════════════════════════════════
-
-  {
-    id: "a1",
-    category: "action",
-    question: "Quelle durée quotidienne minimum suffit pour avancer régulièrement ?",
-    options: [
-      "5 minutes",
-      "30 minutes",
-      "3 heures",
-      "Toute la journée libre"
-    ],
-    correct: "30 minutes",
-    explanation: "La régularité compte plus que la durée. 30 minutes par jour, tous les jours, produit plus que 5 heures une fois par semaine."
-  },
-
-  {
-    id: "a2",
-    category: "action",
-    question: "Pourquoi créer une routine de travail ?",
-    options: [
-      "Pour gagner du temps sur les tâches",
-      "Pour éviter de réfléchir à quoi faire",
-      "Pour être régulier sans dépendre de la motivation",
-      "Pour travailler plus longtemps chaque jour"
-    ],
-    correct: "Pour être régulier sans dépendre de la motivation",
-    explanation: "Une routine enlève les décisions inutiles. Tu n'as plus à décider si tu travailles — tu le fais."
-  },
-
-  {
-    id: "a3",
-    category: "action",
-    question: "Quelle est la clé pour tenir une routine sur le long terme ?",
-    options: [
-      "Trouver la motivation chaque matin",
-      "Définir une action simple, précise et répétable chaque jour",
-      "Avoir des objectifs très ambitieux",
-      "Changer son action chaque semaine pour rester intéressé"
-    ],
-    correct: "Définir une action simple, précise et répétable chaque jour",
-    explanation: "Un bon système enlève les décisions inutiles. Tu ne te demandes plus quoi faire — tu le fais."
-  },
-
-  {
-    id: "a4",
-    category: "action",
-    question: "Quel est le but principal du premier test terrain ?",
-    options: [
-      "Gagner beaucoup d'argent rapidement",
-      "Observer la réaction réelle du marché",
-      "Se perfectionner avant de proposer",
-      "Créer un produit parfait"
-    ],
-    correct: "Observer la réaction réelle du marché",
-    explanation: "Tester, c'est apprendre. Chaque réaction — même négative — est une information précieuse."
-  },
-
-  {
-    id: "a5",
-    category: "action",
-    question: "Que signifie le silence d'un client potentiel ?",
-    options: [
-      "Un échec définitif",
-      "Un rejet personnel",
-      "Une information : ajuster le message ou la cible",
-      "Un problème insurmontable"
-    ],
-    correct: "Une information : ajuster le message ou la cible",
-    explanation: "Le silence indique que quelque chose dans le message ou la cible est à ajuster — pas que l'idée est mauvaise."
-  },
-
-  {
-    id: "a6",
-    category: "action",
-    question: "Qu'apporte un témoignage client avant tout ?",
-    options: [
-      "De l'argent supplémentaire directement",
-      "De la crédibilité visible pour les clients suivants",
-      "Du temps gagné",
-      "De nouvelles idées de produits"
-    ],
-    correct: "De la crédibilité visible pour les clients suivants",
-    explanation: "Les gens font confiance aux autres clients, pas aux promesses. Un témoignage travaille pour toi en permanence."
-  },
-
-  {
-    id: "a7",
-    category: "action",
-    question: "Pourquoi commencer avec 3 à 5 personnes de confiance ?",
-    options: [
-      "Pour avoir un grand réseau rapidement",
-      "Pour tester sans pression et observer les premières réactions",
-      "Pour gagner plus vite",
-      "Pour éviter les concurrents"
-    ],
-    correct: "Pour tester sans pression et observer les premières réactions",
-    explanation: "Les premières personnes permettent de tester et d'ajuster avant de s'adresser à un marché plus large."
-  },
-
-  // ═══════════════════════════════════════════
-  // VENTE — 7 questions (sélection : 2)
-  // Tests : message, prix, proposition
-  // ═══════════════════════════════════════════
-
-  {
-    id: "v1",
-    category: "vente",
-    question: "Pourquoi ton message doit-il être compris en moins de 5 secondes ?",
-    options: [
-      "Pour impressionner le client",
-      "Parce qu'un message compris immédiatement déclenche l'action",
-      "Pour paraître plus professionnel",
-      "Pour être plus court que la concurrence"
-    ],
-    correct: "Parce qu'un message compris immédiatement déclenche l'action",
-    explanation: "Si la personne doit réfléchir pour comprendre, elle passe. La clarté crée l'engagement."
-  },
-
-  {
-    id: "v2",
-    category: "vente",
-    question: "Que doit contenir un bon message de vente ?",
-    options: [
-      "Beaucoup d'informations pour tout expliquer",
-      "Une promesse floue mais attractive",
-      "Pour qui, quel résultat, quelle solution",
-      "Des détails techniques sur le service"
-    ],
-    correct: "Pour qui, quel résultat, quelle solution",
-    explanation: "Ces 3 éléments répondent à la question du client : est-ce fait pour moi ?"
-  },
-
-  {
-    id: "v3",
-    category: "vente",
-    question: "Pourquoi les gens paient-ils pour un service ?",
-    options: [
-      "Pour le prix compétitif",
-      "Pour la qualité perçue",
-      "Pour la solution à un problème réel",
-      "Pour la marque ou la notoriété"
-    ],
-    correct: "Pour la solution à un problème réel",
-    explanation: "Les gens ne paient pas un diplôme ou une expérience. Ils paient le résultat que tu leur apportes."
-  },
-
-  {
-    id: "v4",
-    category: "vente",
-    question: "Quel est le bon prix quand on démarre ?",
-    options: [
-      "Le plus élevé possible pour paraître sérieux",
-      "Le plus bas possible pour attirer le maximum",
-      "Un prix test réaliste que tu peux proposer avec confiance",
-      "Un prix calculé au centime près après une étude de marché"
-    ],
-    correct: "Un prix test réaliste que tu peux proposer avec confiance",
-    explanation: "Tu n'as pas besoin du prix parfait. Tu as besoin d'un prix que tu peux dire à voix haute, sans hésiter."
-  },
-
-  {
-    id: "v5",
-    category: "vente",
-    question: "Quelle est la première étape concrète pour obtenir une vente ?",
-    options: [
-      "Créer un site web professionnel",
-      "Lancer une campagne publicitaire",
-      "Proposer directement son offre à quelqu'un",
-      "Attendre que les clients viennent naturellement"
-    ],
-    correct: "Proposer directement son offre à quelqu'un",
-    explanation: "La première vente ne vient pas d'un site ou d'une publicité. Elle vient d'une proposition directe."
-  },
-
-  {
-    id: "v6",
-    category: "vente",
-    question: "Que fais-tu si personne ne répond à ton premier message ?",
-    options: [
-      "Tu arrêtes de proposer",
-      "Tu ajustes le message et tu réessaies",
-      "Tu baisses ton prix immédiatement",
-      "Tu changes d'activité"
-    ],
-    correct: "Tu ajustes le message et tu réessaies",
-    explanation: "Le silence n'est pas un rejet — c'est une information. Ajuste le message ou la cible, et continue."
-  },
-
-  {
-    id: "v7",
-    category: "vente",
-    question: "Pour quoi les clients paient-ils réellement ?",
-    options: [
-      "Pour ton expérience et tes années de pratique",
-      "Pour ton diplôme et ta formation",
-      "Pour le résultat concret que tu leur apportes",
-      "Pour ta notoriété sur les réseaux sociaux"
-    ],
-    correct: "Pour le résultat concret que tu leur apportes",
-    explanation: "Les gens ne paient pas ton parcours. Ils paient ce que tu leur apportes comme solution."
   }
+}
 
-];
+// ── EXPORT ────────────────────────────────────────────────────
 
-// ── RÉSULTATS — 3 NIVEAUX + FEEDBACK PAR CATÉGORIE ───────────
-
-const QUIZ_RESULTS = {
-
-  success: {
-    min_score: 7,
-    title: "Parcours validé.",
-    message: "Tu as compris les bases. Tu es prêt(e) à passer à l'étape suivante.",
-    action: "unlock_offre_2",
-    cta_label: "Accéder au programme 90 jours →"
-  },
-
-  near_miss: {
-    score_range: [5, 6],
-    title: "Tu es presque là.",
-    message: "Il te manque peu de chose. Revois les chapitres liés à {{weak_categories}} et réessaie dans 24 heures.",
-    action: "retry",
-    cta_label: "Revoir et réessayer"
-  },
-
-  fail: {
-    score_range: [0, 4],
-    title: "Continue à apprendre.",
-    message: "Les bases sont là — prends le temps de les ancrer. Revois le parcours depuis le début et réessaie.",
-    action: "restart_book",
-    cta_label: "Revoir le parcours"
-  },
-
-  // Mapping catégorie → chapitres à revoir (injecté dans {{weak_categories}})
-  category_chapters: {
-    mindset: "Chapitres 1, 3, 5, 7",
-    idee: "Chapitres 2, 3",
-    action: "Chapitres 5, 6, 7",
-    vente: "Chapitres 8, 9"
-  }
-
-};
-
-// ── ADMIN — RÉINITIALISATION MANUELLE DES TENTATIVES ─────────
-
-// Objectif : permettre à l'admin de débloquer un utilisateur
-// sans toucher au reste de son compte (progression livre, exercices, etc.)
-//
-// Cas d'usage :
-// - Testeur bloqué injustement (bug, problème de connexion)
-// - Contenu du quiz corrigé après que l'utilisateur ait échoué
-// - Accompagnement personnalisé Coach Redouane
-//
-// Champs Supabase concernés (table : quiz_attempts) :
-// - attempt_count       → remettre à 0
-// - last_attempt_at     → remettre à null
-// - is_locked           → remettre à false
-// - admin_reset_at      → horodatage de la réinitialisation (audit)
-// - admin_reset_by      → id de l'admin qui a effectué l'action (audit)
-// - admin_reset_reason  → motif saisi par l'admin (optionnel, texte libre)
-//
-// Action admin (dashboard) :
-// - Rechercher l'utilisateur par email
-// - Afficher son statut quiz : tentatives utilisées / score dernier essai / date dernier essai
-// - Bouton "Réinitialiser les tentatives"
-// - Modal de confirmation avec champ "Motif" (optionnel)
-// - Confirmation → écriture en base + log d'audit
-
-const QUIZ_ADMIN = {
-  reset_action: "quiz_attempts_reset",
-  fields_to_reset: [
-    { field: "attempt_count",    value: 0    },
-    { field: "last_attempt_at",  value: null },
-    { field: "is_locked",        value: false }
-  ],
-  audit_fields: [
-    "admin_reset_at",
-    "admin_reset_by",
-    "admin_reset_reason"
-  ],
-  confirmation_required: true,
-  reason_field: {
-    label: "Motif de la réinitialisation",
-    placeholder: "Ex: testeur bloqué, contenu corrigé, accompagnement coach...",
-    obligatoire: false
-  }
-};
-
-// ── OBJET RACINE ─────────────────────────────────────────────
-
-export const PLAN_B_CONTENT = {
+const PLAN_B_CONTENT = {
   intro: INTRO,
   chapters: [
     CHAPTER_1,
@@ -2282,60 +492,10 @@ export const PLAN_B_CONTENT = {
     CHAPTER_5,
     CHAPTER_6,
     CHAPTER_7,
-    CHAPTER_8,
-    CHAPTER_9,
-    CHAPTER_10,
   ],
-  quiz: {
-    config: QUIZ_CONFIG,
-    pool: QUIZ_POOL,
-    results: QUIZ_RESULTS,
-    admin: QUIZ_ADMIN,
-  },
+  quiz: QUIZ
 }
 
-// ── IDS DES EXERCICES OBLIGATOIRES ───────────────────────────
-// Utilisé pour le check de déblocage quiz :
-// quiz débloqué si exercise_responses contient tous ces IDs pour l'utilisateur
+const REQUIRED_EXERCISE_IDS = []
 
-export const REQUIRED_EXERCISE_IDS = [
-  "ch1_ex1",
-  "ch1_ex2",
-  "ch1_ex3",
-  "ch2_ex1",
-  "ch2_ex2",
-  "ch2_ex3",
-  "ch3_ex1",
-  "ch3_ex2",
-  "ch3_ex3",
-  "ch4_ex1",
-  "ch4_ex2",
-  "ch4_ex3",
-  "ch4_ex4",
-  "ch4_ex5",
-  "ch5_ex1",
-  "ch5_ex2",
-  "ch5_ex3",
-  "ch5_ex4",
-  "ch6_ex1",
-  "ch6_ex2",
-  "ch6_ex3",
-  "ch6_ex4",
-  "ch7_ex1",
-  "ch7_ex2",
-  "ch7_ex3",
-  "ch7_ex4",
-  "ch8_ex1",
-  "ch8_ex2",
-  "ch8_ex3",
-  "ch8_ex4",
-  "ch9_ex1",
-  "ch9_ex2",
-  "ch9_ex3",
-  "ch9_ex4",
-  "ch9_ex5",
-  "ch10_ex1",
-  "ch10_ex2",
-  "ch10_ex3",
-  "ch10_ex4"
-]
+module.exports = { PLAN_B_CONTENT, REQUIRED_EXERCISE_IDS }

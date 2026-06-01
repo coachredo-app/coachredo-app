@@ -8,7 +8,7 @@ export const REQUIRED_EXERCISE_IDS = _IDS as string[]
 
 // ── HELPERS ──────────────────────────────────────────────────
 
-/** Récupère un chapitre par numéro (1-10) */
+/** Récupère un chapitre par numéro (1-7) */
 export function getChapter(num: number): Chapter | undefined {
   return PLAN_B_CONTENT.chapters.find(ch => ch.num === num)
 }

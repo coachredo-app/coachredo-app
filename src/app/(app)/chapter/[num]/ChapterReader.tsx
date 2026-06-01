@@ -18,7 +18,7 @@ export default function ChapterReader({ chapter }: { chapter: Chapter }) {
   }
 
   // Lock screen after hydration
-  if (mounted && !isChapterUnlocked(chapter.num, progress) && chapter.num !== 1) {
+  if (mounted && chapter.num !== 1 && !isChapterUnlocked(chapter.num, progress)) {
     return (
       <main className="h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#0a0d1a' }}>
         <div className="text-center max-w-xs">
@@ -41,8 +41,8 @@ export default function ChapterReader({ chapter }: { chapter: Chapter }) {
     )
   }
 
-  const nextHref = chapter.num < 10 ? `/chapter/${chapter.num + 1}` : '/quiz'
-  const nextLabel = chapter.num < 10 ? `Chapitre ${chapter.num + 1} →` : 'Passer au Quiz →'
+  const nextHref = chapter.num < 7 ? `/chapter/${chapter.num + 1}` : '/transition'
+  const nextLabel = chapter.num < 7 ? `Chapitre ${chapter.num + 1} →` : 'Continuer →'
   const backHref = chapter.num === 1 ? '/intro' : `/chapter/${chapter.num - 1}`
   const backLabel = chapter.num === 1 ? 'Intro' : `Chapitre ${chapter.num - 1}`
 
