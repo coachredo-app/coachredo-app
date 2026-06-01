@@ -16,17 +16,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
+    const appUrl = window.location.origin
     const emailRedirectTo = `${appUrl}/${locale}/auth/callback`
 
     const { error: authError } = await supabase.auth.signInWithOtp({
