@@ -5,7 +5,7 @@ import { routing } from './lib/i18n/routing'
 
 /** Routes du reader existant (legacy — pas de i18n) */
 const READER_ROUTES = ['/resume', '/intro', '/chapter', '/quiz', '/access']
-const READER_PUBLIC = ['/login', '/signup', '/access']
+const READER_PUBLIC = ['/login', '/signup', '/access', '/reset-password']
 const READER_AUTH = ['/login', '/signup']
 
 /** Segments de la plateforme nécessitant une auth */
@@ -27,7 +27,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/transition') ||
     pathname.startsWith('/bilan') ||
     pathname === '/login' ||
-    pathname === '/signup'
+    pathname === '/signup' ||
+    pathname === '/reset-password'
 
   if (isAppRoute) {
     let supabaseResponse = NextResponse.next({ request })
