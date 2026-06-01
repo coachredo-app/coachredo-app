@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, BookOpen, User } from 'lucide-react'
+import { LayoutDashboard, BookOpen, User, ShieldCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface BottomNavProps {
   locale: string
+  isAdmin?: boolean
 }
 
 interface NavItem {
@@ -15,7 +16,7 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>
 }
 
-export function BottomNav({ locale }: BottomNavProps) {
+export function BottomNav({ locale, isAdmin }: BottomNavProps) {
   const pathname = usePathname()
 
   const items: NavItem[] = [
@@ -34,6 +35,11 @@ export function BottomNav({ locale }: BottomNavProps) {
       label: 'Compte',
       icon: User,
     },
+    ...(isAdmin ? [{
+      href: `/${locale}/admin`,
+      label: 'Admin',
+      icon: ShieldCheck,
+    }] : []),
   ]
 
   return (

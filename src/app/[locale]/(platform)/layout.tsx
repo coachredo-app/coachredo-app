@@ -23,10 +23,12 @@ export default async function PlatformLayout({
     redirect(`/${locale}/auth/login`)
   }
 
+  const isAdmin = user.email === process.env.ADMIN_EMAIL
+
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar desktop — masquée sur mobile */}
-      <Sidebar locale={locale} />
+      <Sidebar locale={locale} isAdmin={isAdmin} />
 
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col lg:ml-60">
@@ -36,7 +38,7 @@ export default async function PlatformLayout({
       </div>
 
       {/* Bottom nav mobile — masquée sur desktop */}
-      <BottomNav locale={locale} />
+      <BottomNav locale={locale} isAdmin={isAdmin} />
     </div>
   )
 }

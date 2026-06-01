@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LayoutDashboard, BookOpen, User, LogOut } from 'lucide-react'
+import { LayoutDashboard, BookOpen, User, LogOut, ShieldCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SidebarProps {
   locale: string
+  isAdmin?: boolean
 }
 
 interface NavItem {
@@ -16,7 +17,7 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>
 }
 
-export function Sidebar({ locale }: SidebarProps) {
+export function Sidebar({ locale, isAdmin }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -31,6 +32,11 @@ export function Sidebar({ locale }: SidebarProps) {
       label: 'Plan B Rentable',
       icon: BookOpen,
     },
+    ...(isAdmin ? [{
+      href: `/${locale}/admin`,
+      label: 'Administration',
+      icon: ShieldCheck,
+    }] : []),
   ]
 
   const bottomItems: NavItem[] = [
