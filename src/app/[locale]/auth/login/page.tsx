@@ -27,7 +27,8 @@ export default function LoginPage() {
     )
 
     const appUrl = window.location.origin
-    const emailRedirectTo = `${appUrl}/${locale}/auth/callback`
+    const next = new URLSearchParams(window.location.search).get('next') ?? `/${locale}/dashboard`
+    const emailRedirectTo = `${appUrl}/${locale}/auth/callback?next=${encodeURIComponent(next)}`
 
     const { error: authError } = await supabase.auth.signInWithOtp({
       email,
