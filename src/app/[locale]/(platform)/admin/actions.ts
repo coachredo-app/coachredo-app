@@ -13,7 +13,13 @@ export async function deleteUser(userId: string, locale: string) {
 
   const service = createServiceClient()
 
-  // Supprimer toutes les tables liées avant l'utilisateur auth
+  // Libérer le code d'accès lié (évite la contrainte FK)
+  await service
+    .from('access_codes')
+    .update({ used_by: null, used_at: null })
+    .eq('used_by', userId)
+
+  // Supprimer les tables liées
   await service.from('book_access').delete().eq('user_id', userId)
   await service.from('profiles').delete().eq('id', userId)
 

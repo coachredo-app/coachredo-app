@@ -147,14 +147,6 @@ export default function BlockRenderer({
           <span className="text-xs tabular-nums shrink-0" style={{ color: '#4b5563' }}>
             {stepIndex + 1} / {totalSteps}
           </span>
-          <button
-            onClick={toggleSound}
-            title={muted ? 'Activer la musique' : 'Couper la musique'}
-            className="text-base shrink-0"
-            style={{ opacity: muted ? 0.35 : 1, color: GOLD }}
-          >
-            {muted ? '🔇' : '🎵'}
-          </button>
           <Link
             href="/fr/dashboard"
             title="Mon espace"
