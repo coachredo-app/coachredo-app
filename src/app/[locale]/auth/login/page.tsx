@@ -26,13 +26,11 @@ export default function LoginPage() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
     const next = new URLSearchParams(window.location.search).get('next') ?? `/${locale}/dashboard`
-    const emailRedirectTo = `${appUrl}/${locale}/auth/callback?next=${encodeURIComponent(next)}`
 
     const { error: authError } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo },
+      options: { shouldCreateUser: false },
     })
 
     setLoading(false)
