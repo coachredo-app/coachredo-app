@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useReader } from '@/lib/reader/context'
 import type {
   ContentBlock,
@@ -154,6 +155,14 @@ export default function BlockRenderer({
           >
             {muted ? '🔇' : '🎵'}
           </button>
+          <Link
+            href="/fr/dashboard"
+            title="Mon espace"
+            className="text-xs shrink-0"
+            style={{ color: '#4b5563' }}
+          >
+            ⌂
+          </Link>
         </div>
       </div>
 
