@@ -42,7 +42,7 @@ export default function LoginPage() {
       return
     }
 
-    router.push(`/${locale}/auth/verify`)
+    router.push(`/${locale}/auth/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}`)
   }
 
   return (
