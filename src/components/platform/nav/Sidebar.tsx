@@ -28,7 +28,7 @@ export function Sidebar({ locale, isAdmin }: SidebarProps) {
       icon: LayoutDashboard,
     },
     {
-      href: `/${locale}/dashboard`,
+      href: '/resume',
       label: 'Plan B Rentable',
       icon: BookOpen,
     },

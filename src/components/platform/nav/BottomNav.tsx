@@ -26,7 +26,7 @@ export function BottomNav({ locale, isAdmin }: BottomNavProps) {
       icon: LayoutDashboard,
     },
     {
-      href: `/${locale}/dashboard`,
+      href: '/resume',
       label: 'Plan B',
       icon: BookOpen,
     },

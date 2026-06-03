@@ -13,8 +13,12 @@ export async function deleteUser(userId: string, locale: string) {
 
   const service = createServiceClient()
 
+  // Supprimer toutes les tables liées avant l'utilisateur auth
   await service.from('book_access').delete().eq('user_id', userId)
-  await service.auth.admin.deleteUser(userId)
+  await service.from('profiles').delete().eq('id', userId)
+
+  const { error } = await service.auth.admin.deleteUser(userId)
+  if (error) throw new Error(error.message)
 
   revalidatePath(`/${locale}/admin`)
 }
