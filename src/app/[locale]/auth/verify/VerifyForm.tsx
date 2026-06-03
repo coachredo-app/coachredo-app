@@ -91,8 +91,8 @@ export default function VerifyForm({ email, next, locale }: Props) {
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
-                    maxLength={6}
-                    placeholder="123456"
+                    maxLength={8}
+                    placeholder="12345678"
                     value={token}
                     onChange={(e) => setToken(e.target.value.replace(/\D/g, ''))}
                     className={cn(
