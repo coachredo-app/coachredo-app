@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { CopyCodeButton } from './codes/CopyCodeButton'
+import { DeleteUserButton } from './DeleteUserButton'
 import { cn } from '@/lib/utils'
 
 interface AdminPageProps {
@@ -133,6 +134,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
                   <th className="text-left px-5 py-3 text-cr-text-secondary font-medium">Accès</th>
                   <th className="text-left px-5 py-3 text-cr-text-secondary font-medium">Code</th>
                   <th className="text-left px-5 py-3 text-cr-text-secondary font-medium whitespace-nowrap">Activé le</th>
+                  <th className="px-5 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-cr-border">
@@ -162,6 +164,9 @@ export default async function AdminPage({ params }: AdminPageProps) {
                     </td>
                     <td className="px-5 py-3 text-cr-text-secondary whitespace-nowrap">
                       {fmt(u.accessGrantedAt)}
+                    </td>
+                    <td className="px-5 py-3 text-right">
+                      <DeleteUserButton userId={u.id} email={u.email} locale={locale} />
                     </td>
                   </tr>
                 ))}
