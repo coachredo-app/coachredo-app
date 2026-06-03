@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { deleteUser } from './actions'
 
 interface Props {
@@ -10,13 +11,19 @@ interface Props {
 }
 
 export function DeleteUserButton({ userId, email, locale }: Props) {
+  const router = useRouter()
   const [confirming, setConfirming] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   async function handleDelete() {
     setLoading(true)
+    setError('')
     try {
       await deleteUser(userId, locale)
+      router.refresh()
+    } catch (e) {
+      setError('Erreur')
     } finally {
       setLoading(false)
       setConfirming(false)
@@ -47,11 +54,14 @@ export function DeleteUserButton({ userId, email, locale }: Props) {
   }
 
   return (
-    <button
-      onClick={() => setConfirming(true)}
-      className="text-xs text-cr-text-muted hover:text-red-500 transition-colors"
-    >
-      Supprimer
-    </button>
+    <div className="flex items-center gap-2">
+      {error && <span className="text-xs text-red-500">{error}</span>}
+      <button
+        onClick={() => setConfirming(true)}
+        className="text-xs text-cr-text-muted hover:text-red-500 transition-colors"
+      >
+        Supprimer
+      </button>
+    </div>
   )
 }
