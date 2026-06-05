@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { loadBilan, saveBilanResponse, markBilanCompleted } from '@/lib/reader/bilan-storage'
+import { loadBilanFromSupabase, syncBilanResponse, markBilanCompletedInSupabase } from '@/lib/reader/bilan-sync'
 
 const GOLD = '#c9a84c'
 
@@ -121,10 +122,14 @@ export default function BilanPage() {
   const [draft, setDraft] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Charger les réponses existantes au montage
+  // Charger les réponses au montage — localStorage d'abord, puis merge Supabase
   useEffect(() => {
-    const data = loadBilan()
-    setResponses(data.responses)
+    const local = loadBilan()
+    setResponses(local.responses)
+
+    loadBilanFromSupabase().then(remote => {
+      setResponses(prev => ({ ...prev, ...remote }))
+    })
   }, [])
 
   // Fermer le champ à chaque changement de step
@@ -173,11 +178,13 @@ export default function BilanPage() {
       delete next[step.id]
       return next
     })
+    syncBilanResponse(step.id, step.famille, trimmed)
   }
 
   function handleNext() {
     if (isLast) {
       markBilanCompleted()
+      markBilanCompletedInSupabase()
       router.push('/bilan/confirmation')
     } else {
       setIndex(i => i + 1)

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { CopyCodeButton } from './codes/CopyCodeButton'
 import { DeleteUserButton } from './DeleteUserButton'
+import { BilanUserCard } from './BilanUserCard'
 import { cn } from '@/lib/utils'
 
 interface AdminPageProps {
@@ -28,7 +29,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
 
   const service = createServiceClient()
 
-  const [usersResult, codesResult, accessResult] = await Promise.all([
+  const [usersResult, codesResult, accessResult, bilanResult, profilesResult] = await Promise.all([
     service.auth.admin.listUsers({ perPage: 1000 }),
     service
       .from('access_codes')
@@ -38,16 +39,38 @@ export default async function AdminPage({ params }: AdminPageProps) {
     service
       .from('book_access')
       .select('user_id, has_access, access_granted_at'),
+    service
+      .from('bilan_responses')
+      .select('user_id, question_id, famille, response, updated_at')
+      .order('updated_at', { ascending: true }),
+    service
+      .from('profiles')
+      .select('id, bilan_completed_at'),
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const authUsers: any[] = (usersResult.data as any)?.users ?? []
   const codes = codesResult.data ?? []
   const accessRows = accessResult.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bilanRows: any[] = bilanResult.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const profiles: any[] = profilesResult.data ?? []
 
   const accessByUser = Object.fromEntries(accessRows.map(r => [r.user_id, r]))
   const codeByUser = Object.fromEntries(
     codes.filter(c => c.used_by).map(c => [c.used_by, c])
+  )
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bilanByUser = bilanRows.reduce<Record<string, any[]>>((acc, r) => {
+    if (!acc[r.user_id]) acc[r.user_id] = []
+    acc[r.user_id].push(r)
+    return acc
+  }, {})
+
+  const completedAtByUser = Object.fromEntries(
+    profiles.filter(p => p.bilan_completed_at).map(p => [p.id, p.bilan_completed_at])
   )
 
   const availableCodes = codes.filter(c => !c.used_by)
@@ -134,6 +157,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
                   <th className="text-left px-5 py-3 text-cr-text-secondary font-medium">Accès</th>
                   <th className="text-left px-5 py-3 text-cr-text-secondary font-medium">Code</th>
                   <th className="text-left px-5 py-3 text-cr-text-secondary font-medium whitespace-nowrap">Activé le</th>
+                  <th className="text-left px-5 py-3 text-cr-text-secondary font-medium">Bilan</th>
                   <th className="px-5 py-3"></th>
                 </tr>
               </thead>
@@ -164,6 +188,18 @@ export default async function AdminPage({ params }: AdminPageProps) {
                     </td>
                     <td className="px-5 py-3 text-cr-text-secondary whitespace-nowrap">
                       {fmt(u.accessGrantedAt)}
+                    </td>
+                    <td className="px-5 py-3 whitespace-nowrap">
+                      {(() => {
+                        const count = bilanByUser[u.id]?.length ?? 0
+                        const done = !!completedAtByUser[u.id]
+                        if (count === 0) return <span className="text-cr-text-muted">—</span>
+                        return (
+                          <span className={done ? 'text-success font-medium' : 'text-cr-text-secondary'}>
+                            {count}/13{done ? ' ✓' : ''}
+                          </span>
+                        )
+                      })()}
                     </td>
                     <td className="px-5 py-3 text-right">
                       <DeleteUserButton userId={u.id} email={u.email} locale={locale} />
@@ -201,6 +237,30 @@ export default async function AdminPage({ params }: AdminPageProps) {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Bilans de Clarté */}
+      {Object.keys(bilanByUser).length > 0 && (
+        <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">
+          <div className="px-5 py-4 border-b border-cr-border">
+            <h2 className="font-semibold text-cr-text">
+              Bilans de Clarté ({Object.keys(bilanByUser).length})
+            </h2>
+            <p className="text-xs text-cr-text-muted mt-0.5">Réponses des utilisateurs — cliquer pour développer</p>
+          </div>
+          <div className="p-4 space-y-3">
+            {userRows
+              .filter(u => bilanByUser[u.id])
+              .map(u => (
+                <BilanUserCard
+                  key={u.id}
+                  email={u.email}
+                  responses={bilanByUser[u.id]}
+                  completedAt={completedAtByUser[u.id] ?? null}
+                />
+              ))}
           </div>
         </div>
       )}
