@@ -129,6 +129,16 @@ export default function BilanPage() {
 
     loadBilanFromSupabase().then(remote => {
       setResponses(prev => ({ ...prev, ...remote }))
+
+      // Sync vers Supabase les réponses locales pas encore remontées
+      Object.entries(local.responses).forEach(([qId, value]) => {
+        if (!remote[qId] && value) {
+          const step = STEPS.find(s => s.kind === 'question' && s.id === qId)
+          if (step && step.kind === 'question') {
+            syncBilanResponse(qId, step.famille, value)
+          }
+        }
+      })
     })
   }, [])
 
