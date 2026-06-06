@@ -1,7 +1,6 @@
 # Introduction
 
-> **STATUT : VERSION VALIDÉE** — 6 juin 2026.
-> Note : dernière phrase ("Ce livre est écrit pour toi.") en suspens — décision de l'auteur.
+> **STATUT : VERSION DÉFINITIVE VERROUILLÉE** — 6 juin 2026.
 
 ---
 
@@ -26,6 +25,3 @@ Ce livre essaie de créer les conditions de cette clarté. Pas en te disant quoi
 Si tu lis ces lignes, tu as probablement quelque chose en tête depuis un moment. Un projet en attente. Une direction entrevue. Une insatisfaction qui revient régulièrement, sans que tu aies encore trouvé quoi en faire exactement.
 
 Tu n'es pas seul dans cette situation. Et le fait que ça dure depuis un moment ne dit rien de ta capacité à en sortir.
-
-<!-- DÉCISION EN SUSPENS : conserver ou supprimer la ligne suivante -->
-*Ce livre est écrit pour toi.*
