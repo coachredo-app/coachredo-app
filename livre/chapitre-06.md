@@ -1,6 +1,7 @@
 # Chapitre 6 — Commencer avant d'être prêt
 
-> **STATUT : VERSION VALIDÉE** — 6 juin 2026.
+> **STATUT : VERSION DÉFINITIVE VALIDÉE** — 6 juin 2026.
+> Passage personnel enrichi — "série de fois suivantes".
 
 ---
 
@@ -28,7 +29,13 @@ Une prestation rendue régulièrement, une compétence facturée de temps en tem
 
 C'est déjà quelque chose. Même si ça ne ressemble pas encore à ce qu'on avait imaginé.
 
-Il y a eu des mois comme ça. Quelque chose en cours, sans encore savoir si ça allait vraiment devenir quelque chose. Je continuais.
+Il y a eu des mois comme ça.
+
+Quelque chose en cours, sans encore savoir si ça allait vraiment devenir quelque chose. Des échanges qu'on avait du mal à appeler du travail. Des retours qu'on notait quelque part sans savoir encore pourquoi. Une façon de faire qui se précisait lentement, à force de répétitions, sans qu'aucun des deux — ni celui qu'on accompagnait ni soi-même — n'ait encore posé de nom sur ce que c'était exactement.
+
+Ce n'était pas une méthode. Ce n'était pas encore un métier. Mais c'était réel, et c'était à moi.
+
+Je continuais parce que quelque chose répondait — pas toujours clairement, pas toujours comme prévu, mais assez pour justifier la prochaine fois. C'est souvent comme ça que les choses commencent vraiment. Pas avec une décision nette, mais avec une série de fois suivantes.
 
 Commencer avant d'être prêt ne signifie pas commencer sans réfléchir. Ça signifie ne pas confondre la réflexion avec l'attente, ni la prudence avec l'immobilité.
 
