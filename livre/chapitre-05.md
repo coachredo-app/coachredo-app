@@ -1,6 +1,7 @@
 # Chapitre 5 — Les opportunités ne ressemblent pas toujours à ce qu'on imagine
 
-> **STATUT : VERSION VALIDÉE** — 6 juin 2026.
+> **STATUT : VERSION DÉFINITIVE VALIDÉE** — 6 juin 2026.
+> Second exemple ajouté — friction interne / compétence naturelle.
 
 ---
 
@@ -24,9 +25,13 @@ Il a commencé à l'organiser. Simplement. Sans grande infrastructure, sans capi
 
 Ce n'était pas une idée brillante. C'était une observation qu'il avait faite pendant des mois, avant de décider de faire quelque chose avec.
 
-Une opportunité est souvent un problème que quelqu'un a décidé de prendre au sérieux.
+Il y a aussi des frictions plus proches de soi.
 
-Ça peut aussi être un étudiant qui aide régulièrement ses camarades à naviguer dans des démarches que personne n'a encore organisées pour eux — et qui réalise que cette capacité à trouver, synthétiser, rendre accessible ce que d'autres cherchent en vain, ça vaut quelque chose.
+Quelqu'un qui a passé des années à aider ses proches à naviguer dans des situations que les autres trouvaient complexes — un dossier à monter, une situation à démêler, une démarche que tout le monde redoutait et que personne n'arrivait à lire correctement. Il le faisait naturellement, sans y penser. Et puis, à force d'entendre les mêmes questions revenir, il a compris que ce qui lui semblait évident ne l'était pas pour tout le monde — et que cette capacité à rendre accessible ce qui est opaque pouvait valoir quelque chose.
+
+La friction qu'il avait vue n'était pas dans un marché. Elle était dans le quotidien des gens autour de lui.
+
+Une opportunité est souvent un problème que quelqu'un a décidé de prendre au sérieux.
 
 Ce qui change quand on commence à regarder avec cette question — *quel problème est-ce que j'observe régulièrement, sans qu'il soit encore bien résolu ?* — c'est qu'on cesse de chercher une idée. On commence à observer. On s'interroge sur ce qui complique inutilement la vie des gens autour de soi. Sur ce qu'ils font de façon détournée alors que ça pourrait être direct. Sur les connexions qui n'existent pas encore entre des choses qui, pourtant, existent déjà.
 
