@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan B Rentable — Gabarit intérieur v1</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ivoire:  #fffdf7;
+      --bleu:    #0a0d1a;
+      --or:      #c9a84c;
+      --texte:   #1c1917;
+      --texte-dim: #4a4540;
+      --rule:    rgba(201,168,76,0.35);
+      --ligne-ecriture: rgba(0,0,0,0.1);
+    }
+
+    body {
+      background: #e8e4da;
+      min-height: 100vh;
+      padding: 48px 32px 64px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--texte);
+    }
+
+    h1 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(28,25,23,0.35);
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    /* ── Grille de pages ── */
+    .galerie {
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(28,25,23,0.35);
+      margin-bottom: 16px;
+    }
+
+    /* ── Page individuelle ── */
+    .page {
+      background: var(--ivoire);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
+      position: relative;
+    }
+
+    /* Format 14×21cm → à l'écran : 420×630px (3px/mm) */
+    .page-std {
+      width: 420px;
+      min-height: 630px;
+      padding: 54px 44px 60px 56px;  /* top | ext | bot | int(gouttière) */
+    }
+
+    /* ── SPREAD : deux pages en regard ── */
+    .spread {
+      display: flex;
+      gap: 0;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    }
+
+    .spread .page {
+      box-shadow: none;
+    }
+
+    .spread .page-left {
+      width: 420px;
+      min-height: 630px;
+      padding: 54px 56px 60px 44px;  /* int à droite */
+      border-right: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .spread .page-right {
+      width: 420px;
+      min-height: 630px;
+      padding: 54px 44px 60px 56px;
+    }
+
+    /* ══════════════════════════════
+       ÉLÉMENTS TYPOGRAPHIQUES
+    ══════════════════════════════ */
+
+    /* Numéro de chapitre */
+    .ch-num {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--or);
+      margin-bottom: 32px;
+      display: block;
+    }
+
+    /* Titre de chapitre */
+    .ch-titre {
+      font-family: 'DM Serif Display', serif;
+      font-size: 30px;
+      line-height: 1.12;
+      color: var(--bleu);
+      margin-bottom: 40px;
+      max-width: 280px;
+    }
+
+    /* Rule décorative sous le titre */
+    .ch-rule {
+      width: 32px;
+      height: 2px;
+      background: var(--or);
+      opacity: 0.5;
+      margin-bottom: 36px;
+    }
+
+    /* Corps du texte */
+    .corps {
+      font-family: 'EB Garamond', serif;
+      font-size: 11.5px;
+      line-height: 1.75;
+      color: var(--texte);
+    }
+
+    .corps p {
+      margin-bottom: 1em;
+    }
+
+    .corps p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Italique narratif */
+    .corps em {
+      color: var(--texte-dim);
+    }
+
+    /* Running header (haut de page, pages paires/impaires) */
+    .running {
+      position: absolute;
+      top: 22px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(28,25,23,0.22);
+    }
+
+    .running-left  { left: 44px; }
+    .running-right { right: 44px; }
+
+    /* Numéro de page */
+    .folio {
+      position: absolute;
+      bottom: 28px;
+      font-family: 'EB Garamond', serif;
+      font-size: 10px;
+      color: rgba(28,25,23,0.28);
+    }
+
+    .folio-left  { left:  44px; }
+    .folio-right { right: 44px; }
+
+    /* Épigraphe */
+    .epigraphe {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--texte);
+      opacity: 0.75;
+      text-align: center;
+      max-width: 260px;
+      margin: 0 auto;
+      padding-top: 120px;
+    }
+
+    /* ══════════════════════════════
+       BILAN DE CLARTÉ
+    ══════════════════════════════ */
+
+    .bilan-section {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--or);
+      opacity: 0.8;
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .bilan-intro {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 10.5px;
+      line-height: 1.65;
+      color: var(--texte);
+      opacity: 0.55;
+      margin-bottom: 36px;
+    }
+
+    .question {
+      margin-bottom: 28px;
+    }
+
+    .question-texte {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--texte);
+      margin-bottom: 14px;
+    }
+
+    /* Lignes de réponse */
+    .lignes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ligne {
+      width: 100%;
+      height: 0;
+      border-bottom: 1px solid var(--ligne-ecriture);
+      padding-bottom: 10px;
+    }
+
+    /* Page de titre */
+    .titre-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 80px;
+    }
+
+    .titre-livre {
+      font-family: 'DM Serif Display', serif;
+      font-size: 38px;
+      line-height: 1.0;
+      color: var(--bleu);
+      margin-bottom: 24px;
+    }
+
+    .titre-rule-page {
+      width: 36px;
+      height: 1px;
+      background: var(--or);
+      opacity: 0.5;
+      margin-bottom: 24px;
+    }
+
+    .titre-sous {
+      font-family: 'EB Garamond', serif;
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--texte-dim);
+      max-width: 240px;
+      margin-bottom: 60px;
+    }
+
+    .titre-auteur {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--or);
+      opacity: 0.7;
+    }
+
+    /* ── Contrôles ── */
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(28,25,23,0.4);
+      text-decoration: none;
+      padding: 8px 18px;
+      border: 1px solid rgba(28,25,23,0.15);
+      border-radius: 3px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .nav a:hover {
+      color: rgba(28,25,23,0.7);
+      border-color: rgba(28,25,23,0.35);
+    }
+
+    /* ── Print ── */
+    @media print {
+      @page { size: 140mm 210mm; margin: 0; }
+
+      body { background: white; padding: 0; }
+      h1, .nav, .section-label { display: none; }
+
+      .galerie { gap: 0; max-width: none; }
+
+      .spread {
+        display: block;
+        box-shadow: none;
+      }
+
+      .page-std, .spread .page-left, .spread .page-right {
+        width: 140mm;
+        min-height: 210mm;
+        page-break-after: always;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Plan B Rentable &nbsp;·&nbsp; Gabarit intérieur v1 &nbsp;·&nbsp; 14 × 21 cm</h1>
+
+  <div class="galerie">
+
+    <!-- ══ 1. Page de titre ══ -->
+    <div>
+      <p class="section-label">Page 1 — Page de titre</p>
+      <div class="page page-std">
+        <div class="folio folio-right" style="display:none"></div>
+        <div class="titre-page">
+          <div class="titre-livre">PLAN B<br>RENTABLE</div>
+          <div class="titre-rule-page"></div>
+          <p class="titre-sous">Une nouvelle façon de comprendre<br>ce qui te retient — et de construire<br>autre chose.</p>
+          <span class="titre-auteur">Redouane Agaja</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 2. Épigraphe ══ -->
+    <div>
+      <p class="section-label">Page 3 — Épigraphe</p>
+      <div class="page page-std" style="display:flex; align-items:center; justify-content:center;">
+        <p class="epigraphe" style="padding-top:0;">
+          Ce qu'on n'a pas encore nommé,<br>
+          on ne peut pas encore choisir.
+        </p>
+      </div>
+    </div>
+
+    <!-- ══ 3. Spread : ouverture chapitre ══ -->
+    <div>
+      <p class="section-label">Pages 16–17 — Verso blanc + Ouverture Chapitre 1</p>
+      <div class="spread">
+
+        <!-- Page gauche : verso blanc avant le chapitre -->
+        <div class="page page-left">
+          <span class="running running-left">Plan B Rentable</span>
+          <span class="folio folio-left">16</span>
+        </div>
+
+        <!-- Page droite : recto ouverture chapitre -->
+        <div class="page page-right">
+          <span class="folio folio-right">17</span>
+          <div style="padding-top: 32px;">
+            <span class="ch-num">Chapitre 1</span>
+            <h2 class="ch-titre">Pourquoi as-tu l'impression de tourner en rond&nbsp;?</h2>
+            <div class="ch-rule"></div>
+            <div class="corps">
+              <p>Il y a des semaines qui commencent toutes de la même façon.</p>
+              <p>La même promesse muette qu'on se fait à soi-même. <em>Cette semaine, c'est différent.</em> Parfois ça arrive un dimanche soir, téléphone en main, après une vidéo qui parle de liberté et de projets construits depuis zéro.</p>
+              <p>Le sentiment est sincère. L'intention aussi. Et puis les obligations reviennent...</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ 4. Spread : texte courant ══ -->
+    <div>
+      <p class="section-label">Pages 18–19 — Texte courant (double page)</p>
+      <div class="spread">
+
+        <div class="page page-left">
+          <span class="running running-left">Plan B Rentable</span>
+          <span class="folio folio-left">18</span>
+          <div class="corps" style="padding-top:8px;">
+            <p>Tu n'es probablement pas quelqu'un qui manque de volonté. Ni d'idées. Si tu faisais le compte de ce que tu as voulu commencer ces dernières années — les projets pensés, les directions entrevues, les déclics ressentis — la liste serait probablement plus longue que tu ne l'imagines.</p>
+            <p>Le problème n'est pas là.</p>
+            <p>Le problème, c'est ce cycle que beaucoup connaissent mais que peu arrivent à nommer. On attend que les études ouvrent des portes — et les portes tardent. On regarde des vidéos le soir, dans le noir, sur quelqu'un qui raconte comment il a lancé quelque chose depuis zéro. On like. On sauvegarde. On crée même parfois un compte quelque part pour le projet — deux publications, puis plus rien.</p>
+            <p>Ce n'est pas de la paresse. C'est de la dispersion. Et la dispersion ressemble à la stagnation vue de l'extérieur — mais ce n'est pas la même chose.</p>
+          </div>
+        </div>
+
+        <div class="page page-right">
+          <span class="running running-right">Chapitre 1</span>
+          <span class="folio folio-right">19</span>
+          <div class="corps" style="padding-top:8px;">
+            <p>Ce qui complique les choses, c'est que certains autour de toi semblent avancer. Il y a ces conversations où quelqu'un parle de ce qu'il est en train de construire, avec cet air de quelqu'un qui sait où il va. Tu félicites. Et sur le chemin du retour, tu te demandes en silence ce qui te retient.</p>
+            <p>La réponse que tu t'es peut-être donnée : tu n'es pas encore assez prêt. Ou tu attends le bon moment, la bonne information, les bonnes conditions. Ou — dans les moments plus difficiles — tu te demandes si tu n'es simplement pas fait pour ça.</p>
+            <p>Et voici ce que j'ai fini par comprendre, et ce que beaucoup de personnes que j'ai accompagnées ont compris à un moment ou un autre : tourner en rond n'est presque jamais un problème de motivation. C'est presque toujours un problème de clarté.</p>
+            <p><em>La clarté, ça se construit.</em></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ 5. Bilan de Clarté — une famille ══ -->
+    <div>
+      <p class="section-label">Pages 81–82 — Bilan de Clarté · Famille 1</p>
+      <div class="spread">
+
+        <div class="page page-left">
+          <span class="folio folio-left">81</span>
+          <div style="padding-top: 16px;">
+            <span class="bilan-section">Famille 1 &nbsp;·&nbsp; Reconnaissance</span>
+
+            <p class="bilan-intro">
+              Ces questions n'attendent pas de réponse parfaite.<br>
+              Elles prolongent ce que tu as commencé à regarder.
+            </p>
+
+            <div class="question">
+              <p class="question-texte">Qu'est-ce que tu appelles « bientôt » depuis le plus longtemps&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+
+            <div class="question">
+              <p class="question-texte">Si tu observes ta semaine telle qu'elle s'est vraiment passée — pas comme tu aurais voulu qu'elle se passe — qu'est-ce qui t'a retenu le plus&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page page-right">
+          <span class="folio folio-right">82</span>
+          <div style="padding-top: 16px;">
+            <div class="question" style="margin-top: 8px;">
+              <p class="question-texte">Si ton revenu actuel s'arrêtait dans trois mois, qu'est-ce qui changerait dans ta façon de voir ta situation aujourd'hui&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ 6. Bilan de Clarté — page de titre ══ -->
+    <div>
+      <p class="section-label">Page 45 — Bilan de Clarté · titre</p>
+      <div class="page page-std">
+        <span class="folio folio-right">45</span>
+        <div style="padding-top: 40px;">
+          <span class="ch-num">Bilan de Clarté</span>
+          <div class="ch-rule"></div>
+          <div class="corps">
+            <p class="noind">Ces questions ne testent rien.</p>
+            <p>Elles prolongent ce que tu as commencé à regarder en lisant ce livre. Certaines te parleront tout de suite. D'autres resteront ouvertes — c'est prévu, pas un oubli. Il y a des questions qu'on porte avec soi un moment avant de pouvoir leur répondre vraiment.</p>
+            <p>Tu peux les traverser dans l'ordre ou pas. Revenir à certaines plus tard. Laisser les autres de côté. Ce qui compte, c'est le regard que tu poses — pas la liste complétée.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 7. Bilan · Famille 1 Reconnaissance ══ -->
+    <div>
+      <p class="section-label">Pages 46–47 — Bilan · Famille 1 · Reconnaissance</p>
+      <div class="spread">
+
+        <div class="page page-left">
+          <span class="running running-left">Plan B Rentable</span>
+          <span class="folio folio-left">46</span>
+          <div style="padding-top: 16px;">
+            <span class="bilan-section">Famille 1 &nbsp;·&nbsp; Reconnaissance</span>
+            <p class="bilan-intro">Ces questions t'invitent à regarder ta situation telle qu'elle est — pas telle que tu aurais voulu qu'elle soit.</p>
+
+            <div class="question">
+              <p class="question-texte">Qu'est-ce que tu te dis depuis longtemps que tu vas faire — bientôt&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+
+            <div class="question">
+              <p class="question-texte">Si tu observes ta semaine telle qu'elle s'est vraiment passée — pas comme tu aurais voulu qu'elle se passe — qu'est-ce qui t'a retenu le plus&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page page-right">
+          <span class="running running-right">Bilan de Clarté</span>
+          <span class="folio folio-right">47</span>
+          <div style="padding-top: 16px;">
+            <div class="question">
+              <p class="question-texte">Si ton revenu actuel s'arrêtait dans trois mois, qu'est-ce qui changerait dans ta façon de voir ta situation aujourd'hui&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ 8. Bilan · Famille 2 Blocages ══ -->
+    <div>
+      <p class="section-label">Pages 48–49 — Bilan · Famille 2 · Blocages</p>
+      <div class="spread">
+
+        <div class="page page-left">
+          <span class="running running-left">Plan B Rentable</span>
+          <span class="folio folio-left">48</span>
+          <div style="padding-top: 16px;">
+            <span class="bilan-section">Famille 2 &nbsp;·&nbsp; Blocages</span>
+            <p class="bilan-intro">Ces questions t'invitent à nommer ce qui te retient — sans jugement, avec précision.</p>
+
+            <div class="question">
+              <p class="question-texte">Qu'est-ce que tu gardes pour toi depuis longtemps, en attendant que ça ait une forme suffisante pour être montré&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+
+            <div class="question">
+              <p class="question-texte">De qui, précisément, aurais-tu le plus peur de décevoir les attentes&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page page-right">
+          <span class="running running-right">Bilan de Clarté</span>
+          <span class="folio folio-right">49</span>
+          <div style="padding-top: 16px;">
+            <div class="question">
+              <p class="question-texte">Quelle est la « bonne raison » que tu te donnes le plus souvent pour ne pas encore commencer&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ 9. Bilan · Famille 3 Ressources ══ -->
+    <div>
+      <p class="section-label">Pages 50–51 — Bilan · Famille 3 · Ressources</p>
+      <div class="spread">
+
+        <div class="page page-left">
+          <span class="running running-left">Plan B Rentable</span>
+          <span class="folio folio-left">50</span>
+          <div style="padding-top: 16px;">
+            <span class="bilan-section">Famille 3 &nbsp;·&nbsp; Ressources</span>
+            <p class="bilan-intro">Ces questions t'invitent à voir ce que tu possèdes déjà — et que tu n'as peut-être jamais nommé comme une ressource.</p>
+
+            <div class="question">
+              <p class="question-texte">Pour quel type de problème est-ce qu'on vient te voir quand les autres ne savent pas quoi faire&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+
+            <div class="question">
+              <p class="question-texte">Qu'est-ce que tu fais naturellement, si bien que tu ne le vois même plus comme une compétence&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page page-right">
+          <span class="running running-right">Bilan de Clarté</span>
+          <span class="folio folio-right">51</span>
+          <div style="padding-top: 16px;">
+            <div class="question">
+              <p class="question-texte">Qu'est-ce que tu as traversé — une période difficile, une responsabilité prise tôt, une situation gérée sous pression — que tu n'as jamais vraiment compté comme une ressource&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ 10. Bilan · Famille 4 Observation ══ -->
+    <div>
+      <p class="section-label">Pages 52–53 — Bilan · Famille 4 · Observation</p>
+      <div class="spread">
+
+        <div class="page page-left">
+          <span class="running running-left">Plan B Rentable</span>
+          <span class="folio folio-left">52</span>
+          <div style="padding-top: 16px;">
+            <span class="bilan-section">Famille 4 &nbsp;·&nbsp; Observation</span>
+            <p class="bilan-intro">Ces questions t'invitent à regarder autour de toi avec un regard différent.</p>
+
+            <div class="question">
+              <p class="question-texte">Quel problème vois-tu régulièrement autour de toi, que personne n'a encore vraiment résolu&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page page-right">
+          <span class="running running-right">Bilan de Clarté</span>
+          <span class="folio folio-right">53</span>
+          <div style="padding-top: 16px;">
+            <div class="question">
+              <p class="question-texte">Qu'est-ce que les gens font de manière compliquée dans ta vie de tous les jours — alors qu'une façon plus simple devrait exister&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ 11. Bilan · Famille 5 Mouvement ══ -->
+    <div>
+      <p class="section-label">Pages 54–55 — Bilan · Famille 5 · Mouvement</p>
+      <div class="spread">
+
+        <div class="page page-left">
+          <span class="running running-left">Plan B Rentable</span>
+          <span class="folio folio-left">54</span>
+          <div style="padding-top: 16px;">
+            <span class="bilan-section">Famille 5 &nbsp;·&nbsp; Mouvement</span>
+            <p class="bilan-intro">Ces questions t'invitent à envisager un premier pas — concret, petit, réel.</p>
+
+            <div class="question">
+              <p class="question-texte">Si tu devais commencer quelque chose cette semaine — pas le projet entier, juste une première chose concrète — quelle serait cette chose&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page page-right">
+          <span class="running running-right">Bilan de Clarté</span>
+          <span class="folio folio-right">55</span>
+          <div style="padding-top: 16px;">
+            <div class="question">
+              <p class="question-texte">Dans six mois, à quoi reconnaîtrais-tu que quelque chose a légèrement changé dans ta façon de voir ta situation&nbsp;?</p>
+              <div class="lignes">
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+                <div class="ligne"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /galerie -->
+
+  <div class="nav">
+    <a href="couverture.html">← Voir la couverture</a>
+    <a href="javascript:window.print()">Imprimer / PDF</a>
+  </div>
+
+</body>
+</html>
