@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { BILAN_QUESTIONS, FAMILLE_ORDER, FAMILLE_TOTAL } from '@/lib/bilan-questions'
+import { CHAPTERS, TOTAL_CHAPTERS, getReadingProgress } from '@/lib/reading-chapters'
 import { SignauxBloc } from './SignauxBloc'
 import { JournalBloc } from './JournalBloc'
 import { MissionsBloc } from './MissionsBloc'
@@ -43,6 +44,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
     signauxResult,
     journalResult,
     missionsResult,
+    readingResult,
   ] = await Promise.all([
     service.auth.admin.getUserById(id),
     service.from('book_access').select('has_access, access_granted_at').eq('user_id', id).maybeSingle(),
@@ -52,6 +54,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
     service.from('user_signals').select('id, categorie, signal, intensite, coach_note, created_at').eq('user_id', id).order('created_at', { ascending: false }),
     service.from('coach_journal').select('id, type, contenu, resultat, created_at').eq('user_id', id).order('created_at', { ascending: false }),
     service.from('user_missions').select('id, mission, statut, coach_note, assigned_at, completed_at').eq('user_id', id).order('assigned_at', { ascending: false }),
+    service.from('reading_progress').select('chapter_id, chapter_order, completed_at').eq('user_id', id),
   ])
 
   const targetUser = userResult.data?.user
@@ -65,11 +68,13 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
   const signaux: Signal[] = (signauxResult.data ?? []) as Signal[]
   const journal: JournalEntry[] = (journalResult.data ?? []) as JournalEntry[]
   const missions: Mission[] = (missionsResult.data ?? []) as Mission[]
+  const readingRows = readingResult.data ?? []
+  const reading = getReadingProgress(readingRows)
 
   const responseMap = Object.fromEntries(bilanRows.map(r => [r.question_id, r.response]))
   const answeredCount = bilanRows.length
   const bilanCompleted = !!profile?.bilan_completed_at
-  const livreCompleted = !!profile?.livre_completed
+  const livreCompleted = reading.fullyDone || !!profile?.livre_completed
 
   const lastActivity = bilanRows.length > 0
     ? bilanRows.reduce((a, b) => a.updated_at > b.updated_at ? a : b).updated_at
@@ -161,8 +166,20 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <ParcourStep
             label="Livre"
-            status={livreCompleted ? 'done' : 'empty'}
-            detail={livreCompleted ? fmt(profile?.livre_completed_at) : undefined}
+            status={
+              livreCompleted
+                ? 'done'
+                : reading.startedCount > 0
+                ? 'partial'
+                : 'empty'
+            }
+            detail={
+              livreCompleted
+                ? `${TOTAL_CHAPTERS}/${TOTAL_CHAPTERS} ✓`
+                : reading.startedCount > 0
+                ? `Ch. ${reading.completedCount}/${TOTAL_CHAPTERS}`
+                : undefined
+            }
           />
           <ParcourStep
             label="Bilan"
@@ -186,6 +203,39 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
           />
         </div>
       </div>
+
+      {/* Bloc 3b — Progression lecture */}
+      {readingRows.length > 0 && (
+        <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">
+          <div className="px-5 py-4 border-b border-cr-border flex items-center justify-between">
+            <h2 className="font-semibold text-cr-text">Progression — Livre numérique</h2>
+            <span className="text-sm tabular-nums text-cr-text-secondary">
+              {reading.completedCount}/{TOTAL_CHAPTERS} chapitres
+            </span>
+          </div>
+          <div className="px-5 py-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+            {CHAPTERS.map(ch => {
+              const row = readingRows.find(r => r.chapter_id === ch.id)
+              const done = !!row?.completed_at
+              const started = !!row && !done
+              return (
+                <div
+                  key={ch.id}
+                  className={`rounded-lg border px-3 py-2 text-xs ${
+                    done    ? 'bg-green-50 border-green-200 text-green-700' :
+                    started ? 'bg-amber-50 border-amber-200 text-amber-700' :
+                              'bg-background border-cr-border text-cr-text-muted'
+                  }`}
+                >
+                  <span className="font-medium">{ch.label}</span>
+                  {done    && <span className="ml-1 opacity-70">✓</span>}
+                  {started && <span className="ml-1 opacity-70">…</span>}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Bloc 4 — Bilan de Clarté */}
       <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">
