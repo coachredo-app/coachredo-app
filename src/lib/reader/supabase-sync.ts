@@ -1,6 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
+import { READER_KEY_MAP } from '@/lib/reading-chapters'
 import type { LocalProgress } from './progress'
 
 // Fetches Supabase progress and merges on top of localStorage base (Supabase wins)
@@ -70,5 +71,36 @@ export async function upsertChapterProgress(chapterNum: number): Promise<void> {
       completed_at: new Date().toISOString(),
     },
     { onConflict: 'user_id,chapter_num' }
+  )
+}
+
+export async function upsertReadingStart(chapterKey: string): Promise<void> {
+  const ch = READER_KEY_MAP[chapterKey]
+  if (!ch) return
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  await supabase.from('reading_progress').upsert(
+    { user_id: user.id, chapter_id: ch.id, chapter_order: ch.order },
+    { onConflict: 'user_id,chapter_id', ignoreDuplicates: true }
+  )
+}
+
+export async function upsertReadingComplete(chapterKey: string): Promise<void> {
+  const ch = READER_KEY_MAP[chapterKey]
+  if (!ch) return
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  await supabase.from('reading_progress').upsert(
+    {
+      user_id: user.id,
+      chapter_id: ch.id,
+      chapter_order: ch.order,
+      completed_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id,chapter_id' }
   )
 }

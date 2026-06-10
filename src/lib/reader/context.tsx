@@ -18,6 +18,8 @@ import {
   fetchAndMergeProgress,
   upsertExerciseResponse,
   upsertChapterProgress,
+  upsertReadingStart,
+  upsertReadingComplete,
 } from './supabase-sync'
 
 function empty(): LocalProgress {
@@ -58,6 +60,7 @@ export function ReaderProvider({
     setCurrentStep(local.chapters[chapterKey]?.currentStep ?? 0)
     setMounted(true)
     fetchAndMergeProgress(local).then(merged => setProgress(merged))
+    upsertReadingStart(chapterKey)
   }, [chapterKey])
 
   const responses = progress.chapters[chapterKey]?.exercises ?? {}
@@ -100,6 +103,7 @@ export function ReaderProvider({
     if (!isNaN(chapterNum)) {
       upsertChapterProgress(chapterNum)
     }
+    upsertReadingComplete(chapterKey)
   }, [chapterKey, chapterNum])
 
   return (

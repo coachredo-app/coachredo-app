@@ -23,6 +23,18 @@ export const TOTAL_CHAPTERS = CHAPTERS.length
 
 export const CHAPTER_MAP = Object.fromEntries(CHAPTERS.map(c => [c.id, c]))
 
+// Maps reader chapterKey ('intro', '1'...'7') to reading_progress chapter
+export const READER_KEY_MAP: Record<string, Chapter> = {
+  intro: CHAPTER_MAP['introduction'],
+  '1':   CHAPTER_MAP['ch1'],
+  '2':   CHAPTER_MAP['ch2'],
+  '3':   CHAPTER_MAP['ch3'],
+  '4':   CHAPTER_MAP['ch4'],
+  '5':   CHAPTER_MAP['ch5'],
+  '6':   CHAPTER_MAP['ch6'],
+  '7':   CHAPTER_MAP['ch7'],
+}
+
 export function getReadingProgress(rows: { chapter_id: string; completed_at: string | null }[]): {
   startedCount: number
   completedCount: number
