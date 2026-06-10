@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { addMission, updateMissionStatus } from './actions'
+import { addMission, updateMissionStatus, deleteMission } from './actions'
 
 export interface Mission {
   id: string
@@ -44,6 +44,7 @@ export function MissionsBloc({ userId, locale, missions }: Props) {
   const [form, setForm] = useState(DEFAULT_FORM)
   const [loading, setLoading] = useState(false)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit() {
@@ -59,6 +60,17 @@ export function MissionsBloc({ userId, locale, missions }: Props) {
       setError(String(e))
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Supprimer cette mission ?')) return
+    setDeletingId(id)
+    try {
+      await deleteMission(id, userId, locale)
+      router.refresh()
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -131,13 +143,22 @@ export function MissionsBloc({ userId, locale, missions }: Props) {
           {missions.map(m => (
             <div key={m.id} className="px-5 py-4">
               <div className="flex items-start justify-between gap-3 mb-2">
-                <span className={`text-xs font-medium border px-2 py-0.5 rounded flex-shrink-0 ${STATUT_STYLE[m.statut] ?? STATUT_STYLE.en_cours}`}>
-                  {STATUT_LABEL[m.statut] ?? m.statut}
-                </span>
-                <span className="text-xs text-cr-text-muted whitespace-nowrap">
-                  Assignée le {fmtDate(m.assigned_at)}
-                  {m.completed_at && ` · Terminée le ${fmtDate(m.completed_at)}`}
-                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`text-xs font-medium border px-2 py-0.5 rounded flex-shrink-0 ${STATUT_STYLE[m.statut] ?? STATUT_STYLE.en_cours}`}>
+                    {STATUT_LABEL[m.statut] ?? m.statut}
+                  </span>
+                  <span className="text-xs text-cr-text-muted whitespace-nowrap">
+                    Assignée le {fmtDate(m.assigned_at)}
+                    {m.completed_at && ` · Terminée le ${fmtDate(m.completed_at)}`}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleDelete(m.id)}
+                  disabled={deletingId === m.id}
+                  className="text-xs text-cr-text-muted hover:text-error transition-colors disabled:opacity-40 flex-shrink-0"
+                >
+                  ✕
+                </button>
               </div>
               <p className="text-sm text-cr-text leading-relaxed whitespace-pre-wrap mb-2">{m.mission}</p>
               {m.coach_note && (

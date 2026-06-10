@@ -65,6 +65,27 @@ export async function addMission(
   revalidateFiche(locale, userId)
 }
 
+export async function deleteJournalEntry(id: string, userId: string, locale: string) {
+  const service = await checkAdmin()
+  const { error } = await service.from('coach_journal').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidateFiche(locale, userId)
+}
+
+export async function deleteSignal(id: string, userId: string, locale: string) {
+  const service = await checkAdmin()
+  const { error } = await service.from('user_signals').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidateFiche(locale, userId)
+}
+
+export async function deleteMission(id: string, userId: string, locale: string) {
+  const service = await checkAdmin()
+  const { error } = await service.from('user_missions').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidateFiche(locale, userId)
+}
+
 export async function updateMissionStatus(
   missionId: string,
   statut: 'en_cours' | 'terminée' | 'abandonnée',

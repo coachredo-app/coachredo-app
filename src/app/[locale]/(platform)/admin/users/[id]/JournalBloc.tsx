@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { addJournalEntry } from './actions'
+import { addJournalEntry, deleteJournalEntry } from './actions'
 
 export interface JournalEntry {
   id: string
@@ -45,7 +45,19 @@ export function JournalBloc({ userId, locale, entries }: Props) {
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState(DEFAULT_FORM)
   const [loading, setLoading] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  async function handleDelete(id: string) {
+    if (!confirm('Supprimer cette entrée ?')) return
+    setDeletingId(id)
+    try {
+      await deleteJournalEntry(id, userId, locale)
+      router.refresh()
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   async function handleSubmit() {
     if (!form.contenu.trim()) return
@@ -130,10 +142,19 @@ export function JournalBloc({ userId, locale, entries }: Props) {
           {entries.map(e => (
             <div key={e.id} className="px-5 py-4">
               <div className="flex items-center justify-between gap-3 mb-2">
-                <span className={`text-xs font-medium border px-2 py-0.5 rounded ${TYPE_STYLE[e.type] ?? TYPE_STYLE.Note}`}>
-                  {e.type}
-                </span>
-                <span className="text-xs text-cr-text-muted whitespace-nowrap">{fmtDate(e.created_at)}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs font-medium border px-2 py-0.5 rounded ${TYPE_STYLE[e.type] ?? TYPE_STYLE.Note}`}>
+                    {e.type}
+                  </span>
+                  <span className="text-xs text-cr-text-muted whitespace-nowrap">{fmtDate(e.created_at)}</span>
+                </div>
+                <button
+                  onClick={() => handleDelete(e.id)}
+                  disabled={deletingId === e.id}
+                  className="text-xs text-cr-text-muted hover:text-error transition-colors disabled:opacity-40 flex-shrink-0"
+                >
+                  ✕
+                </button>
               </div>
               <p className="text-sm text-cr-text leading-relaxed whitespace-pre-wrap">{e.contenu}</p>
               {e.resultat && (
