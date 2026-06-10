@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { CopyCodeButton } from './codes/CopyCodeButton'
 import { DeleteUserButton } from './DeleteUserButton'
-import { BilanUserCard } from './BilanUserCard'
 import { cn } from '@/lib/utils'
 
 interface AdminPageProps {
@@ -245,30 +244,6 @@ export default async function AdminPage({ params }: AdminPageProps) {
                 )}
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Bilans de Clarté */}
-      {Object.keys(bilanByUser).length > 0 && (
-        <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">
-          <div className="px-5 py-4 border-b border-cr-border">
-            <h2 className="font-semibold text-cr-text">
-              Bilans de Clarté ({Object.keys(bilanByUser).length})
-            </h2>
-            <p className="text-xs text-cr-text-muted mt-0.5">Réponses des utilisateurs — cliquer pour développer</p>
-          </div>
-          <div className="p-4 space-y-3">
-            {userRows
-              .filter(u => bilanByUser[u.id])
-              .map(u => (
-                <BilanUserCard
-                  key={u.id}
-                  email={u.email}
-                  responses={bilanByUser[u.id]}
-                  completedAt={completedAtByUser[u.id] ?? null}
-                />
-              ))}
           </div>
         </div>
       )}
