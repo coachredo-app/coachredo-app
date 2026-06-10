@@ -21,6 +21,10 @@ export const CHAPTERS: Chapter[] = [
 
 export const TOTAL_CHAPTERS = CHAPTERS.length
 
+// Only chapters with reader pages — basis for "book completed" logic
+const REQUIRED_IDS = new Set(['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7'])
+export const REQUIRED_TOTAL = REQUIRED_IDS.size
+
 export const CHAPTER_MAP = Object.fromEntries(CHAPTERS.map(c => [c.id, c]))
 
 // Maps reader chapterKey ('intro', '1'...'7') to reading_progress chapter
@@ -37,7 +41,7 @@ export const READER_KEY_MAP: Record<string, Chapter> = {
 
 export function getReadingProgress(rows: { chapter_id: string; completed_at: string | null }[]): {
   startedCount: number
-  completedCount: number
+  completedCount: number   // required chapters completed (ch1-ch7)
   lastChapterOrder: number | null
   fullyDone: boolean
 } {
@@ -45,9 +49,9 @@ export function getReadingProgress(rows: { chapter_id: string; completed_at: str
     return { startedCount: 0, completedCount: 0, lastChapterOrder: null, fullyDone: false }
   }
 
-  const completedCount = rows.filter(r => r.completed_at).length
+  const completedCount = rows.filter(r => r.completed_at && REQUIRED_IDS.has(r.chapter_id)).length
   const startedCount = rows.length
-  const fullyDone = completedCount === TOTAL_CHAPTERS
+  const fullyDone = completedCount === REQUIRED_TOTAL
 
   const lastChapterOrder = rows.reduce<number | null>((max, r) => {
     const ch = CHAPTER_MAP[r.chapter_id]

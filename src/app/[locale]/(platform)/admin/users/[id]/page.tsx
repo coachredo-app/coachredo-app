@@ -2,7 +2,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { BILAN_QUESTIONS, FAMILLE_ORDER, FAMILLE_TOTAL } from '@/lib/bilan-questions'
-import { CHAPTERS, TOTAL_CHAPTERS, getReadingProgress } from '@/lib/reading-chapters'
+import { CHAPTERS, REQUIRED_TOTAL, getReadingProgress } from '@/lib/reading-chapters'
 import { SignauxBloc } from './SignauxBloc'
 import { JournalBloc } from './JournalBloc'
 import { MissionsBloc } from './MissionsBloc'
@@ -175,9 +175,9 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
             }
             detail={
               livreCompleted
-                ? `${TOTAL_CHAPTERS}/${TOTAL_CHAPTERS} ✓`
+                ? `${REQUIRED_TOTAL}/${REQUIRED_TOTAL} ✓`
                 : reading.startedCount > 0
-                ? `Ch. ${reading.completedCount}/${TOTAL_CHAPTERS}`
+                ? `Ch. ${reading.completedCount}/${REQUIRED_TOTAL}`
                 : undefined
             }
           />
@@ -210,7 +210,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
           <div className="px-5 py-4 border-b border-cr-border flex items-center justify-between">
             <h2 className="font-semibold text-cr-text">Progression — Livre numérique</h2>
             <span className="text-sm tabular-nums text-cr-text-secondary">
-              {reading.completedCount}/{TOTAL_CHAPTERS} chapitres
+              {reading.completedCount}/{REQUIRED_TOTAL} chapitres
             </span>
           </div>
           <div className="px-5 py-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
