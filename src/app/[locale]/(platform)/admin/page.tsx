@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { CopyCodeButton } from './codes/CopyCodeButton'
 import { DeleteUserButton } from './DeleteUserButton'
@@ -164,7 +165,14 @@ export default async function AdminPage({ params }: AdminPageProps) {
               <tbody className="divide-y divide-cr-border">
                 {userRows.map(u => (
                   <tr key={u.id} className="hover:bg-background transition-colors">
-                    <td className="px-5 py-3 text-cr-text font-medium">{u.email}</td>
+                    <td className="px-5 py-3">
+                      <Link
+                        href={`/${locale}/admin/users/${u.id}`}
+                        className="font-medium text-cr-text hover:text-cr-accent transition-colors"
+                      >
+                        {u.email}
+                      </Link>
+                    </td>
                     <td className="px-5 py-3 text-cr-text-secondary whitespace-nowrap">{fmt(u.createdAt)}</td>
                     <td className="px-5 py-3">
                       {u.hasAccess ? (

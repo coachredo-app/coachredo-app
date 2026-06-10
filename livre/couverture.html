@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan B Rentable — Couverture v1</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bleu:    #0a0d1a;
+      --or:      #c9a84c;
+      --blanc:   #f5f0e8;
+      --or-dim:  rgba(201,168,76,0.45);
+      --blanc-dim: rgba(245,240,232,0.55);
+    }
+
+    body {
+      background: #12141f;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px 56px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--blanc);
+    }
+
+    /* ── Label prototype ── */
+    .label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.4);
+      margin-bottom: 36px;
+    }
+
+    /* ══════════════════════════════════
+       COUVERTURE COMPLÈTE
+       Dos (back) | Tranche | Plat (front)
+       Ratio réel : 140mm | 7mm | 140mm × 210mm
+    ══════════════════════════════════ */
+    .cover-wrap {
+      display: flex;
+      height: 612px;           /* 210mm × 2.914 */
+      box-shadow:
+        0 0 0 1px rgba(201,168,76,0.12),
+        0 32px 100px rgba(0,0,0,0.85);
+    }
+
+    /* ─── DOS / Quatrième ─── */
+    .dos {
+      width: 408px;            /* 140mm × 2.914 */
+      height: 100%;
+      background: var(--bleu);
+      padding: 52px 44px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .dos-corps {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-bottom: 8px;
+    }
+
+    .accroche {
+      font-family: 'EB Garamond', serif;
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--blanc);
+      opacity: 0.88;
+      margin-bottom: 32px;
+    }
+
+    .accroche .or { color: var(--or); opacity: 1; }
+
+    .dos-rule {
+      width: 36px;
+      height: 1px;
+      background: var(--or-dim);
+      margin-bottom: 28px;
+    }
+
+    .bio {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 11.5px;
+      line-height: 1.65;
+      color: var(--blanc);
+      opacity: 0.42;
+    }
+
+    .dos-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 28px;
+      border-top: 1px solid rgba(201,168,76,0.1);
+    }
+
+    .dos-site {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--or);
+      opacity: 0.6;
+    }
+
+    .dos-isbn {
+      font-size: 10px;
+      color: var(--blanc);
+      opacity: 0.22;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    /* ─── TRANCHE ─── */
+    .tranche {
+      width: 21px;             /* 7mm × 2.914 */
+      height: 100%;
+      background: #0c1020;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-left:  1px solid rgba(201,168,76,0.08);
+      border-right: 1px solid rgba(201,168,76,0.08);
+      flex-shrink: 0;
+    }
+
+    .tranche-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 7px;
+      color: var(--or);
+      letter-spacing: 0.16em;
+      white-space: nowrap;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      opacity: 0.75;
+    }
+
+    /* ─── PLAT / Couverture avant ─── */
+    .plat {
+      width: 408px;
+      height: 100%;
+      background: var(--bleu);
+      padding: 44px 48px 44px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .plat-top {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .auteur {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--or);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .plat-centre {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .titre {
+      font-family: 'DM Serif Display', serif;
+      font-size: 80px;
+      line-height: 0.9;
+      color: var(--or);
+      letter-spacing: -0.01em;
+      margin-bottom: 22px;
+    }
+
+    .titre-rule {
+      width: 100%;
+      max-width: 280px;
+      height: 1px;
+      background: linear-gradient(to right, var(--or-dim), transparent);
+      margin-bottom: 22px;
+    }
+
+    .sous-titre {
+      font-family: 'EB Garamond', serif;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--blanc);
+      opacity: 0.75;
+      max-width: 240px;
+    }
+
+    .plat-bas {
+      display: flex;
+      justify-content: center;
+    }
+
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 12px;
+      color: var(--or);
+      letter-spacing: 0.12em;
+      opacity: 0.55;
+    }
+
+    /* ── Contrôles ── */
+    .controls {
+      margin-top: 36px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.18s;
+      border: none;
+    }
+
+    .btn:hover { opacity: 0.78; }
+
+    .btn-gold {
+      background: var(--or);
+      color: var(--bleu);
+      font-weight: 600;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--or);
+      border: 1px solid rgba(201,168,76,0.28);
+    }
+
+    .specs {
+      margin-top: 24px;
+      display: flex;
+      gap: 28px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: rgba(201,168,76,0.32);
+      text-transform: uppercase;
+    }
+
+    .specs strong { color: rgba(201,168,76,0.6); }
+
+    /* ── Print ── */
+    @media print {
+      @page { size: 297mm 210mm landscape; margin: 0; }
+
+      body {
+        background: white;
+        padding: 0;
+        min-height: 0;
+        justify-content: flex-start;
+      }
+
+      .label, .controls, .specs { display: none !important; }
+
+      .cover-wrap {
+        height: 210mm;
+        box-shadow: none;
+        page-break-after: avoid;
+      }
+
+      .dos   { width: 140mm; height: 210mm; }
+      .tranche { width: 7mm; height: 210mm; }
+      .plat  { width: 140mm; height: 210mm; }
+
+      .titre { font-size: 58pt; }
+      .accroche { font-size: 10pt; }
+      .bio { font-size: 9pt; }
+      .sous-titre { font-size: 10pt; }
+    }
+  </style>
+</head>
+<body>
+
+  <p class="label">Plan B Rentable &nbsp;·&nbsp; Prototype couverture v1 &nbsp;·&nbsp; 14 × 21 cm &nbsp;·&nbsp; 96 pages</p>
+
+  <div class="cover-wrap">
+
+    <!-- ═══ DOS / Quatrième de couverture ═══ -->
+    <div class="dos">
+      <div class="dos-corps">
+
+        <p class="accroche">
+          Tu n'as probablement pas manqué<br>
+          de motivation.<br>
+          <br>
+          Tu as peut-être manqué de clarté<br>
+          — sur ce que tu cherchais vraiment<br>
+          à construire, pourquoi maintenant,<br>
+          et par où commencer sans tout<br>
+          laisser tomber.<br>
+          <br>
+          Ce livre ne te promet pas de tout<br>
+          changer. Il te propose de regarder<br>
+          honnêtement ce qui te retient<br>
+          depuis longtemps — et de voir ce que<br>
+          tu possèdes déjà sans l'avoir nommé.<br>
+          <br>
+          <span class="or">Deux heures peuvent suffire,<br>
+          si chaque page est utile.</span>
+        </p>
+
+        <div class="dos-rule"></div>
+
+        <p class="bio">
+          Redouane Agaja est coach et fondateur de CoachRedo.<br>
+          Il accompagne des personnes en transition<br>
+          professionnelle depuis plusieurs années.<br>
+          Ce livre est issu de ce travail — pas d'une théorie.
+        </p>
+
+      </div>
+
+      <div class="dos-footer">
+        <span class="dos-site">coachredo.app</span>
+        <span class="dos-isbn">ISBN · · · · · · · · ·<br>19 €</span>
+      </div>
+    </div>
+
+    <!-- ═══ TRANCHE ═══ -->
+    <div class="tranche">
+      <span class="tranche-text">PLAN B RENTABLE &nbsp;·&nbsp; Redouane Agaja &nbsp;·&nbsp; CoachRedo</span>
+    </div>
+
+    <!-- ═══ PLAT / Couverture avant ═══ -->
+    <div class="plat">
+
+      <div class="plat-top">
+        <span class="auteur">Redouane Agaja</span>
+      </div>
+
+      <div class="plat-centre">
+        <div class="titre">PLAN B<br>RENTABLE</div>
+        <div class="titre-rule"></div>
+        <p class="sous-titre">
+          Une nouvelle façon de comprendre<br>
+          ce qui te retient — et de construire<br>
+          autre chose.
+        </p>
+      </div>
+
+      <div class="plat-bas">
+        <span class="logo">CoachRedo</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-gold" onclick="window.print()">Imprimer / Exporter PDF</button>
+    <button class="btn btn-outline" onclick="window.open('interieur.html')">Voir l'intérieur →</button>
+  </div>
+
+  <div class="specs">
+    <span>Format <strong>14 × 21 cm</strong></span>
+    <span>Tranche <strong>7 mm</strong></span>
+    <span>Fond <strong>#0a0d1a</strong></span>
+    <span>Or <strong>#c9a84c</strong></span>
+    <span>Texte <strong>#f5f0e8</strong></span>
+  </div>
+
+</body>
+</html>
