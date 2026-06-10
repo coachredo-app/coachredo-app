@@ -214,7 +214,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
             </span>
           </div>
           <div className="px-5 py-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-            {CHAPTERS.map(ch => {
+            {CHAPTERS.filter(ch => ch.type === 'chapter').map(ch => {
               const row = readingRows.find(r => r.chapter_id === ch.id)
               const done = !!row?.completed_at
               const started = !!row && !done
