@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plan B Rentable — Gabarit intérieur v1</title>
+  <title>Plan B Rentable — Intérieur complet · 14 × 21 cm</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,7 +64,7 @@
     .page-std {
       width: 420px;
       min-height: 630px;
-      padding: 54px 44px 60px 56px;  /* top | ext | bot | int(gouttière) */
+      padding: 54px 44px 60px 56px;
     }
 
     /* ── SPREAD : deux pages en regard ── */
@@ -74,14 +74,12 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.2);
     }
 
-    .spread .page {
-      box-shadow: none;
-    }
+    .spread .page { box-shadow: none; }
 
     .spread .page-left {
       width: 420px;
       min-height: 630px;
-      padding: 54px 56px 60px 44px;  /* int à droite */
+      padding: 54px 56px 60px 44px;
       border-right: 1px solid rgba(0,0,0,0.06);
     }
 
@@ -95,7 +93,6 @@
        ÉLÉMENTS TYPOGRAPHIQUES
     ══════════════════════════════ */
 
-    /* Numéro de chapitre */
     .ch-num {
       font-family: 'DM Sans', sans-serif;
       font-size: 9px;
@@ -107,7 +104,6 @@
       display: block;
     }
 
-    /* Titre de chapitre */
     .ch-titre {
       font-family: 'DM Serif Display', serif;
       font-size: 30px;
@@ -117,7 +113,6 @@
       max-width: 280px;
     }
 
-    /* Rule décorative sous le titre */
     .ch-rule {
       width: 32px;
       height: 2px;
@@ -126,7 +121,6 @@
       margin-bottom: 36px;
     }
 
-    /* Corps du texte */
     .corps {
       font-family: 'EB Garamond', serif;
       font-size: 11.5px;
@@ -134,20 +128,11 @@
       color: var(--texte);
     }
 
-    .corps p {
-      margin-bottom: 1em;
-    }
+    .corps p { margin-bottom: 1em; }
+    .corps p:last-child { margin-bottom: 0; }
 
-    .corps p:last-child {
-      margin-bottom: 0;
-    }
+    .corps em { color: var(--texte-dim); }
 
-    /* Italique narratif */
-    .corps em {
-      color: var(--texte-dim);
-    }
-
-    /* Running header (haut de page, pages paires/impaires) */
     .running {
       position: absolute;
       top: 22px;
@@ -161,7 +146,6 @@
     .running-left  { left: 44px; }
     .running-right { right: 44px; }
 
-    /* Numéro de page */
     .folio {
       position: absolute;
       bottom: 28px;
@@ -173,7 +157,6 @@
     .folio-left  { left:  44px; }
     .folio-right { right: 44px; }
 
-    /* Épigraphe */
     .epigraphe {
       font-family: 'EB Garamond', serif;
       font-style: italic;
@@ -213,9 +196,7 @@
       margin-bottom: 36px;
     }
 
-    .question {
-      margin-bottom: 28px;
-    }
+    .question { margin-bottom: 28px; }
 
     .question-texte {
       font-family: 'EB Garamond', serif;
@@ -226,7 +207,6 @@
       margin-bottom: 14px;
     }
 
-    /* Lignes de réponse */
     .lignes {
       display: flex;
       flex-direction: column;
@@ -283,6 +263,164 @@
       opacity: 0.7;
     }
 
+    /* ══════════════════════════════
+       NOUVEAUX ÉLÉMENTS
+    ══════════════════════════════ */
+
+    /* Dédicace */
+    .dedicace {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 2;
+      color: var(--texte);
+      opacity: 0.7;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+    }
+
+    /* Mentions légales */
+    .mentions {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 7.5px;
+      line-height: 1.75;
+      color: rgba(28,25,23,0.38);
+      position: absolute;
+      bottom: 64px;
+      left: 56px;
+      right: 44px;
+    }
+
+    .mentions strong {
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* Titre de section (Avant de commencer, Introduction) */
+    .section-titre {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      line-height: 1.12;
+      color: var(--bleu);
+      margin-bottom: 20px;
+    }
+
+    .section-rule {
+      width: 24px;
+      height: 1px;
+      background: var(--or);
+      opacity: 0.4;
+      margin-bottom: 22px;
+    }
+
+    /* Sous-titres dans Avant de commencer */
+    .subsection-titre {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(28,25,23,0.35);
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+
+    /* Intermède */
+    .intermede-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--or);
+      margin-bottom: 36px;
+      display: block;
+    }
+
+    /* Séparateur de sections (Ch.7) */
+    .sep-rule {
+      width: 16px;
+      height: 1px;
+      background: var(--or);
+      opacity: 0.3;
+      margin: 18px 0;
+    }
+
+    /* Back matter */
+    .apo-titre {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(28,25,23,0.35);
+      margin-bottom: 16px;
+    }
+
+    .apo-rule {
+      width: 20px;
+      height: 1px;
+      background: var(--or);
+      opacity: 0.35;
+      margin-bottom: 18px;
+    }
+
+    .coachredo-url {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--or);
+      margin-top: 20px;
+      display: block;
+    }
+
+    /* Sommaire */
+    .som-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .som-titre {
+      font-family: 'EB Garamond', serif;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--texte);
+      flex: 1;
+    }
+    .som-folio {
+      font-family: 'EB Garamond', serif;
+      font-size: 10px;
+      color: rgba(28,25,23,0.32);
+      white-space: nowrap;
+    }
+    .som-mouvement {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--or);
+      opacity: 0.8;
+      display: block;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+    .som-indent .som-titre { padding-left: 10px; }
+    .som-intermede .som-titre {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: rgba(28,25,23,0.4);
+    }
+
     /* ── Contrôles ── */
     .nav {
       display: flex;
@@ -334,11 +472,15 @@
 </head>
 <body>
 
-  <h1>Plan B Rentable &nbsp;·&nbsp; Gabarit intérieur v1 &nbsp;·&nbsp; 14 × 21 cm</h1>
+  <h1>Plan B Rentable &nbsp;·&nbsp; Intérieur complet &nbsp;·&nbsp; 14 × 21 cm &nbsp;·&nbsp; 62 pages</h1>
 
   <div class="galerie">
 
-    <!-- ══ 1. Page de titre ══ -->
+    <!-- ══════════════════════════════════════════
+         LIMINAIRES  pp. 1–8
+    ══════════════════════════════════════════ -->
+
+    <!-- p.1 — Page de titre -->
     <div>
       <p class="section-label">Page 1 — Page de titre</p>
       <div class="page page-std">
@@ -352,10 +494,47 @@
       </div>
     </div>
 
-    <!-- ══ 2. Épigraphe ══ -->
+    <!-- p.2 — Mentions légales -->
     <div>
-      <p class="section-label">Page 3 — Épigraphe</p>
+      <p class="section-label">Page 2 — Mentions légales</p>
+      <div class="page page-std">
+        <span class="folio folio-left">2</span>
+        <div class="mentions">
+          <strong>Plan B Rentable</strong><br>
+          <br>
+          © 2026 Redouane Agaja<br>
+          Tous droits réservés.<br>
+          <br>
+          Aucune partie de cet ouvrage ne peut être reproduite, stockée dans un système de récupération ou transmise sous quelque forme que ce soit — électronique, mécanique, par photocopie, enregistrement ou autre — sans l'autorisation écrite préalable de l'auteur.<br>
+          <br>
+          ISBN : [À compléter]<br>
+          Imprimé via Kindle Direct Publishing<br>
+          <br>
+          Dépôt légal : 2026
+        </div>
+      </div>
+    </div>
+
+    <!-- p.3 — Dédicace -->
+    <div>
+      <p class="section-label">Page 3 — Dédicace</p>
+      <div class="page page-std" style="position:relative;">
+        <span class="folio folio-right">3</span>
+        <div class="dedicace">
+          <p>À ma femme et à mes trois enfants,</p>
+          <p style="margin-top:0.5em;">pour leur patience, leur confiance<br>et tout ce qu'ils ont mis dans ce projet.</p>
+          <p style="margin-top:1.4em;">À mes parents, à mon frère et à mes sœurs,</p>
+          <p style="margin-top:0.5em;">pour ce qu'ils m'ont transmis,<br>souvent sans le savoir.</p>
+          <p style="margin-top:1.4em;">Et à tous ceux qui ont cru en moi<br>avant même que les résultats<br>leur en donnent la raison.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.4 — Épigraphe -->
+    <div>
+      <p class="section-label">Page 4 — Épigraphe</p>
       <div class="page page-std" style="display:flex; align-items:center; justify-content:center;">
+        <span class="folio folio-left">4</span>
         <p class="epigraphe" style="padding-top:0;">
           Ce qu'on n'a pas encore nommé,<br>
           on ne peut pas encore choisir.
@@ -363,137 +542,775 @@
       </div>
     </div>
 
-    <!-- ══ 3. Spread : ouverture chapitre ══ -->
+    <!-- p.5 — Sommaire -->
     <div>
-      <p class="section-label">Pages 16–17 — Verso blanc + Ouverture Chapitre 1</p>
-      <div class="spread">
-
-        <!-- Page gauche : verso blanc avant le chapitre -->
-        <div class="page page-left">
-          <span class="running running-left">Plan B Rentable</span>
-          <span class="folio folio-left">16</span>
+      <p class="section-label">Page 5 — Sommaire</p>
+      <div class="page page-std">
+        <span class="folio folio-right">5</span>
+        <div style="padding-top: 8px;">
+          <h2 class="section-titre">Sommaire</h2>
+          <div class="section-rule"></div>
+          <div class="som-entry">
+            <span class="som-titre">Avant de commencer</span>
+            <span class="som-folio">7</span>
+          </div>
+          <div class="som-entry">
+            <span class="som-titre">Introduction</span>
+            <span class="som-folio">9</span>
+          </div>
+          <span class="som-mouvement">Mouvement I &nbsp;·&nbsp; Ce qui te retient</span>
+          <div class="som-entry som-indent">
+            <span class="som-titre">1. Pourquoi as-tu l'impression de tourner en rond&nbsp;?</span>
+            <span class="som-folio">11</span>
+          </div>
+          <div class="som-entry som-indent">
+            <span class="som-titre">2. Le piège de la fausse sécurité</span>
+            <span class="som-folio">15</span>
+          </div>
+          <div class="som-entry som-indent som-intermede">
+            <span class="som-titre">Intermède I</span>
+            <span class="som-folio">19</span>
+          </div>
+          <span class="som-mouvement">Mouvement II &nbsp;·&nbsp; Ce que tu possèdes déjà</span>
+          <div class="som-entry som-indent">
+            <span class="som-titre">3. Ce qui te bloque n'est pas toujours ce que tu crois</span>
+            <span class="som-folio">21</span>
+          </div>
+          <div class="som-entry som-indent">
+            <span class="som-titre">4. Tu n'as peut-être pas besoin de tout recommencer</span>
+            <span class="som-folio">25</span>
+          </div>
+          <div class="som-entry som-indent som-intermede">
+            <span class="som-titre">Intermède II</span>
+            <span class="som-folio">29</span>
+          </div>
+          <span class="som-mouvement">Mouvement III &nbsp;·&nbsp; Ce que tu peux faire</span>
+          <div class="som-entry som-indent">
+            <span class="som-titre">5. Les opportunités ne ressemblent pas toujours à ce qu'on imagine</span>
+            <span class="som-folio">31</span>
+          </div>
+          <div class="som-entry som-indent">
+            <span class="som-titre">6. Commencer avant d'être prêt</span>
+            <span class="som-folio">35</span>
+          </div>
+          <div class="som-entry som-indent">
+            <span class="som-titre">7. Construire quelque chose de réel</span>
+            <span class="som-folio">39</span>
+          </div>
+          <div class="som-entry" style="margin-top: 12px;">
+            <span class="som-titre">Bilan de Clarté</span>
+            <span class="som-folio">47</span>
+          </div>
+          <div class="som-entry">
+            <span class="som-titre">À propos de l'auteur</span>
+            <span class="som-folio">59</span>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Page droite : recto ouverture chapitre -->
-        <div class="page page-right">
-          <span class="folio folio-right">17</span>
-          <div style="padding-top: 32px;">
-            <span class="ch-num">Chapitre 1</span>
-            <h2 class="ch-titre">Pourquoi as-tu l'impression de tourner en rond&nbsp;?</h2>
-            <div class="ch-rule"></div>
+    <!-- p.6 — Blanc -->
+    <div>
+      <p class="section-label">Page 6 — Blanc</p>
+      <div class="page page-std">
+        <span class="folio folio-left">6</span>
+      </div>
+    </div>
+
+    <!-- p.7 — Avant de commencer (page 1) -->
+    <div>
+      <p class="section-label">Page 7 — Avant de commencer</p>
+      <div class="page page-std">
+        <span class="folio folio-right">7</span>
+        <div style="padding-top: 8px;">
+          <h2 class="section-titre">Avant de commencer</h2>
+          <div class="section-rule"></div>
+          <div class="corps">
+            <p>Il y a des choses qu'on n'avoue pas facilement.</p>
+            <p>Les projets commencés et jamais terminés. Les carnets remplis d'idées qu'on ne rouvre plus. Les moments où on se dit que cette fois, c'est différent — et puis la semaine passe, l'année suit, et rien n'a vraiment changé.</p>
+            <p>J'ai connu ça. Pas une fois. Plusieurs.</p>
+          </div>
+          <p class="subsection-titre">Comment lire ce livre</p>
+          <div class="corps">
+            <p>Ce livre est court. C'est intentionnel.</p>
+            <p>Il n'est pas conçu pour être lu par fragments, entre deux obligations. Il est conçu pour être traversé d'une traite — ou en deux sessions au maximum. Pas parce qu'il faut aller vite, mais parce que sa logique interne fonctionne mieux quand on laisse les chapitres se répondre.</p>
+            <p>Tu n'as pas besoin de prendre de notes. Tu n'as pas besoin de surligner. Si quelque chose mérite d'être retenu, tu le retrouveras.</p>
+          </div>
+          <p class="subsection-titre">Les questions</p>
+          <div class="corps">
+            <p>À la fin de certains chapitres, une observation ou une question t'attend. Elles ne sont pas des exercices obligatoires. Elles sont là pour prolonger ce que tu viens de lire — si quelque chose a résonné.</p>
+            <p>Certaines te parleront immédiatement. D'autres resteront sans réponse claire pour l'instant. C'est prévu. Il y a des questions qu'on porte un moment avant de pouvoir y répondre vraiment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.6 — Avant de commencer (page 2) -->
+    <div>
+      <p class="section-label">Page 8 — Avant de commencer (suite)</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">8</span>
+        <div style="padding-top: 16px;">
+          <p class="subsection-titre">Le Bilan de Clarté</p>
+          <div class="corps">
+            <p>À la fin du livre, tu trouveras une série de questions regroupées par famille : Reconnaissance, Blocages, Ressources, Observation, Mouvement.</p>
+            <p>Ce n'est pas un test. Il n'y a pas de bonnes réponses.</p>
+            <p>Tu peux les traverser dans l'ordre ou pas. Revenir à certaines plus tard. En laisser d'autres de côté. Les lignes sont là si tu veux écrire — pas parce que tu dois.</p>
+            <p>Ce qui compte, c'est le regard que tu poses — pas la liste complétée.</p>
+          </div>
+          <div style="margin-top: 32px; border-top: 1px solid rgba(0,0,0,0.07); padding-top: 24px;">
             <div class="corps">
-              <p>Il y a des semaines qui commencent toutes de la même façon.</p>
-              <p>La même promesse muette qu'on se fait à soi-même. <em>Cette semaine, c'est différent.</em> Parfois ça arrive un dimanche soir, téléphone en main, après une vidéo qui parle de liberté et de projets construits depuis zéro.</p>
-              <p>Le sentiment est sincère. L'intention aussi. Et puis les obligations reviennent...</p>
+              <p>Tu n'as pas besoin d'être prêt.</p>
+              <p>Il suffit d'être honnête avec toi-même le temps de cette lecture.</p>
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- ══ 4. Spread : texte courant ══ -->
+    <!-- p.7 — Introduction (page 1) -->
     <div>
-      <p class="section-label">Pages 18–19 — Texte courant (double page)</p>
-      <div class="spread">
+      <p class="section-label">Page 9 — Introduction</p>
+      <div class="page page-std">
+        <span class="folio folio-right">9</span>
+        <div style="padding-top: 8px;">
+          <h2 class="section-titre">Introduction</h2>
+          <div class="section-rule"></div>
+          <div class="corps">
+            <p>Ce livre n'est pas né d'une idée brillante.</p>
+            <p>Il est né de conversations. De beaucoup de conversations, sur plusieurs années, avec des personnes qui avaient en commun quelque chose que j'ai mis du temps à nommer précisément : elles voulaient construire autre chose, elles en avaient la capacité — et pourtant elles n'avançaient pas.</p>
+            <p>Pas par manque d'intelligence. Pas par manque de motivation. Pas parce qu'elles manquaient de ressources ou d'idées. Mais parce que quelque chose — souvent difficile à identifier de l'intérieur — les maintenait dans une forme de stagnation que personne autour d'elles ne voyait vraiment.</p>
+            <p>Elles se voyaient tourner en rond. Et elles ne savaient pas toujours pourquoi.</p>
+            <p>J'ai commencé à travailler comme coach après avoir traversé moi-même une période de ce type. Pas un effondrement spectaculaire — plutôt cette sensation sourde d'être à côté de ce que je voulais vraiment faire, sans parvenir à formuler exactement ce que c'était, ni par où commencer. J'ai attendu longtemps d'avoir la bonne réponse avant de me mettre en mouvement. Ce n'est pas la bonne réponse qui est venue en premier. C'est le mouvement.</p>
+            <p>Ce que j'ai appris de cette période, et de tout le travail qui a suivi, m'a conduit à écrire ce livre.</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <div class="page page-left">
-          <span class="running running-left">Plan B Rentable</span>
-          <span class="folio folio-left">18</span>
-          <div class="corps" style="padding-top:8px;">
+    <!-- p.8 — Introduction (page 2) -->
+    <div>
+      <p class="section-label">Page 10 — Introduction (suite)</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">10</span>
+        <div class="corps" style="padding-top: 16px;">
+          <p>Ce n'est pas un livre de développement personnel au sens habituel du terme. Il ne propose pas de système en dix étapes. Il ne promet pas de résultats rapides. Il ne part pas du principe que tu as besoin d'être transformé pour avancer.</p>
+          <p>Il part d'un constat simple : la plupart des personnes qui veulent construire quelque chose ne manquent pas de potentiel. Elles manquent de clarté. Sur ce qu'elles cherchent vraiment. Sur ce qui les retient concrètement. Sur ce qu'elles possèdent déjà — et qu'elles n'ont souvent jamais nommé comme une ressource.</p>
+          <p>Ce livre essaie de créer les conditions de cette clarté. Pas en te disant quoi faire. En t'aidant à regarder ta propre situation avec un peu plus de précision et un peu moins de sévérité.</p>
+          <p>Si tu lis ces lignes, tu as probablement quelque chose en tête depuis un moment. Un projet en attente. Une direction entrevue. Une insatisfaction qui revient régulièrement, sans que tu aies encore trouvé quoi en faire exactement.</p>
+          <p>Tu n'es pas seul dans cette situation. Et le fait que ça dure depuis un moment ne dit rien de ta capacité à en sortir.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         MOUVEMENT I — Ce qui te retient  pp. 9–18
+    ══════════════════════════════════════════ -->
+
+    <!-- p.9 — Chapitre 1 · Ouverture -->
+    <div>
+      <p class="section-label">Page 11 — Chapitre 1 · Ouverture</p>
+      <div class="page page-std">
+        <span class="folio folio-right">11</span>
+        <div style="padding-top: 32px;">
+          <span class="ch-num">Chapitre 1</span>
+          <h2 class="ch-titre">Pourquoi as-tu l'impression de tourner en rond&nbsp;?</h2>
+          <div class="ch-rule"></div>
+          <div class="corps">
+            <p>Il y a des semaines qui commencent toutes de la même façon.</p>
+            <p>La même promesse muette qu'on se fait à soi-même. <em>Cette semaine, c'est différent. Cette semaine, on avance vraiment.</em> Parfois ça arrive un dimanche soir, téléphone en main, après une vidéo qui parle de liberté et de projets construits depuis zéro. Parfois un lundi matin, juste avant que la journée reprenne. Le sentiment est sincère. L'intention aussi. Et puis les obligations reviennent, et la semaine se termine comme les précédentes — avec cette impression d'avoir fait des choses, mais pas la chose.</p>
             <p>Tu n'es probablement pas quelqu'un qui manque de volonté. Ni d'idées. Si tu faisais le compte de ce que tu as voulu commencer ces dernières années — les projets pensés, les directions entrevues, les déclics ressentis — la liste serait probablement plus longue que tu ne l'imagines.</p>
-            <p>Le problème n'est pas là.</p>
-            <p>Le problème, c'est ce cycle que beaucoup connaissent mais que peu arrivent à nommer. On attend que les études ouvrent des portes — et les portes tardent. On regarde des vidéos le soir, dans le noir, sur quelqu'un qui raconte comment il a lancé quelque chose depuis zéro. On like. On sauvegarde. On crée même parfois un compte quelque part pour le projet — deux publications, puis plus rien.</p>
-            <p>Ce n'est pas de la paresse. C'est de la dispersion. Et la dispersion ressemble à la stagnation vue de l'extérieur — mais ce n'est pas la même chose.</p>
           </div>
         </div>
-
-        <div class="page page-right">
-          <span class="running running-right">Chapitre 1</span>
-          <span class="folio folio-right">19</span>
-          <div class="corps" style="padding-top:8px;">
-            <p>Ce qui complique les choses, c'est que certains autour de toi semblent avancer. Il y a ces conversations où quelqu'un parle de ce qu'il est en train de construire, avec cet air de quelqu'un qui sait où il va. Tu félicites. Et sur le chemin du retour, tu te demandes en silence ce qui te retient.</p>
-            <p>La réponse que tu t'es peut-être donnée : tu n'es pas encore assez prêt. Ou tu attends le bon moment, la bonne information, les bonnes conditions. Ou — dans les moments plus difficiles — tu te demandes si tu n'es simplement pas fait pour ça.</p>
-            <p>Et voici ce que j'ai fini par comprendre, et ce que beaucoup de personnes que j'ai accompagnées ont compris à un moment ou un autre : tourner en rond n'est presque jamais un problème de motivation. C'est presque toujours un problème de clarté.</p>
-            <p><em>La clarté, ça se construit.</em></p>
-          </div>
-        </div>
-
       </div>
     </div>
 
-    <!-- ══ 5. Bilan de Clarté — une famille ══ -->
+    <!-- p.10 — Chapitre 1 · Corps 1 -->
     <div>
-      <p class="section-label">Pages 81–82 — Bilan de Clarté · Famille 1</p>
-      <div class="spread">
-
-        <div class="page page-left">
-          <span class="folio folio-left">81</span>
-          <div style="padding-top: 16px;">
-            <span class="bilan-section">Famille 1 &nbsp;·&nbsp; Reconnaissance</span>
-
-            <p class="bilan-intro">
-              Ces questions n'attendent pas de réponse parfaite.<br>
-              Elles prolongent ce que tu as commencé à regarder.
-            </p>
-
-            <div class="question">
-              <p class="question-texte">Qu'est-ce que tu appelles « bientôt » depuis le plus longtemps&nbsp;?</p>
-              <div class="lignes">
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-              </div>
-            </div>
-
-            <div class="question">
-              <p class="question-texte">Si tu observes ta semaine telle qu'elle s'est vraiment passée — pas comme tu aurais voulu qu'elle se passe — qu'est-ce qui t'a retenu le plus&nbsp;?</p>
-              <div class="lignes">
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-              </div>
-            </div>
-          </div>
+      <p class="section-label">Page 12 — Chapitre 1 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">12</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Le problème n'est pas là.</p>
+          <p>Le problème, c'est ce cycle que beaucoup connaissent mais que peu arrivent à nommer. On attend que les études ouvrent des portes — et les portes tardent. On regarde des vidéos le soir, dans le noir, sur quelqu'un qui raconte comment il a lancé quelque chose depuis zéro. On like. On sauvegarde. On crée même parfois un compte quelque part pour le projet — deux publications, puis plus rien. On note une idée dans son téléphone à 23h en se disant que là, c'est la bonne. Et puis rien. La semaine suivante, une autre idée, le même demi-élan.</p>
+          <p>Ce n'est pas de la paresse. C'est de la dispersion. Et la dispersion ressemble à la stagnation vue de l'extérieur — mais ce n'est pas la même chose. La personne dispersée cherche vraiment. Elle n'a juste pas encore trouvé dans quelle direction creuser.</p>
+          <p>Ce qui complique les choses, c'est que certains autour de toi semblent avancer. Il y a ces conversations où quelqu'un de ton entourage parle de ce qu'il est en train de construire, avec cet air de quelqu'un qui sait où il va. Tu félicites. Tu encourages. Et sur le chemin du retour, tu te demandes en silence ce qui te retient.</p>
         </div>
-
-        <div class="page page-right">
-          <span class="folio folio-right">82</span>
-          <div style="padding-top: 16px;">
-            <div class="question" style="margin-top: 8px;">
-              <p class="question-texte">Si ton revenu actuel s'arrêtait dans trois mois, qu'est-ce qui changerait dans ta façon de voir ta situation aujourd'hui&nbsp;?</p>
-              <div class="lignes">
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-                <div class="ligne"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
 
-    <!-- ══ 6. Bilan de Clarté — page de titre ══ -->
+    <!-- p.11 — Chapitre 1 · Corps 2 -->
     <div>
-      <p class="section-label">Page 45 — Bilan de Clarté · titre</p>
+      <p class="section-label">Page 13 — Chapitre 1 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-right">Chapitre 1</span>
+        <span class="folio folio-right">13</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>La réponse que tu t'es peut-être donnée&nbsp;: tu n'es pas encore assez prêt. Ou tu attends le bon moment, la bonne information, les bonnes conditions. Ou — dans les moments plus difficiles — tu te demandes si tu n'es simplement pas fait pour ça.</p>
+          <p>Peut-être que tu as même essayé quelque chose de concret. Tu en as parlé autour de toi — à un ami, à un proche — avec l'enthousiasme du début. Et puis ça n'a pas marché comme tu l'espérais, ou tu t'es retrouvé seul à porter quelque chose de trop lourd. Tu as arrêté. Et tu n'as pas eu très envie d'en reparler.</p>
+          <p>Ce n'est pas un défaut. C'est une protection normale. Mais cette protection, si on n'y fait pas attention, peut finir par ressembler à une prison.</p>
+          <p>J'ai connu cet endroit. Des projets commencés avec énergie, abandonnés quelques semaines plus tard sans raison bien claire. Pas par manque de sérieux — plutôt par manque de boussole.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.12 — Chapitre 1 · Corps 3 (fin) -->
+    <div>
+      <p class="section-label">Page 14 — Chapitre 1 · Fin</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">14</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Et voici ce que j'ai fini par comprendre, et ce que beaucoup de personnes que j'ai accompagnées ont compris à un moment ou un autre&nbsp;: tourner en rond n'est presque jamais un problème de motivation. C'est presque toujours un problème de clarté.</p>
+          <p>La motivation, on l'a. Elle vient et elle repart, c'est sa nature. Mais la clarté — savoir ce qu'on veut construire, pourquoi c'est important maintenant, et par où commencer concrètement — c'est quelque chose de différent. Et c'est ce qui manque le plus souvent quand on a l'impression de ne pas avancer.</p>
+          <p>Ce n'est pas un aveu de faiblesse. C'est une information — peut-être la plus utile de ce chapitre. La clarté, ça se construit.</p>
+          <p><em>Mais quelque chose, souvent, nous en empêche. Quelque chose qu'on prend, la plupart du temps, pour une force.</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.13 — Chapitre 2 · Ouverture -->
+    <div>
+      <p class="section-label">Page 15 — Chapitre 2 · Ouverture</p>
+      <div class="page page-std">
+        <span class="folio folio-right">15</span>
+        <div style="padding-top: 32px;">
+          <span class="ch-num">Chapitre 2</span>
+          <h2 class="ch-titre">Le piège de la fausse sécurité</h2>
+          <div class="ch-rule"></div>
+          <div class="corps">
+            <p>Il y a quelque chose de rassurant dans la routine.</p>
+            <p>L'heure du réveil qui ne change pas. Le trajet qu'on connaît par cœur. La journée qui se déroule à peu près comme la précédente. Ce n'est pas une mauvaise vie — et il serait faux de le prétendre. C'est une vie qui tient. Qui a ses repères, ses certitudes, ses petites victoires quotidiennes. Et dans un monde où les incertitudes sont nombreuses, il y a une vraie valeur dans quelque chose qui tient.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.14 — Chapitre 2 · Corps 1 -->
+    <div>
+      <p class="section-label">Page 16 — Chapitre 2 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">16</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Le problème n'est pas la routine elle-même. C'est ce qu'elle cache parfois, si on ne regarde pas trop près.</p>
+          <p>Il y a des soirs où une question traverse l'esprit sans prévenir. Pas une question urgente — plutôt quelque chose de sourd, qu'on entend entre deux pensées, juste avant de s'endormir.</p>
+          <p><em>Est-ce que c'est ça&nbsp;?</em> Pas « est-ce que c'est bien&nbsp;? » ou « est-ce que c'est mal&nbsp;? » — juste : est-ce que c'est ça, la trajectoire&nbsp;? Est-ce que dans cinq ans, dans dix ans, la vie ressemblera à ça — en un peu plus grand, en un peu plus lourd, mais fondamentalement pareille&nbsp;?</p>
+          <p>La question ne dure jamais longtemps. Le sommeil arrive, le lendemain recommence, et on n'y pense plus vraiment jusqu'à la prochaine fois.</p>
+          <p>Le temps a une façon étrange de passer dans la stabilité. Pas comme quand on traverse quelque chose de difficile — là, chaque jour se remarque, chaque semaine laisse une trace. Dans la routine, les semaines glissent. On réalise en novembre qu'on avait dit « cette année, je fais quelque chose » en janvier. Et l'année n'est pas perdue — les choses ont avancé, la vie a continué. Mais rien n'a vraiment bougé non plus, dans le sens où on avait vaguement imaginé que ça bougerait.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.15 — Chapitre 2 · Corps 2 -->
+    <div>
+      <p class="section-label">Page 17 — Chapitre 2 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-right">Chapitre 2</span>
+        <span class="folio folio-right">17</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>C'est une fatigue particulière, ça. Pas l'épuisement d'avoir trop fait. Plutôt la lassitude tranquille d'avoir tourné suffisamment longtemps dans le même périmètre.</p>
+          <p>Puis il y a des moments qui changent le regard, sans qu'on l'ait cherché. Un collègue dont le contrat ne se renouvelle pas. Une restructuration dont on entend parler dans un couloir. Quelqu'un qu'on connaît, sérieux et compétent, qui se retrouve à devoir tout reprendre de zéro à un âge où il ne l'avait pas prévu. Ce n'est pas forcément sa propre situation. Mais quelque chose dans ces nouvelles met mal à l'aise, plus que de raison. Parce qu'elles rappellent quelque chose qu'on avait préféré laisser dans l'angle mort&nbsp;: une partie de ta vie est dans les mains de quelqu'un d'autre.</p>
+          <p><em>Combien de temps est-ce que tu pourrais tenir si ce revenu-là s'arrêtait demain&nbsp;?</em></p>
+          <p>Pas longtemps, pour la plupart des gens. Le salaire arrive, et il repart presque aussi vite. Il couvre. Il ne protège pas toujours. Ce n'est pas une honte — c'est la réalité de beaucoup de personnes sérieuses, qui ont fait ce qu'on attendait d'elles&nbsp;: les études, le diplôme, le poste qu'elles ont mis du temps à obtenir. Mais un cadre qu'on n'a pas construit soi-même est un cadre dont on ne contrôle pas tous les paramètres.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.16 — Chapitre 2 · Corps 3 (fin) -->
+    <div>
+      <p class="section-label">Page 18 — Chapitre 2 · Fin</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">18</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Il m'a fallu du temps pour regarder cette réalité en face. Pas par naïveté — plutôt parce que la nommer obligeait à reconnaître quelque chose que je préférais ignorer. La sécurité que j'avais était réelle. Mais elle était aussi un argument commode pour ne pas avoir à choisir.</p>
+          <p>Ce que cette réflexion amène, quand on s'y laisse aller honnêtement, ce n'est pas la panique. Ce n'est pas non plus l'envie de tout quitter du jour au lendemain. C'est quelque chose de plus discret et de plus urgent à la fois&nbsp;: l'envie de dépendre un peu moins. D'avoir quelque chose à soi, même de petit, même d'imparfait, qui ne dépende pas d'une décision prise ailleurs.</p>
+          <p>Un Plan B n'est pas forcément un projet révolutionnaire. Pour beaucoup de gens qui ont réfléchi honnêtement à leur situation, ce n'est pas un rêve de richesse ni une promesse de liberté totale. C'est quelque chose de plus simple — une façon de respirer un peu mieux. De ne plus avoir cette sensation sourde que tout repose sur une seule chose sur laquelle on n'a pas vraiment la main.</p>
+          <p>Il reste une question, pourtant. Si cette réalité est visible — si on peut la sentir, la nommer, la reconnaître dans une soirée honnête avec soi-même — pourquoi est-ce qu'elle dure&nbsp;?</p>
+          <p><em>Parce que ce qui nous retient n'est presque jamais à l'extérieur.</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.17 — Intermède I -->
+    <div>
+      <p class="section-label">Page 19 — Intermède I</p>
+      <div class="page page-std">
+        <span class="folio folio-right">19</span>
+        <div style="padding-top: 40px;">
+          <span class="intermede-label">Intermède I</span>
+          <div class="corps">
+            <p>Il y a des moments dans un livre où il vaut mieux s'arrêter que d'avancer.</p>
+            <p>Pas parce que quelque chose ne va pas. Plutôt parce que quelque chose mérite d'être regardé avant de continuer.</p>
+            <p>Si tu as traversé les premières pages honnêtement, tu as probablement reconnu quelque chose. Peut-être un schéma que tu connais depuis longtemps sans l'avoir jamais nommé aussi clairement. Peut-être une tension entre ce que tu voudrais faire et ce que tu fais réellement. Peut-être juste une légère gêne — ce sentiment discret que certaines choses dans ta vie ne sont pas tout à fait à leur place, et que tu le sais depuis plus longtemps que tu ne veux l'admettre.</p>
+            <p>Cette reconnaissance n'est pas toujours agréable. C'est rarement le cas.</p>
+            <p>Mais elle est utile — plus utile que le confort de ne pas regarder.</p>
+            <p>Ce qui vient ensuite dans ce livre, c'est une autre partie du regard&nbsp;: pas ce qui te retient, mais ce que tu possèdes déjà. Ce n'est pas la même chose. Et la plupart des gens ont beaucoup plus de mal avec cette deuxième partie qu'avec la première.</p>
+            <p>Voir ce qui nous retient, c'est douloureux mais familier. On a l'habitude de se critiquer, de recenser ce qui manque, d'identifier les obstacles. On le fait souvent trop bien.</p>
+            <p>Voir ce qu'on possède déjà — vraiment voir, sans minimiser, sans l'attribuer à la chance ou aux circonstances — c'est un autre exercice. Plus inhabituel. Parfois plus difficile.</p>
+            <p>Prends un moment ici, si tu en as envie.</p>
+            <p>Pas pour répondre à une question. Juste pour laisser ce que tu viens de traverser s'installer un peu, avant de continuer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.18 — Blanc -->
+    <div>
+      <p class="section-label">Page 20 — Blanc</p>
+      <div class="page page-std">
+        <span class="folio folio-left">20</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         MOUVEMENT II — Ce que tu possèdes déjà  pp. 19–28
+    ══════════════════════════════════════════ -->
+
+    <!-- p.19 — Chapitre 3 · Ouverture -->
+    <div>
+      <p class="section-label">Page 21 — Chapitre 3 · Ouverture</p>
+      <div class="page page-std">
+        <span class="folio folio-right">21</span>
+        <div style="padding-top: 32px;">
+          <span class="ch-num">Chapitre 3</span>
+          <h2 class="ch-titre">Ce qui te bloque n'est pas toujours ce que tu crois</h2>
+          <div class="ch-rule"></div>
+          <div class="corps">
+            <p>On sait toujours exactement ce qui nous retient.</p>
+            <p>Ou du moins, on le croit.</p>
+            <p>Le temps qu'on n'a pas. L'argent qu'il faudrait. Le réseau qui manque. Les conditions qui ne sont pas encore réunies. Ce sont des réponses sincères — et souvent, ces obstacles sont bien réels. Il serait faux de les balayer d'un revers de main.</p>
+            <p>Mais il y en a un autre, moins souvent nommé, qui est peut-être plus déterminant que tous les autres réunis. Pas parce qu'il est plus grand. Parce qu'il est à l'intérieur — et qu'il porte des déguisements très convaincants.</p>
+            <p>Il prend surtout deux formes. Les deux savent très bien se faire passer pour autre chose.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.20 — Chapitre 3 · Corps 1 -->
+    <div>
+      <p class="section-label">Page 22 — Chapitre 3 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">22</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Le premier s'appelle le perfectionnisme.</p>
+          <p>Il ressemble à du sérieux. Il se présente comme de la rigueur, de l'exigence, du respect pour le travail bien fait. Et ce n'est pas entièrement faux — il y a quelque chose de réel dans cette intention. Mais dans la pratique, le perfectionnisme fait une chose très précise&nbsp;: il reporte indéfiniment le moment de commencer.</p>
+          <p>Il y a toujours quelque chose à approfondir encore. Une compétence à consolider. Un plan à affiner. Un détail à régler avant d'y aller vraiment. Et pendant ce temps, le projet reste en attente — pas abandonné, juste pas encore lancé.</p>
+          <p>Le dossier existe. Il a un nom. Il y a peut-être même quelques pages de notes dedans, prises un soir d'élan. Mais il n'a pas été ouvert depuis un moment. Et chaque fois qu'on y pense, on se dit que ce n'est pas encore le bon moment — qu'il faut d'abord que...</p>
+          <p>Il y en a un autre, plus profond et moins souvent avoué.</p>
+          <p>Ce n'est pas la peur d'échouer. Beaucoup de gens, dans l'honnêteté, pourraient vivre avec l'échec — un projet qui ne marche pas, une tentative qui tourne court. Ce qu'ils imaginent moins facilement, c'est décevoir.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.21 — Chapitre 3 · Corps 2 -->
+    <div>
+      <p class="section-label">Page 23 — Chapitre 3 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-right">Chapitre 3</span>
+        <span class="folio folio-right">23</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Décevoir ceux qui ont cru en eux. Ceux qui ont investi, d'une façon ou d'une autre, dans ce qu'ils sont devenus. Ceux dont le regard a de l'importance. Ce n'est pas une faiblesse — c'est souvent une forme d'amour retourné. Mais cet amour-là peut se transformer en poids, sans qu'on l'ait cherché.</p>
+          <p>Alors on ne parle pas du projet. Pas encore. On attend qu'il ait une forme, qu'il soit présentable, qu'il tienne debout avant d'être montré. Si ça ne marche pas, au moins personne ne l'aura su. Si ça marche, on pourra en parler. Cette prudence a du sens. Mais elle isole aussi — et elle prive parfois d'un soutien qui aurait changé quelque chose.</p>
+          <p>Reconnaître ces mécanismes n'est pas confortable. Parce qu'ils ne ressemblent pas à de la peur au premier regard. Ils ressemblent à de la prudence, à de la préparation, à du sérieux. Et c'est précisément ce qui les rend difficiles à voir.</p>
+          <p>Mais il y a quelque chose d'important à comprendre sur eux&nbsp;: ils ne sont pas là par hasard. Ils ont été construits pour protéger quelque chose de réel — une image de soi, une relation, une réputation dans un cercle où les regards comptent. Cette protection a eu sa raison d'être.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.22 — Chapitre 3 · Corps 3 (fin) -->
+    <div>
+      <p class="section-label">Page 24 — Chapitre 3 · Fin</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">24</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Le problème n'est pas qu'elle existe. Le problème, c'est quand elle devient si confortable qu'on finit par la confondre avec qui on est.</p>
+          <p>Attendre d'être totalement prêt est parfois une manière élégante de repousser la peur. Pas toujours — parfois la préparation est vraiment de la préparation. Mais il y a un moment où la différence devient possible à voir, si on se donne la permission de regarder honnêtement.</p>
+          <p>Ce n'est pas une invitation à tout lâcher ni à tout risquer. C'est regarder ses propres mécanismes avec un peu de curiosité, plutôt qu'avec de la sévérité.</p>
+          <p>Non pas <em>« je me bloque à cause de la peur. »</em> Mais&nbsp;: <em>« voilà comment fonctionne cette partie de moi — et voilà ce que ça me coûte peut-être. »</em></p>
+          <p>Cette distinction semble petite. Elle change beaucoup de choses.</p>
+          <p>Parce qu'à partir du moment où on commence à voir ses propres mécanismes avec honnêteté, quelque chose change dans les questions qu'on se pose.</p>
+          <p><em>On ne se demande plus seulement&nbsp;: « qu'est-ce qui me retient&nbsp;? » On commence à se demander&nbsp;: « qu'est-ce que j'ai déjà, pour commencer à avancer&nbsp;? »</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.23 — Chapitre 4 · Ouverture -->
+    <div>
+      <p class="section-label">Page 25 — Chapitre 4 · Ouverture</p>
+      <div class="page page-std">
+        <span class="folio folio-right">25</span>
+        <div style="padding-top: 32px;">
+          <span class="ch-num">Chapitre 4</span>
+          <h2 class="ch-titre">Tu n'as peut-être pas besoin de tout recommencer</h2>
+          <div class="ch-rule"></div>
+          <div class="corps">
+            <p>Il y a une question qu'on se pose rarement, parce qu'on est trop occupé à regarder ce qu'on n'a pas encore.</p>
+            <p><em>Qu'est-ce que j'ai déjà&nbsp;?</em></p>
+            <p>Pas dans le sens d'un bilan comptable. Plutôt dans le sens d'un regard honnête sur ce qu'on a traversé, construit, appris — souvent sans le nommer comme tel, souvent sans le compter comme une ressource.</p>
+            <p>La plupart des gens qui veulent avancer pensent qu'il leur manque quelque chose. Un diplôme de plus. Une formation spécifique. Un capital de départ. Un contact au bon endroit. Et peut-être que ces choses manquent réellement, dans certains cas. Mais il y a presque toujours, en parallèle, un autre inventaire qu'on n'a jamais fait — celui de ce qu'on possède déjà, sans encore l'avoir nommé.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.24 — Chapitre 4 · Corps 1 -->
+    <div>
+      <p class="section-label">Page 26 — Chapitre 4 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">26</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Pense à ce qu'on vient te demander.</p>
+          <p>Pas tes supérieurs, pas les institutions — les gens autour de toi. Les amis, les proches, les voisins, les collègues. Pour quel type de problème est-ce qu'on t'appelle&nbsp;? Quelle situation est-ce qu'on te soumet parce qu'on sait que tu vas trouver une issue&nbsp;? Quelle question est-ce qu'on te pose parce que ta façon de voir les choses est différente&nbsp;?</p>
+          <p>Il y a presque toujours quelque chose. Quelque chose que tu résous naturellement, que tu expliques clairement, que tu navigues sans effort apparent — au point que tu ne le vois même plus comme une compétence. Parce que ce qui vient naturellement ne ressemble pas à un talent. Ça ressemble à de l'évidence.</p>
+          <p>C'est souvent là que se cachent les ressources les plus solides.</p>
+          <p>Il y a des gens qui savent lire une situation commerciale en quelques minutes, parce qu'ils ont grandi dans un environnement où le commerce était une langue vivante — les conversations à la boutique familiale, les négociations entendues depuis l'enfance, la logique des prix et des marges absorbée sans manuel. Ils ne pensent pas à ça comme une compétence. Pourtant, des consultants facturent cher pour expliquer des choses qu'ils savent intuitivement.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.25 — Chapitre 4 · Corps 2 -->
+    <div>
+      <p class="section-label">Page 27 — Chapitre 4 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-right">Chapitre 4</span>
+        <span class="folio folio-right">27</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Il y a des gens qui passent d'un registre à l'autre sans effort — une langue ici, un dialecte là, un code culturel différent selon l'interlocuteur. Ils trouvent ça normal. Pourtant, cette capacité à naviguer entre des mondes différents est une forme d'intelligence sociale rare, et souvent décisive dans les contextes où les marchés se croisent.</p>
+          <p>Il y a des gens qui ont géré des situations familiales complexes — des responsabilités prises tôt, des équilibres à tenir, des décisions à prendre sous pression. Ils n'en parlent pas comme d'une formation. Et pourtant.</p>
+          <p>Il m'a fallu du temps pour voir ça dans ma propre trajectoire. Accompagner des gens dans des projets qui n'avancent pas. Apprendre à tenir une conversation difficile sans imposer de réponse. Comprendre comment quelqu'un prend une décision — ou pourquoi il ne la prend pas. Ces choses-là, je ne les rangeais pas du côté des compétences. Je les rangeais du côté de la vie. Ce n'est que plus tard que j'ai compris que ce qu'on traverse forme aussi, même quand ça ne ressemble pas à une école.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.26 — Chapitre 4 · Corps 3 (fin) -->
+    <div>
+      <p class="section-label">Page 28 — Chapitre 4 · Fin</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">28</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Tu as probablement plus que ce que tu comptes.</p>
+          <p>Et la différence entre quelqu'un qui commence avec peu et quelqu'un qui commence avec plus n'est pas toujours là où on croit. Elle est parfois dans la façon dont on regarde ce qu'on a déjà — et ce qu'on décide d'en faire.</p>
+          <p>Il s'agit peut-être juste de regarder ce qu'on est déjà — avec un peu plus de justesse que d'habitude.</p>
+          <p>Ce regard-là, une fois qu'on le pose, change quelque chose dans la façon dont on observe ce qui nous entoure.</p>
+          <p><em>Ce qu'on appelle une opportunité commence à ressembler à quelque chose de différent.</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.27 — Intermède II -->
+    <div>
+      <p class="section-label">Page 29 — Intermède II</p>
+      <div class="page page-std">
+        <span class="folio folio-right">29</span>
+        <div style="padding-top: 40px;">
+          <span class="intermede-label">Intermède II</span>
+          <div class="corps">
+            <p>Il y a quelque chose de particulier dans le fait d'avoir regardé ses propres ressources honnêtement.</p>
+            <p>Ce n'est pas le même inconfort que de regarder ce qui retient. Celui-là est familier — on y revient souvent, parfois trop. Cet inconfort-ci est différent. Plus silencieux. Plus chargé.</p>
+            <p>Parce que voir ce qu'on possède déjà, c'est aussi voir ce qu'on aurait pu faire avec — et ce qu'on pourrait faire avec maintenant.</p>
+            <p>Ce que tu as traversé dans cette partie du livre n'est pas anodin. Tu as peut-être nommé des compétences que tu avais banalisées. Reconnu des expériences que tu n'avais jamais comptées comme des ressources. Vu des problèmes autour de toi que tu pourrais, peut-être, contribuer à résoudre d'une façon ou d'une autre.</p>
+            <p>Ce regard-là crée une forme de responsabilité discrète.</p>
+            <p>Pas une obligation. Pas une pression. Juste ce léger déplacement intérieur où ce qu'on ignorait ne peut plus être ignoré de la même façon.</p>
+            <p>La partie qui vient maintenant est différente.</p>
+            <p>Elle ne te demande plus seulement d'observer. Elle te demande d'envisager — de commencer à regarder ce que tu as découvert non plus comme une liste, mais comme un point de départ possible.</p>
+            <p>Ce n'est pas encore une décision. C'est juste le début de la question.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.28 — Blanc -->
+    <div>
+      <p class="section-label">Page 30 — Blanc</p>
+      <div class="page page-std">
+        <span class="folio folio-left">30</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         MOUVEMENT III — Ce que tu peux faire  pp. 29–42
+    ══════════════════════════════════════════ -->
+
+    <!-- p.29 — Chapitre 5 · Ouverture -->
+    <div>
+      <p class="section-label">Page 31 — Chapitre 5 · Ouverture</p>
+      <div class="page page-std">
+        <span class="folio folio-right">31</span>
+        <div style="padding-top: 32px;">
+          <span class="ch-num">Chapitre 5</span>
+          <h2 class="ch-titre">Les opportunités ne ressemblent pas toujours à ce qu'on imagine</h2>
+          <div class="ch-rule"></div>
+          <div class="corps">
+            <p>La plupart des gens cherchent une opportunité comme on cherche un objet perdu.</p>
+            <p>Quelque chose de spécifique, qui existe quelque part, qu'il s'agirait de trouver avant les autres. Une idée originale. Un marché inexploré. Un moment parfait. Et pendant qu'on cherche cet objet-là, on passe à côté de choses visibles depuis longtemps — parce qu'elles ne ressemblent pas à ce qu'on avait imaginé trouver.</p>
+            <p>Il y a quelque chose de curieux dans la façon dont les opportunités apparaissent, quand on commence vraiment à y faire attention.</p>
+            <p>Elles ne se présentent presque jamais comme des révélations. Elles ressemblent plutôt à des frictions — à des moments où quelque chose ne fonctionne pas bien, où quelque chose manque, où quelqu'un cherche ce qu'il ne trouve pas facilement. Des moments qu'on a appris à ignorer parce qu'ils font partie du paysage habituel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.30 — Chapitre 5 · Corps 1 -->
+    <div>
+      <p class="section-label">Page 32 — Chapitre 5 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">32</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Il y a des problèmes qu'on finit par ne plus voir dans son quotidien. Pas les grands — ceux qu'on attend que d'autres résolvent. Les petits. Ceux qu'on contourne depuis si longtemps qu'ils sont devenus invisibles. La chose qu'on ne trouve nulle part et pour laquelle on improvise à chaque fois. Le service qu'on obtient seulement si on connaît quelqu'un. L'information qu'il faut assembler soi-même à partir de trois sources différentes parce qu'elle n'existe pas organisée quelque part. L'attente qu'on a acceptée sans vraiment comprendre pourquoi elle existe encore.</p>
+          <p>Ces frictions-là ont quelque chose en commun&nbsp;: elles sont là depuis longtemps, et personne ne les a encore résolues sérieusement.</p>
+          <p>Il y a quelques années, quelqu'un dans un quartier que je connais a commencé à faire quelque chose de très simple.</p>
+          <p>Il remarquait depuis longtemps que les gens autour de lui payaient des prix très différents pour les mêmes choses — selon qui ils connaissaient, selon le moment, selon le quartier. Cette information circulait. Elle existait de bouche à oreille depuis toujours. Mais elle n'était organisée nulle part.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.31 — Chapitre 5 · Corps 2 -->
+    <div>
+      <p class="section-label">Page 33 — Chapitre 5 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-right">Chapitre 5</span>
+        <span class="folio folio-right">33</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Il a commencé à l'organiser. Simplement. Sans grande infrastructure, sans capital de départ. Juste l'acte de collecter ce que tout le monde savait partiellement, et de le rendre accessible à ceux qui en avaient besoin.</p>
+          <p>Ce n'était pas une idée brillante. C'était une observation qu'il avait faite pendant des mois, avant de décider de faire quelque chose avec.</p>
+          <p>Il y a aussi des frictions plus proches de soi.</p>
+          <p>Quelqu'un qui a passé des années à aider ses proches à naviguer dans des situations que les autres trouvaient complexes — un dossier à monter, une situation à démêler, une démarche que tout le monde redoutait et que personne n'arrivait à lire correctement. Il le faisait naturellement, sans y penser. Et puis, à force d'entendre les mêmes questions revenir, il a compris que ce qui lui semblait évident ne l'était pas pour tout le monde — et que cette capacité à rendre accessible ce qui est opaque pouvait valoir quelque chose.</p>
+          <p>La friction qu'il avait vue n'était pas dans un marché. Elle était dans le quotidien des gens autour de lui.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.32 — Chapitre 5 · Corps 3 (fin) -->
+    <div>
+      <p class="section-label">Page 34 — Chapitre 5 · Fin</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">34</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Une opportunité est souvent un problème que quelqu'un a décidé de prendre au sérieux.</p>
+          <p>Ce qui change quand on commence à regarder avec cette question — <em>quel problème est-ce que j'observe régulièrement, sans qu'il soit encore bien résolu&nbsp;?</em> — c'est qu'on cesse de chercher une idée. On commence à observer. On s'interroge sur ce qui complique inutilement la vie des gens autour de soi. Sur ce qu'ils font de façon détournée alors que ça pourrait être direct. Sur les connexions qui n'existent pas encore entre des choses qui, pourtant, existent déjà.</p>
+          <p>Ce n'est pas un secteur porteur. Ce n'est pas une niche à exploiter. C'est juste un regard différent sur ce qui est déjà là.</p>
+          <p>La difficulté n'est pas de trouver quoi observer. La plupart des gens, quand ils se posent honnêtement cette question, trouvent rapidement plusieurs réponses.</p>
+          <p>La difficulté, c'est de se décider à faire quelque chose avec ce qu'on a vu.</p>
+          <p><em>Ce moment — où voir devient faire — est rarement celui qu'on avait prévu.</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.33 — Chapitre 6 · Ouverture -->
+    <div>
+      <p class="section-label">Page 35 — Chapitre 6 · Ouverture</p>
+      <div class="page page-std">
+        <span class="folio folio-right">35</span>
+        <div style="padding-top: 32px;">
+          <span class="ch-num">Chapitre 6</span>
+          <h2 class="ch-titre">Commencer avant d'être prêt</h2>
+          <div class="ch-rule"></div>
+          <div class="corps">
+            <p>On commence quand on est prêt.</p>
+            <p>Quand on a les compétences nécessaires. Quand les conditions sont réunies. Quand le plan est solide et la peur s'est calmée suffisamment pour avancer sans trop de risques.</p>
+            <p>C'est une pensée raisonnable. Le problème, c'est qu'elle peut s'étirer indéfiniment.</p>
+            <p>L'attente a une façon particulière de se justifier à elle-même. Il y a toujours une bonne raison de ne pas encore commencer — une raison différente de celle du mois précédent, mais une raison. Et les mois s'accumulent avec une régularité silencieuse, jusqu'au moment où on réalise que le « bientôt » dure depuis plus longtemps qu'on ne l'avait prévu.</p>
+            <p>Ce n'est pas de la mauvaise foi. C'est une façon de se protéger qui a l'apparence de la sagesse.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.34 — Chapitre 6 · Corps 1 -->
+    <div>
+      <p class="section-label">Page 36 — Chapitre 6 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">36</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>Ce qu'on comprend moins facilement, c'est que la confiance ne précède pas l'action. Elle en est le résultat.</p>
+          <p>On ne commence pas parce qu'on est prêt. On devient prêt parce qu'on a commencé. On n'apprend pas à marcher en regardant marcher. On tombe, on se relève, on ajuste. La confiance dans l'équilibre se construit comme ça — pas avant.</p>
+          <p>Ça signifie qu'une première tentative imparfaite a plus de valeur réelle qu'un plan parfait qui n'a jamais été testé. Que l'imperfection du début n'est pas un problème à corriger avant de commencer — c'est une étape normale dans presque tout ce qui finit par bien fonctionner. Et que celui qui se dit « je ne suis pas encore prêt » n'est peut-être pas en train d'être prudent. Il est peut-être en train d'attendre une sensation qui n'arrive qu'après.</p>
+          <p>Il y a des gens qui ont déjà commencé, sans l'avoir vraiment nommé.</p>
+          <p>Un premier message envoyé à quelqu'un qui pourrait être intéressé. Une première offre formulée en deux phrases, sans logo, sans site. Un premier test posé simplement pour voir ce qui se passe.</p>
+          <p>Une prestation rendue régulièrement, une compétence facturée de temps en temps, quelque chose qu'on fait « en parallèle » depuis des mois sans lui donner de nom parce qu'on attend que ça ressemble davantage à quelque chose. Il y a peut-être un numéro enregistré dans son téléphone sous « client », sans que le mot ait jamais été prononcé à voix haute. Ou une somme reçue pour quelque chose fait naturellement, notée quelque part, dans une case qu'on n'a pas encore su nommer.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.35 — Chapitre 6 · Corps 2 (fin) -->
+    <div>
+      <p class="section-label">Page 37 — Chapitre 6 · Fin</p>
+      <div class="page page-std">
+        <span class="running running-right">Chapitre 6</span>
+        <span class="folio folio-right">37</span>
+        <div class="corps" style="padding-top: 8px;">
+          <p>C'est déjà quelque chose. Même si ça ne ressemble pas encore à ce qu'on avait imaginé.</p>
+          <p>Il y a eu des mois comme ça.</p>
+          <p>Quelque chose en cours, sans encore savoir si ça allait vraiment devenir quelque chose. Des échanges qu'on avait du mal à appeler du travail. Des retours qu'on notait quelque part sans savoir encore pourquoi. Une façon de faire qui se précisait lentement, à force de répétitions, sans qu'aucun des deux — ni celui qu'on accompagnait ni soi-même — n'ait encore posé de nom sur ce que c'était exactement.</p>
+          <p>Ce n'était pas une méthode. Ce n'était pas encore un métier. Mais c'était réel, et c'était à moi.</p>
+          <p>Je continuais parce que quelque chose répondait — pas toujours clairement, pas toujours comme prévu, mais assez pour justifier la prochaine fois. C'est souvent comme ça que les choses commencent vraiment. Pas avec une décision nette, mais avec une série de fois suivantes.</p>
+          <p>Commencer avant d'être prêt ne signifie pas commencer sans réfléchir. Ça signifie ne pas confondre la réflexion avec l'attente, ni la prudence avec l'immobilité.</p>
+          <p>Il y a un moment — pas un moment parfait, juste un moment suffisant — où il devient possible de faire une première chose concrète. Pas le plan entier. Pas la version finale. Juste quelque chose de réel, même petit, même imparfait, qui a l'avantage d'exister.</p>
+          <p><em>Ce qui se construit ensuite est rarement ce qu'on avait prévu. Mais au moins, c'est réel.</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.36 — Blanc -->
+    <div>
+      <p class="section-label">Page 38 — Blanc</p>
+      <div class="page page-std">
+        <span class="folio folio-left">38</span>
+      </div>
+    </div>
+
+    <!-- p.37 — Chapitre 7 · Ouverture -->
+    <div>
+      <p class="section-label">Page 39 — Chapitre 7 · Ouverture</p>
+      <div class="page page-std">
+        <span class="folio folio-right">39</span>
+        <div style="padding-top: 32px;">
+          <span class="ch-num">Chapitre 7</span>
+          <h2 class="ch-titre">Construire quelque chose de réel</h2>
+          <div class="ch-rule"></div>
+          <div class="corps">
+            <p>Il y a une différence entre comprendre quelque chose et décider de faire quelque chose avec ce qu'on a compris.</p>
+            <p>Les deux sont nécessaires. Mais ce sont deux mouvements différents — et le passage de l'un à l'autre est l'endroit où beaucoup de choses se jouent.</p>
+            <p>Ce qui reste après avoir traversé ces chapitres n'est pas forcément une clarté parfaite. C'est peut-être juste une façon légèrement différente de regarder sa propre situation. Un déplacement discret dans la façon de se voir — pas un bouleversement, juste une nuance.</p>
+            <p>C'est souvent de là que quelque chose commence.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.38 — Chapitre 7 · Corps 1 -->
+    <div>
+      <p class="section-label">Page 40 — Chapitre 7 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">40</span>
+        <div class="corps" style="padding-top: 8px;">
+          <div class="sep-rule"></div>
+          <p>On imagine un lancement. Un moment de décision nette, une annonce, un premier jour qui ressemble à un premier jour. Dans la réalité, ça commence presque toujours plus discrètement.</p>
+          <p>Un message envoyé à quelqu'un qui pourrait être intéressé — sans trop savoir si c'est le bon moment, ni la bonne formulation. Une conversation initiée avec l'honnêteté un peu maladroite de quelqu'un qui ne sait pas encore exactement ce qu'il propose. Un premier essai tenté sans filet — pas par bravade, juste parce que continuer à ne pas essayer commençait à coûter quelque chose.</p>
+          <p>Ce n'est pas spectaculaire. Ça ne ressemble pas à un départ. Ça ressemble à des débuts hésitants, à des ajustements en cours de route, à des moments où l'on n'est pas sûr d'avancer dans la bonne direction, et où l'on continue quand même — parce que rester immobile n'est pas gratuit non plus.</p>
+          <p>Ce que j'ai appris, dans ma propre trajectoire et dans celles des personnes que j'ai accompagnées, c'est que la construction réelle se passe rarement dans des éclats. Elle se passe dans des décisions ordinaires, souvent prises seul, souvent à des heures où personne ne regarde. Un rendez-vous accepté même si les conditions n'étaient pas idéales. Une offre formulée, imparfaite, quand même envoyée. Une idée testée à petite échelle, pour voir — sans attendre que tout soit prêt. Ces moments-là, pris séparément, ne ressemblent à rien de particulier. Mis ensemble, ils ressemblent à un chemin.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.39 — Chapitre 7 · Corps 2 -->
+    <div>
+      <p class="section-label">Page 41 — Chapitre 7 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-right">Chapitre 7</span>
+        <span class="folio folio-right">41</span>
+        <div class="corps" style="padding-top: 8px;">
+          <div class="sep-rule"></div>
+          <p>Il y a une partie du processus que personne ne raconte bien, parce qu'elle ne se raconte pas bien.</p>
+          <p>L'attente. Les semaines où quelque chose avance mais rien ne se voit encore. Les messages restés sans réponse — pas parce que l'idée était mauvaise, mais parce que le moment n'était pas le bon, ou que la personne n'avait pas la tête à ça. Les essais qui ne mènent nulle part, ou qui mènent quelque part d'inattendu, et qui demandent de reprendre, d'ajuster, de recommencer autrement.</p>
+          <p>On parle souvent des pivots comme s'ils étaient des décisions stratégiques. Dans la réalité, ils ressemblent plutôt à des ajustements faits un peu dans le vide — on essaie quelque chose, ça ne correspond pas tout à fait, on modifie, on réessaie. Ce n'est pas une méthode. C'est simplement ce qui se passe quand on est honnête avec ce qui marche et ce qui ne marche pas.</p>
+          <p>Ce qui ne marche pas n'est pas du temps perdu. C'est souvent la partie la plus précise de l'apprentissage. On comprend quelque chose sur son propre fonctionnement, sur ce que les gens cherchent vraiment, sur la façon dont on veut travailler — ou pas. Des informations qu'aucune formation n'aurait pu donner avec la même netteté, parce qu'elles viennent de ce qu'on a réellement essayé.</p>
+          <p>Si tu n'y es pas préparé, tu risques d'interpréter ce silence comme une confirmation que tu n'es pas fait pour ça. Tu vas chercher un autre angle, une autre approche, et recommencer le cycle — non pas parce que l'idée était mauvaise, mais parce que tu n'avais pas encore intégré que le silence fait partie de la construction.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.40 — Chapitre 7 · Corps 3 -->
+    <div>
+      <p class="section-label">Page 42 — Chapitre 7 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">42</span>
+        <div class="corps" style="padding-top: 8px;">
+          <div class="sep-rule"></div>
+          <p>Il y a un moment difficile à nommer — le moment où quelque chose devient réel.</p>
+          <p>Pas réel au sens de rentable, ni de visible. Réel au sens où ça existe un peu indépendamment de toi. Où tu ne peux plus complètement défaire ce que tu as commencé, même si tu le voulais. Pas parce que tu t'es engagé publiquement, pas parce que tu as mis de l'argent quelque part. Parce qu'une décision a été prise — une vraie décision, même petite — et que cette décision a changé quelque chose dans ta façon de te voir.</p>
+          <p>Quelqu'un a payé pour quelque chose que tu as fait. Quelqu'un est revenu. Quelqu'un a parlé de toi à quelqu'un d'autre, sans que tu lui aies demandé. Ces signes-là ne signifient pas que tu as réussi. Ils signifient que quelque chose que tu as proposé a eu un effet sur quelqu'un d'autre que toi — et ça, ça change quelque chose.</p>
+          <p>Ce n'est pas l'argent qui rend quelque chose réel. C'est la réciprocité. L'échange. Le fait que quelqu'un d'autre reconnaisse une valeur dans ce que tu as construit. Même une fois. Même à petite échelle.</p>
+          <p><em>Quelque chose existe ici. Pas encore grand-chose. Mais quelque chose</em> — et c'est suffisant pour continuer.</p>
+          <div class="sep-rule"></div>
+          <p>Ce que tu construis n'a pas besoin de ressembler à ce que quelqu'un d'autre a construit. Il n'y a pas de format correct, pas de trajectoire standard. Certaines personnes construisent quelque chose de petit et de stable, qui leur donne juste un peu plus de liberté et un peu moins de dépendance — et c'est suffisant. D'autres construisent quelque chose qui grandit, qui prend des directions auxquelles elles ne s'attendaient pas. Les deux sont valides. Ce qui compte, c'est que c'est à toi.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.41 — Chapitre 7 · Corps 4 -->
+    <div>
+      <p class="section-label">Page 43 — Chapitre 7 · Corps</p>
+      <div class="page page-std">
+        <span class="running running-right">Chapitre 7</span>
+        <span class="folio folio-right">43</span>
+        <div class="corps" style="padding-top: 8px;">
+          <div class="sep-rule"></div>
+          <p>Il m'a fallu du temps pour comprendre ça autrement qu'en théorie.</p>
+          <p>Pendant longtemps, j'ai attendu d'être prêt. D'avoir la bonne formation, le bon titre, la bonne façon de présenter ce que je faisais. Il y a eu une période où je repoussais parce que je ne me sentais pas encore suffisamment légitime — comme si la légitimité allait arriver d'elle-même, avec assez de lectures et assez de temps. Comme si un moment allait finir par arriver où je me dirais enfin&nbsp;: <em>maintenant, c'est bon</em>.</p>
+          <p>Ce moment n'est pas arrivé comme ça.</p>
+          <p>Ce qui s'est passé à la place, c'est que j'ai commencé quand même — mal, sans être prêt, sans certitude que c'était la bonne façon de faire. Et quelque temps après, j'ai réalisé que quelque chose que j'avais proposé avait réellement aidé quelqu'un. C'est là que j'ai compris que j'attendais une permission que personne d'autre que moi ne pouvait me donner.</p>
+          <p>Ce n'est pas une leçon que j'ai apprise une fois et retenue définitivement. C'est quelque chose que j'ai dû réapprendre à chaque étape — à chaque fois que je voulais attendre encore un peu, encore un peu, avant de proposer quelque chose de nouveau. Je le réapprends encore.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.42 — Chapitre 7 · Corps 5 (fin) -->
+    <div>
+      <p class="section-label">Page 44 — Chapitre 7 · Fin</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">44</span>
+        <div class="corps" style="padding-top: 8px;">
+          <div class="sep-rule"></div>
+          <p>La prochaine étape n'est pas une autre lecture.</p>
+          <p>Ce que j'ai vu, chez les personnes qui commencent vraiment, ce n'est pas qu'elles avaient plus de certitude que les autres. C'est qu'elles ont arrêté d'attendre que les conditions soient parfaites — et qu'elles ont fait une première chose concrète, petite, sans filet.</p>
+          <p>Ça peut être une conversation avec quelqu'un qui fait ce que tu envisages. Ça peut être écrire, pour la première fois, ce que tu proposerais si tu devais le proposer demain. Ça peut être calculer ce dont tu as besoin, vraiment, pour que ça soit viable.</p>
+          <p>Une chose. Cette semaine. Pas le projet entier — juste une chose, et voir ce que ça produit.</p>
+          <div class="sep-rule"></div>
+          <p>Il y a des personnes qui referment ce livre avec le sentiment que quelque chose a changé. Et il y en a qui le referment avec les mêmes informations, et qui reprennent exactement là où elles en étaient.</p>
+          <p>La différence n'est pas dans le livre.</p>
+          <p>Ce que tu as traversé dans ces pages — les questions posées sur ta propre situation, les ressources que tu as commencé à nommer, ce qui te retient vraiment — tout ça existait avant. Ce livre n'a pas créé ces réponses. Il a peut-être aidé à les rendre un peu plus visibles.</p>
+          <p>Tu n'as pas besoin d'être prêt. Tu n'as pas besoin que tout soit clair, ni d'avoir résolu la question de la légitimité. Ces choses-là se règlent rarement avant de commencer — elles se règlent en commençant.</p>
+          <p><em>Le reste appartient à ce que tu vas décider d'en faire.</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.43 — Blanc -->
+    <div>
+      <p class="section-label">Page 45 — Blanc</p>
       <div class="page page-std">
         <span class="folio folio-right">45</span>
+      </div>
+    </div>
+
+    <!-- p.44 — Blanc -->
+    <div>
+      <p class="section-label">Page 46 — Blanc</p>
+      <div class="page page-std">
+        <span class="folio folio-left">46</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         BILAN DE CLARTÉ  pp. 45–55
+    ══════════════════════════════════════════ -->
+
+    <!-- p.45 — Bilan de Clarté · Page de titre -->
+    <div>
+      <p class="section-label">Page 47 — Bilan de Clarté · Titre</p>
+      <div class="page page-std">
+        <span class="folio folio-right">47</span>
         <div style="padding-top: 40px;">
           <span class="ch-num">Bilan de Clarté</span>
           <div class="ch-rule"></div>
           <div class="corps">
-            <p class="noind">Ces questions ne testent rien.</p>
+            <p>Ces questions ne testent rien.</p>
             <p>Elles prolongent ce que tu as commencé à regarder en lisant ce livre. Certaines te parleront tout de suite. D'autres resteront ouvertes — c'est prévu, pas un oubli. Il y a des questions qu'on porte avec soi un moment avant de pouvoir leur répondre vraiment.</p>
             <p>Tu peux les traverser dans l'ordre ou pas. Revenir à certaines plus tard. Laisser les autres de côté. Ce qui compte, c'est le regard que tu poses — pas la liste complétée.</p>
           </div>
@@ -501,14 +1318,14 @@
       </div>
     </div>
 
-    <!-- ══ 7. Bilan · Famille 1 Reconnaissance ══ -->
+    <!-- pp.46–47 — Bilan · Famille 1 · Reconnaissance -->
     <div>
-      <p class="section-label">Pages 46–47 — Bilan · Famille 1 · Reconnaissance</p>
+      <p class="section-label">Pages 48–49 — Bilan · Famille 1 · Reconnaissance</p>
       <div class="spread">
 
         <div class="page page-left">
           <span class="running running-left">Plan B Rentable</span>
-          <span class="folio folio-left">46</span>
+          <span class="folio folio-left">48</span>
           <div style="padding-top: 16px;">
             <span class="bilan-section">Famille 1 &nbsp;·&nbsp; Reconnaissance</span>
             <p class="bilan-intro">Ces questions t'invitent à regarder ta situation telle qu'elle est — pas telle que tu aurais voulu qu'elle soit.</p>
@@ -540,7 +1357,7 @@
 
         <div class="page page-right">
           <span class="running running-right">Bilan de Clarté</span>
-          <span class="folio folio-right">47</span>
+          <span class="folio folio-right">49</span>
           <div style="padding-top: 16px;">
             <div class="question">
               <p class="question-texte">Si ton revenu actuel s'arrêtait dans trois mois, qu'est-ce qui changerait dans ta façon de voir ta situation aujourd'hui&nbsp;?</p>
@@ -562,14 +1379,14 @@
       </div>
     </div>
 
-    <!-- ══ 8. Bilan · Famille 2 Blocages ══ -->
+    <!-- pp.48–49 — Bilan · Famille 2 · Blocages -->
     <div>
-      <p class="section-label">Pages 48–49 — Bilan · Famille 2 · Blocages</p>
+      <p class="section-label">Pages 50–51 — Bilan · Famille 2 · Blocages</p>
       <div class="spread">
 
         <div class="page page-left">
           <span class="running running-left">Plan B Rentable</span>
-          <span class="folio folio-left">48</span>
+          <span class="folio folio-left">50</span>
           <div style="padding-top: 16px;">
             <span class="bilan-section">Famille 2 &nbsp;·&nbsp; Blocages</span>
             <p class="bilan-intro">Ces questions t'invitent à nommer ce qui te retient — sans jugement, avec précision.</p>
@@ -601,7 +1418,7 @@
 
         <div class="page page-right">
           <span class="running running-right">Bilan de Clarté</span>
-          <span class="folio folio-right">49</span>
+          <span class="folio folio-right">51</span>
           <div style="padding-top: 16px;">
             <div class="question">
               <p class="question-texte">Quelle est la « bonne raison » que tu te donnes le plus souvent pour ne pas encore commencer&nbsp;?</p>
@@ -623,14 +1440,14 @@
       </div>
     </div>
 
-    <!-- ══ 9. Bilan · Famille 3 Ressources ══ -->
+    <!-- pp.50–51 — Bilan · Famille 3 · Ressources -->
     <div>
-      <p class="section-label">Pages 50–51 — Bilan · Famille 3 · Ressources</p>
+      <p class="section-label">Pages 52–53 — Bilan · Famille 3 · Ressources</p>
       <div class="spread">
 
         <div class="page page-left">
           <span class="running running-left">Plan B Rentable</span>
-          <span class="folio folio-left">50</span>
+          <span class="folio folio-left">52</span>
           <div style="padding-top: 16px;">
             <span class="bilan-section">Famille 3 &nbsp;·&nbsp; Ressources</span>
             <p class="bilan-intro">Ces questions t'invitent à voir ce que tu possèdes déjà — et que tu n'as peut-être jamais nommé comme une ressource.</p>
@@ -662,7 +1479,7 @@
 
         <div class="page page-right">
           <span class="running running-right">Bilan de Clarté</span>
-          <span class="folio folio-right">51</span>
+          <span class="folio folio-right">53</span>
           <div style="padding-top: 16px;">
             <div class="question">
               <p class="question-texte">Qu'est-ce que tu as traversé — une période difficile, une responsabilité prise tôt, une situation gérée sous pression — que tu n'as jamais vraiment compté comme une ressource&nbsp;?</p>
@@ -684,14 +1501,14 @@
       </div>
     </div>
 
-    <!-- ══ 10. Bilan · Famille 4 Observation ══ -->
+    <!-- pp.52–53 — Bilan · Famille 4 · Observation -->
     <div>
-      <p class="section-label">Pages 52–53 — Bilan · Famille 4 · Observation</p>
+      <p class="section-label">Pages 54–55 — Bilan · Famille 4 · Observation</p>
       <div class="spread">
 
         <div class="page page-left">
           <span class="running running-left">Plan B Rentable</span>
-          <span class="folio folio-left">52</span>
+          <span class="folio folio-left">54</span>
           <div style="padding-top: 16px;">
             <span class="bilan-section">Famille 4 &nbsp;·&nbsp; Observation</span>
             <p class="bilan-intro">Ces questions t'invitent à regarder autour de toi avec un regard différent.</p>
@@ -714,9 +1531,9 @@
 
         <div class="page page-right">
           <span class="running running-right">Bilan de Clarté</span>
-          <span class="folio folio-right">53</span>
+          <span class="folio folio-right">55</span>
           <div style="padding-top: 16px;">
-            <div class="question">
+            <div class="question" style="margin-top: 8px;">
               <p class="question-texte">Qu'est-ce que les gens font de manière compliquée dans ta vie de tous les jours — alors qu'une façon plus simple devrait exister&nbsp;?</p>
               <div class="lignes">
                 <div class="ligne"></div>
@@ -736,14 +1553,14 @@
       </div>
     </div>
 
-    <!-- ══ 11. Bilan · Famille 5 Mouvement ══ -->
+    <!-- pp.54–55 — Bilan · Famille 5 · Mouvement -->
     <div>
-      <p class="section-label">Pages 54–55 — Bilan · Famille 5 · Mouvement</p>
+      <p class="section-label">Pages 56–57 — Bilan · Famille 5 · Mouvement</p>
       <div class="spread">
 
         <div class="page page-left">
           <span class="running running-left">Plan B Rentable</span>
-          <span class="folio folio-left">54</span>
+          <span class="folio folio-left">56</span>
           <div style="padding-top: 16px;">
             <span class="bilan-section">Famille 5 &nbsp;·&nbsp; Mouvement</span>
             <p class="bilan-intro">Ces questions t'invitent à envisager un premier pas — concret, petit, réel.</p>
@@ -766,7 +1583,7 @@
 
         <div class="page page-right">
           <span class="running running-right">Bilan de Clarté</span>
-          <span class="folio folio-right">55</span>
+          <span class="folio folio-right">57</span>
           <div style="padding-top: 16px;">
             <div class="question">
               <p class="question-texte">Dans six mois, à quoi reconnaîtrais-tu que quelque chose a légèrement changé dans ta façon de voir ta situation&nbsp;?</p>
@@ -786,6 +1603,68 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         BACK MATTER  pp. 56–60
+    ══════════════════════════════════════════ -->
+
+    <!-- p.56 — Blanc -->
+    <div>
+      <p class="section-label">Page 58 — Blanc</p>
+      <div class="page page-std">
+        <span class="folio folio-left">58</span>
+      </div>
+    </div>
+
+    <!-- p.57 — À propos de l'auteur -->
+    <div>
+      <p class="section-label">Page 59 — À propos de l'auteur</p>
+      <div class="page page-std">
+        <span class="folio folio-right">59</span>
+        <div style="padding-top: 60px;">
+          <p class="apo-titre">À propos de l'auteur</p>
+          <div class="apo-rule"></div>
+          <div class="corps">
+            <p>Redouane Agaja a passé des années à accompagner des personnes qui voulaient construire quelque chose de différent — un projet, une activité, une façon de vivre leur travail autrement. Il a fondé CoachRedo à partir d'une conviction simple&nbsp;: ce qui retient les gens n'est pas toujours ce qu'ils pensent, et ce dont ils ont besoin existe souvent déjà.</p>
+            <p><em>Plan B Rentable</em> est son premier livre. Il est né de ce qu'il a traversé, observé et accumulé — la façon dont les choses commencent vraiment, quand on arrête d'attendre la version parfaite.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.58 — Page CoachRedo -->
+    <div>
+      <p class="section-label">Page 60 — CoachRedo</p>
+      <div class="page page-std">
+        <span class="running running-left">Plan B Rentable</span>
+        <span class="folio folio-left">60</span>
+        <div style="padding-top: 60px;">
+          <p class="apo-titre">CoachRedo</p>
+          <div class="apo-rule"></div>
+          <div class="corps">
+            <p>CoachRedo est un espace d'accompagnement pour les personnes qui veulent construire quelque chose qui leur appartient — une activité, un projet, une direction professionnelle différente.</p>
+            <p>Ce qu'on y fait ensemble n'est pas un programme standard. C'est un regard posé sur ta situation telle qu'elle est&nbsp;: ce qui est déjà là, ce qui te retient, et ce qui pourrait devenir quelque chose.</p>
+          </div>
+          <span class="coachredo-url">coachredo.app</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- p.59 — Blanc -->
+    <div>
+      <p class="section-label">Page 61 — Blanc</p>
+      <div class="page page-std">
+        <span class="folio folio-right">61</span>
+      </div>
+    </div>
+
+    <!-- p.60 — Blanc -->
+    <div>
+      <p class="section-label">Page 62 — Blanc</p>
+      <div class="page page-std">
+        <span class="folio folio-left">62</span>
       </div>
     </div>
 
