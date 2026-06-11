@@ -16,6 +16,30 @@ function revalidateFiche(locale: string, userId: string) {
   revalidatePath(`/${locale}/admin/users/${userId}`)
 }
 
+export async function upsertDiagnostic(
+  userId: string,
+  locale: string,
+  data: {
+    diagnostic_status: string
+    force_principale: string
+    frein_principal: string
+    hypothese_plan_b: string
+    signal_prioritaire: string
+    niveau_clarte: number
+    niveau_mouvement: number
+    synthese_coach: string
+    message_utilisateur: string
+  }
+) {
+  const service = await checkAdmin()
+  const { error } = await service.from('diagnostics').upsert(
+    { user_id: userId, ...data, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' }
+  )
+  if (error) throw new Error(error.message)
+  revalidateFiche(locale, userId)
+}
+
 export async function addSignal(
   userId: string,
   locale: string,

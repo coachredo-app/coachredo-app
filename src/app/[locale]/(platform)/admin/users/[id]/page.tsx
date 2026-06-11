@@ -3,9 +3,11 @@ import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { BILAN_QUESTIONS, FAMILLE_ORDER, FAMILLE_TOTAL } from '@/lib/bilan-questions'
 import { CHAPTERS, REQUIRED_TOTAL, getReadingProgress } from '@/lib/reading-chapters'
+import { DiagnosticBloc } from './DiagnosticBloc'
 import { SignauxBloc } from './SignauxBloc'
 import { JournalBloc } from './JournalBloc'
 import { MissionsBloc } from './MissionsBloc'
+import type { Diagnostic } from './DiagnosticBloc'
 import type { Signal } from './SignauxBloc'
 import type { JournalEntry } from './JournalBloc'
 import type { Mission } from './MissionsBloc'
@@ -45,6 +47,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
     journalResult,
     missionsResult,
     readingResult,
+    diagnosticResult,
   ] = await Promise.all([
     service.auth.admin.getUserById(id),
     service.from('book_access').select('has_access, access_granted_at').eq('user_id', id).maybeSingle(),
@@ -55,6 +58,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
     service.from('coach_journal').select('id, type, contenu, resultat, created_at').eq('user_id', id).order('created_at', { ascending: false }),
     service.from('user_missions').select('id, mission, statut, coach_note, assigned_at, completed_at').eq('user_id', id).order('assigned_at', { ascending: false }),
     service.from('reading_progress').select('chapter_id, chapter_order, completed_at').eq('user_id', id),
+    service.from('diagnostics').select('*').eq('user_id', id).maybeSingle(),
   ])
 
   const targetUser = userResult.data?.user
@@ -70,6 +74,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
   const missions: Mission[] = (missionsResult.data ?? []) as Mission[]
   const readingRows = readingResult.data ?? []
   const reading = getReadingProgress(readingRows)
+  const diagnostic = diagnosticResult.data as Diagnostic | null
 
   const responseMap = Object.fromEntries(bilanRows.map(r => [r.question_id, r.response]))
   const answeredCount = bilanRows.length
@@ -237,7 +242,10 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
         </div>
       )}
 
-      {/* Bloc 4 — Bilan de Clarté */}
+      {/* Bloc 4 — Diagnostic */}
+      <DiagnosticBloc userId={id} locale={locale} diagnostic={diagnostic} />
+
+      {/* Bloc 5 — Bilan de Clarté */}
       <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">
         <div className="px-5 py-4 border-b border-cr-border flex items-center justify-between">
           <h2 className="font-semibold text-cr-text">Bilan de Clarté</h2>
