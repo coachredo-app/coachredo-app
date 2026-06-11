@@ -15,6 +15,7 @@ export interface Diagnostic {
   niveau_mouvement: number | null
   synthese_coach: string | null
   message_utilisateur: string | null
+  created_at: string
   updated_at: string
 }
 
@@ -142,7 +143,12 @@ export function DiagnosticBloc({ userId, locale, diagnostic }: Props) {
         <div>
           <h2 className="font-semibold text-cr-text">Diagnostic CoachRedo</h2>
           {diagnostic && !editing && (
-            <p className="text-xs text-cr-text-muted mt-0.5">Mis à jour le {fmt(diagnostic.updated_at)}</p>
+            <div className="flex items-center gap-3 mt-0.5">
+              <p className="text-xs text-cr-text-muted">Créé le {fmt(diagnostic.created_at)}</p>
+              {diagnostic.created_at !== diagnostic.updated_at && (
+                <p className="text-xs text-cr-text-muted">· Mis à jour le {fmt(diagnostic.updated_at)}</p>
+              )}
+            </div>
           )}
         </div>
         <div className="flex items-center gap-3">
