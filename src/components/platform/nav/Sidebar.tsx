@@ -3,12 +3,13 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LayoutDashboard, BookOpen, User, LogOut, ShieldCheck } from 'lucide-react'
+import { LayoutDashboard, BookOpen, User, LogOut, ShieldCheck, TrendingUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SidebarProps {
   locale: string
   isAdmin?: boolean
+  hasTradingAccess?: boolean
 }
 
 interface NavItem {
@@ -17,7 +18,7 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>
 }
 
-export function Sidebar({ locale, isAdmin }: SidebarProps) {
+export function Sidebar({ locale, isAdmin, hasTradingAccess }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -32,6 +33,11 @@ export function Sidebar({ locale, isAdmin }: SidebarProps) {
       label: 'Plan B Rentable',
       icon: BookOpen,
     },
+    ...(hasTradingAccess ? [{
+      href: `/${locale}/trading/dashboard`,
+      label: 'CoachRedo Trading',
+      icon: TrendingUp,
+    }] : []),
     ...(isAdmin ? [{
       href: `/${locale}/admin`,
       label: 'Administration',

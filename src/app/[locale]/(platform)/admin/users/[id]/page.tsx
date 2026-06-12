@@ -7,6 +7,7 @@ import { DiagnosticBloc } from './DiagnosticBloc'
 import { SignauxBloc } from './SignauxBloc'
 import { JournalBloc } from './JournalBloc'
 import { MissionsBloc } from './MissionsBloc'
+import { TradingAdminBloc } from '@/components/trading/admin/TradingAdminBloc'
 import type { Diagnostic } from './DiagnosticBloc'
 import type { Signal } from './SignauxBloc'
 import type { JournalEntry } from './JournalBloc'
@@ -309,6 +310,9 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
 
       {/* Bloc 7 — Missions */}
       <MissionsBloc userId={id} locale={locale} missions={missions} />
+
+      {/* Bloc 8 — CoachRedo Trading */}
+      <TradingAdminBloc userId={id} />
 
     </div>
   )

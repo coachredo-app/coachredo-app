@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "trading": "CoachRedo Trading",
+    "dashboard": "Tableau de bord",
+    "sessions": "Sessions",
+    "cmp": "Analyse CMP",
+    "journal": "Journal",
+    "academy": "Academy",
+    "coach": "Coach IA",
+    "discipline": "Discipline",
+    "edge": "Edge Database",
+    "propFirm": "Prop Firm",
+    "tradePlan": "Trade Plan"
+  },
+  "modes": {
+    "ELEVE": "Mode Élève",
+    "ANALYSTE": "Mode Analyste",
+    "TRADER_ENCADRE": "Mode Trader Encadré",
+    "PRO": "Mode Pro"
+  },
+  "sessions": {
+    "asia": "Session Asia",
+    "london": "Session London",
+    "newyork": "Session New York",
+    "off": "Hors session",
+    "asiaGate": "NO CMP ANALYSIS — Asian Session Range requis",
+    "asiaGateDesc": "Saisir le range Asia (High / Low) avant toute analyse CMP"
+  },
+  "cmp": {
+    "idle": "Attente. Le marché ne présente pas de conditions exploitables.",
+    "watching": "Structure en formation. Surveiller sans intervenir.",
+    "pressureBuilding": "Pression en construction. Les conditions commencent à s'aligner.",
+    "expansionRisk": "Risque d'expansion. Attendre confirmation avant tout engagement.",
+    "earlyReady": "Setup potentiel. Validation M5/M3 requise avant entrée.",
+    "ready": "Setup validé. Conditions favorables — plan d'entrée en cours.",
+    "execution": "Fenêtre d'exécution ouverte. Tous les critères sont réunis."
+  },
+  "locks": {
+    "lossStreak": "TRADING LOCK — 3 pertes consécutives",
+    "lossStreakDesc": "Après 3 pertes consécutives, le trading est automatiquement suspendu. La protection de ton capital prime sur l'opportunité.",
+    "newsLock": "NEWS LOCK — Actualité critique",
+    "newsLockDesc": "Un événement macro critique est en cours. Le marché est imprévisible dans cette fenêtre.",
+    "sessionExit": "SESSION FERMÉE",
+    "manualLock": "TRADING SUSPENDU",
+    "unlockAt": "Déverrouillage prévu",
+    "unlockAsia": "Déverrouillage automatique à la prochaine ouverture Asia (00:00 UTC)",
+    "cannotIgnore": "Ce lock ne peut pas être ignoré. Profites-en pour réviser ton journal."
+  },
+  "discipline": {
+    "score": "Score de Discipline",
+    "weekendWarning": "Fermeture weekend dans 30 minutes (20:00 UTC)",
+    "weekendViolation": "Violation weekend — les positions non-crypto doivent être fermées",
+    "violations": {
+      "tradingLock": "Trading verrouillé — reprendre demain à 00:00 UTC",
+      "newsLock": "News Lock actif — attendre la fin de la fenêtre",
+      "weekendProtection": "Weekend Protection — seules les cryptos sont autorisées",
+      "lossStreak": "3 pertes consécutives — trading suspendu jusqu'à 00:00 UTC"
+    }
+  },
+  "philosophy": {
+    "process": "Processus > Résultat",
+    "discipline": "Discipline > Profit",
+    "understanding": "Compréhension > Technique",
+    "protection": "Protection du capital > Opportunité"
+  },
+  "anticipation": {
+    "disclaimer": "ANTICIPATION ≠ CONFIRMATION — Ce plan est conditionnel. Aucune entrée sans confirmation confirmée."
+  },
+  "access": {
+    "locked": "Fonctionnalité verrouillée",
+    "currentMode": "Actuellement en",
+    "noAccess": "Aucun accès Trading activé.",
+    "migrationRequired": "Module Trading non activé — migration SQL à appliquer."
+  },
+  "admin": {
+    "title": "CoachRedo Trading",
+    "accessActive": "Accès actif",
+    "tier": "Tier",
+    "mode": "Mode",
+    "disciplineScore": "Discipline Score",
+    "tradesThisMonth": "Trades ce mois",
+    "lastActivity": "Dernière activité",
+    "activeLocks": "Locks actifs",
+    "noLocks": "Aucun"
+  }
+}

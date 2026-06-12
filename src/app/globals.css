@@ -30,6 +30,16 @@
   --color-error:            #C13B2E;
   --color-warning:          #D97706;
 
+  /* ── Trading tokens ──────────────────────────────────────── */
+  --color-trading-asia:     #F59E0B;
+  --color-trading-london:   #3B82F6;
+  --color-trading-newyork:  #6B7280;
+  --color-trading-ready:    #16A34A;
+  --color-trading-locked:   #7C3AED;
+  --color-trading-watching: #1D4ED8;
+  --color-trading-pressure: #92400E;
+  --color-trading-danger:   #DC2626;
+
   /* ── Fonts ───────────────────────────────────────────────── */
   --font-sans:    var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-serif:   var(--font-dm-serif), ui-serif, Georgia, serif;

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/platform/nav/Sidebar'
 import { BottomNav } from '@/components/platform/nav/BottomNav'
+import { checkTradingAccess } from '@/lib/trading-access'
 
 interface PlatformLayoutProps {
   children: React.ReactNode
@@ -25,10 +26,18 @@ export default async function PlatformLayout({
 
   const isAdmin = user.email === process.env.ADMIN_EMAIL
 
+  // Vérification silencieuse — la table peut ne pas exister avant migration
+  let hasTradingAccess = false
+  try {
+    hasTradingAccess = await checkTradingAccess(user.id)
+  } catch {
+    // Table pas encore créée — pas de trading dans le menu
+  }
+
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar desktop — masquée sur mobile */}
-      <Sidebar locale={locale} isAdmin={isAdmin} />
+      <Sidebar locale={locale} isAdmin={isAdmin} hasTradingAccess={hasTradingAccess} />
 
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col lg:ml-60">
