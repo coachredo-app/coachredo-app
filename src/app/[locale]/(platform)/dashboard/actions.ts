@@ -21,14 +21,15 @@ export async function submitMissionResponse(
   // et qu'elle est en cours (on ne répond qu'à une mission active)
   const { data: mission, error: fetchError } = await supabase
     .from('user_missions')
-    .select('id, user_id, statut')
+    .select('id, user_id, statut, user_response')
     .eq('id', missionId)
     .eq('user_id', user.id)
     .eq('statut', 'en_cours')
+    .is('user_response', null)
     .single()
 
   if (fetchError || !mission) {
-    return { error: 'Mission introuvable ou déjà terminée.' }
+    return { error: 'Mission introuvable, déjà terminée ou déjà répondue.' }
   }
 
   // Écriture via service_role — uniquement les deux champs autorisés

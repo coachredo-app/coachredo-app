@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { submitMissionResponse } from './actions'
 
 interface Mission {
@@ -22,6 +23,7 @@ function fmt(d: string | null) {
 }
 
 export function MissionCard({ mission, locale }: { mission: Mission; locale: string }) {
+  const router = useRouter()
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -39,6 +41,7 @@ export function MissionCard({ mission, locale }: { mission: Mission; locale: str
     } else {
       setShowForm(false)
       setText('')
+      router.refresh()
     }
   }
 
