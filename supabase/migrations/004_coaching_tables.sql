@@ -3,9 +3,14 @@
 -- Tables de coaching + colonnes manquantes + RLS utilisateur
 -- ============================================================
 -- Contexte : ces tables existaient en production sans migration écrite.
--- Ce fichier les rend reproductibles et ajoute les champs V1 manquants.
--- Les CREATE TABLE utilisent IF NOT EXISTS (idempotent).
--- Les CREATE POLICY sont sans IF NOT EXISTS (compatible PG 15/16).
+-- Ce fichier est conçu pour être safe à rejouer sur un environnement
+-- partiellement migré :
+--   - CREATE TABLE  : IF NOT EXISTS
+--   - ALTER TABLE   : ADD COLUMN IF NOT EXISTS
+--   - CREATE POLICY : encapsulé dans un bloc DO pour éviter l'erreur
+--                     "policy already exists" sur Postgres 15/16
+--   - CREATE INDEX  : IF NOT EXISTS
+-- Aucune donnée existante n'est modifiée ou supprimée.
 -- ============================================================
 
 
@@ -18,15 +23,13 @@ alter table public.profiles
 
 
 -- ── ACCESS CODES : colonne access_type ───────────────────────
--- Différencie les codes book des codes trading (module Trading).
+-- NOT NULL avec DEFAULT 'book' : tous les codes existants reçoivent 'book'.
 alter table public.access_codes
   add column if not exists access_type text not null default 'book'
     check (access_type in ('book', 'trading'));
 
 
 -- ── READING PROGRESS ─────────────────────────────────────────
--- Suivi lecture chapitre par chapitre, écrit par le reader (supabase-sync.ts).
--- Une ligne par (user, chapter). completed_at null = commencé, non terminé.
 create table if not exists public.reading_progress (
   id            uuid        primary key default gen_random_uuid(),
   user_id       uuid        references auth.users(id) on delete cascade not null,
@@ -39,22 +42,42 @@ create table if not exists public.reading_progress (
 
 alter table public.reading_progress enable row level security;
 
-create policy "reading_progress_select_own"
-  on public.reading_progress for select
-  using (auth.uid() = user_id);
+do $$ begin
+  if not exists (
+    select 1 from pg_policies
+    where tablename = 'reading_progress' and policyname = 'reading_progress_select_own'
+  ) then
+    create policy "reading_progress_select_own"
+      on public.reading_progress for select
+      using (auth.uid() = user_id);
+  end if;
+end $$;
 
-create policy "reading_progress_insert_own"
-  on public.reading_progress for insert
-  with check (auth.uid() = user_id);
+do $$ begin
+  if not exists (
+    select 1 from pg_policies
+    where tablename = 'reading_progress' and policyname = 'reading_progress_insert_own'
+  ) then
+    create policy "reading_progress_insert_own"
+      on public.reading_progress for insert
+      with check (auth.uid() = user_id);
+  end if;
+end $$;
 
-create policy "reading_progress_update_own"
-  on public.reading_progress for update
-  using (auth.uid() = user_id);
+do $$ begin
+  if not exists (
+    select 1 from pg_policies
+    where tablename = 'reading_progress' and policyname = 'reading_progress_update_own'
+  ) then
+    create policy "reading_progress_update_own"
+      on public.reading_progress for update
+      using (auth.uid() = user_id);
+  end if;
+end $$;
 
 
 -- ── DIAGNOSTICS ──────────────────────────────────────────────
--- Diagnostic CoachRedo rempli par le coach. Une fiche par utilisateur.
--- Aucun accès utilisateur direct — service_role uniquement (admin).
+-- Outil interne coach — aucun accès utilisateur.
 create table if not exists public.diagnostics (
   id                  uuid        primary key default gen_random_uuid(),
   user_id             uuid        references auth.users(id) on delete cascade not null unique,
@@ -72,11 +95,9 @@ create table if not exists public.diagnostics (
 );
 
 alter table public.diagnostics enable row level security;
--- Pas de politique utilisateur : seul service_role accède à cette table.
 
 
 -- ── USER SIGNALS ─────────────────────────────────────────────
--- Signaux identifiés par le coach. Outil interne — jamais visible par l'utilisateur.
 create table if not exists public.user_signals (
   id          uuid        primary key default gen_random_uuid(),
   user_id     uuid        references auth.users(id) on delete cascade not null,
@@ -88,11 +109,9 @@ create table if not exists public.user_signals (
 );
 
 alter table public.user_signals enable row level security;
--- Pas de politique utilisateur : seul service_role accède à cette table.
 
 
 -- ── COACH JOURNAL ────────────────────────────────────────────
--- Journal privé du coach. Strictement interne, jamais exposé à l'utilisateur.
 create table if not exists public.coach_journal (
   id         uuid        primary key default gen_random_uuid(),
   user_id    uuid        references auth.users(id) on delete cascade not null,
@@ -103,21 +122,10 @@ create table if not exists public.coach_journal (
 );
 
 alter table public.coach_journal enable row level security;
--- Pas de politique utilisateur : seul service_role accède à cette table.
 
 
 -- ── USER MISSIONS ────────────────────────────────────────────
--- Missions assignées par le coach.
---
--- Modèle de sécurité :
---   SELECT  → autorisé pour l'utilisateur (lire ses propres missions)
---   INSERT  → service_role uniquement (coach via admin)
---   UPDATE  → service_role uniquement via Server Action authentifiée.
---             La réponse utilisateur (user_response) est écrite par une
---             Server Action qui vérifie auth.uid() côté serveur avant
---             d'appeler service_role. Cela empêche toute modification
---             de statut ou du texte de mission par appel API direct.
---   DELETE  → service_role uniquement (coach via admin)
+-- SELECT autorisé pour l'utilisateur. INSERT/UPDATE/DELETE via service_role uniquement.
 create table if not exists public.user_missions (
   id             uuid        primary key default gen_random_uuid(),
   user_id        uuid        references auth.users(id) on delete cascade not null,
@@ -131,11 +139,23 @@ create table if not exists public.user_missions (
   responded_at   timestamptz
 );
 
+-- Colonnes V1 manquantes si la table existait avant cette migration
+alter table public.user_missions
+  add column if not exists user_response text,
+  add column if not exists responded_at  timestamptz;
+
 alter table public.user_missions enable row level security;
 
-create policy "user_missions_select_own"
-  on public.user_missions for select
-  using (auth.uid() = user_id);
+do $$ begin
+  if not exists (
+    select 1 from pg_policies
+    where tablename = 'user_missions' and policyname = 'user_missions_select_own'
+  ) then
+    create policy "user_missions_select_own"
+      on public.user_missions for select
+      using (auth.uid() = user_id);
+  end if;
+end $$;
 
 
 -- ── INDEX ────────────────────────────────────────────────────
