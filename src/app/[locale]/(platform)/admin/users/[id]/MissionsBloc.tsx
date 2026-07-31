@@ -11,6 +11,8 @@ export interface Mission {
   coach_note: string | null
   assigned_at: string
   completed_at: string | null
+  user_response: string | null
+  responded_at: string | null
 }
 
 const STATUT_STYLE: Record<string, string> = {
@@ -163,6 +165,22 @@ export function MissionsBloc({ userId, locale, missions }: Props) {
               <p className="text-sm text-cr-text leading-relaxed whitespace-pre-wrap mb-2">{m.mission}</p>
               {m.coach_note && (
                 <p className="text-xs text-cr-text-secondary italic mb-2">{m.coach_note}</p>
+              )}
+              {m.user_response && (
+                <div className="mt-3 bg-background rounded-lg border border-cr-border px-4 py-3">
+                  <p className="text-xs font-semibold text-cr-accent mb-1">
+                    Réponse utilisateur
+                    {m.responded_at && (
+                      <span className="ml-2 font-normal text-cr-text-muted">
+                        — {fmtDate(m.responded_at)}
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-sm text-cr-text leading-relaxed whitespace-pre-wrap">{m.user_response}</p>
+                </div>
+              )}
+              {m.statut === 'en_cours' && !m.user_response && (
+                <p className="text-xs text-cr-text-muted italic mt-2">En attente de réponse…</p>
               )}
               {m.statut === 'en_cours' && (
                 <div className="flex gap-2 mt-2">

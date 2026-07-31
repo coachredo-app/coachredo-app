@@ -57,7 +57,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
     service.from('profiles').select('bilan_completed_at, nom, telephone, livre_completed, livre_completed_at').eq('id', id).maybeSingle(),
     service.from('user_signals').select('id, categorie, signal, intensite, coach_note, created_at').eq('user_id', id).order('created_at', { ascending: false }),
     service.from('coach_journal').select('id, type, contenu, resultat, created_at').eq('user_id', id).order('created_at', { ascending: false }),
-    service.from('user_missions').select('id, mission, statut, coach_note, assigned_at, completed_at').eq('user_id', id).order('assigned_at', { ascending: false }),
+    service.from('user_missions').select('id, mission, statut, coach_note, assigned_at, completed_at, user_response, responded_at').eq('user_id', id).order('assigned_at', { ascending: false }),
     service.from('reading_progress').select('chapter_id, chapter_order, completed_at').eq('user_id', id),
     service.from('diagnostics').select('*').eq('user_id', id).maybeSingle(),
   ])
