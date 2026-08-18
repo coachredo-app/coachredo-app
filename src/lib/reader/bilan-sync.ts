@@ -7,25 +7,13 @@ function getClient() {
   )
 }
 
-export async function loadBilanFromSupabase(): Promise<Record<string, string>> {
-  try {
-    const supabase = getClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return {}
 
-    const { data } = await supabase
-      .from('bilan_responses')
-      .select('question_id, response')
-      .eq('user_id', user.id)
-
-    if (!data) return {}
-    return Object.fromEntries(data.map(r => [r.question_id as string, r.response as string]))
-  } catch {
-    return {}
-  }
-}
-
-export async function syncBilanResponse(questionId: string, famille: string, value: string): Promise<void> {
+export async function syncBilanResponse(
+  sessionId: string,
+  questionId: string,
+  famille: string,
+  value: string
+): Promise<void> {
   try {
     const supabase = getClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -35,36 +23,36 @@ export async function syncBilanResponse(questionId: string, famille: string, val
       await supabase.from('bilan_responses').upsert(
         {
           user_id: user.id,
+          session_id: sessionId,
           question_id: questionId,
           famille,
           response: value.trim(),
           updated_at: new Date().toISOString(),
         },
-        { onConflict: 'user_id,question_id' }
+        { onConflict: 'session_id,question_id' }
       )
     } else {
       await supabase
         .from('bilan_responses')
         .delete()
         .eq('user_id', user.id)
+        .eq('session_id', sessionId)
         .eq('question_id', questionId)
     }
-  } catch {
-    // localStorage already saved — silently ignore
+  } catch (err) {
+    console.error('[bilan-sync] syncBilanResponse failed — question:', questionId, err)
   }
 }
 
-export async function markBilanCompletedInSupabase(): Promise<void> {
+export async function updateCurrentStep(sessionId: string, step: number): Promise<void> {
   try {
     const supabase = getClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
     await supabase
-      .from('profiles')
-      .update({ bilan_completed_at: new Date().toISOString() })
-      .eq('id', user.id)
-  } catch {
-    // silently ignore
+      .from('bilan_sessions')
+      .update({ current_step: step })
+      .eq('id', sessionId)
+      .eq('statut', 'in_progress')
+  } catch (err) {
+    console.error('[bilan-sync] updateCurrentStep failed — step:', step, err)
   }
 }

@@ -18,25 +18,39 @@ export default function BilanConfirmationPage() {
         </p>
 
         <h1 className="text-xl font-bold mb-6" style={{ color: '#f9fafb' }}>
-          Tu as terminé le livre.
+          Tu as terminé le Bilan de Clarté.
         </h1>
 
         <div className="space-y-4 mb-10 text-left">
           <p className="text-base leading-relaxed" style={{ color: '#d1d5db' }}>
-            Ce que tu as lu, ce que tu as regardé en toi — ça ne disparaît pas.
+            Ce que tu as vu — même partiellement, même sans réponse encore — ça ne disparaît pas.
           </p>
           <p className="text-base leading-relaxed" style={{ color: '#d1d5db' }}>
-            La prochaine étape est le Programme 90 jours. Il arrive bientôt.
+            Ton coach va pouvoir prendre connaissance de ton Bilan et préparer la suite de ton parcours.
           </p>
         </div>
 
         <Link
-          href="/intro"
-          className="text-sm transition-opacity"
-          style={{ color: '#4b5563' }}
+          href="/fr/dashboard"
+          className="inline-block w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all active:scale-95 text-center"
+          style={{
+            backgroundColor: GOLD,
+            color: '#0a0d1a',
+            boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
+          }}
         >
-          ← Relire depuis le début
+          Retourner sur mon espace →
         </Link>
+
+        <div className="mt-6">
+          <Link
+            href="/intro"
+            className="text-sm transition-opacity"
+            style={{ color: '#4b5563' }}
+          >
+            ← Relire le livre depuis le début
+          </Link>
+        </div>
 
       </div>
     </main>

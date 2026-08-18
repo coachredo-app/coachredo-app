@@ -29,7 +29,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
 
   const service = createServiceClient()
 
-  const [usersResult, codesResult, accessResult, bilanResult, profilesResult] = await Promise.all([
+  const [usersResult, codesResult, accessResult, bilanResult, sessionsResult] = await Promise.all([
     service.auth.admin.listUsers({ perPage: 1000 }),
     service
       .from('access_codes')
@@ -41,11 +41,13 @@ export default async function AdminPage({ params }: AdminPageProps) {
       .select('user_id, has_access, access_granted_at'),
     service
       .from('bilan_responses')
-      .select('user_id, question_id, famille, response, updated_at')
+      .select('user_id, session_id, question_id')
       .order('updated_at', { ascending: true }),
+    // Toutes les sessions pour déterminer la plus récente par utilisateur
     service
-      .from('profiles')
-      .select('id, bilan_completed_at'),
+      .from('bilan_sessions')
+      .select('id, user_id, session_num, statut')
+      .order('session_num', { ascending: false }),
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,22 +57,33 @@ export default async function AdminPage({ params }: AdminPageProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const bilanRows: any[] = bilanResult.data ?? []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const profiles: any[] = profilesResult.data ?? []
+  const allSessions: any[] = sessionsResult.data ?? []
 
   const accessByUser = Object.fromEntries(accessRows.map(r => [r.user_id, r]))
   const codeByUser = Object.fromEntries(
     codes.filter(c => c.used_by).map(c => [c.used_by, c])
   )
 
+  // Session la plus récente par utilisateur (sessions déjà ordonnées par session_num desc)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bilanByUser = bilanRows.reduce<Record<string, any[]>>((acc, r) => {
-    if (!acc[r.user_id]) acc[r.user_id] = []
-    acc[r.user_id].push(r)
+  const latestSessionByUser = allSessions.reduce<Record<string, any>>((acc, s) => {
+    if (!acc[s.user_id]) acc[s.user_id] = s  // premier = le plus récent (ORDER BY session_num desc)
     return acc
   }, {})
 
-  const completedAtByUser = Object.fromEntries(
-    profiles.filter(p => p.bilan_completed_at).map(p => [p.id, p.bilan_completed_at])
+  // Compteur Bilan par utilisateur — réponses de la session la plus récente uniquement
+  const bilanCountByUser = bilanRows.reduce<Record<string, number>>((acc, r) => {
+    const latest = latestSessionByUser[r.user_id]
+    if (latest && r.session_id === latest.id) {
+      acc[r.user_id] = (acc[r.user_id] ?? 0) + 1
+    }
+    return acc
+  }, {})
+
+  const completedByUser = Object.fromEntries(
+    Object.entries(latestSessionByUser)
+      .filter(([, s]) => s.statut === 'completed')
+      .map(([userId]) => [userId, true])
   )
 
   const availableCodes = codes.filter(c => !c.used_by)
@@ -198,8 +211,8 @@ export default async function AdminPage({ params }: AdminPageProps) {
                     </td>
                     <td className="px-5 py-3 whitespace-nowrap">
                       {(() => {
-                        const count = bilanByUser[u.id]?.length ?? 0
-                        const done = !!completedAtByUser[u.id]
+                        const count = bilanCountByUser[u.id] ?? 0
+                        const done = !!completedByUser[u.id]
                         if (count === 0) return <span className="text-cr-text-muted">—</span>
                         return (
                           <span className={done ? 'text-success font-medium' : 'text-cr-text-secondary'}>

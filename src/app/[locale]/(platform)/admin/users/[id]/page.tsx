@@ -49,17 +49,19 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
     missionsResult,
     readingResult,
     diagnosticResult,
+    bilanSessionsResult,
   ] = await Promise.all([
     service.auth.admin.getUserById(id),
     service.from('book_access').select('has_access, access_granted_at').eq('user_id', id).maybeSingle(),
     service.from('access_codes').select('code, used_at').eq('used_by', id).maybeSingle(),
-    service.from('bilan_responses').select('question_id, famille, response, updated_at').eq('user_id', id).order('updated_at', { ascending: true }),
+    service.from('bilan_responses').select('session_id, question_id, famille, response, updated_at').eq('user_id', id).order('updated_at', { ascending: true }),
     service.from('profiles').select('bilan_completed_at, nom, telephone, livre_completed, livre_completed_at').eq('id', id).maybeSingle(),
     service.from('user_signals').select('id, categorie, signal, intensite, coach_note, created_at').eq('user_id', id).order('created_at', { ascending: false }),
     service.from('coach_journal').select('id, type, contenu, resultat, created_at').eq('user_id', id).order('created_at', { ascending: false }),
     service.from('user_missions').select('id, mission, statut, coach_note, assigned_at, completed_at, user_response, responded_at').eq('user_id', id).order('assigned_at', { ascending: false }),
     service.from('reading_progress').select('chapter_id, chapter_order, completed_at').eq('user_id', id),
     service.from('diagnostics').select('*').eq('user_id', id).maybeSingle(),
+    service.from('bilan_sessions').select('id, session_num, statut, completed_at').eq('user_id', id).order('session_num', { ascending: false }).limit(1).maybeSingle(),
   ])
 
   const targetUser = userResult.data?.user
@@ -67,7 +69,12 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
 
   const access = accessResult.data
   const code = codeResult.data
-  const bilanRows = bilanResult.data ?? []
+  const latestBilanSession = bilanSessionsResult.data ?? null
+  const allBilanRows = bilanResult.data ?? []
+  // Filtrer par la session la plus récente si elle existe
+  const bilanRows = latestBilanSession
+    ? allBilanRows.filter(r => r.session_id === latestBilanSession.id)
+    : allBilanRows
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profile = profileResult.data as any
   const signaux: Signal[] = (signauxResult.data ?? []) as Signal[]
@@ -79,7 +86,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
 
   const responseMap = Object.fromEntries(bilanRows.map(r => [r.question_id, r.response]))
   const answeredCount = bilanRows.length
-  const bilanCompleted = !!profile?.bilan_completed_at
+  const bilanCompleted = latestBilanSession?.statut === 'completed'
   const livreCompleted = reading.fullyDone || !!profile?.livre_completed
 
   const lastActivity = bilanRows.length > 0
@@ -249,10 +256,19 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
       {/* Bloc 5 — Bilan de Clarté */}
       <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">
         <div className="px-5 py-4 border-b border-cr-border flex items-center justify-between">
-          <h2 className="font-semibold text-cr-text">Bilan de Clarté</h2>
+          <h2 className="font-semibold text-cr-text">
+            Bilan de Clarté
+            {latestBilanSession && (
+              <span className="ml-2 text-xs font-normal text-cr-text-muted">
+                — Session #{latestBilanSession.session_num}
+              </span>
+            )}
+          </h2>
           <div className="flex items-center gap-3">
             {bilanCompleted && (
-              <span className="text-xs text-success font-medium">✓ Complété le {fmt(profile?.bilan_completed_at)}</span>
+              <span className="text-xs text-success font-medium">
+                ✓ Complété le {fmt(latestBilanSession?.completed_at ?? profile?.bilan_completed_at)}
+              </span>
             )}
             <span className="text-sm tabular-nums text-cr-text-secondary">{answeredCount}/13</span>
           </div>

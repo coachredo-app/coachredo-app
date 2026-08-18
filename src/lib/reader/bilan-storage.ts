@@ -3,10 +3,12 @@ const BILAN_KEY = 'planb_bilan'
 export interface BilanData {
   responses: Record<string, string>
   completedAt: string | null
+  sessionId: string | null
+  currentStep: number
 }
 
 function empty(): BilanData {
-  return { responses: {}, completedAt: null }
+  return { responses: {}, completedAt: null, sessionId: null, currentStep: 0 }
 }
 
 export function loadBilan(): BilanData {
@@ -46,4 +48,18 @@ export function markBilanCompleted(): void {
     data.completedAt = new Date().toISOString()
     persist(data)
   }
+}
+
+export function saveBilanSession(sessionId: string): void {
+  if (typeof window === 'undefined') return
+  const data = loadBilan()
+  data.sessionId = sessionId
+  persist(data)
+}
+
+export function saveBilanStep(step: number): void {
+  if (typeof window === 'undefined') return
+  const data = loadBilan()
+  data.currentStep = step
+  persist(data)
 }

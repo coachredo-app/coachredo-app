@@ -49,18 +49,17 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/${locale}/auth/login`)
 
-  // Toutes les données en parallèle — client utilisateur (RLS appliqué)
+  // Première vague de requêtes parallèles
   const [
     bookAccessResult,
     readingResult,
     profileResult,
-    bilanResult,
     missionResult,
+    sessionResult,
   ] = await Promise.all([
     supabase.from('book_access').select('has_access').eq('user_id', user.id).single(),
     supabase.from('reading_progress').select('chapter_id, chapter_order, completed_at').eq('user_id', user.id),
     supabase.from('profiles').select('bilan_completed_at').eq('id', user.id).single(),
-    supabase.from('bilan_responses').select('question_id').eq('user_id', user.id),
     supabase
       .from('user_missions')
       .select('id, mission, coach_note, assigned_at, user_response, responded_at')
@@ -69,13 +68,31 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       .order('assigned_at', { ascending: false })
       .limit(1)
       .maybeSingle(),
+    // Session Bilan la plus récente (in_progress prioritaire, sinon dernière completed)
+    supabase
+      .from('bilan_sessions')
+      .select('id, statut, session_num, completed_at')
+      .eq('user_id', user.id)
+      .order('session_num', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ])
 
   const hasAccess = bookAccessResult.data?.has_access === true
   const reading = getReadingProgress(readingResult.data ?? [])
-  const bilanCompleted = !!profileResult.data?.bilan_completed_at
-  const bilanAnswered = bilanResult.data?.length ?? 0
+  const bilanCompleted = sessionResult.data?.statut === 'completed'
   const activeMission = missionResult.data ?? null
+  const latestSession = sessionResult.data ?? null
+
+  // Deuxième vague : compter les réponses de la session active (si elle existe)
+  let bilanAnswered = 0
+  if (latestSession) {
+    const { data: countData } = await supabase
+      .from('bilan_responses')
+      .select('question_id')
+      .eq('session_id', latestSession.id)
+    bilanAnswered = countData?.length ?? 0
+  }
 
   // Statuts parcours
   const livreStatus: ParcourStepStatus =
@@ -93,7 +110,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     undefined
 
   const bilanDetail =
-    bilanCompleted ? `Complété le ${fmt(profileResult.data?.bilan_completed_at)}` :
+    bilanCompleted ? `Complété le ${fmt(latestSession?.completed_at ?? profileResult.data?.bilan_completed_at)}` :
     bilanAnswered > 0 ? `${bilanAnswered}/13 réponses` :
     undefined
 
@@ -101,6 +118,13 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     activeMission?.user_response ? 'Réponse envoyée' :
     activeMission ? 'En cours' :
     undefined
+
+  // CTA Livre selon l'état de lecture
+  const livreCta = reading.fullyDone
+    ? { label: 'Relire le livre', href: '/intro' }
+    : reading.startedCount > 0
+    ? { label: 'Continuer le livre', href: '/resume' }
+    : { label: 'Commencer le livre', href: '/intro' }
 
   return (
     <div className="space-y-8 max-w-2xl">
@@ -153,10 +177,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           </h2>
           <div className="space-y-2">
             <Link
-              href="/resume"
+              href={livreCta.href}
               className="flex items-center justify-between px-4 py-3 rounded-lg bg-cr-accent text-white text-sm font-medium hover:opacity-90 transition-opacity"
             >
-              <span>Continuer le livre</span>
+              <span>{livreCta.label}</span>
               <span>→</span>
             </Link>
 
