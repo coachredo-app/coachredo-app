@@ -4,7 +4,6 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { routing } from './lib/i18n/routing'
 
 /** Routes du reader existant (legacy — pas de i18n) */
-const READER_ROUTES = ['/resume', '/intro', '/chapter', '/quiz', '/access']
 const READER_PUBLIC = ['/login', '/signup', '/access', '/reset-password']
 const READER_AUTH = ['/login', '/signup']
 
@@ -17,7 +16,6 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // ── 1. Routes reader legacy (/(app), /resume, /intro, /chapter, etc.) ──
-  const isReaderRoute = READER_ROUTES.some((r) => pathname.startsWith(r))
   const isAppRoute =
     pathname.startsWith('/resume') ||
     pathname.startsWith('/intro') ||
@@ -65,6 +63,11 @@ export async function proxy(request: NextRequest) {
 
     // No session on protected routes → redirect to login
     if (!user && !READER_PUBLIC.includes(pathname)) {
+      if (pathname.startsWith('/bilan')) {
+        const loginUrl = new URL('/fr/auth/login', request.url)
+        loginUrl.searchParams.set('next', pathname)
+        return NextResponse.redirect(loginUrl)
+      }
       return NextResponse.redirect(new URL('/login', request.url))
     }
 

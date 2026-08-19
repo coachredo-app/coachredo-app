@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { getReadingProgress } from '@/lib/reading-chapters'
 import { BilanReader } from './BilanReader'
 import { BilanGateway } from './BilanGateway'
 
@@ -7,6 +8,14 @@ export default async function BilanPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/fr/auth/login')
+
+  const { data: readingRows } = await createServiceClient()
+    .from('reading_progress')
+    .select('chapter_id, completed_at')
+    .eq('user_id', user.id)
+
+  const { fullyDone } = getReadingProgress(readingRows ?? [])
+  if (!fullyDone) redirect('/fr/dashboard')
 
   // Charger toutes les sessions de l'utilisateur (plus récentes en premier)
   const { data: sessions } = await supabase

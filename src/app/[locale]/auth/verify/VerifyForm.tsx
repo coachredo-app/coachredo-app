@@ -42,7 +42,15 @@ export default function VerifyForm({ email, next, locale }: Props) {
       return
     }
 
-    router.push(next)
+    const safeNext = (() => {
+      try {
+        const url = new URL(next, 'http://localhost')
+        return url.origin === 'http://localhost' && next.startsWith('/') ? next : '/fr/dashboard'
+      } catch {
+        return '/fr/dashboard'
+      }
+    })()
+    router.push(safeNext)
     router.refresh()
   }
 
@@ -75,7 +83,7 @@ export default function VerifyForm({ email, next, locale }: Props) {
                 Un email a été envoyé à <span className="font-medium text-cr-text">{email}</span>
               </p>
               <p className="text-cr-text-muted text-xs mb-6 text-center">
-                Clique sur le lien dans l'email, ou entre le code à 6 chiffres ci-dessous.
+                Clique sur le lien dans l&apos;email, ou entre le code à 6 chiffres ci-dessous.
               </p>
 
               <form onSubmit={handleVerify} className="space-y-4">

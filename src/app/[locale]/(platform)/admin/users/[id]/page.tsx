@@ -274,8 +274,10 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
           </div>
         </div>
 
-        {answeredCount === 0 ? (
+        {answeredCount === 0 && !bilanCompleted ? (
           <p className="px-5 py-6 text-sm text-cr-text-muted italic">Le Bilan n&apos;a pas encore été commencé.</p>
+        ) : answeredCount === 0 && bilanCompleted ? (
+          <p className="px-5 py-6 text-sm text-cr-text-muted italic">Bilan complété — aucune réponse enregistrée (0/13).</p>
         ) : (
           <div className="divide-y divide-cr-border">
             {FAMILLE_ORDER.map(famille => {

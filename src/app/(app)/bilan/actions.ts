@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { getReadingProgress } from '@/lib/reading-chapters'
 
 export async function createBilanSession(): Promise<
   { sessionId: string; sessionNum: number } | { error: string }
@@ -9,6 +10,14 @@ export async function createBilanSession(): Promise<
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non authentifié' }
+
+  const { data: readingRows } = await createServiceClient()
+    .from('reading_progress')
+    .select('chapter_id, completed_at')
+    .eq('user_id', user.id)
+
+  const { fullyDone } = getReadingProgress(readingRows ?? [])
+  if (!fullyDone) return { error: 'Le livre doit être terminé pour accéder au Bilan.' }
 
   // Idempotence : retourner la session in_progress existante si elle existe déjà
   const { data: existing } = await supabase

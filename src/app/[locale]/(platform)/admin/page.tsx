@@ -213,7 +213,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
                       {(() => {
                         const count = bilanCountByUser[u.id] ?? 0
                         const done = !!completedByUser[u.id]
-                        if (count === 0) return <span className="text-cr-text-muted">—</span>
+                        if (count === 0 && !done) return <span className="text-cr-text-muted">—</span>
                         return (
                           <span className={done ? 'text-success font-medium' : 'text-cr-text-secondary'}>
                             {count}/13{done ? ' ✓' : ''}
