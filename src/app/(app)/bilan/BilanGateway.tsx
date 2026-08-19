@@ -149,25 +149,25 @@ function BilanView({
   )
 }
 
-// ── BilanGateway — écran de choix ─────────────────────────────
+// ── BilanGateway — liste des sessions terminées ───────────────
 export function BilanGateway({
-  lastSession,
-  responses,
+  completedSessions,
+  allResponses,
 }: {
-  lastSession: CompletedSession
-  responses: Record<string, string>
+  completedSessions: CompletedSession[]
+  allResponses: Record<string, Record<string, string>>
 }) {
   const router = useRouter()
-  const [showView, setShowView] = useState(false)
+  const [viewingSession, setViewingSession] = useState<CompletedSession | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  if (showView) {
+  if (viewingSession) {
     return (
       <BilanView
-        responses={responses}
-        session={lastSession}
-        onBack={() => setShowView(false)}
+        responses={allResponses[viewingSession.id] ?? {}}
+        session={viewingSession}
+        onBack={() => setViewingSession(null)}
       />
     )
   }
@@ -192,28 +192,28 @@ export function BilanGateway({
       <div className="w-full max-w-sm">
 
         <p
-          className="text-xs font-semibold uppercase tracking-widest mb-3 text-center"
+          className="text-xs font-semibold uppercase tracking-widest mb-8 text-center"
           style={{ color: GOLD }}
         >
           Bilan de Clarté
         </p>
 
-        <p className="text-xs text-center mb-10" style={{ color: '#4b5563' }}>
-          Bilan #{lastSession.session_num} — complété le {fmt(lastSession.completed_at)}
-        </p>
-
         <div className="space-y-3">
-          <button
-            onClick={() => setShowView(true)}
-            className="w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all active:scale-95"
-            style={{
-              backgroundColor: '#1f2937',
-              color: '#d1d5db',
-              border: '1px solid #374151',
-            }}
-          >
-            Voir mes réponses
-          </button>
+          {completedSessions.map(session => (
+            <button
+              key={session.id}
+              onClick={() => setViewingSession(session)}
+              className="w-full text-left px-4 py-3 rounded-2xl transition-all active:scale-95"
+              style={{ backgroundColor: '#1f2937', border: '1px solid #374151' }}
+            >
+              <p className="text-xs font-semibold" style={{ color: GOLD }}>
+                Bilan #{session.session_num}
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: '#4b5563' }}>
+                Complété le {fmt(session.completed_at)} — Voir mes réponses →
+              </p>
+            </button>
+          ))}
           <button
             onClick={handleNewBilan}
             disabled={loading}

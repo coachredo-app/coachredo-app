@@ -26,7 +26,6 @@ export default async function BilanPage() {
     .limit(20)
 
   const activeSession = sessions?.find(s => s.statut === 'in_progress') ?? null
-  const lastCompleted = sessions?.find(s => s.statut === 'completed') ?? null
 
   // Cas A : session in_progress → lecteur Bilan
   if (activeSession) {
@@ -41,17 +40,21 @@ export default async function BilanPage() {
     return <BilanReader session={activeSession} initialResponses={initialResponses} />
   }
 
-  // Cas B : au moins un Bilan terminé, aucun en cours → écran de choix
-  if (lastCompleted) {
-    const { data: rows } = await supabase
+  // Cas B : sessions terminées, aucune en cours → liste historique complète
+  const completedSessions = sessions?.filter(s => s.statut === 'completed') ?? []
+  if (completedSessions.length > 0) {
+    const { data: allRows } = await supabase
       .from('bilan_responses')
-      .select('question_id, response')
-      .eq('session_id', lastCompleted.id)
+      .select('session_id, question_id, response')
+      .in('session_id', completedSessions.map(s => s.id))
 
-    const responses = Object.fromEntries(
-      (rows ?? []).map(r => [r.question_id as string, r.response as string])
-    )
-    return <BilanGateway lastSession={lastCompleted} responses={responses} />
+    const allResponses: Record<string, Record<string, string>> = {}
+    for (const row of (allRows ?? [])) {
+      if (!allResponses[row.session_id as string]) allResponses[row.session_id as string] = {}
+      allResponses[row.session_id as string][row.question_id as string] = row.response as string
+    }
+
+    return <BilanGateway completedSessions={completedSessions} allResponses={allResponses} />
   }
 
   // Cas C : aucune session — créer la première via service_role
