@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getReadingProgress } from '@/lib/reading-chapters'
+import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
 
 export async function createBilanSession(): Promise<
   { sessionId: string; sessionNum: number } | { error: string }
@@ -28,6 +29,29 @@ export async function createBilanSession(): Promise<
     .maybeSingle()
 
   if (existing) return { sessionId: existing.id, sessionNum: existing.session_num }
+
+  // Délai de 30 jours depuis le dernier Bilan complété
+  const { data: lastDone } = await supabase
+    .from('bilan_sessions')
+    .select('completed_at')
+    .eq('user_id', user.id)
+    .eq('statut', 'completed')
+    .order('session_num', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (lastDone?.completed_at) {
+    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
+    const elapsed = Date.now() - new Date(lastDone.completed_at).getTime()
+    if (elapsed < THIRTY_DAYS_MS) {
+      const availableAt = new Date(new Date(lastDone.completed_at).getTime() + THIRTY_DAYS_MS)
+      return {
+        error: `Nouveau Bilan disponible le ${availableAt.toLocaleDateString('fr-FR', {
+          day: 'numeric', month: 'long', year: 'numeric',
+        })}.`,
+      }
+    }
+  }
 
   // Calculer le prochain session_num côté serveur
   const service = createServiceClient()
@@ -86,6 +110,22 @@ export async function completeBilanSession(
     .single()
 
   if (fetchError || !session) return { error: 'Session introuvable ou déjà terminée.' }
+
+  // Vérifier les 5 réponses obligatoires
+  const { data: requiredRows } = await supabase
+    .from('bilan_responses')
+    .select('question_id, response')
+    .eq('session_id', sessionId)
+    .in('question_id', [...REQUIRED_QUESTION_IDS])
+
+  const answeredRequired = new Set(
+    (requiredRows ?? [])
+      .filter(r => (r.response as string)?.trim())
+      .map(r => r.question_id as string)
+  )
+  if (answeredRequired.size < REQUIRED_QUESTION_IDS.size) {
+    return { error: 'Veuillez répondre aux 5 questions essentielles avant de terminer.' }
+  }
 
   const service = createServiceClient()
   const now = new Date().toISOString()

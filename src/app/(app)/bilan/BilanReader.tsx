@@ -12,6 +12,7 @@ import {
 import { syncBilanResponse, updateCurrentStep } from '@/lib/reader/bilan-sync'
 import { completeBilanSession } from './actions'
 import { STEPS } from './steps'
+import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
 
 const GOLD = '#c9a84c'
 
@@ -34,6 +35,7 @@ export function BilanReader({
   const [responses, setResponses] = useState<Record<string, string>>(initialResponses)
   const [fieldOpen, setFieldOpen] = useState(false)
   const [draft, setDraft] = useState('')
+  const [completionError, setCompletionError] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Fusionner les réponses offline puis synchroniser localStorage avec Supabase
@@ -82,6 +84,10 @@ export function BilanReader({
   const isLast = index === STEPS.length - 1
   const progressPct = ((index + 1) / STEPS.length) * 100
 
+  const missingRequiredIds = isLast
+    ? [...REQUIRED_QUESTION_IDS].filter(id => !responses[id]?.trim())
+    : []
+
   const prevStep = index > 0 ? STEPS[index - 1] : null
   const showFamilleLabel =
     step.kind === 'question' &&
@@ -111,8 +117,13 @@ export function BilanReader({
 
   async function handleNext() {
     if (isLast) {
+      if (missingRequiredIds.length > 0) return
       markBilanCompleted()
-      await completeBilanSession(session.id)
+      const result = await completeBilanSession(session.id)
+      if (result.error) {
+        setCompletionError(result.error)
+        return
+      }
       router.push('/bilan/confirmation')
     } else {
       navigateTo(index + 1)
@@ -236,9 +247,20 @@ export function BilanReader({
         className="flex-none px-4 sm:px-6 pt-3"
         style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 2rem))' }}
       >
+        {isLast && missingRequiredIds.length > 0 && (
+          <p className="text-xs text-center mb-3" style={{ color: '#ef4444' }}>
+            {missingRequiredIds.length} réponse{missingRequiredIds.length > 1 ? 's' : ''} essentielle{missingRequiredIds.length > 1 ? 's' : ''} manquante{missingRequiredIds.length > 1 ? 's' : ''} — utilise ← Précédent pour y répondre.
+          </p>
+        )}
+        {completionError && (
+          <p className="text-xs text-center mb-3" style={{ color: '#ef4444' }}>
+            {completionError}
+          </p>
+        )}
         <button
           onClick={handleNext}
-          className="w-full py-4 rounded-2xl font-bold text-base tracking-wide transition-all active:scale-95"
+          disabled={isLast && missingRequiredIds.length > 0}
+          className="w-full py-4 rounded-2xl font-bold text-base tracking-wide transition-all active:scale-95 disabled:opacity-40"
           style={{
             backgroundColor: GOLD,
             color: '#0a0d1a',

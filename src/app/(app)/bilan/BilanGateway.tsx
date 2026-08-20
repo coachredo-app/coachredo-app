@@ -153,9 +153,11 @@ function BilanView({
 export function BilanGateway({
   completedSessions,
   allResponses,
+  nextAvailableAt,
 }: {
   completedSessions: CompletedSession[]
   allResponses: Record<string, Record<string, string>>
+  nextAvailableAt: string | null
 }) {
   const router = useRouter()
   const [viewingSession, setViewingSession] = useState<CompletedSession | null>(null)
@@ -214,18 +216,27 @@ export function BilanGateway({
               </p>
             </button>
           ))}
-          <button
-            onClick={handleNewBilan}
-            disabled={loading}
-            className="w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all active:scale-95 disabled:opacity-40"
-            style={{
-              backgroundColor: GOLD,
-              color: '#0a0d1a',
-              boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
-            }}
-          >
-            {loading ? 'Création…' : 'Faire un nouveau Bilan →'}
-          </button>
+          {nextAvailableAt ? (
+            <p className="text-xs text-center py-4" style={{ color: '#4b5563' }}>
+              Nouveau Bilan disponible le{' '}
+              {new Date(nextAvailableAt).toLocaleDateString('fr-FR', {
+                day: 'numeric', month: 'long', year: 'numeric',
+              })}.
+            </p>
+          ) : (
+            <button
+              onClick={handleNewBilan}
+              disabled={loading}
+              className="w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all active:scale-95 disabled:opacity-40"
+              style={{
+                backgroundColor: GOLD,
+                color: '#0a0d1a',
+                boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
+              }}
+            >
+              {loading ? 'Création…' : 'Faire un nouveau Bilan →'}
+            </button>
+          )}
         </div>
 
         {error && (

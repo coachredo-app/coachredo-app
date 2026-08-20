@@ -2,6 +2,7 @@ export interface BilanQuestion {
   id: string
   famille: string
   text: string
+  required?: boolean
 }
 
 export const BILAN_QUESTIONS: BilanQuestion[] = [
@@ -9,6 +10,7 @@ export const BILAN_QUESTIONS: BilanQuestion[] = [
     famille: 'Reconnaissance',
     id: 'reconnaissance_1',
     text: "Qu'est-ce que tu te dis depuis longtemps que tu vas faire — bientôt ?",
+    required: true,
   },
   {
     famille: 'Reconnaissance',
@@ -34,11 +36,13 @@ export const BILAN_QUESTIONS: BilanQuestion[] = [
     famille: 'Blocages',
     id: 'blocages_3',
     text: "Quelle est la « bonne raison » que tu te donnes le plus souvent pour ne pas encore commencer ?",
+    required: true,
   },
   {
     famille: 'Ressources',
     id: 'ressources_1',
     text: "Pour quel type de problème est-ce qu'on vient te voir quand les autres ne savent pas quoi faire ?",
+    required: true,
   },
   {
     famille: 'Ressources',
@@ -54,6 +58,7 @@ export const BILAN_QUESTIONS: BilanQuestion[] = [
     famille: 'Observation',
     id: 'observation_1',
     text: "Quel problème vois-tu régulièrement autour de toi, que personne n'a encore vraiment résolu ?",
+    required: true,
   },
   {
     famille: 'Observation',
@@ -64,6 +69,7 @@ export const BILAN_QUESTIONS: BilanQuestion[] = [
     famille: 'Mouvement',
     id: 'mouvement_1',
     text: "Si tu devais commencer quelque chose cette semaine — pas le projet entier, juste une première chose concrète — quelle serait cette chose ?",
+    required: true,
   },
   {
     famille: 'Mouvement',
@@ -90,4 +96,8 @@ export const FAMILLE_TOTAL = BILAN_QUESTIONS.reduce<Record<string, number>>(
     return acc
   },
   {}
+)
+
+export const REQUIRED_QUESTION_IDS = new Set(
+  BILAN_QUESTIONS.filter(q => q.required).map(q => q.id)
 )
