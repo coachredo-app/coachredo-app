@@ -87,6 +87,9 @@ export function BilanReader({
   const missingRequiredIds = isLast
     ? [...REQUIRED_QUESTION_IDS].filter(id => !responses[id]?.trim())
     : []
+  const missingRequiredScreens = missingRequiredIds
+    .map(id => STEPS.findIndex(s => s.kind === 'question' && s.id === id) + 1)
+    .sort((a, b) => a - b)
 
   const prevStep = index > 0 ? STEPS[index - 1] : null
   const showFamilleLabel =
@@ -203,7 +206,11 @@ export function BilanReader({
                     cursor: 'pointer',
                   }}
                 >
-                  {hasResponse ? '✓ Modifier ma réflexion' : '✎ Répondre (optionnel)'}
+                  {hasResponse
+                    ? '✓ Modifier ma réflexion'
+                    : REQUIRED_QUESTION_IDS.has(step.id)
+                      ? '✎ Réponse essentielle'
+                      : '✎ Répondre (optionnel)'}
                 </button>
               ) : (
                 <textarea
@@ -249,7 +256,7 @@ export function BilanReader({
       >
         {isLast && missingRequiredIds.length > 0 && (
           <p className="text-xs text-center mb-3" style={{ color: '#ef4444' }}>
-            {missingRequiredIds.length} réponse{missingRequiredIds.length > 1 ? 's' : ''} essentielle{missingRequiredIds.length > 1 ? 's' : ''} manquante{missingRequiredIds.length > 1 ? 's' : ''} — utilise ← Précédent pour y répondre.
+            Réponse{missingRequiredIds.length > 1 ? 's' : ''} essentielle{missingRequiredIds.length > 1 ? 's' : ''} manquante{missingRequiredIds.length > 1 ? 's' : ''} — question{missingRequiredIds.length > 1 ? 's' : ''} {missingRequiredScreens.join(', ')} — utilise ← Précédent.
           </p>
         )}
         {completionError && (
