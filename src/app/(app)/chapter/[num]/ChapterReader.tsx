@@ -43,8 +43,8 @@ export default function ChapterReader({ chapter }: { chapter: Chapter }) {
 
   const nextHref = chapter.num < 7 ? `/chapter/${chapter.num + 1}` : '/transition'
   const nextLabel = chapter.num < 7 ? `Chapitre ${chapter.num + 1} →` : 'Continuer →'
-  const backHref = chapter.num === 1 ? '/intro' : `/chapter/${chapter.num - 1}`
-  const backLabel = chapter.num === 1 ? 'Intro' : `Chapitre ${chapter.num - 1}`
+  const backHref = chapter.num === 1 ? '/fr/dashboard' : `/chapter/${chapter.num - 1}`
+  const backLabel = chapter.num === 1 ? 'Mon espace CoachRedo' : `Chapitre ${chapter.num - 1}`
 
   return (
     <BlockRenderer

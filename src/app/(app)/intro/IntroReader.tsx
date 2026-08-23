@@ -10,8 +10,8 @@ export default function IntroReader({ intro }: { intro: Intro }) {
       exercises={[]}
       nextHref="/chapter/1"
       nextLabel="Commencer le Chapitre 1 →"
-      backHref="/intro"
-      backLabel="Intro"
+      backHref="/fr/dashboard"
+      backLabel="Mon espace CoachRedo"
       chapterLabel="Plan B Rentable"
     />
   )

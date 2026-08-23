@@ -184,19 +184,30 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               <span>→</span>
             </Link>
 
-            <Link
-              href="/bilan"
-              className="flex items-center justify-between px-4 py-3 rounded-lg border border-cr-border bg-surface text-cr-text text-sm font-medium hover:bg-background transition-colors"
-            >
-              <span>
-                Bilan de Clarté
-                {bilanCompleted && <span className="ml-2 text-xs text-success font-normal">✓ Complété</span>}
-                {!bilanCompleted && bilanAnswered > 0 && (
-                  <span className="ml-2 text-xs text-cr-text-muted font-normal">{bilanAnswered}/13</span>
-                )}
-              </span>
-              <span className="text-cr-text-muted">→</span>
-            </Link>
+            {reading.fullyDone ? (
+              <Link
+                href="/bilan"
+                className="flex items-center justify-between px-4 py-3 rounded-lg border border-cr-border bg-surface text-cr-text text-sm font-medium hover:bg-background transition-colors"
+              >
+                <span>
+                  Bilan de Clarté
+                  {bilanCompleted && <span className="ml-2 text-xs text-success font-normal">✓ Complété</span>}
+                  {!bilanCompleted && bilanAnswered > 0 && (
+                    <span className="ml-2 text-xs text-cr-text-muted font-normal">{bilanAnswered}/13</span>
+                  )}
+                </span>
+                <span className="text-cr-text-muted">→</span>
+              </Link>
+            ) : (
+              <div className="flex items-start justify-between px-4 py-3 rounded-lg border border-cr-border bg-background cursor-default">
+                <span className="text-sm font-medium text-cr-text-muted">
+                  🔒 Bilan de Clarté
+                  <span className="block text-xs font-normal mt-0.5">
+                    Disponible après avoir terminé le livre
+                  </span>
+                </span>
+              </div>
+            )}
           </div>
         </section>
       )}
