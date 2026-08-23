@@ -53,6 +53,10 @@ export function markBilanCompleted(): void {
 export function saveBilanSession(sessionId: string): void {
   if (typeof window === 'undefined') return
   const data = loadBilan()
+  if (data.sessionId !== sessionId) {
+    persist({ responses: {}, completedAt: null, sessionId, currentStep: 0 })
+    return
+  }
   data.sessionId = sessionId
   persist(data)
 }
