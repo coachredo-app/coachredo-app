@@ -135,7 +135,7 @@ export function BilanReader({
 
   function handleBack() {
     if (isFirst) {
-      router.push('/transition')
+      router.push('/fr/dashboard')
     } else {
       navigateTo(index - 1)
     }
@@ -163,14 +163,25 @@ export function BilanReader({
           className="text-sm transition-opacity hover:opacity-100"
           style={{ color: '#6b7280', cursor: 'pointer' }}
         >
-          ← {isFirst ? 'Retour' : 'Précédent'}
+          ← {isFirst ? 'Mon espace CoachRedo' : 'Précédent'}
         </button>
         <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
           Bilan de clarté
         </span>
-        <span className="text-xs tabular-nums" style={{ color: '#4b5563' }}>
-          {index + 1} / {STEPS.length}
-        </span>
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="text-xs tabular-nums" style={{ color: '#4b5563' }}>
+            {index + 1} / {STEPS.length}
+          </span>
+          {!isFirst && (
+            <button
+              onClick={() => router.push('/fr/dashboard')}
+              className="text-xs transition-opacity hover:opacity-100"
+              style={{ color: '#374151', cursor: 'pointer' }}
+            >
+              Mon espace CoachRedo
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Contenu — scrollable */}
