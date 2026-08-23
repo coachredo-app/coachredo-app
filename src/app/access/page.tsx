@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function AccessPage() {
   const router = useRouter()
@@ -28,25 +29,34 @@ export default function AccessPage() {
       return
     }
 
-    router.push('/intro')
-    router.refresh()
+    router.push('/fr/dashboard')
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#0a0d1a' }}>
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold" style={{ color: '#c9a84c' }}>Plan B Rentable</h1>
-          <p className="text-sm mt-1" style={{ color: '#6b7280' }}>par Coach Redouane</p>
-        </div>
 
-        <div className="rounded-xl p-8" style={{ backgroundColor: '#111827', border: '1px solid #1f2937' }}>
-          <h2 className="text-xl font-semibold mb-2" style={{ color: '#e5e7eb' }}>
-            Activer l&apos;accès
-          </h2>
-          <p className="text-sm mb-6" style={{ color: '#6b7280' }}>
+        <Link
+          href="/fr/dashboard"
+          className="inline-flex items-center gap-1.5 text-sm text-cr-text-secondary hover:text-cr-text transition-colors mb-6"
+        >
+          ← Retour à mon espace
+        </Link>
+
+        <div className="mb-8">
+          <h1
+            className="text-2xl font-bold text-cr-text"
+            style={{ fontFamily: 'var(--font-dm-serif)' }}
+          >
+            Plan B Rentable
+          </h1>
+          <p className="text-sm text-cr-text-secondary mt-1">
             Saisis le code reçu après ton achat pour accéder au parcours.
           </p>
+        </div>
+
+        <div className="bg-surface rounded-xl border border-cr-border p-8 space-y-4">
+          <h2 className="text-lg font-semibold text-cr-text">Activer l&apos;accès</h2>
 
           <form onSubmit={handleRedeem} className="space-y-4">
             <input
@@ -55,28 +65,23 @@ export default function AccessPage() {
               onChange={e => setCode(e.target.value)}
               required
               placeholder="Ex : PLANB-XXXX-XXXX"
-              className="w-full rounded-lg px-4 py-3 text-sm outline-none tracking-widest text-center font-mono"
-              style={{
-                backgroundColor: '#0a0d1a',
-                border: '1px solid #1f2937',
-                color: '#e5e7eb',
-              }}
+              className="w-full rounded-lg border border-cr-border bg-background px-4 py-3 text-sm tracking-widest text-center font-mono text-cr-text placeholder:text-cr-text-muted focus:outline-none focus:ring-1 focus:ring-cr-accent"
             />
 
             {error && (
-              <p className="text-sm text-center" style={{ color: '#ef4444' }}>{error}</p>
+              <p className="text-sm text-center text-error">{error}</p>
             )}
 
             <button
               type="submit"
               disabled={loading || code.length < 4}
-              className="w-full rounded-lg py-3 text-sm font-semibold transition-opacity disabled:opacity-40"
-              style={{ backgroundColor: '#c9a84c', color: '#0a0d1a' }}
+              className="w-full rounded-lg py-3 text-sm font-semibold bg-cr-accent text-white hover:opacity-90 transition-opacity disabled:opacity-40"
             >
               {loading ? 'Vérification...' : 'Activer mon accès'}
             </button>
           </form>
         </div>
+
       </div>
     </div>
   )
