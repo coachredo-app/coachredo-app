@@ -32,33 +32,11 @@ export async function activateTradingAccess(code: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Non authentifié')
 
-  const { data: accessCode, error: codeError } = await supabase
-    .from('access_codes')
-    .select('code, access_type, used_by')
-    .eq('code', code.trim().toUpperCase())
-    .eq('access_type', 'trading')
-    .single()
+  const { data, error } = await supabase.rpc('redeem_trading_code', { p_code: code })
+  if (error) throw new Error('Erreur serveur.')
 
-  if (codeError || !accessCode) throw new Error('Code invalide ou introuvable')
-  if (accessCode.used_by) throw new Error('Ce code a déjà été utilisé')
-
-  const [updateCode] = await Promise.all([
-    supabase.from('access_codes').update({
-      used_by: user.id,
-      used_at: new Date().toISOString(),
-    }).eq('code', code),
-  ])
-  if (updateCode.error) throw updateCode.error
-
-  const { error: accessError } = await supabase
-    .from('trading_access')
-    .upsert({
-      user_id: user.id,
-      has_access: true,
-      access_tier: 'academy',
-      access_granted_at: new Date().toISOString(),
-    })
-  if (accessError) throw accessError
+  const result = data as { success?: boolean; error?: string } | null
+  if (result?.error) throw new Error(result.error)
 
   revalidatePath('/trading')
   return { success: true }

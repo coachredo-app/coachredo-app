@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request) {
   const { code } = await request.json()
@@ -15,38 +15,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Non authentifié.' }, { status: 401 })
   }
 
-  const service = createServiceClient()
+  const { data, error } = await supabase.rpc('redeem_book_code', { p_code: code })
 
-  // Check code validity
-  const { data: accessCode } = await service
-    .from('access_codes')
-    .select('code, access_type, used_by')
-    .eq('code', code)
-    .single()
-
-  if (!accessCode) {
-    return NextResponse.json({ error: 'Code invalide ou expiré.' }, { status: 400 })
+  if (error) {
+    return NextResponse.json({ error: 'Erreur serveur.' }, { status: 500 })
   }
 
-  if (accessCode.used_by) {
-    return NextResponse.json({ error: 'Ce code a déjà été utilisé.' }, { status: 400 })
+  const result = data as { success?: boolean; error?: string } | null
+
+  if (result?.error) {
+    return NextResponse.json({ error: result.error }, { status: 400 })
   }
-
-  // Mark code as used
-  await service
-    .from('access_codes')
-    .update({ used_by: user.id, used_at: new Date().toISOString() })
-    .eq('code', code)
-
-  // Grant access — upsert in case trigger row is missing for legacy users
-  await service
-    .from('book_access')
-    .upsert({
-      user_id: user.id,
-      has_access: true,
-      access_granted_at: new Date().toISOString(),
-      access_method: 'code',
-    }, { onConflict: 'user_id' })
 
   return NextResponse.json({ success: true })
 }
