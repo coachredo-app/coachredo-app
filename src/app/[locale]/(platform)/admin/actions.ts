@@ -1,17 +1,10 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { requireAdminService } from '@/lib/admin'
 
 export async function deleteUser(userId: string, locale: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user || user.email !== process.env.ADMIN_EMAIL) {
-    throw new Error('Non autorisé')
-  }
-
-  const service = createServiceClient()
+  const service = await requireAdminService()
 
   // Libérer le code d'accès lié (évite la contrainte FK)
   await service

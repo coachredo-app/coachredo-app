@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { AccessTier, TraderMode, TradingAdminData } from './trading-types'
-import { createServiceClient } from '@/lib/supabase/server'
+import { requireAdminService } from '@/lib/admin'
 
 export async function checkTradingAccess(userId: string): Promise<boolean> {
   const supabase = await createClient()
@@ -34,7 +34,7 @@ export async function getTradingMode(userId: string): Promise<TraderMode | null>
 
 // Admin uniquement — utilise le service client
 export async function getTradingAdminData(userId: string): Promise<TradingAdminData> {
-  const service = createServiceClient()
+  const service = await requireAdminService()
 
   const now = new Date()
   const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()

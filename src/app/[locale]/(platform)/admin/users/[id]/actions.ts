@@ -1,16 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient, createServiceClient } from '@/lib/supabase/server'
-
-async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user || user.email !== process.env.ADMIN_EMAIL) {
-    throw new Error('Non autorisé')
-  }
-  return createServiceClient()
-}
+import { requireAdminService } from '@/lib/admin'
 
 function revalidateFiche(locale: string, userId: string) {
   revalidatePath(`/${locale}/admin/users/${userId}`)
@@ -31,7 +22,7 @@ export async function upsertDiagnostic(
     message_utilisateur: string
   }
 ) {
-  const service = await checkAdmin()
+  const service = await requireAdminService()
   const { error } = await service.from('diagnostics').upsert(
     { user_id: userId, ...data, updated_at: new Date().toISOString() },
     { onConflict: 'user_id' }
@@ -45,7 +36,7 @@ export async function addSignal(
   locale: string,
   data: { categorie: string; signal: string; intensite: string; coach_note?: string }
 ) {
-  const service = await checkAdmin()
+  const service = await requireAdminService()
   const { error } = await service.from('user_signals').insert({
     user_id: userId,
     categorie: data.categorie,
@@ -62,7 +53,7 @@ export async function addJournalEntry(
   locale: string,
   data: { type: string; contenu: string; resultat?: string }
 ) {
-  const service = await checkAdmin()
+  const service = await requireAdminService()
   const { error } = await service.from('coach_journal').insert({
     user_id: userId,
     type: data.type,
@@ -78,7 +69,7 @@ export async function addMission(
   locale: string,
   data: { mission: string; coach_note?: string }
 ) {
-  const service = await checkAdmin()
+  const service = await requireAdminService()
   const { error } = await service.from('user_missions').insert({
     user_id: userId,
     mission: data.mission,
@@ -90,21 +81,21 @@ export async function addMission(
 }
 
 export async function deleteJournalEntry(id: string, userId: string, locale: string) {
-  const service = await checkAdmin()
+  const service = await requireAdminService()
   const { error } = await service.from('coach_journal').delete().eq('id', id)
   if (error) throw new Error(error.message)
   revalidateFiche(locale, userId)
 }
 
 export async function deleteSignal(id: string, userId: string, locale: string) {
-  const service = await checkAdmin()
+  const service = await requireAdminService()
   const { error } = await service.from('user_signals').delete().eq('id', id)
   if (error) throw new Error(error.message)
   revalidateFiche(locale, userId)
 }
 
 export async function deleteMission(id: string, userId: string, locale: string) {
-  const service = await checkAdmin()
+  const service = await requireAdminService()
   const { error } = await service.from('user_missions').delete().eq('id', id)
   if (error) throw new Error(error.message)
   revalidateFiche(locale, userId)
@@ -116,7 +107,7 @@ export async function updateMissionStatus(
   userId: string,
   locale: string
 ) {
-  const service = await checkAdmin()
+  const service = await requireAdminService()
   const update: Record<string, unknown> = { statut }
   if (statut === 'terminée') update.completed_at = new Date().toISOString()
   if (statut === 'en_cours') update.completed_at = null

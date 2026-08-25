@@ -1,8 +1,9 @@
 'use server'
 
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { checkTradingAccess } from './trading-access'
+import { requireAdminService } from '@/lib/admin'
 import type { TraderMode } from './trading-types'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -14,15 +15,6 @@ async function requireTradingUser() {
   const hasAccess = await checkTradingAccess(user.id)
   if (!hasAccess) throw new Error('Accès CoachRedo Trading requis')
   return { supabase, user }
-}
-
-async function requireAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user || user.email !== process.env.ADMIN_EMAIL) {
-    throw new Error('Accès admin requis')
-  }
-  return createServiceClient()
 }
 
 // ─── Activation accès trading ─────────────────────────────────────────────────
@@ -45,7 +37,7 @@ export async function activateTradingAccess(code: string) {
 // ─── Mise à jour mode trading (admin) ─────────────────────────────────────────
 
 export async function adminSetTradingMode(userId: string, mode: TraderMode) {
-  const service = await requireAdmin()
+  const service = await requireAdminService()
 
   const { error } = await service
     .from('profiles')
@@ -64,7 +56,7 @@ export async function adminCreateTradingLock(
   lockType: 'LossStreak' | 'NewsLock' | 'SessionExit' | 'ManualLock',
   unlockAt?: string
 ) {
-  const service = await requireAdmin()
+  const service = await requireAdminService()
 
   const { error } = await service.from('trading_trading_locks').insert({
     user_id: userId,
@@ -81,7 +73,7 @@ export async function adminCreateTradingLock(
 // ─── Déverrouillage manuel (admin) ────────────────────────────────────────────
 
 export async function adminReleaseTradingLock(lockId: string, userId: string) {
-  const service = await requireAdmin()
+  const service = await requireAdminService()
 
   const { error } = await service
     .from('trading_trading_locks')
