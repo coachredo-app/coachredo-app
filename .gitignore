@@ -46,3 +46,6 @@ next-env.d.ts
 # Cache de Next.js (edge, ISR, etc.)
 .cache/
 # --------------------------------------------------------------------
+
+# Rapports internes (coordination multi-fenêtres, ne pas publier)
+handoff/
