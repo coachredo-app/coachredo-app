@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import {
   loadBilan,
   saveBilanSession,
@@ -168,19 +169,18 @@ export function BilanReader({
         <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
           Bilan de clarté
         </span>
-        <div className="flex flex-col items-end gap-0.5">
+        <div className="flex items-center gap-2">
           <span className="text-xs tabular-nums" style={{ color: '#4b5563' }}>
             {index + 1} / {STEPS.length}
           </span>
-          {!isFirst && (
-            <button
-              onClick={() => router.push('/fr/dashboard')}
-              className="text-xs transition-opacity hover:opacity-100"
-              style={{ color: '#374151', cursor: 'pointer' }}
-            >
-              Mon espace CoachRedo
-            </button>
-          )}
+          <Link
+            href="/fr/dashboard"
+            className="text-xs flex items-center gap-1"
+            style={{ color: '#6b7280' }}
+          >
+            <span>⌂</span>
+            <span className="hidden sm:inline">Mon espace</span>
+          </Link>
         </div>
       </div>
 

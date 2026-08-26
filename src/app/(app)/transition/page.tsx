@@ -63,6 +63,18 @@ export default function TransitionPage() {
           </Link>
         </div>
 
+        {/* Dashboard */}
+        <div className="mt-4 text-center">
+          <Link
+            href="/fr/dashboard"
+            className="text-sm flex items-center justify-center gap-1 transition-opacity"
+            style={{ color: '#6b7280' }}
+          >
+            <span>⌂</span>
+            <span>Mon espace</span>
+          </Link>
+        </div>
+
       </div>
     </main>
   )
