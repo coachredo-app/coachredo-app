@@ -70,7 +70,7 @@ export default function BlockRenderer({
   chapterLabel,
 }: Props) {
   const router = useRouter()
-  const { currentStep, goNext, goPrev, isExerciseDone, completeChapter, progress, chapterKey } = useReader()
+  const { currentStep, goNext, goPrev, isExerciseDone, completeChapter } = useReader()
   const { muted, toggle: toggleSound } = useAmbientSound()
 
   const steps = useMemo(() => buildSteps(blocks, exercises), [blocks, exercises])
@@ -88,12 +88,10 @@ export default function BlockRenderer({
     canAdvance = isExerciseDone(step.exercise.id)
   }
 
-  const alreadyCompleted = progress.chapters[chapterKey]?.completed === true
-
   function handleNext() {
     if (!canAdvance) return
     if (isLast) {
-      if (!alreadyCompleted) completeChapter()
+      completeChapter()
       router.push(nextHref)
     } else {
       goNext()

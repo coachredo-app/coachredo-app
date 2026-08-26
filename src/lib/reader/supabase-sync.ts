@@ -12,7 +12,7 @@ export async function fetchAndMergeProgress(base: LocalProgress): Promise<LocalP
 
   const merged: LocalProgress = JSON.parse(JSON.stringify(base))
 
-  const [{ data: exercises }, { data: chapters }] = await Promise.all([
+  const [{ data: exercises }, { data: chapters }, { data: readingRows }] = await Promise.all([
     supabase
       .from('exercise_responses')
       .select('exercise_id, chapter_num, response')
@@ -22,6 +22,10 @@ export async function fetchAndMergeProgress(base: LocalProgress): Promise<LocalP
       .select('chapter_num, is_completed')
       .eq('user_id', user.id)
       .eq('is_completed', true),
+    supabase
+      .from('reading_progress')
+      .select('chapter_id, completed_at')
+      .eq('user_id', user.id),
   ])
 
   if (exercises) {
@@ -37,6 +41,25 @@ export async function fetchAndMergeProgress(base: LocalProgress): Promise<LocalP
       const key = String(row.chapter_num)
       if (!merged.chapters[key]) merged.chapters[key] = { completed: false, exercises: {} }
       merged.chapters[key].completed = true
+    }
+  }
+
+  if (readingRows) {
+    const rpKeyMap = Object.fromEntries(
+      Object.entries(READER_KEY_MAP).map(([key, ch]) => [ch.id, key])
+    )
+    for (const row of readingRows) {
+      if (!row.completed_at) continue
+      const key = rpKeyMap[row.chapter_id]
+      if (!key) continue
+      if (key === 'intro') {
+        merged.introCompleted = true
+        if (!merged.chapters['intro']) merged.chapters['intro'] = { completed: false, exercises: {} }
+        merged.chapters['intro'].completed = true
+      } else {
+        if (!merged.chapters[key]) merged.chapters[key] = { completed: false, exercises: {} }
+        merged.chapters[key].completed = true
+      }
     }
   }
 
@@ -94,7 +117,7 @@ export async function upsertReadingComplete(chapterKey: string): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return
 
-  await supabase.from('reading_progress').upsert(
+  const { error } = await supabase.from('reading_progress').upsert(
     {
       user_id: user.id,
       chapter_id: ch.id,
@@ -103,4 +126,5 @@ export async function upsertReadingComplete(chapterKey: string): Promise<void> {
     },
     { onConflict: 'user_id,chapter_id' }
   )
+  if (error) console.error('[reading-progress] upsert failed:', error.message)
 }

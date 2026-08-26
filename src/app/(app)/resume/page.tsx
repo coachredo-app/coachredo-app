@@ -1,39 +1,30 @@
-'use client'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { loadProgress } from '@/lib/reader/progress'
+const CH_NUM: Record<string, number> = {
+  ch1: 1, ch2: 2, ch3: 3, ch4: 4, ch5: 5, ch6: 6, ch7: 7,
+}
+const REQUIRED = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7']
 
-export default function ResumePage() {
-  const router = useRouter()
+export default async function ResumePage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/fr/auth/login')
 
-  useEffect(() => {
-    const p = loadProgress()
+  const { data: rows } = await supabase
+    .from('reading_progress')
+    .select('chapter_id, completed_at')
+    .eq('user_id', user.id)
 
-    // Intro not done yet
-    if (!p.introCompleted) {
-      router.replace('/intro')
-      return
-    }
+  if (!rows || rows.length === 0) redirect('/intro')
 
-    // Find first incomplete chapter
-    for (let num = 1; num <= 7; num++) {
-      if (!p.chapters[String(num)]?.completed) {
-        router.replace(`/chapter/${num}`)
-        return
-      }
-    }
+  const completedIds = new Set(rows.filter(r => r.completed_at).map(r => r.chapter_id))
 
-    // All chapters done → page de transition
-    router.replace('/transition')
-  }, [router])
+  if (!completedIds.has('introduction')) redirect('/intro')
 
-  return (
-    <div
-      className="h-screen flex items-center justify-center"
-      style={{ backgroundColor: '#0a0d1a' }}
-    >
-      <div className="w-6 h-6 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#c9a84c', borderTopColor: 'transparent' }} />
-    </div>
-  )
+  for (const id of REQUIRED) {
+    if (!completedIds.has(id)) redirect(`/chapter/${CH_NUM[id]}`)
+  }
+
+  redirect('/transition')
 }

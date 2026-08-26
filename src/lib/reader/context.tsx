@@ -98,13 +98,15 @@ export function ReaderProvider({
   )
 
   const completeChapter = useCallback(() => {
-    const updated = markChapterComplete(chapterKey)
-    setProgress(updated)
-    if (!isNaN(chapterNum)) {
-      upsertChapterProgress(chapterNum)
+    if (!progress.chapters[chapterKey]?.completed) {
+      const updated = markChapterComplete(chapterKey)
+      setProgress(updated)
+      if (!isNaN(chapterNum)) {
+        upsertChapterProgress(chapterNum)
+      }
     }
     upsertReadingComplete(chapterKey)
-  }, [chapterKey, chapterNum])
+  }, [chapterKey, chapterNum, progress])
 
   return (
     <ReaderContext.Provider

@@ -98,7 +98,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const livreStatus: ParcourStepStatus =
     reading.fullyDone ? 'done' : reading.startedCount > 0 ? 'partial' : hasAccess ? 'empty' : 'locked'
   const bilanStatus: ParcourStepStatus =
-    bilanCompleted ? 'done' : bilanAnswered > 0 ? 'partial' : hasAccess ? 'empty' : 'locked'
+    !reading.fullyDone ? 'locked' :
+    bilanCompleted ? 'done' :
+    bilanAnswered > 0 ? 'partial' :
+    'empty'
   const missionStatus: ParcourStepStatus =
     activeMission?.user_response ? 'done' :
     activeMission ? 'partial' :
