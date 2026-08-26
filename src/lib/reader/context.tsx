@@ -58,8 +58,12 @@ export function ReaderProvider({
     const local = loadProgress()
     setProgress(local)
     setCurrentStep(local.chapters[chapterKey]?.currentStep ?? 0)
-    setMounted(true)
-    fetchAndMergeProgress(local).then(merged => setProgress(merged))
+    fetchAndMergeProgress(local)
+      .then(merged => setProgress(merged))
+      .catch(error => {
+        console.error('[reader-progress] merge failed:', error)
+      })
+      .finally(() => setMounted(true))
     upsertReadingStart(chapterKey)
   }, [chapterKey])
 
