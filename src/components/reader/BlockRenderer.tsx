@@ -147,11 +147,11 @@ export default function BlockRenderer({
           </span>
           <Link
             href="/fr/dashboard"
-            title="Mon espace"
-            className="text-xs shrink-0"
-            style={{ color: '#4b5563' }}
+            className="text-xs shrink-0 flex items-center gap-1"
+            style={{ color: '#6b7280' }}
           >
-            ⌂
+            <span>⌂</span>
+            <span className="hidden sm:inline">Mon espace</span>
           </Link>
         </div>
       </div>
