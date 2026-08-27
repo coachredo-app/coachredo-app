@@ -44,31 +44,33 @@ export function MindMapDesktop({ bilanStatut }: Props) {
           .mm-chrome, .mm-cta { display: none !important; }
           .mm-canvas-flex  { display: block !important; flex: none !important; }
 
-          /* Remove JS transform from ScaledCanvas */
+          /* A4 anchor — page break determined by this box height, not content coords */
           .mm-sc-container {
-            position: static !important;
-            width: auto !important;
-            height: auto !important;
-            overflow: visible !important;
+            position: relative !important;
+            width: 297mm !important;
+            height: 210mm !important;
+            overflow: hidden !important;
             background: white !important;
           }
+
+          /* Inner scaled layer — absolute so it doesn't expand the A4 container */
           .mm-sc-transform {
-            position: static !important;
-            top: auto !important; left: auto !important;
-            width: auto !important; height: auto !important;
-            transform: none !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 1760px !important;
+            height: 1245px !important;
+            transform: scale(0.6375) !important;
+            transform-origin: top left !important;
           }
 
-          /* Artboard: zoom scales layout footprint → exactly A4 landscape (1122×794px at 96dpi) */
+          /* Artboard — natural size, no zoom */
           .mm-artboard {
-            zoom: 63.75% !important;
             width: 1760px !important;
             height: 1245px !important;
             background: white !important;
             border: none !important;
-            overflow: hidden !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
+            overflow: visible !important;
           }
 
           /* SVG gold: force color preservation */
