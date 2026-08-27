@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { CHROME } from './mindmap.content'
 
@@ -41,11 +43,11 @@ export function RotatePrompt() {
         </Link>
         <button
           onClick={() => {
-            alert(
-              `Clic reçu ✓\n` +
-              `typeof window.print: ${typeof window.print}\n` +
-              `UA: ${navigator.userAgent.slice(0, 80)}`
-            )
+            if (typeof navigator.share === 'function') {
+              navigator.share({ url: window.location.href }).catch(() => {})
+            } else {
+              window.print()
+            }
           }}
           style={{
             color: '#A0AEC0',
