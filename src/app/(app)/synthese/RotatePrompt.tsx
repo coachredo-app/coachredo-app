@@ -40,7 +40,13 @@ export function RotatePrompt() {
           {CHROME.home}
         </Link>
         <button
-          onClick={() => window.print()}
+          onClick={() => {
+            alert(
+              `Clic reçu ✓\n` +
+              `typeof window.print: ${typeof window.print}\n` +
+              `UA: ${navigator.userAgent.slice(0, 80)}`
+            )
+          }}
           style={{
             color: '#A0AEC0',
             fontSize: 14,
