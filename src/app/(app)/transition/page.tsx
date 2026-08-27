@@ -41,7 +41,7 @@ export default function TransitionPage() {
 
         {/* CTA */}
         <Link
-          href="/bilan"
+          href="/synthese"
           className="block w-full py-4 rounded-2xl font-bold text-sm sm:text-base tracking-wide text-center transition-all active:scale-95"
           style={{
             backgroundColor: GOLD,
@@ -49,7 +49,7 @@ export default function TransitionPage() {
             boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
           }}
         >
-          Accéder au Bilan de clarté →
+          Voir la carte du parcours →
         </Link>
 
         {/* Back */}

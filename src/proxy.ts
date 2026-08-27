@@ -24,6 +24,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/access') ||
     pathname.startsWith('/transition') ||
     pathname.startsWith('/bilan') ||
+    pathname.startsWith('/synthese') ||
     pathname === '/login' ||
     pathname === '/signup' ||
     pathname === '/reset-password'
@@ -63,7 +64,7 @@ export async function proxy(request: NextRequest) {
 
     // No session on protected routes → redirect to login
     if (!user && !READER_PUBLIC.includes(pathname)) {
-      if (pathname.startsWith('/bilan')) {
+      if (pathname.startsWith('/bilan') || pathname.startsWith('/synthese')) {
         const loginUrl = new URL('/fr/auth/login', request.url)
         loginUrl.searchParams.set('next', pathname)
         return NextResponse.redirect(loginUrl)

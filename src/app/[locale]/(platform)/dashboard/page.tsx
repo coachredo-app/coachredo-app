@@ -187,6 +187,16 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               <span>→</span>
             </Link>
 
+            {reading.fullyDone && (
+              <Link
+                href="/synthese"
+                className="flex items-center justify-between px-4 py-3 rounded-lg border border-cr-border bg-surface text-cr-text text-sm font-medium hover:bg-background transition-colors"
+              >
+                <span>Carte du parcours</span>
+                <span className="text-cr-text-muted">→</span>
+              </Link>
+            )}
+
             {reading.fullyDone ? (
               <Link
                 href="/bilan"
