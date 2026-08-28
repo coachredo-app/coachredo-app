@@ -19,7 +19,7 @@ export async function GET() {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'inline; filename="plan-b-carte.pdf"',
+        'Content-Disposition': `inline; filename="Plan-B-Rentable-Carte-du-parcours.pdf"; filename*=UTF-8''Plan-B-Rentable-Carte-du-parcours.pdf`,
         'Content-Length': pdf.byteLength.toString(),
         'Cache-Control': 'private, max-age=3600',
       },
