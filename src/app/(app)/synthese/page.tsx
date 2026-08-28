@@ -1,3 +1,7 @@
+export const metadata = {
+  title: 'Plan B Rentable — Carte du parcours',
+}
+
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getReadingProgress } from '@/lib/reading-chapters'
