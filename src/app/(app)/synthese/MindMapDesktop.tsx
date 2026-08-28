@@ -31,7 +31,17 @@ export function MindMapDesktop({ bilanStatut }: Props) {
       style={{ backgroundColor: '#070A12', height: '100dvh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
     >
       <style>{`
+        @media screen {
+          .mm-print-desktop-hidden { display: none; }
+        }
+
         @media print {
+          /* Reveal MindMapDesktop wrapper when not the active screen view */
+          .mm-print-desktop-hidden { display: block !important; }
+          /* Hide all screen-only views (RotatePrompt, MindMapLandscape, pre-hydration blank) */
+          .mm-screen-only { display: none !important; }
+
+
           @page { size: A4 landscape; margin: 0; }
 
           /* Reset page structure */

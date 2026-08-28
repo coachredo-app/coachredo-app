@@ -34,8 +34,16 @@ export function MindMap({ bilanStatut }: Props) {
     return () => mqs.forEach(mq => mq.removeEventListener('change', update))
   }, [])
 
-  if (view === null)        return <div style={{ backgroundColor: '#0B0F1A', minHeight: '100dvh' }} />
-  if (view === 'landscape') return <MindMapLandscape />
-  if (view === 'portrait')  return <RotatePrompt />
-  return <MindMapDesktop bilanStatut={bilanStatut} />
+  return (
+    <>
+      {/* Always mounted — sole printable element regardless of active screen view */}
+      <div className={view !== 'desktop' ? 'mm-print-desktop-hidden' : undefined}>
+        <MindMapDesktop bilanStatut={bilanStatut} />
+      </div>
+      {/* Screen-only views — suppressed during print */}
+      {view === null        && <div className="mm-screen-only" style={{ backgroundColor: '#0B0F1A', minHeight: '100dvh' }} />}
+      {view === 'landscape' && <div className="mm-screen-only"><MindMapLandscape /></div>}
+      {view === 'portrait'  && <div className="mm-screen-only"><RotatePrompt /></div>}
+    </>
+  )
 }

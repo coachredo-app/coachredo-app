@@ -42,13 +42,7 @@ export function RotatePrompt() {
           {CHROME.home}
         </Link>
         <button
-          onClick={() => {
-            if (typeof navigator.share === 'function') {
-              navigator.share({ url: window.location.href }).catch(() => {})
-            } else {
-              window.print()
-            }
-          }}
+          onClick={() => window.print()}
           style={{
             color: '#A0AEC0',
             fontSize: 14,
