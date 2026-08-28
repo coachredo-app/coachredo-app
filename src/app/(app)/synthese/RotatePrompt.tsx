@@ -41,20 +41,22 @@ export function RotatePrompt() {
         >
           {CHROME.home}
         </Link>
-        <button
-          onClick={() => window.print()}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+        <a
+          href="/synthese/pdf"
           style={{
             color: '#A0AEC0',
             fontSize: 14,
-            background: 'none',
-            border: 'none',
+            textDecoration: 'none',
             cursor: 'pointer',
             padding: 0,
             minHeight: 48,
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
           {CHROME.print}
-        </button>
+        </a>
       </div>
 
       {/* Bloc marque — centré à top:168 */}
