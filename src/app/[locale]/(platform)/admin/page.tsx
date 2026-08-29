@@ -5,6 +5,9 @@ import { CopyCodeButton } from './codes/CopyCodeButton'
 import { DeleteUserButton } from './DeleteUserButton'
 import { cn } from '@/lib/utils'
 
+const RELANCE_SEUIL_JOURS = 3
+const RELANCE_SEUIL_MS    = RELANCE_SEUIL_JOURS * 24 * 60 * 60 * 1000
+
 interface AdminPageProps {
   params: Promise<{ locale: string }>
 }
@@ -18,6 +21,14 @@ function fmt(dateStr: string | null | undefined) {
   })
 }
 
+type ActionCat = 'A' | 'B' | 'C'
+interface ActionItem {
+  userId:    string
+  email:     string
+  cat:       ActionCat
+  dateLabel: string
+}
+
 export default async function AdminPage({ params }: AdminPageProps) {
   const { locale } = await params
   const supabase = await createClient()
@@ -29,7 +40,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
 
   const service = createServiceClient()
 
-  const [usersResult, codesResult, accessResult, bilanResult, sessionsResult] = await Promise.all([
+  const [usersResult, codesResult, accessResult, bilanResult, sessionsResult, missionsResult] = await Promise.all([
     service.auth.admin.listUsers({ perPage: 1000 }),
     service
       .from('access_codes')
@@ -48,6 +59,12 @@ export default async function AdminPage({ params }: AdminPageProps) {
       .from('bilan_sessions')
       .select('id, user_id, session_num, statut')
       .order('session_num', { ascending: false }),
+    // Missions actives uniquement — pour la section Action requise
+    service
+      .from('user_missions')
+      .select('id, user_id, user_response, assigned_at, responded_at')
+      .eq('statut', 'en_cours')
+      .order('assigned_at', { ascending: true }),
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,6 +75,8 @@ export default async function AdminPage({ params }: AdminPageProps) {
   const bilanRows: any[] = bilanResult.data ?? []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const allSessions: any[] = sessionsResult.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const activeMissionsAll: any[] = missionsResult.data ?? []
 
   const accessByUser = Object.fromEntries(accessRows.map(r => [r.user_id, r]))
   const codeByUser = Object.fromEntries(
@@ -86,6 +105,63 @@ export default async function AdminPage({ params }: AdminPageProps) {
       .map(([userId]) => [userId, true])
   )
 
+  // ── Action requise ───────────────────────────────────────────
+  const emailByUser = Object.fromEntries(authUsers.map(u => [u.id as string, (u.email ?? '—') as string]))
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const activeMissionsByUser = activeMissionsAll.reduce<Record<string, any[]>>((acc, m) => {
+    if (!acc[m.user_id]) acc[m.user_id] = []
+    acc[m.user_id].push(m)
+    return acc
+  }, {})
+
+  const relevantUserIds = new Set([
+    ...Object.keys(completedByUser),
+    ...Object.keys(activeMissionsByUser),
+  ])
+
+  // eslint-disable-next-line react-hooks/purity -- Server Component: Date.now() runs once per request, no re-render
+  const now = Date.now()
+  const actionItems: ActionItem[] = []
+
+  for (const userId of relevantUserIds) {
+    const email    = emailByUser[userId] ?? '—'
+    const active   = activeMissionsByUser[userId] ?? []
+    const bilanDone = !!completedByUser[userId]
+
+    if (active.length === 0) {
+      if (bilanDone) actionItems.push({ userId, email, cat: 'A', dateLabel: '' })
+      continue
+    }
+
+    // B — au moins une mission active avec réponse
+    const withResponse = active.filter((m: { user_response: string | null }) => m.user_response !== null)
+    if (withResponse.length > 0) {
+      const displayed = [...withResponse].sort(
+        (a: { responded_at: string }, b: { responded_at: string }) =>
+          new Date(b.responded_at).getTime() - new Date(a.responded_at).getTime()
+      )[0]
+      actionItems.push({ userId, email, cat: 'B', dateLabel: fmt(displayed.responded_at) })
+      continue
+    }
+
+    // C — aucune réponse, au moins une mission en retard
+    const overdue = active.filter(
+      (m: { user_response: string | null; assigned_at: string }) =>
+        m.user_response === null && now - new Date(m.assigned_at).getTime() > RELANCE_SEUIL_MS
+    )
+    if (overdue.length > 0) {
+      // La plus ancienne en retard (déjà triée ascending par assigned_at)
+      actionItems.push({ userId, email, cat: 'C', dateLabel: fmt(overdue[0].assigned_at) })
+      continue
+    }
+    // Sinon : attente normale, rien à signaler
+  }
+
+  // Ordre d'affichage : B (urgence max) → C → A
+  const CAT_ORDER: Record<ActionCat, number> = { B: 0, C: 1, A: 2 }
+  actionItems.sort((a, b) => CAT_ORDER[a.cat] - CAT_ORDER[b.cat])
+
   const availableCodes = codes.filter(c => !c.used_by)
   const usedCodes = codes.filter(c => c.used_by)
   const activeUsers = accessRows.filter(r => r.has_access).length
@@ -110,6 +186,52 @@ export default async function AdminPage({ params }: AdminPageProps) {
         <h1 className="text-2xl font-bold text-cr-text">Administration</h1>
         <p className="text-cr-text-secondary mt-1 text-sm">Plan B Rentable — vue globale</p>
       </div>
+
+      {/* Action requise */}
+      {actionItems.length > 0 && (
+        <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">
+          <div className="px-5 py-4 border-b border-cr-border">
+            <h2 className="font-semibold text-cr-text">Action requise</h2>
+            <p className="text-xs text-cr-text-muted mt-0.5">{actionItems.length} client{actionItems.length > 1 ? 's' : ''} en attente d&apos;une action</p>
+          </div>
+          <div className="divide-y divide-cr-border">
+            {actionItems.map(item => (
+              <Link
+                key={item.userId}
+                href={`/${locale}/admin/users/${item.userId}`}
+                className="flex items-center justify-between px-5 py-3 hover:bg-background transition-colors"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  {item.cat === 'A' && (
+                    <span className="inline-flex flex-shrink-0 items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                      À accompagner
+                    </span>
+                  )}
+                  {item.cat === 'B' && (
+                    <span className="inline-flex flex-shrink-0 items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                      Réponse reçue
+                    </span>
+                  )}
+                  {item.cat === 'C' && (
+                    <span className="inline-flex flex-shrink-0 items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                      À relancer
+                    </span>
+                  )}
+                  <span className="text-sm font-medium text-cr-text truncate">{item.email}</span>
+                </div>
+                <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+                  {item.dateLabel && (
+                    <span className="text-xs text-cr-text-muted whitespace-nowrap">
+                      {item.cat === 'B' ? `le ${item.dateLabel}` : `depuis le ${item.dateLabel}`}
+                    </span>
+                  )}
+                  <span className="text-cr-text-muted text-xs">→</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
