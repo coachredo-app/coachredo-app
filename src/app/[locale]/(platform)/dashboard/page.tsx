@@ -116,6 +116,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const missionStatus: ParcourStepStatus =
     activeMission?.user_response ? 'done' :
     activeMission ? 'partial' :
+    lastTerminatedMission ? 'done' :
     'empty'
 
   const livreDetail =
