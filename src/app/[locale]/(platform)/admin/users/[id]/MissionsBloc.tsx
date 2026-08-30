@@ -88,6 +88,8 @@ export function MissionsBloc({ userId, locale, missions }: Props) {
     }
   }
 
+  const hasActiveMission = missions.some(m => m.statut === 'en_cours')
+
   return (
     <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">
       <div className="px-5 py-4 border-b border-cr-border flex items-center justify-between">
@@ -95,12 +97,16 @@ export function MissionsBloc({ userId, locale, missions }: Props) {
           <h2 className="font-semibold text-cr-text">Missions</h2>
           <p className="text-xs text-cr-text-muted mt-0.5">Actions assignées à l&apos;utilisateur</p>
         </div>
-        <button
-          onClick={() => setOpen(o => !o)}
-          className="text-xs font-medium text-cr-accent hover:opacity-80 transition-opacity"
-        >
-          {open ? 'Annuler' : '+ Assigner'}
-        </button>
+        {hasActiveMission ? (
+          <span className="text-xs text-cr-text-muted italic">Mission en cours</span>
+        ) : (
+          <button
+            onClick={() => setOpen(o => !o)}
+            className="text-xs font-medium text-cr-accent hover:opacity-80 transition-opacity"
+          >
+            {open ? 'Annuler' : '+ Assigner'}
+          </button>
+        )}
       </div>
 
       {/* Formulaire */}

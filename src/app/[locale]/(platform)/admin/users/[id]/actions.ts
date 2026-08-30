@@ -70,13 +70,33 @@ export async function addMission(
   data: { mission: string; coach_note?: string }
 ) {
   const service = await requireAdminService()
+
+  const { data: existing } = await service
+    .from('user_missions')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('statut', 'en_cours')
+    .limit(1)
+    .maybeSingle()
+
+  if (existing) {
+    throw new Error('Ce client a déjà une mission en cours. Clôturez-la avant d\'en assigner une nouvelle.')
+  }
+
   const { error } = await service.from('user_missions').insert({
     user_id: userId,
     mission: data.mission,
     statut: 'en_cours',
     coach_note: data.coach_note || null,
   })
-  if (error) throw new Error(error.message)
+
+  if (error) {
+    if (error.code === '23505') {
+      throw new Error('Une mission est déjà en cours pour ce client.')
+    }
+    throw new Error(error.message)
+  }
+
   revalidateFiche(locale, userId)
 }
 

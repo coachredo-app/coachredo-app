@@ -56,6 +56,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     profileResult,
     missionResult,
     sessionResult,
+    lastTerminatedResult,
   ] = await Promise.all([
     supabase.from('book_access').select('has_access').eq('user_id', user.id).single(),
     supabase.from('reading_progress').select('chapter_id, chapter_order, completed_at').eq('user_id', user.id),
@@ -76,12 +77,22 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       .order('session_num', { ascending: false })
       .limit(1)
       .maybeSingle(),
+    // Dernier cycle terminé — pour contextualiser le message d'attente
+    supabase
+      .from('user_missions')
+      .select('id, mission, user_response, responded_at, completed_at')
+      .eq('user_id', user.id)
+      .eq('statut', 'terminée')
+      .order('completed_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ])
 
   const hasAccess = bookAccessResult.data?.has_access === true
   const reading = getReadingProgress(readingResult.data ?? [])
   const bilanCompleted = sessionResult.data?.statut === 'completed'
   const activeMission = missionResult.data ?? null
+  const lastTerminatedMission = lastTerminatedResult.data ?? null
   const latestSession = sessionResult.data ?? null
 
   // Deuxième vague : compter les réponses de la session active (si elle existe)
@@ -154,7 +165,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       {activeMission && (
         <section>
           <h2 className="text-xs font-semibold uppercase tracking-widest text-cr-accent mb-3">
-            {activeMission.user_response ? 'Ta dernière mission' : 'Ta mission'}
+            Ta mission
           </h2>
           <MissionCard mission={activeMission} locale={locale} />
         </section>
@@ -163,11 +174,28 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       {/* Pas encore de mission */}
       {!activeMission && hasAccess && (
         <section>
-          <div className="bg-surface rounded-xl border border-cr-border p-6 text-center space-y-2">
-            <p className="text-cr-text font-medium text-sm">Ton coach prépare ta prochaine étape</p>
-            <p className="text-cr-text-muted text-xs">
-              Tu seras notifié dès qu&apos;une mission est disponible.
+          <div className="bg-surface rounded-xl border border-cr-border p-6 space-y-4">
+            <p className="text-cr-text font-medium text-sm">
+              {lastTerminatedMission
+                ? 'Cette mission est terminée. Ton coach prépare la prochaine étape de ton accompagnement.'
+                : 'Ton Bilan a bien été transmis. Ton coach prépare la suite de ton accompagnement.'}
             </p>
+            {lastTerminatedMission && (
+              <div className="border-t border-cr-border pt-4 space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-widest text-cr-text-muted">
+                  Dernier cycle
+                </p>
+                <p className="text-sm text-cr-text leading-relaxed">{lastTerminatedMission.mission}</p>
+                {lastTerminatedMission.user_response && (
+                  <div className="bg-background rounded-lg px-3 py-2 border border-cr-border">
+                    <p className="text-xs text-cr-text-muted mb-1">Ta réponse</p>
+                    <p className="text-sm text-cr-text leading-relaxed whitespace-pre-wrap">
+                      {lastTerminatedMission.user_response}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </section>
       )}

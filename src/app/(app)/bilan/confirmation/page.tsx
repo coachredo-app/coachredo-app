@@ -26,7 +26,7 @@ export default function BilanConfirmationPage() {
             Ce que tu as vu — même partiellement, même sans réponse encore — ça ne disparaît pas.
           </p>
           <p className="text-base leading-relaxed" style={{ color: '#d1d5db' }}>
-            Ton coach va pouvoir prendre connaissance de ton Bilan et préparer la suite de ton parcours.
+            Ton Bilan a bien été transmis. Ton coach prépare la suite de ton accompagnement.
           </p>
         </div>
 
