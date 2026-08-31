@@ -173,13 +173,13 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       )}
 
       {/* Pas encore de mission */}
-      {!activeMission && hasAccess && (
+      {!activeMission && hasAccess && (bilanCompleted || lastTerminatedMission) && (
         <section>
           <div className="bg-surface rounded-xl border border-cr-border p-6 space-y-4">
             <p className="text-cr-text font-medium text-sm">
               {lastTerminatedMission
                 ? 'Cette mission est terminée. Ton coach prépare la prochaine étape de ton accompagnement.'
-                : 'Ton Bilan a bien été transmis. Ton coach prépare la suite de ton accompagnement.'}
+                : 'Ton Bilan de clarté est complété. Ton coach prépare ton Rapport CoachRedo personnalisé.'}
             </p>
             {lastTerminatedMission && (
               <div className="border-t border-cr-border pt-4 space-y-2">
