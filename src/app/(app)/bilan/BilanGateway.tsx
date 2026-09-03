@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createBilanSession } from './actions'
 import { QUESTION_STEPS } from './steps'
 
 const GOLD = '#c9a84c'
@@ -153,16 +151,11 @@ function BilanView({
 export function BilanGateway({
   completedSessions,
   allResponses,
-  nextAvailableAt,
 }: {
   completedSessions: CompletedSession[]
   allResponses: Record<string, Record<string, string>>
-  nextAvailableAt: string | null
 }) {
-  const router = useRouter()
   const [viewingSession, setViewingSession] = useState<CompletedSession | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   if (viewingSession) {
     return (
@@ -172,18 +165,6 @@ export function BilanGateway({
         onBack={() => setViewingSession(null)}
       />
     )
-  }
-
-  async function handleNewBilan() {
-    setLoading(true)
-    setError(null)
-    const result = await createBilanSession()
-    if ('error' in result) {
-      setError(result.error)
-      setLoading(false)
-      return
-    }
-    router.push('/bilan')
   }
 
   return (
@@ -216,34 +197,7 @@ export function BilanGateway({
               </p>
             </button>
           ))}
-          {nextAvailableAt ? (
-            <p className="text-xs text-center py-4" style={{ color: '#4b5563' }}>
-              Nouveau Bilan disponible le{' '}
-              {new Date(nextAvailableAt).toLocaleDateString('fr-FR', {
-                day: 'numeric', month: 'long', year: 'numeric',
-              })}.
-            </p>
-          ) : (
-            <button
-              onClick={handleNewBilan}
-              disabled={loading}
-              className="w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all active:scale-95 disabled:opacity-40"
-              style={{
-                backgroundColor: GOLD,
-                color: '#0a0d1a',
-                boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
-              }}
-            >
-              {loading ? 'Création…' : 'Faire un nouveau Bilan →'}
-            </button>
-          )}
         </div>
-
-        {error && (
-          <p className="text-xs text-center mt-4" style={{ color: '#ef4444' }}>
-            {error}
-          </p>
-        )}
 
         <div className="mt-8 text-center">
           <Link

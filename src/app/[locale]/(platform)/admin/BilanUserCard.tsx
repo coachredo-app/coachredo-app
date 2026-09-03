@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BILAN_QUESTIONS, FAMILLE_ORDER, FAMILLE_TOTAL } from '@/lib/bilan-questions'
+import { BILAN_QUESTIONS, FAMILLE_ORDER, FAMILLE_TOTAL, REQUIRED_QUESTION_IDS, CONTEXT_QUESTIONS } from '@/lib/bilan-questions'
 
 interface BilanResponse {
   question_id: string
@@ -32,7 +32,7 @@ export function BilanUserCard({ email, responses, completedAt }: Props) {
     responses.map(r => [r.question_id, r.response])
   )
 
-  const answeredCount = responses.length
+  const answeredCount = responses.filter(r => REQUIRED_QUESTION_IDS.has(r.question_id)).length
 
   return (
     <div className="border border-cr-border rounded-xl overflow-hidden">
@@ -115,6 +115,29 @@ export function BilanUserCard({ email, responses, completedAt }: Props) {
               </div>
             )
           })}
+
+          {CONTEXT_QUESTIONS.some(q => responseMap[q.id]) && (
+            <div className="px-5 py-4 border-b border-cr-border last:border-b-0">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold uppercase tracking-widest text-cr-accent">
+                  Contexte & Historique
+                </p>
+                <span className="text-xs tabular-nums text-cr-text-muted">
+                  {CONTEXT_QUESTIONS.filter(q => responseMap[q.id]).length}/{CONTEXT_QUESTIONS.length}
+                </span>
+              </div>
+              <div className="space-y-4">
+                {CONTEXT_QUESTIONS.filter(q => responseMap[q.id]).map(q => (
+                  <div key={q.id}>
+                    <p className="text-xs text-cr-text-muted mb-1 leading-relaxed">{q.text}</p>
+                    <p className="text-sm text-cr-text leading-relaxed whitespace-pre-wrap">
+                      {responseMap[q.id]}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {answeredCount === 0 && (
             <p className="px-5 py-4 text-sm text-cr-text-muted">Aucune réponse enregistrée.</p>

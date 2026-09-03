@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
 import { CopyCodeButton } from './codes/CopyCodeButton'
 import { DeleteUserButton } from './DeleteUserButton'
 import { cn } from '@/lib/utils'
@@ -93,7 +94,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
   // Compteur Bilan par utilisateur — réponses de la session la plus récente uniquement
   const bilanCountByUser = bilanRows.reduce<Record<string, number>>((acc, r) => {
     const latest = latestSessionByUser[r.user_id]
-    if (latest && r.session_id === latest.id) {
+    if (latest && r.session_id === latest.id && REQUIRED_QUESTION_IDS.has(r.question_id)) {
       acc[r.user_id] = (acc[r.user_id] ?? 0) + 1
     }
     return acc

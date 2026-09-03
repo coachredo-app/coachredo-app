@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getReadingProgress, REQUIRED_TOTAL } from '@/lib/reading-chapters'
+import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
 import { MissionCard } from './MissionCard'
 
 interface DashboardPageProps {
@@ -102,6 +103,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       .from('bilan_responses')
       .select('question_id')
       .eq('session_id', latestSession.id)
+      .in('question_id', [...REQUIRED_QUESTION_IDS])
     bilanAnswered = countData?.length ?? 0
   }
 
@@ -179,7 +181,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             <p className="text-cr-text font-medium text-sm">
               {lastTerminatedMission
                 ? 'Cette mission est terminée. Ton coach prépare la prochaine étape de ton accompagnement.'
-                : 'Ton Bilan de clarté est complété. Ton coach prépare ton Rapport CoachRedo personnalisé.'}
+                : 'Ton Bilan de clarté est validé. Ton Rapport CoachRedo personnalisé est en cours de préparation.'}
             </p>
             {lastTerminatedMission && (
               <div className="border-t border-cr-border pt-4 space-y-2">

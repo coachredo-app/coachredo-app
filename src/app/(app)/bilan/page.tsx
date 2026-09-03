@@ -54,17 +54,7 @@ export default async function BilanPage() {
       allResponses[row.session_id as string][row.question_id as string] = row.response as string
     }
 
-    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
-    const lastCompleted = completedSessions[0]
-    let nextAvailableAt: string | null = null
-    if (lastCompleted?.completed_at) {
-      const availableDate = new Date(new Date(lastCompleted.completed_at).getTime() + THIRTY_DAYS_MS)
-      if (availableDate > new Date()) {
-        nextAvailableAt = availableDate.toISOString()
-      }
-    }
-
-    return <BilanGateway completedSessions={completedSessions} allResponses={allResponses} nextAvailableAt={nextAvailableAt} />
+    return <BilanGateway completedSessions={completedSessions} allResponses={allResponses} />
   }
 
   // Cas C : aucune session — créer la première via service_role

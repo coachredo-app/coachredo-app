@@ -18,15 +18,12 @@ export default function BilanConfirmationPage() {
         </p>
 
         <h1 className="text-xl font-bold mb-6" style={{ color: '#f9fafb' }}>
-          Tu as terminé le Bilan de Clarté.
+          Ton Bilan de clarté est validé.
         </h1>
 
         <div className="space-y-4 mb-10 text-left">
           <p className="text-base leading-relaxed" style={{ color: '#d1d5db' }}>
-            Ce que tu as vu — même partiellement, même sans réponse encore — ça ne disparaît pas.
-          </p>
-          <p className="text-base leading-relaxed" style={{ color: '#d1d5db' }}>
-            Ton Bilan a bien été transmis. Ton coach prépare la suite de ton accompagnement.
+            Ton Rapport CoachRedo personnalisé sera préparé à partir de tes réponses, puis relu et validé par le coach avant d&apos;être mis à ta disposition dans ton espace CoachRedo.
           </p>
         </div>
 

@@ -13,9 +13,24 @@ import {
 import { syncBilanResponse, updateCurrentStep } from '@/lib/reader/bilan-sync'
 import { completeBilanSession } from './actions'
 import { STEPS } from './steps'
-import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
+import { STEPS_REQUIRED_IDS, BILAN_QUESTIONS } from '@/lib/bilan-questions'
 
 const GOLD = '#c9a84c'
+
+const SITUATION_OPTIONS = [
+  'Salarié(e)',
+  'Étudiant(e)',
+  'Entrepreneur · indépendant',
+  'Sans activité actuellement',
+  'Autre',
+]
+
+const TEMPS_OPTIONS = [
+  'Moins de 5 h',
+  '5 à 10 h',
+  '10 à 20 h',
+  'Plus de 20 h',
+]
 
 export interface BilanSession {
   id: string
@@ -38,6 +53,17 @@ export function BilanReader({
   const [draft, setDraft] = useState('')
   const [completionError, setCompletionError] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Écran contexte affiché APRÈS les intros.
+  // Pour une session neuve (current_step < 3) : déclenché par handleNext quand on quitte la dernière intro.
+  // Pour une session V1 reprise (current_step >= 3) sans C1/C2 : affiché immédiatement.
+  const [showContext, setShowContext] = useState(
+    session.current_step >= 3 &&
+    (!initialResponses['contexte_situation'] || !initialResponses['contexte_temps'])
+  )
+  const [ctxSituation, setCtxSituation] = useState(initialResponses['contexte_situation'] ?? '')
+  const [ctxTemps, setCtxTemps] = useState(initialResponses['contexte_temps'] ?? '')
+  const [ctxLoading, setCtxLoading] = useState(false)
 
   // Fusionner les réponses offline puis synchroniser localStorage avec Supabase
   useEffect(() => {
@@ -86,11 +112,31 @@ export function BilanReader({
   const progressPct = ((index + 1) / STEPS.length) * 100
 
   const missingRequiredIds = isLast
-    ? [...REQUIRED_QUESTION_IDS].filter(id => !responses[id]?.trim())
+    ? [...STEPS_REQUIRED_IDS].filter(id => !responses[id]?.trim())
     : []
-  const missingRequiredScreens = missingRequiredIds
-    .map(id => STEPS.findIndex(s => s.kind === 'question' && s.id === id) + 1)
+
+  // Séparer les questions réflexives manquantes (1-13) de E1
+  const missingReflectiveNums = missingRequiredIds
+    .filter(id => id !== 'contexte_experience')
+    .map(id => BILAN_QUESTIONS.findIndex(q => q.id === id) + 1)
     .sort((a, b) => a - b)
+  const missingE1 = missingRequiredIds.includes('contexte_experience')
+
+  // Message affiché sur la done screen
+  let missingMessage = ''
+  if (isLast && missingRequiredIds.length > 0) {
+    const reflPart = missingReflectiveNums.length === 0 ? ''
+      : missingReflectiveNums.length === 1
+      ? `la question ${missingReflectiveNums[0]}`
+      : `les questions ${missingReflectiveNums.slice(0, -1).join(', ')} et ${missingReflectiveNums[missingReflectiveNums.length - 1]}`
+    if (reflPart && missingE1) {
+      missingMessage = `Il te reste à compléter ${reflPart}, ainsi que « Ton expérience jusqu'ici ».`
+    } else if (reflPart) {
+      missingMessage = `Il te reste à compléter ${reflPart}.`
+    } else {
+      missingMessage = `Il te reste à compléter « Ton expérience jusqu'ici ».`
+    }
+  }
 
   const prevStep = index > 0 ? STEPS[index - 1] : null
   const showFamilleLabel =
@@ -130,6 +176,15 @@ export function BilanReader({
       }
       router.push('/bilan/confirmation')
     } else {
+      // Intercepter la transition intro→question si C1/C2 non encore renseignés
+      if (
+        step.kind === 'intro' &&
+        STEPS[index + 1]?.kind === 'question' &&
+        (!responses['contexte_situation'] || !responses['contexte_temps'])
+      ) {
+        setShowContext(true)
+        return
+      }
       navigateTo(index + 1)
     }
   }
@@ -140,6 +195,121 @@ export function BilanReader({
     } else {
       navigateTo(index - 1)
     }
+  }
+
+  async function handleContextSubmit() {
+    if (!ctxSituation || !ctxTemps || ctxLoading) return
+    setCtxLoading(true)
+    saveBilanResponse('contexte_situation', ctxSituation)
+    saveBilanResponse('contexte_temps', ctxTemps)
+    await Promise.all([
+      syncBilanResponse(session.id, 'contexte_situation', 'Contexte', ctxSituation),
+      syncBilanResponse(session.id, 'contexte_temps', 'Contexte', ctxTemps),
+    ])
+    setResponses(prev => ({
+      ...prev,
+      contexte_situation: ctxSituation,
+      contexte_temps: ctxTemps,
+    }))
+    setCtxLoading(false)
+    setShowContext(false)
+    // Avancer automatiquement à la Q1 si on venait de la transition intro→question
+    if (step.kind === 'intro' && STEPS[index + 1]?.kind === 'question') {
+      navigateTo(index + 1)
+    }
+  }
+
+  if (showContext) {
+    return (
+      <div className="reader-fixed" style={{ backgroundColor: '#0a0d1a' }}>
+        <div className="flex-none flex items-center justify-between px-5 pt-5 pb-3">
+          <button
+            onClick={() => router.push('/fr/dashboard')}
+            className="text-sm transition-opacity hover:opacity-100"
+            style={{ color: '#6b7280', cursor: 'pointer' }}
+          >
+            ← Mon espace CoachRedo
+          </button>
+          <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
+            Bilan de clarté
+          </span>
+          <div />
+        </div>
+
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-8" style={{ touchAction: 'pan-y' }}>
+          <div className="w-full max-w-lg mx-auto min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-6" style={{ color: GOLD }}>
+              Un peu de contexte avant de commencer.
+            </p>
+            <p className="text-sm leading-relaxed mb-10" style={{ color: '#6b7280' }}>
+              Ces deux informations permettent d&apos;adapter l&apos;analyse à ta situation réelle.
+            </p>
+
+            <div className="mb-8">
+              <p className="text-base font-medium mb-4" style={{ color: '#f3f4f6' }}>
+                Ta situation actuelle
+              </p>
+              <div className="space-y-2">
+                {SITUATION_OPTIONS.map(opt => (
+                  <button
+                    key={opt}
+                    onClick={() => setCtxSituation(opt)}
+                    className="w-full text-left px-4 py-3 rounded-xl text-sm transition-all"
+                    style={{
+                      backgroundColor: ctxSituation === opt ? 'rgba(201,168,76,0.12)' : '#111827',
+                      border: ctxSituation === opt ? '1px solid rgba(201,168,76,0.45)' : '1px solid #1f2937',
+                      color: ctxSituation === opt ? GOLD : '#9ca3af',
+                    }}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <p className="text-base font-medium mb-4" style={{ color: '#f3f4f6' }}>
+                Temps disponible par semaine
+              </p>
+              <div className="space-y-2">
+                {TEMPS_OPTIONS.map(opt => (
+                  <button
+                    key={opt}
+                    onClick={() => setCtxTemps(opt)}
+                    className="w-full text-left px-4 py-3 rounded-xl text-sm transition-all"
+                    style={{
+                      backgroundColor: ctxTemps === opt ? 'rgba(201,168,76,0.12)' : '#111827',
+                      border: ctxTemps === opt ? '1px solid rgba(201,168,76,0.45)' : '1px solid #1f2937',
+                      color: ctxTemps === opt ? GOLD : '#9ca3af',
+                    }}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="flex-none px-4 sm:px-6 pt-3"
+          style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 2rem))' }}
+        >
+          <button
+            onClick={handleContextSubmit}
+            disabled={!ctxSituation || !ctxTemps || ctxLoading}
+            className="w-full py-4 rounded-2xl font-bold text-base tracking-wide transition-all active:scale-95 disabled:opacity-40"
+            style={{
+              backgroundColor: GOLD,
+              color: '#0a0d1a',
+              boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
+            }}
+          >
+            Continuer →
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -170,9 +340,16 @@ export function BilanReader({
           Bilan de clarté
         </span>
         <div className="flex items-center gap-2">
-          <span className="text-xs tabular-nums" style={{ color: '#4b5563' }}>
-            {index + 1} / {STEPS.length}
-          </span>
+          {step.kind === 'question' && step.id !== 'contexte_experience' && (
+            <span className="text-xs tabular-nums" style={{ color: '#4b5563' }}>
+              {BILAN_QUESTIONS.findIndex(q => q.id === step.id) + 1} / 13
+            </span>
+          )}
+          {step.kind === 'question' && step.id === 'contexte_experience' && (
+            <span className="text-xs" style={{ color: '#4b5563' }}>
+              Ton expérience jusqu&apos;ici
+            </span>
+          )}
           <Link
             href="/fr/dashboard"
             className="text-xs flex items-center gap-1"
@@ -208,28 +385,35 @@ export function BilanReader({
                 {step.text}
               </p>
               {!fieldOpen ? (
-                <button
-                  onClick={handleOpenField}
-                  className="text-sm transition-opacity"
-                  style={{
-                    color: hasResponse ? GOLD : '#4b5563',
-                    opacity: hasResponse ? 0.75 : 0.55,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {hasResponse
-                    ? '✓ Modifier ma réflexion'
-                    : REQUIRED_QUESTION_IDS.has(step.id)
-                      ? '✎ Réponse essentielle'
-                      : '✎ Répondre (optionnel)'}
-                </button>
+                <>
+                  <button
+                    onClick={handleOpenField}
+                    className="text-sm transition-opacity"
+                    style={{
+                      color: hasResponse ? GOLD : '#4b5563',
+                      opacity: hasResponse ? 0.75 : 0.55,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {hasResponse ? '✓ Modifier ma réflexion' : '✎ Répondre à cette question'}
+                  </button>
+                  {!hasResponse && (
+                    <p className="text-xs mt-3" style={{ color: '#6b7280' }}>
+                      Pas de réponse évidente ? « Je ne sais pas encore » est une réponse valide.
+                    </p>
+                  )}
+                </>
               ) : (
                 <textarea
                   ref={textareaRef}
                   value={draft}
                   onChange={e => setDraft(e.target.value)}
                   onBlur={handleBlur}
-                  placeholder="Ce qui te vient spontanément..."
+                  placeholder={
+                    step.id === 'contexte_experience'
+                      ? "Si oui : qu'as-tu essayé et qu'en as-tu retenu ? Si non : indique simplement que tu n'as encore rien tenté."
+                      : 'Ce qui te vient spontanément...'
+                  }
                   rows={4}
                   className="w-full text-sm leading-relaxed resize-none outline-none rounded-lg p-3"
                   style={{
@@ -249,10 +433,10 @@ export function BilanReader({
                 Plan B Rentable
               </p>
               <p className="text-base leading-relaxed mb-4" style={{ color: '#d1d5db' }}>
-                Tu as traversé les questions.
+                Tu as répondu aux questions.
               </p>
               <p className="text-base leading-relaxed" style={{ color: '#6b7280' }}>
-                Ce que tu as vu — même partiellement, même sans réponse encore — c&apos;est déjà quelque chose.
+                Ce que tu viens de partager — même quand c&apos;était difficile à formuler — constitue la matière de ton Rapport.
               </p>
             </div>
           )}
@@ -267,7 +451,7 @@ export function BilanReader({
       >
         {isLast && missingRequiredIds.length > 0 && (
           <p className="text-xs text-center mb-3" style={{ color: '#ef4444' }}>
-            Réponse{missingRequiredIds.length > 1 ? 's' : ''} essentielle{missingRequiredIds.length > 1 ? 's' : ''} manquante{missingRequiredIds.length > 1 ? 's' : ''} — question{missingRequiredIds.length > 1 ? 's' : ''} {missingRequiredScreens.join(', ')} — utilise ← Précédent.
+            {missingMessage}
           </p>
         )}
         {completionError && (
@@ -285,7 +469,7 @@ export function BilanReader({
             boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
           }}
         >
-          {isLast ? 'Terminer →' : 'Continuer →'}
+          {isLast ? 'Valider mon Bilan de clarté →' : 'Continuer →'}
         </button>
       </div>
 

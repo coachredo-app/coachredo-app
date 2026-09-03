@@ -1,7 +1,7 @@
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
-import { BILAN_QUESTIONS, FAMILLE_ORDER, FAMILLE_TOTAL } from '@/lib/bilan-questions'
+import { BILAN_QUESTIONS, FAMILLE_ORDER, FAMILLE_TOTAL, REQUIRED_QUESTION_IDS, CONTEXT_QUESTIONS } from '@/lib/bilan-questions'
 import { CHAPTERS, REQUIRED_TOTAL, getReadingProgress } from '@/lib/reading-chapters'
 import { DiagnosticBloc } from './DiagnosticBloc'
 import { SignauxBloc } from './SignauxBloc'
@@ -85,7 +85,7 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
   const diagnostic = diagnosticResult.data as Diagnostic | null
 
   const responseMap = Object.fromEntries(bilanRows.map(r => [r.question_id, r.response]))
-  const answeredCount = bilanRows.length
+  const answeredCount = bilanRows.filter(r => REQUIRED_QUESTION_IDS.has(r.question_id)).length
   const bilanCompleted = latestBilanSession?.statut === 'completed'
   const livreCompleted = reading.fullyDone || !!profile?.livre_completed
 
@@ -316,6 +316,32 @@ export default async function FicheUtilisateurPage({ params }: FichePageProps) {
                 </div>
               )
             })}
+            {CONTEXT_QUESTIONS.some(q => responseMap[q.id]) && (
+              <div className="px-5 py-5">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-cr-accent">
+                    Contexte & Historique
+                  </p>
+                  <span className="text-xs tabular-nums font-medium text-cr-text-muted">
+                    {CONTEXT_QUESTIONS.filter(q => responseMap[q.id]).length}/{CONTEXT_QUESTIONS.length}
+                  </span>
+                </div>
+                <div className="space-y-5">
+                  {CONTEXT_QUESTIONS.map(q => (
+                    <div key={q.id}>
+                      <p className="text-xs text-cr-text-muted mb-1.5 leading-relaxed">{q.text}</p>
+                      {responseMap[q.id] ? (
+                        <p className="text-sm text-cr-text leading-relaxed whitespace-pre-wrap">
+                          {responseMap[q.id]}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-cr-text-muted italic">—</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

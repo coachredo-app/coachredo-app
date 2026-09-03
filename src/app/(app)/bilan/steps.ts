@@ -14,7 +14,7 @@ export const STEPS: Step[] = [
   },
   {
     kind: 'intro',
-    text: "Tu peux les traverser dans l'ordre ou pas. Revenir à certaines plus tard. Laisser les autres de côté. Ce qui compte, c'est le regard que tu poses — pas la liste complétée.",
+    text: "Prends le temps de répondre à chaque question avec sincérité. Si une question ne te parle pas encore, « je ne sais pas encore » est aussi une réponse valable. Tu pourras revenir sur tes réponses et les modifier avant de valider définitivement ton Bilan. Tes réponses constitueront la matière de ton Rapport CoachRedo personnalisé.",
   },
   {
     kind: 'question',
@@ -93,6 +93,12 @@ export const STEPS: Step[] = [
     famille: 'Mouvement',
     id: 'mouvement_2',
     text: "Dans six mois, à quoi reconnaîtrais-tu que quelque chose a légèrement changé dans ta façon de voir ta situation ?",
+  },
+  {
+    kind: 'question',
+    famille: 'Historique',
+    id: 'contexte_experience',
+    text: "As-tu déjà lancé ou tenté quelque chose pour créer une activité ou générer un revenu en dehors de ton activité principale ?",
   },
   {
     kind: 'done',

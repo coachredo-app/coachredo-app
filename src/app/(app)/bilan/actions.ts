@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getReadingProgress } from '@/lib/reading-chapters'
-import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
+import { COMPLETION_REQUIRED_IDS } from '@/lib/bilan-questions'
 
 export async function createBilanSession(): Promise<
   { sessionId: string; sessionNum: number } | { error: string }
@@ -41,16 +41,7 @@ export async function createBilanSession(): Promise<
     .maybeSingle()
 
   if (lastDone?.completed_at) {
-    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
-    const elapsed = Date.now() - new Date(lastDone.completed_at).getTime()
-    if (elapsed < THIRTY_DAYS_MS) {
-      const availableAt = new Date(new Date(lastDone.completed_at).getTime() + THIRTY_DAYS_MS)
-      return {
-        error: `Nouveau Bilan disponible le ${availableAt.toLocaleDateString('fr-FR', {
-          day: 'numeric', month: 'long', year: 'numeric',
-        })}.`,
-      }
-    }
+    return { error: 'Ton Bilan de clarté est déjà complété. Ton Rapport CoachRedo est en cours de préparation.' }
   }
 
   // Calculer le prochain session_num côté serveur
@@ -111,20 +102,20 @@ export async function completeBilanSession(
 
   if (fetchError || !session) return { error: 'Session introuvable ou déjà terminée.' }
 
-  // Vérifier les 5 réponses obligatoires
+  // Vérifier les 16 réponses obligatoires (13 réflexives + C1 + C2 + E1)
   const { data: requiredRows } = await supabase
     .from('bilan_responses')
     .select('question_id, response')
     .eq('session_id', sessionId)
-    .in('question_id', [...REQUIRED_QUESTION_IDS])
+    .in('question_id', [...COMPLETION_REQUIRED_IDS])
 
   const answeredRequired = new Set(
     (requiredRows ?? [])
       .filter(r => (r.response as string)?.trim())
       .map(r => r.question_id as string)
   )
-  if (answeredRequired.size < REQUIRED_QUESTION_IDS.size) {
-    return { error: 'Veuillez répondre aux 5 questions essentielles avant de terminer.' }
+  if (answeredRequired.size < COMPLETION_REQUIRED_IDS.size) {
+    return { error: 'Veuillez compléter toutes les questions avant de terminer.' }
   }
 
   const service = createServiceClient()
