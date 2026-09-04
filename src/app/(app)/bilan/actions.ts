@@ -5,6 +5,8 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getReadingProgress } from '@/lib/reading-chapters'
 import { COMPLETION_REQUIRED_IDS } from '@/lib/bilan-questions'
 
+// ── Server Actions ──────────────────────────────────────────────────────────
+
 export async function createBilanSession(): Promise<
   { sessionId: string; sessionNum: number } | { error: string }
 > {
@@ -30,7 +32,6 @@ export async function createBilanSession(): Promise<
 
   if (existing) return { sessionId: existing.id, sessionNum: existing.session_num }
 
-  // Délai de 30 jours depuis le dernier Bilan complété
   const { data: lastDone } = await supabase
     .from('bilan_sessions')
     .select('completed_at')
@@ -44,7 +45,6 @@ export async function createBilanSession(): Promise<
     return { error: 'Ton Bilan de clarté est déjà complété. Ton Rapport CoachRedo est en cours de préparation.' }
   }
 
-  // Calculer le prochain session_num côté serveur
   const service = createServiceClient()
   const { data: lastSession } = await service
     .from('bilan_sessions')
@@ -63,12 +63,12 @@ export async function createBilanSession(): Promise<
       session_num: sessionNum,
       statut: 'in_progress',
       current_step: 0,
+      bilan_version: 2,
     })
     .select('id, session_num')
     .single()
 
   if (error) {
-    // 23505 = violation d'unicité : une autre requête concurrente a créé la session
     if (error.code === '23505') {
       const { data: race } = await supabase
         .from('bilan_sessions')
@@ -84,6 +84,34 @@ export async function createBilanSession(): Promise<
   return { sessionId: newSession.id, sessionNum: newSession.session_num }
 }
 
+export async function createUpgradeSession(): Promise<
+  { sessionId: string } | { error: string }
+> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Non authentifié' }
+
+  // Idempotence applicative : retourner la session upgrade in_progress si elle existe
+  const { data: existing } = await supabase
+    .from('bilan_sessions')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('session_type', 'upgrade')
+    .eq('statut', 'in_progress')
+    .maybeSingle()
+
+  if (existing) return { sessionId: existing.id }
+
+  // Appel RPC transactionnel via client authentifié (auth.uid() actif dans le RPC).
+  // La sélection de la source canonique V1 est effectuée dans le RPC sous verrou.
+  const { data, error } = await supabase.rpc('create_upgrade_bilan_session')
+
+  if (error) return { error: 'Erreur lors de la création de la mise à niveau.' }
+  if (data?.error) return { error: data.error as string }
+
+  return { sessionId: data.session_id as string }
+}
+
 export async function completeBilanSession(
   sessionId: string
 ): Promise<{ error?: string }> {
@@ -91,7 +119,6 @@ export async function completeBilanSession(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non authentifié' }
 
-  // Vérifier que la session appartient à l'utilisateur et est encore in_progress
   const { data: session, error: fetchError } = await supabase
     .from('bilan_sessions')
     .select('id, statut')
@@ -102,7 +129,6 @@ export async function completeBilanSession(
 
   if (fetchError || !session) return { error: 'Session introuvable ou déjà terminée.' }
 
-  // Vérifier les 16 réponses obligatoires (13 réflexives + C1 + C2 + E1)
   const { data: requiredRows } = await supabase
     .from('bilan_responses')
     .select('question_id, response')
@@ -128,7 +154,6 @@ export async function completeBilanSession(
 
   if (sessionError) return { error: 'Erreur lors de la complétion du Bilan.' }
 
-  // Compatibilité : maintenir profiles.bilan_completed_at pour le dashboard et l'admin
   await service
     .from('profiles')
     .update({ bilan_completed_at: now })

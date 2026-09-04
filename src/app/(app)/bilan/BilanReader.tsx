@@ -37,14 +37,27 @@ export interface BilanSession {
   session_num: number
   current_step: number
   statut: string
+  started_at: string
+}
+
+function fmtDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
 }
 
 export function BilanReader({
   session,
   initialResponses,
+  upgradeMode = false,
+  responseDates,
 }: {
   session: BilanSession
   initialResponses: Record<string, string>
+  upgradeMode?: boolean
+  responseDates?: Record<string, string>
 }) {
   const router = useRouter()
   const [index, setIndex] = useState(session.current_step)
@@ -64,6 +77,7 @@ export function BilanReader({
   const [ctxSituation, setCtxSituation] = useState(initialResponses['contexte_situation'] ?? '')
   const [ctxTemps, setCtxTemps] = useState(initialResponses['contexte_temps'] ?? '')
   const [ctxLoading, setCtxLoading] = useState(false)
+  const [touchedQuestions, setTouchedQuestions] = useState<Set<string>>(new Set())
 
   // Fusionner les réponses offline puis synchroniser localStorage avec Supabase
   useEffect(() => {
@@ -146,6 +160,15 @@ export function BilanReader({
   const savedResponse = step.kind === 'question' ? (responses[step.id] ?? '') : ''
   const hasResponse = savedResponse.length > 0
 
+  // Badge "réponse historique" : visible pour les réponses pré-remplies depuis V1
+  // non encore modifiées dans cette session upgrade.
+  const isHistoricalResponse =
+    upgradeMode &&
+    step.kind === 'question' &&
+    responseDates?.[step.id] !== undefined &&
+    !touchedQuestions.has(step.id) &&
+    new Date(responseDates[step.id]) < new Date(session.started_at)
+
   function handleOpenField() {
     if (step.kind !== 'question') return
     setDraft(responses[step.id] ?? '')
@@ -163,6 +186,7 @@ export function BilanReader({
       return next
     })
     syncBilanResponse(session.id, step.id, step.famille, trimmed)
+    setTouchedQuestions(prev => new Set([...prev, step.id]))
   }
 
   async function handleNext() {
@@ -384,6 +408,11 @@ export function BilanReader({
               >
                 {step.text}
               </p>
+              {isHistoricalResponse && responseDates?.[step.id] && (
+                <p className="text-xs mb-4" style={{ color: '#6b7280' }}>
+                  Réponse enregistrée le {fmtDate(responseDates[step.id])} — relis-la et modifie-la si ta situation a changé.
+                </p>
+              )}
               {!fieldOpen ? (
                 <>
                   <button
