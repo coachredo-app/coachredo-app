@@ -60,7 +60,9 @@ export function BilanReader({
   responseDates?: Record<string, string>
 }) {
   const router = useRouter()
-  const [index, setIndex] = useState(session.current_step)
+  // Borne minimale de navigation : intros 0/1/2 inaccessibles en mode upgrade
+  const minStep = upgradeMode ? 3 : 0
+  const [index, setIndex] = useState(Math.max(minStep, session.current_step))
   const [responses, setResponses] = useState<Record<string, string>>(initialResponses)
   const [fieldOpen, setFieldOpen] = useState(false)
   const [draft, setDraft] = useState('')
@@ -69,9 +71,9 @@ export function BilanReader({
 
   // Écran contexte affiché APRÈS les intros.
   // Pour une session neuve (current_step < 3) : déclenché par handleNext quand on quitte la dernière intro.
-  // Pour une session V1 reprise (current_step >= 3) sans C1/C2 : affiché immédiatement.
+  // Pour une session upgrade ou V1 reprise (current_step >= 3) sans C1/C2 : affiché immédiatement.
   const [showContext, setShowContext] = useState(
-    session.current_step >= 3 &&
+    Math.max(minStep, session.current_step) >= 3 &&
     (!initialResponses['contexte_situation'] || !initialResponses['contexte_temps'])
   )
   const [ctxSituation, setCtxSituation] = useState(initialResponses['contexte_situation'] ?? '')
@@ -121,7 +123,7 @@ export function BilanReader({
   }
 
   const step = STEPS[index]
-  const isFirst = index === 0
+  const isFirst = index <= minStep
   const isLast = index === STEPS.length - 1
   const progressPct = ((index + 1) / STEPS.length) * 100
 
