@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createUpgradeSession } from '../actions'
 
@@ -110,6 +111,11 @@ export default async function BilanUpgradePage() {
             Compléter mon Bilan →
           </button>
         </form>
+        <div className="mt-4 text-center">
+          <Link href="/fr/dashboard" className="text-sm" style={{ color: '#6b7280' }}>
+            ← Retourner sur mon espace
+          </Link>
+        </div>
       </div>
     </div>
   )
