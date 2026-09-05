@@ -22,10 +22,10 @@ export default async function BilanUpgradePage() {
   ) ?? null
   if (upgradeActive) redirect('/bilan')
 
-  // Éligibilité : au moins une session V1 completed ou superseded
-  // (même définition que page.tsx — Cas B refusé, accès manuel bloqué)
+  // Éligibilité : au moins une session V1 completed
+  // superseded seul ≠ Bilan validé — accès manuel bloqué pour les profils E1
   const hasV1History = (sessions ?? []).some(s =>
-    (s.statut === 'completed' || s.statut === 'superseded') &&
+    s.statut === 'completed' &&
     s.bilan_version === null &&
     s.session_type === 'standard'
   )
