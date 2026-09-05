@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getReadingProgress, REQUIRED_TOTAL } from '@/lib/reading-chapters'
 import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
-import { MissionCard } from './MissionCard'
 
 interface DashboardPageProps {
   params: Promise<{ locale: string }>
@@ -50,59 +49,67 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/${locale}/auth/login`)
 
-  // Première vague de requêtes parallèles
   const [
     bookAccessResult,
     readingResult,
     profileResult,
-    missionResult,
-    sessionResult,
-    lastTerminatedResult,
+    legacyV1Result,
+    completedV2Result,
+    activeSessionResult,
   ] = await Promise.all([
     supabase.from('book_access').select('has_access').eq('user_id', user.id).single(),
     supabase.from('reading_progress').select('chapter_id, chapter_order, completed_at').eq('user_id', user.id),
     supabase.from('profiles').select('bilan_completed_at').eq('id', user.id).single(),
-    supabase
-      .from('user_missions')
-      .select('id, mission, coach_note, assigned_at, user_response, responded_at')
-      .eq('user_id', user.id)
-      .eq('statut', 'en_cours')
-      .order('assigned_at', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    // Session Bilan la plus récente (in_progress prioritaire, sinon dernière completed)
+    // Existence d'un Bilan V1 completed — détermine l'éligibilité legacy upgrade
     supabase
       .from('bilan_sessions')
-      .select('id, statut, session_num, completed_at')
+      .select('id')
       .eq('user_id', user.id)
+      .eq('statut', 'completed')
+      .is('bilan_version', null)
+      .eq('session_type', 'standard')
+      .limit(1)
+      .maybeSingle(),
+    // Session V2 completed la plus récente — pour bilanCompleted et date d'affichage
+    supabase
+      .from('bilan_sessions')
+      .select('id, completed_at')
+      .eq('user_id', user.id)
+      .eq('statut', 'completed')
+      .eq('bilan_version', 2)
       .order('session_num', { ascending: false })
       .limit(1)
       .maybeSingle(),
-    // Dernier cycle terminé — pour contextualiser le message d'attente
+    // Session in_progress active — pour compteur de réponses
     supabase
-      .from('user_missions')
-      .select('id, mission, user_response, responded_at, completed_at')
+      .from('bilan_sessions')
+      .select('id')
       .eq('user_id', user.id)
-      .eq('statut', 'terminée')
-      .order('completed_at', { ascending: false })
+      .eq('statut', 'in_progress')
+      .order('session_num', { ascending: false })
       .limit(1)
       .maybeSingle(),
   ])
 
   const hasAccess = bookAccessResult.data?.has_access === true
   const reading = getReadingProgress(readingResult.data ?? [])
-  const bilanCompleted = sessionResult.data?.statut === 'completed'
-  const activeMission = missionResult.data ?? null
-  const lastTerminatedMission = lastTerminatedResult.data ?? null
-  const latestSession = sessionResult.data ?? null
 
-  // Deuxième vague : compter les réponses de la session active (si elle existe)
+  // Règle métier Bilan
+  const hasV1History = legacyV1Result.data !== null
+  const hasCompletedV2 = completedV2Result.data !== null
+  const needsUpgrade = hasV1History && !hasCompletedV2
+  const bilanCompleted = hasCompletedV2
+
+  const completedV2Session = completedV2Result.data ?? null
+  const activeSession = activeSessionResult.data ?? null
+
+  // Compteur de réponses — uniquement hors état upgrade requis
   let bilanAnswered = 0
-  if (latestSession) {
+  if (activeSession && !needsUpgrade) {
     const { data: countData } = await supabase
       .from('bilan_responses')
       .select('question_id')
-      .eq('session_id', latestSession.id)
+      .eq('session_id', activeSession.id)
       .in('question_id', [...REQUIRED_QUESTION_IDS])
     bilanAnswered = countData?.length ?? 0
   }
@@ -113,12 +120,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const bilanStatus: ParcourStepStatus =
     !reading.fullyDone ? 'locked' :
     bilanCompleted ? 'done' :
+    needsUpgrade ? 'partial' :
     bilanAnswered > 0 ? 'partial' :
-    'empty'
-  const missionStatus: ParcourStepStatus =
-    activeMission?.user_response ? 'done' :
-    activeMission ? 'partial' :
-    lastTerminatedMission ? 'done' :
     'empty'
 
   const livreDetail =
@@ -127,13 +130,9 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     undefined
 
   const bilanDetail =
-    bilanCompleted ? `Complété le ${fmt(latestSession?.completed_at ?? profileResult.data?.bilan_completed_at)}` :
+    bilanCompleted ? `Complété le ${fmt(completedV2Session?.completed_at ?? profileResult.data?.bilan_completed_at)}` :
+    needsUpgrade ? 'À compléter pour ton Rapport' :
     bilanAnswered > 0 ? `${bilanAnswered}/13 réponses` :
-    undefined
-
-  const missionDetail =
-    activeMission?.user_response ? 'Réponse envoyée' :
-    activeMission ? 'En cours' :
     undefined
 
   // CTA Livre selon l'état de lecture
@@ -157,48 +156,40 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <h2 className="text-xs font-semibold uppercase tracking-widest text-cr-accent mb-3">
           Mon parcours
         </h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <ParcourStep label="Livre" status={livreStatus} detail={livreDetail} />
           <ParcourStep label="Bilan" status={bilanStatus} detail={bilanDetail} />
-          <ParcourStep label="Mission" status={missionStatus} detail={missionDetail} />
         </div>
       </section>
 
-      {/* Mission active */}
-      {activeMission && (
-        <section>
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-cr-accent mb-3">
-            Ta mission
-          </h2>
-          <MissionCard mission={activeMission} locale={locale} />
-        </section>
-      )}
-
-      {/* Pas encore de mission */}
-      {!activeMission && hasAccess && (bilanCompleted || lastTerminatedMission) && (
+      {/* Bilan legacy — mise à niveau requise */}
+      {needsUpgrade && reading.fullyDone && (
         <section>
           <div className="bg-surface rounded-xl border border-cr-border p-6 space-y-4">
             <p className="text-cr-text font-medium text-sm">
-              {lastTerminatedMission
-                ? 'Cette mission est terminée. Ton coach prépare la prochaine étape de ton accompagnement.'
-                : 'Ton Bilan de clarté est validé. Ton Rapport CoachRedo personnalisé est en cours de préparation.'}
+              Complète ton Bilan pour préparer ton Rapport CoachRedo.
             </p>
-            {lastTerminatedMission && (
-              <div className="border-t border-cr-border pt-4 space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-widest text-cr-text-muted">
-                  Dernier cycle
-                </p>
-                <p className="text-sm text-cr-text leading-relaxed">{lastTerminatedMission.mission}</p>
-                {lastTerminatedMission.user_response && (
-                  <div className="bg-background rounded-lg px-3 py-2 border border-cr-border">
-                    <p className="text-xs text-cr-text-muted mb-1">Ta réponse</p>
-                    <p className="text-sm text-cr-text leading-relaxed whitespace-pre-wrap">
-                      {lastTerminatedMission.user_response}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
+            <p className="text-cr-text-secondary text-sm">
+              Ton Bilan précédent est conservé. Quelques informations complémentaires
+              sont nécessaires pour que ton Rapport personnalisé puisse être préparé.
+            </p>
+            <Link
+              href="/bilan"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cr-accent text-white text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              Compléter mon Bilan →
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Bilan V2 validé — Rapport en préparation */}
+      {bilanCompleted && hasAccess && (
+        <section>
+          <div className="bg-surface rounded-xl border border-cr-border p-6">
+            <p className="text-cr-text font-medium text-sm">
+              Ton Bilan de clarté est validé. Ton Rapport CoachRedo personnalisé est en cours de préparation.
+            </p>
           </div>
         </section>
       )}
@@ -236,7 +227,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 <span>
                   Bilan de Clarté
                   {bilanCompleted && <span className="ml-2 text-xs text-success font-normal">✓ Complété</span>}
-                  {!bilanCompleted && bilanAnswered > 0 && (
+                  {needsUpgrade && <span className="ml-2 text-xs text-amber-600 font-normal">À mettre à jour</span>}
+                  {!bilanCompleted && !needsUpgrade && bilanAnswered > 0 && (
                     <span className="ml-2 text-xs text-cr-text-muted font-normal">{bilanAnswered}/13</span>
                   )}
                 </span>
