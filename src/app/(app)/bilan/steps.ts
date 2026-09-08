@@ -5,14 +5,20 @@ export type Step =
 
 export const STEPS: Step[] = [
   {
+    // INTRO VISIBLE 1 — À quoi sert ce Bilan ?
     kind: 'intro',
-    text: 'Ces questions ne testent rien.',
+    text: "Ce Bilan est là pour t'aider à faire le point.\n\nIl n'y a ni bonne ni mauvaise réponse.\n\nL'objectif est simplement de mieux comprendre où tu en es aujourd'hui et ce que tu veux construire.",
   },
   {
+    // INTRO VISIBLE 2 — Comment répondre ? (dernier écran d'intro visible,
+    // le CTA "Commencer mon Bilan →" déclenche directement l'écran contexte C1/C2/C3 — cf. BilanReader)
     kind: 'intro',
-    text: "Elles prolongent ce que tu as commencé à regarder en lisant ce livre. Certaines te parleront tout de suite. D'autres resteront ouvertes — c'est prévu, pas un oubli. Il y a des questions qu'on porte avec soi un moment avant de pouvoir leur répondre vraiment.",
+    text: 'Réponds simplement et avec sincérité.\n\nSi tu ne sais pas encore quoi répondre à une question, tu peux écrire « je ne sais pas encore ». C\'est une réponse valable.\n\nTu pourras modifier tes réponses avant de valider définitivement ton Bilan.\n\nTes réponses serviront à préparer ton Rapport CoachRedo personnalisé.',
   },
   {
+    // Slot technique de compatibilité (ex-3e intro) — préserve STEPS.length=18 et les index
+    // Q1..Q13/E1/done pour ne pas décaler current_step déjà persisté ni la RPC upgrade (minStep=3).
+    // Ne doit JAMAIS être affiché comme écran : BilanReader recale toute navigation qui l'atteindrait.
     kind: 'intro',
     text: "Prends le temps de répondre à chaque question avec sincérité. Si une question ne te parle pas encore, « je ne sais pas encore » est aussi une réponse valable. Tu pourras revenir sur tes réponses et les modifier avant de valider définitivement ton Bilan. Tes réponses constitueront la matière de ton Rapport CoachRedo personnalisé.",
   },

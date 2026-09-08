@@ -127,12 +127,20 @@ export const CONTEXT_QUESTIONS: BilanQuestion[] = [
     required: true,
   },
   {
+    famille: 'Contexte',
+    id: 'contexte_priorite',
+    text: 'Quel est le principal résultat que tu aimerais obtenir grâce à ton Plan B ?',
+    required: true,
+  },
+  {
     famille: 'Historique',
     id: 'contexte_experience',
     text: "As-tu déjà lancé ou tenté quelque chose pour créer une activité ou générer un revenu en dehors de ton activité principale ?",
     required: true,
   },
 ]
+
+export const CONTEXTE_PRIORITE_MAX_LENGTH = 150
 
 export const CONTEXT_QUESTION_IDS = new Set(
   CONTEXT_QUESTIONS.map(q => q.id)
@@ -144,7 +152,7 @@ export const STEPS_REQUIRED_IDS = new Set([
   'contexte_experience',
 ])
 
-// Validation métier complète : 13 réflexives + C1 + C2 + E1
+// Validation métier complète : 13 réflexives + C1 + C2 + C3 + E1
 export const COMPLETION_REQUIRED_IDS = new Set([
   ...REQUIRED_QUESTION_IDS,
   ...CONTEXT_QUESTION_IDS,

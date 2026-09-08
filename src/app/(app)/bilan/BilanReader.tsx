@@ -13,7 +13,7 @@ import {
 import { syncBilanResponse, updateCurrentStep } from '@/lib/reader/bilan-sync'
 import { completeBilanSession } from './actions'
 import { STEPS } from './steps'
-import { STEPS_REQUIRED_IDS, BILAN_QUESTIONS } from '@/lib/bilan-questions'
+import { STEPS_REQUIRED_IDS, BILAN_QUESTIONS, CONTEXTE_PRIORITE_MAX_LENGTH } from '@/lib/bilan-questions'
 
 const GOLD = '#c9a84c'
 
@@ -62,7 +62,11 @@ export function BilanReader({
   const router = useRouter()
   // Borne minimale de navigation : intros 0/1/2 inaccessibles en mode upgrade
   const minStep = upgradeMode ? 3 : 0
-  const [index, setIndex] = useState(Math.max(minStep, session.current_step))
+  // index 2 = slot technique de compatibilité (ex-3e intro), jamais un écran visible.
+  // Si une session arrive directement dessus (valeur persistée, reprise), on la recale
+  // sur le dernier écran d'intro visible (index 1) plutôt que de l'afficher.
+  const rawIndex = Math.max(minStep, session.current_step)
+  const [index, setIndex] = useState(rawIndex === 2 ? 1 : rawIndex)
   const [responses, setResponses] = useState<Record<string, string>>(initialResponses)
   const [fieldOpen, setFieldOpen] = useState(false)
   const [draft, setDraft] = useState('')
@@ -71,13 +75,14 @@ export function BilanReader({
 
   // Écran contexte affiché APRÈS les intros.
   // Pour une session neuve (current_step < 3) : déclenché par handleNext quand on quitte la dernière intro.
-  // Pour une session upgrade ou V1 reprise (current_step >= 3) sans C1/C2 : affiché immédiatement.
+  // Pour une session upgrade ou V1 reprise (current_step >= 3) sans C1/C2/C3 : affiché immédiatement.
   const [showContext, setShowContext] = useState(
     Math.max(minStep, session.current_step) >= 3 &&
-    (!initialResponses['contexte_situation'] || !initialResponses['contexte_temps'])
+    (!initialResponses['contexte_situation'] || !initialResponses['contexte_temps'] || !initialResponses['contexte_priorite'])
   )
   const [ctxSituation, setCtxSituation] = useState(initialResponses['contexte_situation'] ?? '')
   const [ctxTemps, setCtxTemps] = useState(initialResponses['contexte_temps'] ?? '')
+  const [ctxPriorite, setCtxPriorite] = useState(initialResponses['contexte_priorite'] ?? '')
   const [ctxLoading, setCtxLoading] = useState(false)
   const [touchedQuestions, setTouchedQuestions] = useState<Set<string>>(new Set())
 
@@ -202,12 +207,10 @@ export function BilanReader({
       }
       router.push('/bilan/confirmation')
     } else {
-      // Intercepter la transition intro→question si C1/C2 non encore renseignés
-      if (
-        step.kind === 'intro' &&
-        STEPS[index + 1]?.kind === 'question' &&
-        (!responses['contexte_situation'] || !responses['contexte_temps'])
-      ) {
+      // Quitter Intro 2 vers l'avant affiche toujours le Contexte C1/C2/C3 (préremplies si déjà
+      // répondues), complet ou non — parcours symétrique avec le retour Contexte → Intro 2.
+      // index === 1 : dernier écran d'intro visible (index 2 = slot technique, jamais affiché).
+      if (step.kind === 'intro' && index === 1) {
         setShowContext(true)
         return
       }
@@ -216,6 +219,12 @@ export function BilanReader({
   }
 
   function handleBack() {
+    if (index === 3) {
+      // Q1 → toujours réafficher le Contexte C1/C2/C3, avant le test isFirst
+      // (sinon minStep=3 en upgrade sortirait direct au dashboard sans jamais repasser par le Contexte).
+      setShowContext(true)
+      return
+    }
     if (isFirst) {
       router.push('/fr/dashboard')
     } else {
@@ -223,25 +232,40 @@ export function BilanReader({
     }
   }
 
+  function handleContextBack() {
+    setShowContext(false)
+    if (upgradeMode) {
+      router.push('/fr/dashboard')
+    } else {
+      // Retour à Intro 2 (dernier écran d'intro visible ; index 2 = slot technique, jamais affiché).
+      navigateTo(1)
+    }
+  }
+
   async function handleContextSubmit() {
-    if (!ctxSituation || !ctxTemps || ctxLoading) return
+    const trimmedPriorite = ctxPriorite.trim()
+    if (!ctxSituation || !ctxTemps || !trimmedPriorite || ctxLoading) return
     setCtxLoading(true)
     saveBilanResponse('contexte_situation', ctxSituation)
     saveBilanResponse('contexte_temps', ctxTemps)
+    saveBilanResponse('contexte_priorite', trimmedPriorite)
     await Promise.all([
       syncBilanResponse(session.id, 'contexte_situation', 'Contexte', ctxSituation),
       syncBilanResponse(session.id, 'contexte_temps', 'Contexte', ctxTemps),
+      syncBilanResponse(session.id, 'contexte_priorite', 'Contexte', trimmedPriorite),
     ])
     setResponses(prev => ({
       ...prev,
       contexte_situation: ctxSituation,
       contexte_temps: ctxTemps,
+      contexte_priorite: trimmedPriorite,
     }))
     setCtxLoading(false)
     setShowContext(false)
-    // Avancer automatiquement à la Q1 si on venait de la transition intro→question
-    if (step.kind === 'intro' && STEPS[index + 1]?.kind === 'question') {
-      navigateTo(index + 1)
+    // Avancer automatiquement à Q1 (index 3) si on venait du dernier écran d'intro visible —
+    // saute le slot technique (index 2), jamais affiché.
+    if (step.kind === 'intro' && index === 1) {
+      navigateTo(3)
     }
   }
 
@@ -250,16 +274,23 @@ export function BilanReader({
       <div className="reader-fixed" style={{ backgroundColor: '#0a0d1a' }}>
         <div className="flex-none flex items-center justify-between px-5 pt-5 pb-3">
           <button
-            onClick={() => router.push('/fr/dashboard')}
+            onClick={handleContextBack}
             className="text-sm transition-opacity hover:opacity-100"
             style={{ color: '#6b7280', cursor: 'pointer' }}
           >
-            ← Mon espace CoachRedo
+            ← Précédent
           </button>
           <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
             Bilan de clarté
           </span>
-          <div />
+          <Link
+            href="/fr/dashboard"
+            className="text-xs flex items-center gap-1"
+            style={{ color: '#6b7280' }}
+          >
+            <span>⌂</span>
+            <span className="hidden sm:inline">Mon espace</span>
+          </Link>
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-8" style={{ touchAction: 'pan-y' }}>
@@ -268,7 +299,7 @@ export function BilanReader({
               Un peu de contexte avant de commencer.
             </p>
             <p className="text-sm leading-relaxed mb-10" style={{ color: '#6b7280' }}>
-              Ces deux informations permettent d&apos;adapter l&apos;analyse à ta situation réelle.
+              Ces informations permettent d&apos;adapter l&apos;analyse à ta situation réelle.
             </p>
 
             <div className="mb-8">
@@ -314,6 +345,32 @@ export function BilanReader({
                 ))}
               </div>
             </div>
+
+            <div className="mb-8">
+              <p className="text-base font-medium mb-2" style={{ color: '#f3f4f6' }}>
+                Quel est le principal résultat que tu aimerais obtenir grâce à ton Plan B ?
+              </p>
+              <p className="text-xs mb-4" style={{ color: '#6b7280' }}>
+                Par exemple : avoir un revenu supplémentaire, être plus indépendant, préparer une reconversion ou construire ta propre activité.
+              </p>
+              <input
+                type="text"
+                value={ctxPriorite}
+                onChange={e => setCtxPriorite(e.target.value.slice(0, CONTEXTE_PRIORITE_MAX_LENGTH))}
+                placeholder="Décris ton objectif en quelques mots…"
+                maxLength={CONTEXTE_PRIORITE_MAX_LENGTH}
+                className="w-full text-sm outline-none rounded-lg px-4 py-3"
+                style={{
+                  backgroundColor: '#111827',
+                  color: '#d1d5db',
+                  border: '1px solid #1f2937',
+                  fontFamily: 'inherit',
+                }}
+              />
+              <p className="text-xs mt-2 text-right tabular-nums" style={{ color: '#4b5563' }}>
+                {ctxPriorite.length}/{CONTEXTE_PRIORITE_MAX_LENGTH}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -323,7 +380,7 @@ export function BilanReader({
         >
           <button
             onClick={handleContextSubmit}
-            disabled={!ctxSituation || !ctxTemps || ctxLoading}
+            disabled={!ctxSituation || !ctxTemps || !ctxPriorite.trim() || ctxLoading}
             className="w-full py-4 rounded-2xl font-bold text-base tracking-wide transition-all active:scale-95 disabled:opacity-40"
             style={{
               backgroundColor: GOLD,
@@ -392,7 +449,7 @@ export function BilanReader({
         <div className="w-full max-w-lg mx-auto min-w-0">
 
           {step.kind === 'intro' && (
-            <p className="text-base leading-relaxed" style={{ color: '#9ca3af', fontStyle: 'italic' }}>
+            <p className="text-base leading-relaxed" style={{ color: '#9ca3af', fontStyle: 'italic', whiteSpace: 'pre-line' }}>
               {step.text}
             </p>
           )}
@@ -500,7 +557,7 @@ export function BilanReader({
             boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
           }}
         >
-          {isLast ? 'Valider mon Bilan de clarté →' : 'Continuer →'}
+          {isLast ? 'Valider mon Bilan de clarté →' : index === 1 ? 'Commencer mon Bilan →' : 'Continuer →'}
         </button>
       </div>
 

@@ -79,7 +79,7 @@ export default async function BilanUpgradePage() {
 
           <div className="mb-10 space-y-3">
             {[
-              'Deux informations rapides sur ta situation',
+              'Quelques informations rapides sur ta situation',
               'Tes réponses précédentes à relire et, si nécessaire, ajuster',
               'Une information sur ce que tu as déjà tenté',
             ].map(item => (
