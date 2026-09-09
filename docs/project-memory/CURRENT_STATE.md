@@ -18,7 +18,7 @@ Dernière mise à jour : 2026-09-09 (V2 — corrections QG)
 | Élément | Valeur |
 |---|---|
 | Branche | `main` |
-| HEAD | `3eb835a` — `feat: refine Bilan context and navigation` |
+| HEAD | `60cd0be` — `docs: establish CoachRedo project memory` |
 | État de push | Poussé manuellement sur `origin/main`, déployé |
 | Vercel Production | `Ready` |
 | Smoke test production | Validé le 2026-09-09 par le QG |
@@ -35,10 +35,11 @@ Dernière mise à jour : 2026-09-09 (V2 — corrections QG)
 - **Dashboard client** — état du parcours (Livre/Bilan), logique `bilan_version`/`session_type` correcte (D-011), wording aligné sur la frontière produit Bilan/Rapport/Coaching (D-010).
 - **Admin** — fiche utilisateur complète, gestion codes d'accès, file « Action requise » A/B/C pour les missions coaching (D-006, D-007 — système de coaching **legacy actuel**, pas l'architecture future), centralisation de l'autorisation admin (D-002).
 - **Module Trading** — présent et actif dans le repo, mais son approche est **abandonnée** (D-016) — classé legacy, à auditer puis nettoyer dans un chantier dédié futur. Le futur Trading CoachRedo viendra du projet CMP Trading (développé séparément) une fois opérationnel.
+- **Fondation mémoire projet** (`CLAUDE.md` + `docs/project-memory/`) — installée, versionnée et validée, commit `60cd0be` (D-014).
 
 ## 3. Chantier actif
 
-**Fondation mémoire projet en cours de validation.** Le chantier **Rapport CoachRedo personnalisé** reste **suspendu jusqu'à l'intégration propre de cette fondation** dans le repo (création + commit avec GO explicite).
+**Aucun chantier applicatif n'est actuellement ouvert.** La fondation mémoire projet est installée, versionnée et validée (commit `60cd0be`) — ce chantier est clos. Voir §8 pour la prochaine action fonctionnelle.
 
 ## 4. Travail partiellement terminé / non implémenté (à ne pas supposer existant)
 
@@ -76,6 +77,4 @@ Fichiers présents dans `supabase/migrations/` : `001_schema`, `001_trading_boot
 
 ## 8. Prochaine action exacte
 
-**Attendre le GO QG sur la fondation mémoire** (validation du contenu des 5 fichiers proposés dans `/Downloads/coachredo_memoire_proposition_20260909/`). Une fois validée : créer les fichiers dans le repo et les commiter (avec GO explicite pour le commit, conformément à la règle permanente).
-
-**Ensuite, première action fonctionnelle :** ouvrir le chantier Rapport CoachRedo personnalisé en commençant par l'**audit read-only déjà prévu** du repo actuel — migrations, Admin, Auth. **Le choix du fournisseur IA n'est pas un préalable** à cet audit ni à l'ouverture du chantier.
+**Ouvrir le chantier Rapport CoachRedo personnalisé** en commençant par l'**audit read-only déjà prévu** du repo actuel — migrations, Admin, Auth. Le choix du fournisseur IA reste **ouvert, différé et non bloquant** — ce n'est pas un préalable à cet audit ni à l'ouverture du chantier.

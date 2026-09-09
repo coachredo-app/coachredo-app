@@ -153,7 +153,7 @@ Ces trois propositions sont documentées comme **explorations historiques** — 
 **Décision :** création de `CLAUDE.md` + `docs/project-memory/{PROJECT_BIBLE,ARCHITECTURE,DECISIONS,CURRENT_STATE}.md`, destinés à être **trackés par git** — à la différence de `handoff/` qui reste local (D-003).
 **Pourquoi :** les sessions Claude Code/ChatGPT changent régulièrement ; le contexte produit et technique doit survivre au-delà d'une session et d'une machine, ce que `handoff/` (gitignored) ne permet pas structurellement.
 **Conséquence :** toute nouvelle session doit lire ces documents avant d'intervenir (cf. `CLAUDE.md`). Mise à jour disciplinée : ne pas alourdir ces fichiers à chaque micro-changement, seulement aux incréments significatifs validés.
-**Statut :** ACTIVE (en cours de relecture QG — pas encore intégrée au repo)
+**Statut :** ACTIVE — implémentée et versionnée dans le repo au commit `60cd0be`.
 
 ---
 
