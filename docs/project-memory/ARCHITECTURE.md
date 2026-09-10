@@ -7,7 +7,7 @@ metadata:
 
 # ARCHITECTURE — CoachRedo App
 
-Dernière mise à jour : 2026-09-09 (V2 — corrections QG) — reflète le repo au HEAD `3eb835a`.
+Dernière mise à jour : 2026-09-10 (V3 — fondation Rapport exécutée) — reflète le repo au dernier commit fonctionnel/applicatif connu `34f2ca1` (les commits mémoire strictement documentaires postérieurs à celui-ci n'invalident pas cette baseline).
 
 Ce document décrit l'existant vérifié dans le repo. Une architecture future déjà décidée mais non implémentée est explicitement marquée **[FUTUR — non implémenté]**. Ne jamais présenter une table ou fonctionnalité de cette catégorie comme si elle existait.
 
@@ -88,10 +88,11 @@ Toutes les Server Actions admin (13 call-sites au moment de la centralisation) p
 
 Chaque table utilisateur a RLS activé. Règle par défaut : un utilisateur ne voit que ses propres lignes (`auth.uid() = user_id`). Le `service_role` bypass systématiquement. Tables sans policy `authenticated` du tout (accès service_role exclusif) : `access_codes`, `diagnostics`, `user_signals`, `coach_journal`.
 
-### Tables principales (confirmées par les migrations 001-011)
+### Tables principales (confirmées par les migrations 001-012)
 
 | Table | Rôle | Note |
 |---|---|---|
+| `rapports` | Fondation Rapport CoachRedo | Créée par la migration 012 (2026-09-10, commit `34f2ca1`). Table vide en production. RLS activé, **aucune policy** — accès exclusif `service_role` en attendant la future RPC de lecture client `SECURITY DEFINER` (non implémentée). Voir §6 pour le schéma et les invariants complets. |
 | `profiles` | Étend `auth.users` | `bilan_completed_at` : dénormalisation legacy, **ne pas utiliser comme source canonique** du statut Bilan (cf. `bilan_sessions`) |
 | `book_access` | Gate d'accès Plan B Rentable | 1 ligne/utilisateur |
 | `access_codes` | Codes d'accès admin | `access_type` : `'book'` \| `'trading'` |
@@ -153,36 +154,43 @@ Conséquence pratique confirmée : un utilisateur legacy peut apparaître en cat
 
 ---
 
-## 6. [FUTUR — non implémenté] Fondation Rapport CoachRedo
+## 6. [PARTIELLEMENT IMPLÉMENTÉ] Fondation Rapport CoachRedo — DB en place, accès applicatif à construire
 
-Schéma arbitré par le QG le 2026-09-07, verrouillé pour ses aspects structurels, **migration non exécutée**. Aucune table `rapports`, aucune route `/rapport`, aucun SDK IA n'existe dans le repo à ce jour.
+Schéma arbitré par le QG le 2026-09-07, verrouillé pour ses aspects structurels. **Migration 012 exécutée en production le 2026-09-10** (commit `34f2ca1`) — la table `rapports` existe réellement avec le schéma ci-dessous. Aucune route `/rapport`, aucun SDK IA n'existe encore dans le repo.
 
 ```
-TABLE rapports (proposée, PAS créée)
+TABLE rapports (créée, migration 012, 2026-09-10)
   id uuid PK, user_id uuid NOT NULL, bilan_session_id uuid NOT NULL,
   statut text DEFAULT 'draft' CHECK (draft|published),
   sections jsonb, contenu_coach text,                         -- client-visible via RPC uniquement
   sections_meta jsonb, ai_provider text, ai_model text,
-  ai_generated_at timestamptz, publie_par <type ouvert>, publie_le timestamptz,  -- admin-only
+  ai_generated_at timestamptz,
+  publie_par uuid REFERENCES auth.users(id) ON DELETE SET NULL, publie_le timestamptz,  -- admin-only
   schema_version integer DEFAULT 1, created_at, updated_at,
   UNIQUE (bilan_session_id),
   FOREIGN KEY (user_id, bilan_session_id) REFERENCES bilan_sessions(user_id, id)
-    -- requiert : ALTER TABLE bilan_sessions ADD UNIQUE (user_id, id) — trivial, id déjà PK
+    -- posé par la même migration 012 : bilan_sessions_user_id_id_key UNIQUE (user_id, id)
+  CHECK (
+    (statut = 'draft' AND publie_le IS NULL AND publie_par IS NULL)
+    OR (statut = 'published' AND publie_le IS NOT NULL)
+  )  -- rapports_publication_consistency_check
 ```
 
-Accès client exclusif via une future fonction de lecture `SECURITY DEFINER` (ne retournant que `id, sections, contenu_coach, publie_le`) — **aucune policy `SELECT` `authenticated` sur la table**. Décision explicite après comparaison de 3 options (vue RLS / double table / RPC) — voir DECISIONS D-013 pour le détail et les alternatives rejetées.
+Accès client exclusif via une future fonction de lecture `SECURITY DEFINER` (ne retournant que `id, sections, contenu_coach, publie_le`) — **aucune policy `SELECT` `authenticated` sur la table**, conforme à la table en production. Décision explicite après comparaison de 3 options (vue RLS / double table / RPC) — voir DECISIONS D-013 pour le détail et les alternatives rejetées.
 
-**Points explicitement ouverts (ne pas les traiter comme tranchés) :**
-- **`publie_par`** : type et provenance **OUVERTS** — à auditer/trancher pendant le chantier Rapport, pas avant.
-- **Fournisseur IA** : **OUVERT, différé et non bloquant.** L'interface *provider-neutral* (contrat TypeScript indépendant du fournisseur) est, elle, décidée — mais aucun fournisseur n'est choisi.
+**`publie_par` et `updated_at` : tranchés (2026-09-10)** — voir schéma ci-dessus et DECISIONS D-013 pour le détail des raisons (UUID stable vs email, `ON DELETE SET NULL`, absence de trigger générique).
 
-**Lifecycle V1, strict :** `draft → published`. Pas de workflow ordinaire de dépublication ou de retour arrière en V1. Une future architecture de correction/révision/historisation sera un **chantier explicite séparé** — ne documenter aucune procédure de contournement (y compris via `service_role`) comme une exception officielle en attendant ce chantier.
+**Point encore explicitement ouvert : fournisseur IA — OUVERT, différé et non bloquant.** L'interface *provider-neutral* (contrat TypeScript indépendant du fournisseur) est, elle, décidée — mais aucun fournisseur n'est choisi.
 
-**Numérotation de migration :** 012 est actuellement le prochain numéro libre connu (vérifié par lecture du dossier le 2026-09-09) — **à revérifier immédiatement avant toute création**, ne pas le considérer comme figé.
+**Lifecycle V1, strict :** `draft → published`, désormais garanti en DB par `rapports_publication_consistency_check`. Pas de workflow ordinaire de dépublication ou de retour arrière en V1. **Aucun mécanisme de correction/révision d'un Rapport déjà publié n'est décidé ni implémenté** — l'édition humaine du contenu reste prévue **avant** publication (sur le `draft`) ; une éventuelle architecture de correction/révision **post-publication** resterait un **chantier explicite séparé**, non défini — ne documenter aucune procédure de contournement (y compris via `service_role`) comme une exception officielle en attendant ce chantier.
+
+**Numérotation de migration :** 012 exécutée (voir ci-dessus). **013 est désormais le prochain numéro libre connu** — à revérifier immédiatement avant toute création, ne pas le considérer comme figé.
 
 Détail doctrinal complet (workflow, types de blocs `fait/observation/hypothese/piste/inconnu`, `evidence_refs`) : voir PROJECT_BIBLE §4 et DECISIONS D-013.
 
-**Point de départ du chantier :** le prochain chantier Rapport commence par un **audit read-only** du repo actuel — migrations, Admin, Auth — pas par le choix du fournisseur IA (cf. CURRENT_STATE §8).
+**Reste non implémenté à ce stade** : aucune policy `SELECT`/`INSERT`/`UPDATE` `authenticated` sur `rapports` (conforme à la décision — accès client prévu exclusivement via une future RPC `SECURITY DEFINER`, non encore écrite) ; aucune Server Action Admin de création/édition du draft et publication ; aucune route `/rapport` ; aucune intégration UI dashboard/admin ; aucun SDK IA installé.
+
+**Prochaine étape du chantier :** conception puis implémentation de la RPC `SECURITY DEFINER` de lecture contrôlée du Rapport côté client (cf. CURRENT_STATE §8) — pas par le choix du fournisseur IA.
 
 ---
 

@@ -7,7 +7,7 @@ metadata:
 
 # DECISIONS — CoachRedo App
 
-Dernière mise à jour : 2026-09-09 (V3 — corrections finales QG post-audit V2)
+Dernière mise à jour : 2026-09-10 (V4 — fondation Rapport exécutée, D-013 résolue)
 
 Ce registre ne contient que les décisions structurantes — pas les discussions intermédiaires. Chaque entrée : sujet, décision, pourquoi, conséquence, statut. Une décision remplacée reste visible avec `Statut: SUPERSEDED`, jamais supprimée.
 
@@ -143,8 +143,17 @@ Ces trois propositions sont documentées comme **explorations historiques** — 
 - **`publie_par`** — type et provenance ouverts, à auditer/trancher pendant le chantier Rapport.
 - **Fournisseur IA** — ouvert, différé, **non bloquant**. L'interface provider-neutral (contrat), elle, est décidée.
 **Pourquoi :** détail complet des comparaisons dans les audits `handoff/20260906_QG_audit_rapport_architecture*.md` et `20260907_QG_rapport_arbitrage_data_final.md` (non versionnés, locaux).
-**Conséquence :** ce schéma est la référence pour la migration 012 (non créée à ce jour — numéro à revérifier avant utilisation, cf. ARCHITECTURE §6). Le chantier Rapport démarre par un audit read-only (repo, migrations, Admin, Auth), pas par le choix du fournisseur IA.
-**Statut :** ACTIVE (structure verrouillée par le QG) — **non implémenté** (migration non créée, non exécutée) ; `publie_par` et fournisseur IA restent ouverts.
+**Conséquence :** ce schéma est la référence pour la migration 012.
+
+**Résolution (2026-09-10) — fondation DB exécutée en production :**
+- Migration `012_rapport_foundation.sql` créée (commit `34f2ca1`, poussé sur `main`) et **exécutée avec succès en production le 2026-09-10** (vérifications post-exécution confirmées par le QG : contrainte `bilan_sessions_user_id_id_key` présente, table `rapports` créée conforme au schéma ci-dessus, RLS activé, 0 policy, 0 ligne, volumétrie `bilan_sessions` inchangée 12→12).
+- **`publie_par` tranché** : `uuid references auth.users(id) on delete set null`. L'UUID admin est l'identité stable (contrairement à l'email, qui peut changer) ; `on delete set null` (et non `no action`) car le Rapport appartient au client et doit survivre à la suppression d'un ancien compte admin — `publie_le` reste la preuve durable de publication même si `publie_par` devient `NULL` par la suite.
+- **`updated_at` tranché** : `DEFAULT now()`, sans trigger générique — mise à jour posée explicitement (`updated_at = now()`) par les futures Server Actions, cohérent avec le pattern déjà en place sur `bilan_responses` (aucun trigger générique n'existe dans ce repo, cf. ARCHITECTURE §3).
+- **Invariant de publication ajouté** : contrainte `rapports_publication_consistency_check` — `statut = 'draft' ⇒ publie_le IS NULL AND publie_par IS NULL` ; `statut = 'published' ⇒ publie_le IS NOT NULL`. Permet une publication atomique en une seule opération. Le lifecycle reste strictement `draft → published` (V1) : aucune procédure de révision/correction post-publication n'est décidée par cette résolution — une telle architecture, si elle voit le jour, restera un chantier explicite séparé.
+- **Reste ouvert** : fournisseur IA (différé, non bloquant).
+- **Reste à construire**, hors périmètre de cette migration : RPC `SECURITY DEFINER` de lecture client, Server Actions Admin de création/édition du draft et publication, intégration UI, correction de la dette admin `bilan_version` (incrément séparé, cf. ARCHITECTURE §4).
+
+**Statut :** ACTIVE — structure verrouillée **et fondation DB exécutée en production** (2026-09-10, migration 012). `publie_par` et `updated_at` tranchés. RPC de lecture client et Server Actions Admin restent à construire. Fournisseur IA reste ouvert.
 
 ---
 
