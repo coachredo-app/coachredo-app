@@ -4,12 +4,17 @@ import { revalidatePath } from 'next/cache'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getReadingProgress } from '@/lib/reading-chapters'
 import { COMPLETION_REQUIRED_IDS } from '@/lib/bilan-questions'
+import { BILAN_OPEN } from '@/lib/bilan-flag'
+
+const BILAN_CLOSED_MESSAGE = 'Le Bilan de clarté est temporairement en pause. Tes réponses sont conservées.'
 
 // ── Server Actions ──────────────────────────────────────────────────────────
 
 export async function createBilanSession(): Promise<
   { sessionId: string; sessionNum: number } | { error: string }
 > {
+  if (!BILAN_OPEN) return { error: BILAN_CLOSED_MESSAGE }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non authentifié' }
@@ -87,6 +92,8 @@ export async function createBilanSession(): Promise<
 export async function createUpgradeSession(): Promise<
   { sessionId: string } | { error: string }
 > {
+  if (!BILAN_OPEN) return { error: BILAN_CLOSED_MESSAGE }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non authentifié' }
@@ -115,6 +122,8 @@ export async function createUpgradeSession(): Promise<
 export async function completeBilanSession(
   sessionId: string
 ): Promise<{ error?: string }> {
+  if (!BILAN_OPEN) return { error: BILAN_CLOSED_MESSAGE }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non authentifié' }
@@ -160,5 +169,74 @@ export async function completeBilanSession(
     .eq('id', user.id)
 
   revalidatePath('/fr/dashboard')
+  return {}
+}
+
+// ── Écritures d'autosauvegarde (réponses + étape courante) ──────────────────
+// Appelées par src/lib/reader/bilan-sync.ts. Client authentifié (RLS) uniquement —
+// jamais de service role ici : l'ownership reste garanti par les policies RLS
+// existantes (auth.uid() = user_id, session appartenant à l'utilisateur et in_progress),
+// exactement comme lorsque ces écritures partaient du navigateur.
+// BILAN_CLOSED : sentinelle dédiée (pas de nouvelle UI) — permet à bilan-sync.ts
+// de distinguer une fermeture attendue d'une vraie erreur, sans rien afficher côté client
+// (autosauvegarde silencieuse, comportement inchangé).
+
+export async function saveBilanResponseAction(
+  sessionId: string,
+  questionId: string,
+  famille: string,
+  value: string
+): Promise<{ error?: string }> {
+  if (!BILAN_OPEN) return { error: 'BILAN_CLOSED' }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Non authentifié' }
+
+  const trimmed = value.trim()
+
+  if (trimmed) {
+    const { error } = await supabase.from('bilan_responses').upsert(
+      {
+        user_id: user.id,
+        session_id: sessionId,
+        question_id: questionId,
+        famille,
+        response: trimmed,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'session_id,question_id' }
+    )
+    if (error) return { error: error.message }
+  } else {
+    const { error } = await supabase
+      .from('bilan_responses')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('session_id', sessionId)
+      .eq('question_id', questionId)
+    if (error) return { error: error.message }
+  }
+
+  return {}
+}
+
+export async function updateCurrentStepAction(
+  sessionId: string,
+  step: number
+): Promise<{ error?: string }> {
+  if (!BILAN_OPEN) return { error: 'BILAN_CLOSED' }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Non authentifié' }
+
+  const { error } = await supabase
+    .from('bilan_sessions')
+    .update({ current_step: step })
+    .eq('id', sessionId)
+    .eq('statut', 'in_progress')
+
+  if (error) return { error: error.message }
   return {}
 }

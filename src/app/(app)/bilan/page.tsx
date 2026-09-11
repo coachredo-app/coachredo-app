@@ -1,8 +1,11 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getReadingProgress } from '@/lib/reading-chapters'
+import { BILAN_OPEN } from '@/lib/bilan-flag'
 import { BilanReader } from './BilanReader'
 import { BilanGateway } from './BilanGateway'
+import { BilanComingSoon } from './BilanComingSoon'
+import { BilanPaused } from './BilanPaused'
 
 export default async function BilanPage() {
   const supabase = await createClient()
@@ -24,6 +27,22 @@ export default async function BilanPage() {
     .eq('user_id', user.id)
     .order('session_num', { ascending: false })
     .limit(20)
+
+  // Fermeture temporaire du Bilan (phase testeurs livre) — aucune nouvelle
+  // production de données (création, reprise/saisie, upgrade) tant que fermé.
+  // La consultation d'un Bilan V2 déjà completed reste toujours autorisée.
+  if (!BILAN_OPEN) {
+    const hasAnySession = (sessions?.length ?? 0) > 0
+    if (!hasAnySession) return <BilanComingSoon />
+
+    const hasCompletedV2 = (sessions ?? []).some(
+      s => s.statut === 'completed' && s.bilan_version === 2
+    )
+    const hasInProgress = (sessions ?? []).some(s => s.statut === 'in_progress')
+
+    if (hasInProgress || !hasCompletedV2) return <BilanPaused />
+    // sinon : au moins un Bilan V2 completed → logique Cas B normale ci-dessous (lecture seule)
+  }
 
   const rawActive = sessions?.find(s => s.statut === 'in_progress') ?? null
 

@@ -1,12 +1,17 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { BILAN_OPEN } from '@/lib/bilan-flag'
 import { createUpgradeSession } from '../actions'
 
 export default async function BilanUpgradePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/fr/auth/login')
+
+  // Fermeture temporaire du Bilan — aucun nouvel upgrade V2 pendant BILAN_OPEN=false.
+  // /bilan recalculera l'état correct (BilanPaused pour ce profil legacy).
+  if (!BILAN_OPEN) redirect('/bilan')
 
   // Vérifier l'éligibilité côté serveur avant d'afficher la page
   const { data: sessions } = await supabase

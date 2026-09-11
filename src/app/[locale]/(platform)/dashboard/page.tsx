@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getReadingProgress, REQUIRED_TOTAL } from '@/lib/reading-chapters'
 import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
+import { BILAN_OPEN } from '@/lib/bilan-flag'
 
 interface DashboardPageProps {
   params: Promise<{ locale: string }>
@@ -142,6 +143,14 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     ? { label: 'Continuer le livre', href: '/resume' }
     : { label: 'Commencer le livre', href: '/intro' }
 
+  // Fermeture temporaire du Bilan — la consultation d'un V2 déjà completed reste active
+  const bilanCtaActive = reading.fullyDone && (BILAN_OPEN || bilanCompleted)
+  const bilanLockedReason = !reading.fullyDone
+    ? 'Disponible après avoir terminé le livre'
+    : needsUpgrade || bilanAnswered > 0
+    ? 'Conservé — temporairement en pause'
+    : 'Bientôt disponible'
+
   return (
     <div className="space-y-8 max-w-2xl">
 
@@ -173,12 +182,19 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               Ton Bilan précédent est conservé. Quelques informations complémentaires
               sont nécessaires pour que ton Rapport personnalisé puisse être préparé.
             </p>
-            <Link
-              href="/bilan"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cr-accent text-white text-sm font-medium hover:opacity-90 transition-opacity"
-            >
-              Compléter mon Bilan →
-            </Link>
+            {BILAN_OPEN ? (
+              <Link
+                href="/bilan"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cr-accent text-white text-sm font-medium hover:opacity-90 transition-opacity"
+              >
+                Compléter mon Bilan →
+              </Link>
+            ) : (
+              <p className="text-cr-text-muted text-sm">
+                Ta mise à jour est temporairement suspendue. Tes réponses précédentes sont
+                conservées, la nouvelle expérience est en préparation.
+              </p>
+            )}
           </div>
         </section>
       )}
@@ -219,7 +235,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </Link>
             )}
 
-            {reading.fullyDone ? (
+            {bilanCtaActive ? (
               <Link
                 href="/bilan"
                 className="flex items-center justify-between px-4 py-3 rounded-lg border border-cr-border bg-surface text-cr-text text-sm font-medium hover:bg-background transition-colors"
@@ -239,7 +255,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 <span className="text-sm font-medium text-cr-text-muted">
                   🔒 Bilan de Clarté
                   <span className="block text-xs font-normal mt-0.5">
-                    Disponible après avoir terminé le livre
+                    {bilanLockedReason}
                   </span>
                 </span>
               </div>
