@@ -7,7 +7,7 @@ metadata:
 
 # DECISIONS — CoachRedo App
 
-Dernière mise à jour : 2026-09-10 (V4 — fondation Rapport exécutée, D-013 résolue)
+Dernière mise à jour : 2026-09-11 (V5 — D-017 ajoutée, fermeture temporaire du Bilan)
 
 Ce registre ne contient que les décisions structurantes — pas les discussions intermédiaires. Chaque entrée : sujet, décision, pourquoi, conséquence, statut. Une décision remplacée reste visible avec `Statut: SUPERSEDED`, jamais supprimée.
 
@@ -185,3 +185,21 @@ Ces trois propositions sont documentées comme **explorations historiques** — 
 **Pourquoi :** l'intégration actuelle anticipait un projet Trading qui n'était pas encore mature ; poursuivre son développement dans CoachRedo App créerait une dette d'architecture vis-à-vis d'un projet CMP qui évolue indépendamment.
 **Conséquence :** le module Trading actuel (`[locale]/(platform)/trading/`, tables `trading_*`) est classé **legacy** (voir ARCHITECTURE §8). Aucune nouvelle fonctionnalité Trading ne doit être ajoutée à cette ébauche. Le nettoyage est un chantier dédié futur, non ouvert à ce jour.
 **Statut :** ACTIVE (abandon de l'approche actée ; nettoyage non engagé)
+
+---
+
+### D-017 — Fermeture temporaire du Bilan de clarté pendant la phase testeurs du livre
+**Date :** 2026-09-11
+**Décision :** pendant la phase de test du livre Plan B Rentable auprès de premiers clients testeurs, le Bilan de clarté actuel est gelé via un flag serveur unique `BILAN_OPEN` (`src/lib/bilan-flag.ts` — `process.env.BILAN_OPEN !== 'false'`). `BILAN_OPEN=false` empêche toute nouvelle production de données Bilan : création d'une première session, reprise/saisie d'une session `in_progress` (y compris la migration automatique d'une session legacy orpheline via `migrate_legacy_session()`), et démarrage d'un upgrade V2 pour un legacy V1 `completed` sans V2 — sans toucher Supabase ni RLS. La consultation en lecture seule d'un Bilan V2 déjà `completed` reste pleinement active.
+
+Les écritures d'autosauvegarde (réponses + étape courante), qui passaient auparavant directement du navigateur vers Supabase (`src/lib/reader/bilan-sync.ts`, client `createBrowserClient`), ont été converties en Server Actions (`saveBilanResponseAction`, `updateCurrentStepAction`, ajoutées à `bilan/actions.ts`) vérifiant `BILAN_OPEN` avant écriture — nécessaire pour neutraliser un onglet Bilan resté ouvert avant le déploiement de la fermeture, qui aurait sinon continué à écrire directement via RLS sans jamais passer par ce contrôle. Ces Server Actions utilisent le client Supabase **authentifié** de l'utilisateur (jamais `service_role`) ; l'ownership reste garanti par les policies RLS déjà en place (`bilan_responses_insert/update/delete_active_session`, `bilan_sessions_update_step_own`, migration `005_bilan_sessions.sql`), **inchangées**.
+
+**Pourquoi :** donner accès au livre à des clients testeurs sans les exposer au Bilan actuel, dont l'avenir (refonte, ajustement ou statu quo) dépend de l'arbitrage QG post-J5 (Side Hustle Summit) — éviter de collecter des données Bilan sur une version que le QG pourrait vouloir faire évoluer.
+
+**Conséquence :** commit `6db96d4` (`feat: pause Bilan during book testing`), poussé sur `main` et déployé en Production le 2026-09-11, `BILAN_OPEN=false` actif. Réversible sans migration : repasser `BILAN_OPEN` à `true` (ou retirer la variable) en Vercel Production puis redéployer restaure intégralement le comportement antérieur — aucune donnée n'a été supprimée ni transformée pendant la fermeture.
+
+**Validation — distinguer Production et code :**
+- **Validé fonctionnellement en Production** (tests manuels QG, 2026-09-11) : Bilan V2 `completed` toujours consultable, aucune nouvelle session créée ; legacy nécessitant une mise à niveau suspendu, données conservées, aucun nouvel upgrade V2 ; utilisateur sans Bilan → livre terminé normalement, dashboard et Carte du parcours affichent « Bientôt disponible » ; accès direct par URL à `/bilan` → écran d'attente, aucune question accessible, aucune session créée.
+- **Non reproduit manuellement en Production** : le scénario « onglet Bilan déjà ouvert avant le déploiement de la fermeture ». Sa robustesse repose sur la vérification du code faite avant déploiement (Server Actions gated par `BILAN_OPEN`, RLS inchangé, `tsc`/`eslint`/`build` passés) — pas sur un test end-to-end en Production, pour ne pas manipuler inutilement des données réelles.
+
+**Statut :** ACTIVE — `BILAN_OPEN=false` en vigueur en Production depuis le 2026-09-11, durée liée à la phase testeurs du livre, sans date de réouverture fixée à ce stade. Ne préjuge d'aucune décision sur une future version du Bilan (cf. CURRENT_STATE §3).
