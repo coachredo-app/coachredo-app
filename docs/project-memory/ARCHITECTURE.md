@@ -7,7 +7,7 @@ metadata:
 
 # ARCHITECTURE — CoachRedo App
 
-Dernière mise à jour : 2026-09-11 (V4 — fermeture temporaire du Bilan, flag `BILAN_OPEN`) — reflète le repo au dernier commit fonctionnel/applicatif connu `6db96d4` (les commits mémoire strictement documentaires postérieurs à celui-ci n'invalident pas cette baseline).
+Dernière mise à jour : 2026-09-16 (V5 — convention assets de marque `public/assets/brand/`) — reflète le repo au dernier commit fonctionnel/applicatif connu `806a932` (les commits mémoire strictement documentaires postérieurs à celui-ci n'invalident pas cette baseline).
 
 Ce document décrit l'existant vérifié dans le repo. Une architecture future déjà décidée mais non implémentée est explicitement marquée **[FUTUR — non implémenté]**. Ne jamais présenter une table ou fonctionnalité de cette catégorie comme si elle existait.
 
@@ -59,6 +59,8 @@ src/app/
 Middleware unique : `src/proxy.ts`. Branche `isAppRoute` (reader legacy, pas de préfixe locale) vs branche plateforme (passe par `next-intl` middleware). Chaque branche gère elle-même son guard auth — pas de layout global qui protège tout. `PLATFORM_PROTECTED = ['dashboard', 'plan-b', 'account', 'settings', 'admin']` (note : le segment `plan-b` est listé dans le middleware mais aucun dossier `plan-b/` n'existe actuellement sous `[locale]/(platform)/` — écart mineur, sans impact fonctionnel connu).
 
 **Trois patterns de navigation coexistent délibérément** (décision confirmée le 2026-08-26, ne pas unifier en un composant partagé) : `BlockRenderer` (reader step-by-step), `BilanReader`/`BilanView` (question-by-question), pages standalone (transition, confirmation, synthese). Chaque fix de navigation reste local à son fichier.
+
+**Convention assets de marque** (depuis le 2026-09-16, commit `806a932`) : `public/assets/brand/coachredo/` (marque mère, historique) et `public/assets/brand/coachredo-music/` (identité officielle CoachRedo Music) — archivage uniquement, aucun de ces assets n'est encore référencé par le code applicatif.
 
 ---
 

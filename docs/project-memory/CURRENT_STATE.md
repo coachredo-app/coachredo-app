@@ -7,7 +7,7 @@ metadata:
 
 # CURRENT_STATE — CoachRedo App
 
-Dernière mise à jour : 2026-09-11 (V4 — fermeture temporaire du Bilan, phase testeurs livre)
+Dernière mise à jour : 2026-09-16 (V5 — synchronisation post-Summit, chantier Bilan V3 en cours)
 
 **Ce document est vivant.** Il doit être mis à jour à chaque incrément fonctionnel significatif validé (cf. règle dans `CLAUDE.md`). S'il contredit le repo réel au moment où vous le lisez, faites confiance au repo et signalez la contradiction au QG.
 
@@ -18,7 +18,7 @@ Dernière mise à jour : 2026-09-11 (V4 — fermeture temporaire du Bilan, phase
 | Élément | Valeur |
 |---|---|
 | Branche | `main` |
-| Dernier commit fonctionnel/applicatif connu | `6db96d4` — `feat: pause Bilan during book testing` (les commits mémoire strictement documentaires postérieurs à celui-ci n'invalident pas cette baseline) |
+| Dernier commit fonctionnel/applicatif connu | `806a932` — `assets: add CoachRedo Music brand identity` (commit d'assets, pas de code applicatif — succède à `6db96d4` — `feat: pause Bilan during book testing` ; le commit intermédiaire `29ca9c8` est strictement documentaire et n'invalide jamais une baseline) |
 | État de push | Poussé manuellement sur `origin/main`, déployé |
 | Vercel Production | `Ready` |
 | Smoke test production | Validé le 2026-09-09 par le QG |
@@ -41,12 +41,25 @@ Dernière mise à jour : 2026-09-11 (V4 — fermeture temporaire du Bilan, phase
 - **Fermeture temporaire du Bilan de clarté (phase testeurs du livre)** — chantier clos (D-017) : flag serveur unique `BILAN_OPEN` (`src/lib/bilan-flag.ts`), guard central dans `bilan/page.tsx` distinguant les 4 états (aucune session / `in_progress` / `completed` V2 / legacy V1 sans V2), neutralisation de `/bilan/upgrade`, écritures d'autosauvegarde (réponses + étape courante) migrées du client Supabase navigateur vers des Server Actions vérifiant le flag (client authentifié, RLS inchangé, aucun `service_role`). CTA dashboard et Carte du parcours (`/synthese`) reflètent l'état fermé. Commit `6db96d4`, déployé en Production le 2026-09-11, `BILAN_OPEN=false` actif.
   **Validé fonctionnellement en Production** pour les scénarios testables manuellement : Bilan V2 completed toujours consultable, legacy nécessitant upgrade suspendu (données conservées), utilisateur sans Bilan → écran « Bientôt disponible » (dashboard, synthese, et `/bilan` en accès direct par URL).
   **Non reproduit manuellement en Production** : le scénario « onglet Bilan déjà ouvert avant le déploiement de la fermeture » — sa robustesse repose sur la vérification du code faite avant déploiement (Server Actions gated par `BILAN_OPEN`, RLS inchangé), pas sur un test end-to-end en Production, pour ne pas manipuler inutilement des données réelles.
+- **Archivage des assets officiels CoachRedo Music** — commit `806a932` : 5 assets de marque officiels (avatar, logo horizontal, logo principal transparent, monochrome blanc transparent, monochrome or transparent) archivés dans `public/assets/brand/coachredo-music/`, plus le monogramme historique CoachRedo (marque mère) archivé séparément dans `public/assets/brand/coachredo/coachredo-monogram.png`. Copies vérifiées bit-à-bit (SHA-256) depuis les fichiers sources fournis par le QG. **Archivage uniquement — aucun de ces assets n'est encore intégré à l'interface CoachRedo App.**
 
-## 3. Chantier actif
+## 3. Chantier actif — conception du Bilan/Rapport idéal (post-audit Summit)
 
-**Chantier Rapport CoachRedo personnalisé — fondation DB terminée, chantier en pause stratégique temporaire.** Fondation DB validée en production le 2026-09-10 (migration 012). Le chantier est **mis en pause jusqu'à la synthèse consolidée J1–J5 du Side Hustle Summit 2026** et l'arbitrage QG ADOPTER / ADAPTER / REJETER qui en découlera — J3 a déjà fait émerger des enseignements potentiellement structurants (validation marché, accès au client, distribution, réduction des frictions, accompagnement) que le QG ne veut pas voir figés prématurément dans la doctrine analytique/pédagogique du Rapport. Aucun développement Rapport supplémentaire ne démarre avant cet arbitrage.
+L'audit stratégique indépendant post-Summit (Side Hustle Summit 2026, J1–J5) a été livré (document QG, hors repo) et a servi de base à l'arbitrage. **Le travail conceptuel du futur Bilan a déjà commencé — ce chantier n'est plus en attente d'une synthèse.**
 
-Le QG a précisé (2026-09-11) la séquence prévue après la synthèse J1–J5, dans cet ordre : arbitrage ADOPTER / ADAPTER / REJETER → définition du Rapport idéal → matrice de compréhension CoachRedo → audit du Bilan V2 actuel → décision sur une future version du Bilan → **seulement ensuite**, reprise de l'architecture Rapport. Aucun de ces points n'est tranché à ce stade — cette séquence fixe l'ordre du travail à venir, pas son contenu.
+Séquence suivie (actée le 2026-09-11, ordre toujours valable) : arbitrage ADOPTER / ADAPTER / REJETER → définition du Rapport idéal → matrice de compréhension CoachRedo → audit du Bilan V2 actuel → décision sur une future version du Bilan → **seulement ensuite**, reprise de l'architecture Rapport. Aucune reprise du développement Rapport avant la fin de cette séquence.
+
+**État d'avancement (2026-09-16)** : construction conceptuelle de la matrice finale du Bilan V3, famille par famille. Familles **Situation réelle** et **WHY / Direction personnelle** travaillées en profondeur. Famille **Parcours & expériences** entamée, pas encore verrouillée.
+
+**Règles de conception verrouillées pendant cette phase :**
+- Avant de valider une question : vérifier explicitement qu'elle mesure réellement l'information recherchée ; si ce n'est pas le cas, décomposer le construit visé, l'information réellement obtenue, les ambiguïtés et les croisements possibles avant reformulation.
+- Une contradiction entre deux réponses n'est jamais traitée comme une conclusion — c'est un signal de clarification. Détection **bidirectionnelle** : peut révéler une surestimation autant qu'une ressource ou une marge de manœuvre sous-estimée (principe issu de la famille Situation réelle).
+- Le modèle de Dilts (environnement, comportement, capacités, valeurs/croyances, représentation de soi/identité, sens/contribution) sert uniquement de **grille interne secondaire de couverture** — jamais présenté à l'utilisateur comme test psychologique ou vérité scientifique.
+- Système de relance **P0–P3**, déterminé **après** la réponse (pas une propriété fixe de la question), selon la qualité/suffisance de l'information obtenue et son importance pour le Rapport : P0 = information suffisante, aucune relance ; P1 = amélioration secondaire possible, relance seulement si le contexte la rend utile ; P2 = information importante insuffisante, relance recommandée ; P3 = information essentielle trop pauvre/ambiguë, relance prédéfinie déclenchée. **Garde-fou UX V1** : une seule relance principale maximum par question ; si l'information reste insuffisante après cette relance → INCONNU → on avance.
+- Épistémologie des données : SELF-DECLARED / EVIDENCE-BASED / INFERRED / CONTRADICTOIRE / INCONNU.
+- Les deux points précédemment signalés comme à trancher avant la matrice sont réglés : formulation « compétence invisible » restaurée sur son construit d'origine (aveuglement à sa propre compétence, pas comparaison à autrui), et sémantique P0–P3 ci-dessus clarifiée.
+
+**Chantier temporairement en pause** : un benchmark externe (*Alchemy of Self*) est en cours dans la fenêtre Veille & Benchmark du QG. La conception finale de la matrice Bilan est mise en pause en attendant son retour — objectif : identifier d'éventuels mécanismes utiles, pas copier ses questions. Voir §8 pour la prochaine action exacte.
 
 **Distinct de ce chantier** : le Bilan de clarté actuel est temporairement gelé en Production depuis le 2026-09-11 pour la phase testeurs du livre (`BILAN_OPEN=false`, voir §2 et D-017) — un gel opérationnel réversible (flag), pas une refonte, qui ne préjuge d'aucune décision sur la future version du Bilan évoquée ci-dessus. Voir §8.
 
@@ -78,6 +91,7 @@ Fichiers présents dans `supabase/migrations/` : `001_schema`, `001_trading_boot
 - `handoff/` reste hors git — ne jamais proposer de le tracker sans décision QG explicite.
 - **Aucune suppression destructive de données/tables** (coaching legacy, Trading legacy) sans audit préalable et GO explicite.
 - `BILAN_OPEN=false` actif en Production (phase testeurs du livre, depuis le 2026-09-11) — gèle toute nouvelle production de données Bilan (création, reprise/saisie, upgrade) ; la consultation d'un Bilan V2 déjà `completed` reste active. Réouverture = repasser la variable à `true` (ou la retirer) en Vercel Production puis redéployer — aucune migration, aucune donnée à réconcilier. Voir D-017.
+- **Bug terrain actif, non résolu** : affichage initial du Reader mobile fortement zoomé/décalé sur iPhone, rapporté par un vrai lecteur (dézoom manuel à deux doigts nécessaire pour corriger). Diagnostic fait par inspection de code uniquement le 2026-09-16 (capture jamais reçue) — balise viewport et protections anti-overflow existantes inspectées, **aucune cause repo directe démontrée**. Pistes non confirmées (navigateur in-app, chaîne de redirections au premier accès, comportement WebKit `viewport-fit=cover`) — ce sont des hypothèses classées par probabilité, pas des faits établis. Aucune correction choisie ni autorisée. Détail complet : `handoff/20260916_handoff_point_de_coupure.md`.
 
 ## 7. Décisions ouvertes (nécessitent un arbitrage QG)
 
@@ -89,8 +103,8 @@ Fichiers présents dans `supabase/migrations/` : `001_schema`, `001_trading_boot
 
 ## 8. Prochaine action exacte
 
-**Attendre la synthèse consolidée J1–J5 du Side Hustle Summit 2026**, puis effectuer l'arbitrage QG ADOPTER / ADAPTER / REJETER des enseignements potentiellement pertinents pour CoachRedo, suivi (voir §3 pour la séquence complète) de la définition du Rapport idéal, de la matrice de compréhension CoachRedo, de l'audit du Bilan V2 actuel et de la décision sur une future version du Bilan — **seulement ensuite** la reprise de la conception détaillée du Rapport.
+**Reprendre après réception du benchmark externe *Alchemy of Self*** (en cours dans la fenêtre Veille & Benchmark du QG) : arbitrer ses enseignements contre l'architecture CoachRedo actuelle (identifier d'éventuels mécanismes utiles, ne pas copier ses questions), puis poursuivre et verrouiller la matrice finale du Bilan V3 famille par famille (voir §3 pour l'état d'avancement — Situation réelle et WHY/Direction personnelle travaillées en profondeur, Parcours & expériences entamée).
 
-Après cette séquence, la prochaine brique technique prévue du chantier Rapport reste la conception puis l'implémentation de la RPC `SECURITY DEFINER` de lecture contrôlée côté client (un utilisateur authentifié ne peut récupérer que son propre Rapport publié — champs strictement limités à `id, sections, contenu_coach, publie_le`, conformément à D-013), **sauf décision QG contraire issue de cette séquence**. Le choix du fournisseur IA reste **ouvert, différé et non bloquant**.
+Après verrouillage complet de la matrice Bilan V3, la séquence prévue reste (voir §3) : décision sur la future version du Bilan → reprise de l'architecture Rapport → conception puis implémentation de la RPC `SECURITY DEFINER` de lecture contrôlée côté client (un utilisateur authentifié ne peut récupérer que son propre Rapport publié — champs strictement limités à `id, sections, contenu_coach, publie_le`, conformément à D-013), **sauf décision QG contraire issue de cette séquence**. Le choix du fournisseur IA reste **ouvert, différé et non bloquant**.
 
 **En parallèle, sans lien avec ce qui précède** : le Bilan actuel reste gelé (`BILAN_OPEN=false`, §2, §6, D-017) pendant la phase testeurs du livre. Ce gel n'est pas une action du chantier Rapport et n'a pas vocation à être réévalué à l'arbitrage J5, sauf si le QG le demande explicitement.
