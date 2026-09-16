@@ -75,6 +75,8 @@ Règle stricte : **aucun engagement de coaching n'est créé automatiquement** �
 
 Cette frontière a été identifiée comme nécessaire après un bug produit réel (le dashboard promettait « la suite de ton accompagnement » à un client qui n'avait fait que soumettre son Bilan, avant même que le concept de Rapport existe formellement — voir DECISIONS D-010).
 
+**[verrouillé QG, 2026-09-16]** La méthode du coaching humain CoachRedo (posture IA-copilote, discipline d'analyse, conduite de séance, limites) est formalisée dans `docs/project-memory/COACHING_DOCTRINE.md`. Ce document ne modifie pas la frontière produit ci-dessus — il la présuppose. Voir aussi DECISIONS D-018.
+
 ---
 
 ## 6. Vision multi-domaines et mémoire longitudinale CoachRedo — VALIDÉE comme vision stratégique

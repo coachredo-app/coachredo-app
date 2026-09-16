@@ -7,7 +7,7 @@ metadata:
 
 # DECISIONS — CoachRedo App
 
-Dernière mise à jour : 2026-09-11 (V5 — D-017 ajoutée, fermeture temporaire du Bilan)
+Dernière mise à jour : 2026-09-16 (V6 — D-018 ajoutée, doctrine du coaching humain CoachRedo)
 
 Ce registre ne contient que les décisions structurantes — pas les discussions intermédiaires. Chaque entrée : sujet, décision, pourquoi, conséquence, statut. Une décision remplacée reste visible avec `Statut: SUPERSEDED`, jamais supprimée.
 
@@ -203,3 +203,12 @@ Les écritures d'autosauvegarde (réponses + étape courante), qui passaient aup
 - **Non reproduit manuellement en Production** : le scénario « onglet Bilan déjà ouvert avant le déploiement de la fermeture ». Sa robustesse repose sur la vérification du code faite avant déploiement (Server Actions gated par `BILAN_OPEN`, RLS inchangé, `tsc`/`eslint`/`build` passés) — pas sur un test end-to-end en Production, pour ne pas manipuler inutilement des données réelles.
 
 **Statut :** ACTIVE — `BILAN_OPEN=false` en vigueur en Production depuis le 2026-09-11, durée liée à la phase testeurs du livre, sans date de réouverture fixée à ce stade. Ne préjuge d'aucune décision sur une future version du Bilan (cf. CURRENT_STATE §3).
+
+---
+
+### D-018 — Doctrine formalisée du coaching humain CoachRedo (copilote IA)
+**Date :** 2026-09-16
+**Décision :** formalisation d'une doctrine méthodologique durable pour le coaching humain CoachRedo assisté par IA (posture copilote, discipline d'analyse DÉCLARÉ/OBSERVATION/HYPOTHÈSE/INCONNU, conduite de séance, dossier longitudinal, limites médicales/psychologiques/juridiques/sécurité, rôle de challenge de l'IA) — détail complet dans `docs/project-memory/COACHING_DOCTRINE.md`, prompt maître de démarrage dans `docs/project-memory/COACHING_SESSION_TEMPLATE.md`.
+**Pourquoi :** disposer d'une référence stable et comparable d'une fenêtre client à l'autre, plutôt que de redéfinir la méthode à chaque session. L'épistémologie à 4 états de cette doctrine (DÉCLARÉ/OBSERVATION/HYPOTHÈSE/INCONNU) est intentionnellement distincte de celle du Bilan V3 (SELF-DECLARED/EVIDENCE-BASED/INFERRED/CONTRADICTOIRE/INCONNU, cf. CURRENT_STATE §3) — deux cadres adaptés à deux usages différents (produit structuré vs. discipline conversationnelle live), à ne pas harmoniser automatiquement.
+**Conséquence :** nouveaux fichiers `COACHING_DOCTRINE.md` et `COACHING_SESSION_TEMPLATE.md` créés dans `docs/project-memory/` ; pointeur ajouté dans PROJECT_BIBLE §5. Aucune donnée personnelle ni dossier d'un client réel dans ces fichiers — uniquement la méthode générique. Ne modifie pas la frontière produit Bilan/Rapport ≠ Coaching (D-010).
+**Statut :** ACTIVE
