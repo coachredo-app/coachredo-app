@@ -46,7 +46,7 @@ Ne jamais transformer une hypothèse en fait. Une contradiction ou incohérence 
 
 Principe directeur : **quand CoachRedo ne sait pas, il questionne. Quand il ne peut pas encore savoir, il cherche une manière prudente de vérifier. Il n'invente pas.**
 
-**Distinction avec l'épistémologie du Bilan V3** (`SELF-DECLARED / EVIDENCE-BASED / INFERRED / CONTRADICTOIRE / INCONNU`, cf. `CURRENT_STATE.md` §3) : ce sont deux cadres intentionnellement distincts, adaptés à deux usages différents — **ne pas chercher à les harmoniser automatiquement**.
+**Distinction avec l'épistémologie du Bilan V3** (`DÉCLARÉ / ÉTAYÉ / INFÉRÉ / CONTRADICTOIRE / INCONNU`, terminologie canonique depuis D-020, cf. `CURRENT_STATE.md` §3) : ce sont deux cadres intentionnellement distincts, adaptés à deux usages différents — **ne pas chercher à les harmoniser automatiquement**.
 - Le Bilan V3 est une **architecture de preuve et d'inférence du produit**, conçue pour qualifier et scorer des réponses écrites dans un parcours structuré et asynchrone.
 - Le Coaching Personnel humain utilise une **discipline conversationnelle**, permettant en temps réel de distinguer ce que le client dit, ce qui est observable, ce qui reste hypothétique et ce qui demeure inconnu.
 

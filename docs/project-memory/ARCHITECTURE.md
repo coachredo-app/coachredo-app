@@ -7,7 +7,7 @@ metadata:
 
 # ARCHITECTURE — CoachRedo App
 
-Dernière mise à jour : 2026-09-16 (V5 — convention assets de marque `public/assets/brand/`) — reflète le repo au dernier commit fonctionnel/applicatif connu `806a932` (les commits mémoire strictement documentaires postérieurs à celui-ci n'invalident pas cette baseline).
+Dernière mise à jour : 2026-09-23 (V6 — pointeur de découvrabilité vers `livre/`, sources éditoriales versionnées de l'édition papier) — reflète le repo au dernier commit fonctionnel/applicatif connu `806a932` (les commits mémoire strictement documentaires postérieurs à celui-ci n'invalident pas cette baseline).
 
 Ce document décrit l'existant vérifié dans le repo. Une architecture future déjà décidée mais non implémentée est explicitement marquée **[FUTUR — non implémenté]**. Ne jamais présenter une table ou fonctionnalité de cette catégorie comme si elle existait.
 
@@ -61,6 +61,8 @@ Middleware unique : `src/proxy.ts`. Branche `isAppRoute` (reader legacy, pas de 
 **Trois patterns de navigation coexistent délibérément** (décision confirmée le 2026-08-26, ne pas unifier en un composant partagé) : `BlockRenderer` (reader step-by-step), `BilanReader`/`BilanView` (question-by-question), pages standalone (transition, confirmation, synthese). Chaque fix de navigation reste local à son fichier.
 
 **Convention assets de marque** (depuis le 2026-09-16, commit `806a932`) : `public/assets/brand/coachredo/` (marque mère, historique) et `public/assets/brand/coachredo-music/` (identité officielle CoachRedo Music) — archivage uniquement, aucun de ces assets n'est encore référencé par le code applicatif.
+
+**Sources éditoriales versionnées du livre (`livre/`)** : dossier à la racine du repo, **tracké par git** (à la différence de `handoff/`), contenant le manuscrit source de Plan B Rentable (`livre/*.md` par chapitre/section) ainsi que les gabarits d'édition papier (`interieur.html`, `couverture.html`, `PRINT_HANDOFF.md` — voir DECISIONS D-021). **Relation avec le Reader numérique, telle que vérifiée dans le repo : aucune.** Le Reader lit son contenu depuis `src/content/content.js` (via `src/lib/content/index.ts`) ; aucun script ou pipeline de génération reliant `livre/*.md` à `content.js` n'a été trouvé dans le repo — ce sont deux artefacts de contenu distincts et maintenus indépendamment, pas une source unique partagée. Ne pas supposer de synchronisation automatique entre les deux.
 
 ---
 

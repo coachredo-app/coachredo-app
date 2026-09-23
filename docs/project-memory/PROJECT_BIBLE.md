@@ -49,6 +49,8 @@ CoachRedo refuse explicitement : l'argent facile, les promesses irréalistes, le
 Livre (Plan B Rentable) → Bilan de clarté → Rapport CoachRedo personnalisé
 ```
 
+**[note, 2026-09-23]** Le Livre existe sous deux formes distinctes : une **expérience numérique** (le Reader de l'application) et une **édition papier** — voir `ARCHITECTURE.md` §2 et `DECISIONS.md` D-021 pour le détail. Les deux ne partagent aujourd'hui aucun pipeline de contenu commun vérifié dans le repo.
+
 **Le Rapport est l'aboutissement de ce produit pédagogique.** Un client peut s'arrêter après l'avoir reçu : il a reçu la valeur complète de Plan B Rentable. Ce n'est ni un diagnostic médical/psychologique, ni une promesse de résultat, ni un générateur automatique de « business idéal ». Il fournit une lecture structurée des réponses du Bilan — faits, observations, hypothèses explicitement identifiées comme telles, une piste testable, et les inconnues importantes quand les réponses ne permettent pas de conclure.
 
 **Correction sur la composition du Bilan (17 éléments requis) :**
@@ -60,6 +62,8 @@ Livre (Plan B Rentable) → Bilan de clarté → Rapport CoachRedo personnalisé
 Les écrans d'introduction **ne sont pas comptés** parmi les 17 éléments requis : ils ne collectent aucune donnée. (La version précédente de ce document en fixait le nombre à tort dans le calcul des « 17 éléments » — leur nombre exact n'est pas un fait à figer dans ce document.)
 
 Détail éditorial et technique complet du Rapport : voir `ARCHITECTURE.md` §6 et `DECISIONS.md` D-013.
+
+**[note, 2026-09-23]** Le chantier V3 introduit un nouveau nommage produit orienté utilisateur — **Mon point de départ** (Bilan) et **Ma feuille de route** (Rapport) — ainsi qu'une architecture UX de hub arbitrée (voir `docs/project-memory/MON_POINT_DE_DEPART_V3.md` et `DECISIONS.md` D-019). Ce nommage ne modifie pas, à ce stade, le produit actuellement en production (toujours nommé Bilan de Clarté V2 / Rapport CoachRedo) ni l'architecture structurelle verrouillée ci-dessus, qui reste correcte pour décrire l'enchaînement Livre → évaluation → livrable personnalisé.
 
 ---
 
