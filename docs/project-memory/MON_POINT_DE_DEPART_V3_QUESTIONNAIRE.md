@@ -7,11 +7,11 @@ metadata:
 
 # MON_POINT_DE_DEPART_V3_QUESTIONNAIRE — Source de vérité Q1-Q36
 
-Dernière mise à jour : 2026-09-23
+Dernière mise à jour : 2026-09-25 (conception de collecte CLOSE, D-022 — statuts finaux post-audit individuel + audit inverse global, deux micro-données ajoutées)
 
-Ce document transcrit fidèlement le handoff QG2 (`HANDOFF_QG2_MON_POINT_DE_DEPART_V3.md`, transmis par le QG le 2026-09-23) sur le contenu détaillé du questionnaire Mon point de départ V3. **Aucune information absente du handoff n'a été comblée par supposition** — les trous sont explicitement notés comme ouverts.
+Ce document transcrit fidèlement le handoff QG2 (`HANDOFF_QG2_MON_POINT_DE_DEPART_V3.md`, transmis par le QG le 2026-09-23) sur le contenu détaillé du questionnaire Mon point de départ V3, **mis à jour avec les verdicts finaux de la matrice de couverture Q1-Q36** (audit individuel des 36 questions par étape, puis audit inverse global de couverture décisionnelle, clôturés et arbitrés le 2026-09-25, cf. DECISIONS D-022). **Aucune information n'a été comblée par supposition** — les points encore ouverts sont explicitement notés comme tels.
 
-**Ce document n'est pas la matrice finale de couverture Q1-Q36.** Cette matrice (voir `CURRENT_STATE.md` §8) reste **non commencée** — elle devra vérifier systématiquement, pour chaque question : provenance/preuve, croisements, usage dans Ma feuille de route, décision influencée, risque d'interprétation, effort/durée. **Sauf mention contraire explicite ci-dessous, le statut par défaut de chaque question est donc « à contrôler dans la matrice » — la présence d'une formulation détaillée ne signifie pas qu'elle est verrouillée définitivement.**
+**La matrice finale de couverture Q1-Q36 est CLOSE (D-022, 2026-09-25).** Chaque question a reçu un verdict final (CONSERVER / CONSERVER MAIS À AJUSTER), aucune suppression n'a résulté de l'audit. **Sauf mention contraire explicite ci-dessous, le statut par défaut de chaque question est CONSERVER** — les points encore ouverts (mécanismes techniques, formulations UX finales) sont listés explicitement en §3 et ne remettent pas en cause la conservation de la question elle-même. **Aucun ajout futur de question « au cas où » n'est autorisé** : toute modification future devra être justifiée par un besoin décisionnel démontré.
 
 **Relation avec `MON_POINT_DE_DEPART_V3.md`** : ce fichier-ci documente le *contenu* (Q1-Q36, branches, relances, règles de collecte). `MON_POINT_DE_DEPART_V3.md` documente l'*architecture UX* (hub, états d'étape, navigation, micro-transitions, Ma feuille de route). Les deux se référencent mutuellement, sans dupliquer.
 
@@ -105,6 +105,25 @@ Pour Mon point de départ V3 : **DÉCLARÉ / ÉTAYÉ / INFÉRÉ / CONTRADICTOIRE
 
 **Confirmation d'unification (cf. point 13 de la mission) :** le QG tranche explicitement que `SELF-DECLARED/EVIDENCE-BASED/INFERRED/CONTRADICTOIRE/INCONNU` (formulation précédemment documentée dans `CURRENT_STATE.md`) et `DÉCLARÉ/ÉTAYÉ/INFÉRÉ/CONTRADICTOIRE/INCONNU` (ci-dessus) sont **le même cadre conceptuel** — la seconde devient la terminologie canonique pour V3, la première est l'ancienne formulation/équivalence historique. Ceci ne modifie pas le cadre conversationnel volontairement distinct de la doctrine coaching humain (`COACHING_DOCTRINE.md` §3 : DÉCLARÉ/OBSERVATION/HYPOTHÈSE/INCONNU, 4 états, contexte différent).
 
+### ÉTAT ACTUEL ≠ LIMITE PERMANENTE (VERROUILLÉ, D-022, 2026-09-25)
+
+Toute donnée de Mon point de départ décrit la situation connue au moment de la collecte. Elle sert à calibrer ce qui est réaliste **maintenant**, sans être projetée automatiquement par Ma feuille de route comme une limite à moyen ou long terme. Une contrainte, préférence ou condition n'est considérée comme durable que si les données permettent réellement de le soutenir — sinon, son évolution future reste ouverte (INCONNU, pas une négation). Toute voie utilisée comme étape — emploi, mission, apprentissage, petit service, stabilisation ou autre — doit être présentée comme une étape lorsqu'elle l'est, reliée à la direction recherchée (Étape 2), et non substituée silencieusement à l'objectif de la personne.
+
+Généralise deux doctrines déjà verrouillées isolément : les trois règles Q29 (urgence économique, voir Étape 6) et la séparation Q18 (niveau de preuve d'une capacité / mobilisabilité actuelle, voir Étape 4) — désormais des cas particuliers de cette règle unique.
+
+**Nuance verrouillée pour Q31** : la condition indispensable doit être respectée **maintenant** (doctrine Q8/Q31 inchangée, aucune obligation immédiate affaiblie) ; seule sa **permanence future** ne doit pas être présumée sans données. Deux choses distinctes, non contradictoires.
+
+Cas couverts explicitement (vérifiés sans contradiction lors de l'audit de clôture) : temps disponible (Q3/Q4), mobilisabilité d'une capacité (Q18), budget de test (Q28), mobilité réelle (Q30), condition indispensable (Q31, avec la nuance ci-dessus), ouverture au changement (Q32), et toute voie de stabilisation présentée comme étape.
+
+### Classification des questions — logique d'apparition UX (VERROUILLÉ, D-022, 2026-09-25)
+
+Trois états d'apparition exclusivement, sans hiérarchie d'importance automatique attachée (une question conditionnelle ou de récupération peut être déterminante dans un parcours et inutile dans un autre) :
+- **SOCLE** = question normalement présentée dans le parcours.
+- **CONDITIONNELLE** = apparaît lorsqu'une condition explicite du parcours est remplie.
+- **RÉCUPÉRATION** = apparaît seulement lorsque les questions précédentes n'ont pas suffisamment couvert une dimension.
+
+« Contextualisation » (une question qui qualifie/enrichit une donnée déjà obtenue sous un angle particulier, ex. Q14 et Q24) reste un **descripteur analytique secondaire** possible, **jamais un quatrième état d'apparition** — ne pas mélanger fonction analytique et logique UX d'apparition.
+
 ### Johari (VALIDÉ comme mécanisme interne)
 
 Zone connue = la personne sait + éléments disponibles. Zone aveugle = elle ne revendique pas quelque chose mais plusieurs expériences convergent. Zone cachée = elle connaît quelque chose mais ne l'utilise/valorise pas. Potentiel latent = hypothèse uniquement, jamais présenté comme découvert (« CoachRedo a découvert ton talent caché » est explicitement exclu). Pour le latent : hypothèse → test → terrain → données réelles.
@@ -149,7 +168,7 @@ Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton 
 
 ## 2. Q1-Q36 — Contenu détaillé par étape
 
-Sauf mention contraire explicite, statut par défaut = **À CONTRÔLER DANS LA MATRICE** (conception détaillée mais non verrouillée individuellement — voir note en tête de document).
+**Matrice de couverture close (D-022, 2026-09-25).** Sauf mention contraire explicite dans le verdict d'une question, statut par défaut = **CONSERVER** (voir note en tête de document).
 
 ### Étape 1 — Ta situation aujourd'hui
 
@@ -158,7 +177,23 @@ Sauf mention contraire explicite, statut par défaut = **À CONTRÔLER DANS LA M
 - Choix : Salarié(e) / À mon compte / indépendant(e) / Étudiant(e) / En recherche d'emploi / Sans activité professionnelle actuellement / Retraité(e) / Autre
 - Aide : aucune (les choix suffisent)
 - Objectif : contexte professionnel principal
-- **Statut : VALIDÉ** (principe et question). **À ARBITRER** : ajout envisagé d'une catégorie distincte « Je gère déjà une activité ou une entreprise » (pour ne pas confondre entrepreneur existant et indépendant/freelance) — non verrouillé séparément.
+- **Statut : CONSERVER (VALIDÉ, D-022).** Le point autrefois « à arbitrer » (distinguer entrepreneur existant et indépendant/freelance) est résolu **différemment** de l'ajout d'une catégorie à Q1 : voir la branche « activité existante » ci-dessous, rattachée à Q1 mais non fusionnée avec elle.
+
+**Branche « activité existante », rattachée à Q1 — AJOUTÉE (VALIDÉ QG, D-022, 2026-09-24).** Q1 reste centrée sur la situation principale et n'absorbe pas le cumul. Question courte commune à tous les profils (salarié, étudiant, recherche d'emploi, retraité, etc.), posée juste après Q1 :
+- Formulation : « En parallèle de ta situation principale, as-tu déjà une activité, un service ou un petit business que tu développes ou qui te rapporte parfois de l'argent ? » — Oui / Non.
+- Si Oui, branche courte : (1) « En une phrase, de quoi s'agit-il ? » (texte libre) ; (2) « Où en est cette activité aujourd'hui ? » — *Je viens juste de commencer* / *Je suis en train de la tester* / *Elle fonctionne déjà, même modestement* / *Elle est déjà bien installée*.
+- Aucune relance sur le champ 1 (validé, pas un point ouvert par défaut).
+- Objectif décisionnel : distinguer une personne qui part réellement de zéro d'une personne qui possède déjà quelque chose pouvant être consolidé, développé, testé différemment ou pivoté.
+- Aucune conclusion de viabilité, de marché, ou de compétence entrepreneuriale généralisée à partir de cette réponse.
+- Chevauchement possible avec Q16 (valeur déjà apportée) dans le sous-cas où l'activité est déjà « fonctionne déjà »/« bien installée » — traité par réutilisation/rappel UX, pas par un skip sémantique (mécanisme exact non spécifié, reste ouvert).
+- Fonction d'apparition : SOCLE pour la question Oui/Non ; CONDITIONNELLE pour le détail (si Oui).
+
+**Micro-donnée « territoire principal », rattachée à l'Étape 1 — AJOUTÉE (VALIDÉ QG, D-022, 2026-09-25).** Après Q1 et sa branche activité existante :
+- Formulation : « Depuis quel pays ou territoire envisages-tu principalement de développer ton Plan B aujourd'hui ? » — pays/territoire sélectionnable + Autre / Je ne sais pas encore.
+- Doctrine : ce n'est pas la nationalité ; ce n'est pas nécessairement le pays administratif de résidence ; c'est le territoire principal pertinent pour l'action envisagée aujourd'hui. Aucune adresse, aucune géolocalisation IP, aucune ville obligatoire dans MPD — une précision géographique supplémentaire pourra être demandée ultérieurement uniquement si une recherche/un test concret l'exige.
+- Soumise à ÉTAT ACTUEL ≠ LIMITE PERMANENTE (le territoire déclaré n'est pas présumé définitif).
+- Ajoutée après audit factuel du repo (lecture seule, 2026-09-24) confirmant qu'aucune donnée géographique exploitable n'existe actuellement dans le produit : `profiles.country` (`supabase/migrations/001_schema.sql:13`) existe en base mais est une colonne dormante, jamais peuplée ni utilisée nulle part dans `src/`.
+- Fonction d'apparition : SOCLE.
 
 **Q2 — Occupations importantes**
 - Formulation : « En dehors de ton activité principale, qu'est-ce qui prend régulièrement une partie importante de ton temps ? »
@@ -195,7 +230,7 @@ Sauf mention contraire explicite, statut par défaut = **À CONTRÔLER DANS LA M
 - Relance si réponse vague : « Qu'est-ce qui serait concrètement différent dans ta vie si les choses allaient mieux ? »
 - Relance si réponse uniquement financière : « Si tu gagnais davantage grâce à ton Plan B, qu'est-ce que cela te permettrait concrètement de changer dans ta vie ? »
 - Objectif : destination/changement recherché. Règle : une motivation financière est légitime — ne pas chercher artificiellement une motivation « plus profonde ».
-- **Branche moyen/long terme, ajout validé conceptuellement, non numérotée** : si Q6 ne donne qu'un objectif immédiat et que la direction plus longue reste inconnue → « Et plus tard, si les choses avancent bien, qu'aimerais-tu avoir construit ou changé grâce à ton Plan B ? » Pas d'exemples. **SKIP si Q6 contient déjà la trajectoire.** Mécanique déterministe exacte du skip : **À ARBITRER** (§29 du handoff).
+- **Branche moyen/long terme, non numérotée — CONSERVER MAIS À AJUSTER (VALIDÉ QG avec justification corrigée, D-022).** Sa nécessité décisionnelle n'est **pas** d'éviter qu'une section de Ma feuille de route reste vide : elle est de **distinguer un objectif immédiat qui constitue la destination elle-même d'un objectif immédiat qui n'est qu'une première marche vers une direction plus lointaine.** Si Q6 ne donne qu'un objectif immédiat sans direction plus lointaine identifiable : « Et plus tard, si ce premier changement devient possible, vers quoi aimerais-tu que cela t'emmène ? » — réponse libre, INCONNU accepté, pas de seconde relance. **SKIP si Q6 contient déjà la trajectoire.** Mécanisme déterministe exact du skip : **toujours À ARBITRER** (pas de décision IA live).
 
 **Q7 — Priorité**
 - **Conditionnelle** : seulement si Q6 contient plusieurs changements sans hiérarchie.
@@ -221,11 +256,11 @@ Sauf mention contraire explicite, statut par défaut = **À CONTRÔLER DANS LA M
 
 ### Étape 3 — Ton parcours
 
-**Q10 — Réussites / expériences significatives**
+**Q10 — Réussites / expériences significatives — CONSERVER MAIS À AJUSTER (VALIDÉ QG, D-022)**
 - Formulation : « Dans ton parcours, quelles sont les choses que tu es content(e) d'avoir réussi à faire ? »
 - Aide : « Cela peut être quelque chose que tu as réalisé, appris, amélioré ou aidé à résoudre, dans ton travail, tes études, ta famille, une activité ou ta vie quotidienne. »
 - Type : jusqu'à 3 + « aucune »
-- Relance si contribution personnelle peu claire (une seule) : « Qu'est-ce que tu as fait toi-même pour que cela fonctionne ? »
+- **Relance corrigée : une seule relance maximale, pas une par réussite.** Formulation : « Parmi ces réussites, choisis celle qui représente le mieux ce que tu sais apporter. Qu'as-tu fait toi-même pour que cela fonctionne ? » Les réussites non retenues par cette relance restent des données de contexte/capacités candidates — elles n'ont pas besoin d'être chacune individuellement transformées en preuve exploitable.
 - Objectif interne : CONTEXTE → ACTION PERSONNELLE → RÉSULTAT → APPRENTISSAGE → CAPACITÉ POSSIBLE → RÉCENCE → ENVIE DE RÉUTILISER — **mais pas sept questions UX séparées** (un seul numéro Q porte cette collecte).
 
 **Q11 — Origine des apprentissages**
@@ -257,20 +292,22 @@ Sauf mention contraire explicite, statut par défaut = **À CONTRÔLER DANS LA M
 - Limite stricte : pas de trauma mining, pas de diagnostic, pas d'étiquette « résilience ».
 - Réutilisation possible avec Q24 si même épisode (cf. §1).
 
-**Q15 — Stratégie d'apprentissage**
-- **CONDITIONNELLE / RÉCUPÉRATION** : seulement si la manière d'apprendre reste insuffisamment couverte.
+**Q15 — Stratégie d'apprentissage — CONSERVER MAIS À AJUSTER (VALIDÉ QG avec correction de la logique de déclenchement, D-022)**
+- **RÉCUPÉRATION** : le déclencheur **ne dépend pas de Q11** (Q11 = provenance/canal des apprentissages, nature de donnée incompatible pour tester une suffisance). Le vrai déclencheur : Q10–Q14 ont-ils déjà fourni un épisode suffisamment concret montrant comment la personne s'est réellement débrouillée pour apprendre quelque chose qu'elle ne savait pas faire ? Si oui → skip. Si non → Q15 apparaît, sur une seule situation. Traduction en règle déterministe structurée : **toujours à spécifier ultérieurement**, pas de décision IA live.
 - Formulation : « Pense à une fois où tu as dû apprendre quelque chose d'important que tu ne savais pas faire au départ. Comment t'y es-tu pris ? »
 - Aide : volontairement aucune
 - Relance si vague : « Concrètement, qu'as-tu fait pour apprendre ? »
 - Limite : un épisode ≠ style psychologique général. **Aucun typage VAK.**
 
-**Q16 — Valeur déjà apportée**
+**Q16 — Valeur déjà apportée — CONSERVER MAIS À AJUSTER (VALIDÉ QG avec correction du niveau de preuve, D-022)**
 - Formulation : « As-tu déjà utilisé ce que tu sais faire pour rendre un service, aider quelqu'un à obtenir un résultat ou vendre quelque chose ? »
 - Aide : « Cela peut avoir été payé ou non. »
 - Choix : Oui / Non / Je ne sais pas
 - Si oui : « Donne-nous un exemple : qu'as-tu fait, pour qui, et qu'est-ce qui s'est passé ? » (pas de noms nécessaires)
 - Relance si trace de valeur externe absente : « Est-ce que cette personne t'a payé, donné quelque chose en échange, recommandé à quelqu'un ou demandé de recommencer ? »
 - Objectif : trace d'une valeur déjà créée pour quelqu'un. Limite : **pas une validation de marché**.
+- **Niveau de preuve corrigé (verrouillé) :** DÉCLARÉ dans tous les cas, **y compris lorsqu'un paiement, une recommandation, une répétition ou une action d'un tiers est rapporté(e) par la personne** — cela reste une trace externe déclarée particulièrement informative, mais **pas une corroboration indépendante**. Le passage éventuel vers ÉTAYÉ appartient exclusivement à l'analyse post-collecte par convergence avec d'autres signaux indépendants (ex. Q12), jamais à Q16 seule. Dans tous les cas : **capacité ÉTAYÉE ≠ marché validé**.
+- **Distinction avec la branche activité existante (Q1) — verrouillée :** Q1 = qu'est-ce qui existe actuellement et à quel stade déclaré ? Q16 = existe-t-il une expérience concrète où une capacité a déjà produit de la valeur pour quelqu'un ? **Q16 conservée même lorsqu'une activité existante est déclarée en Q1** — les deux répondent à des questions différentes. Chevauchement possible dans le sous-cas d'une activité déjà « fonctionne déjà »/« bien installée » : traité par réutilisation/rappel des données déjà connues dans l'UX, **pas un skip sémantique complexe** — mécanisme exact non spécifié, reste ouvert.
 
 **Q17 — Ce qu'on veut réutiliser / éviter**
 - Deux champs sous une même question/écran :
@@ -281,12 +318,13 @@ Sauf mention contraire explicite, statut par défaut = **À CONTRÔLER DANS LA M
 
 ### Étape 4 — Ce que tu as déjà en main
 
-**Q18 — Capacités actuelles**
+**Q18 — Capacités actuelles — CONSERVER (VALIDÉ QG avec correction doctrinale, D-022)**
 - Formulation : « Aujourd'hui, qu'est-ce que tu sais réellement faire par toi-même ? »
 - Aide : « Pense à ce que tu sais faire au travail, dans tes études, dans une activité, un métier ou dans la vie quotidienne. Pas besoin d'être expert(e). »
 - Type : jusqu'à 5 + « aucune »
 - Pour chaque élément, sous-question : « Aujourd'hui, tu pourrais encore le faire : » — Oui facilement / Oui avec une petite remise à niveau / Non je devrais beaucoup réapprendre / Je ne sais pas
 - Limite : pas de score débutant/intermédiaire/expert. Catégories internes : disponible maintenant / réactivable / à réapprendre / inconnu.
+- **Doctrine verrouillée — deux dimensions strictement distinctes, jamais fusionnées :** (A) le niveau de preuve de l'existence d'une capacité (alimenté par Q10–Q17 et leur future convergence DÉCLARÉ→ÉTAYÉ) et (B) la mobilisabilité actuelle déclarée (ce que Q18 mesure uniquement). Une capacité peut être ÉTAYÉE + facilement mobilisable ; ÉTAYÉE + nécessitant beaucoup de réapprentissage ; DÉCLARÉE + facilement mobilisable ; ou DÉCLARÉE + mobilisabilité inconnue — les quatre combinaisons sont légitimes. Une tension entre Q18 et une donnée historique (ex. Q10) n'est pas automatiquement CONTRADICTOIRE : elle peut refléter une évolution temporelle normale. Q18 ne participe jamais à la convergence DÉCLARÉ→ÉTAYÉ.
 
 **Q19 — Moyens matériels**
 - Formulation : « Parmi ces moyens, lesquels pourrais-tu réellement utiliser pour construire ton Plan B ? »
@@ -300,6 +338,7 @@ Sauf mention contraire explicite, statut par défaut = **À CONTRÔLER DANS LA M
 - Aide : « Choisis seulement ce que tu peux faire sans avoir besoin qu'on te guide à chaque étape. »
 - Actions : rechercher sur Internet, messages/photos/documents, e-mail, formulaires/démarches en ligne, documents simples, tableur basique, visuel/présentation, publication réseaux sociaux, gestion d'un compte social professionnel, appel vidéo, acheter/vendre/recevoir une commande en ligne, paiement numérique, outils IA pour rechercher/écrire/créer/travailler, autre, peu de choses seul(e)
 - Objectif : capacités numériques fonctionnelles, **pas un score digital global**.
+- **Principe verrouillé pour l'analyse post-collecte (CONSERVER MAIS À AJUSTER, D-022) :** pas de taxonomie universelle « lacune de fond vs lacune superficielle ». Pour une action numérique requise par la route : (1) déjà autonome → directement mobilisable ; (2) non autonome mais accompagnement raisonnablement léger au regard du test envisagé → intégrer un préalable ; (3) non autonome et acquisition significative au regard du test → adapter la forme du test ou la route. Seuils et algorithme **toujours à spécifier**. Aucun score numérique global, aucune nouvelle question.
 
 **Q21 — Langues fonctionnelles**
 - Formulation : « Quelles langues peux-tu utiliser aujourd'hui, même si tu ne les maîtrises pas parfaitement ? »
@@ -314,13 +353,22 @@ Sauf mention contraire explicite, statut par défaut = **À CONTRÔLER DANS LA M
 - Objectif : réseau mobilisable pour construire. Ne pas interpréter négativement l'absence de réseau.
 - Distinction : Q22 (réseau d'aide général) ≠ Q35 (accès aux personnes concernées par un problème observé).
 
+**Micro-donnée « actif relationnel mobilisable », rattachée à l'Étape 4 — AJOUTÉE (VALIDÉ QG, D-022, 2026-09-25).** Après Q22 :
+- Formulation : « As-tu déjà un groupe ou un réseau de personnes que tu peux contacter directement si tu veux apprendre de leurs besoins, tester une idée ou leur proposer quelque chose ? » — Oui / Non / Je ne sais pas.
+- Si Oui, une seule qualification : « De quel type de groupe ou réseau s'agit-il principalement ? » — Réseau professionnel / Anciens clients ou contacts / Communauté en ligne / Groupe ou association / Entourage ou réseau local / Autre. Aucun nombre d'abonnés, aucun nombre de contacts, aucun score d'engagement, aucun nom.
+- Doctrine verrouillée : **ACTIF RELATIONNEL ACCESSIBLE ≠ AUDIENCE ENGAGÉE ≠ DEMANDE ≠ CLIENTÈLE.** Indique uniquement l'existence déclarée d'un canal de contact potentiellement mobilisable, peut influencer la friction/testabilité de certaines options. Reste DÉCLARÉE.
+- Ne fusionne ni avec Q22 (soutien reçu par la personne, direction inverse) ni avec Q35 (accès conditionné à un problème déjà identifié) — confirmé absent de Q1–Q36 après tous les croisements possibles (audit inverse global).
+- Fonction d'apparition : SOCLE pour la question Oui/Non ; CONDITIONNELLE pour la qualification (si Oui).
+
 ### Étape 5 — Ta façon d'avancer
 
-**⚠️ Ordre interne validé, à ne jamais réordonner de sa propre initiative :**
+**⚠️ Ordre interne VALIDÉ DÉFINITIVEMENT (D-022, 2026-09-25), à ne jamais réordonner de sa propre initiative :**
 ```
 Q23 → Q27 → Q24 → Q26 → Q25 conditionnelle
 ```
-Raison déjà arbitrée : éviter une succession de questions centrées sur les difficultés, équilibrer immédiatement avec une expérience de continuité réussie.
+Raison déjà arbitrée, confirmée après audit challengeant explicitement l'alternative (Q23→Q24 consécutifs) : la rupture volontaire entre Q23 et Q24 par Q27 est conservée afin d'éviter une séquence exclusivement centrée sur les difficultés, équilibrée immédiatement par une expérience de continuité réussie — un compromis délibéré entre continuité narrative stricte et charge émotionnelle, jugé défendable.
+
+**Garde-fou transversal de l'Étape 5, VERROUILLÉ (D-022) :** les comportements passés servent à calibrer le prochain test, pas à enfermer la personne dans ses comportements passés. Architecture : ÉPISODE PASSÉ → observation contextuelle → hypothèse prudente pour calibrer le premier test → nouvelle expérience → nouvelle donnée terrain → adaptation. Une absence ou une difficulté passée peut conduire à créer une expérience progressive élargissant la capacité d'action, pas seulement à réduire l'ambition du test. Exemples verrouillés : absence passée de demande de feedback ≠ incapacité à en demander ; action retardée ≠ besoin permanent de micro-actions ; arrêt après obstacle ≠ faible persévérance ; attente avant décision ≠ personne indécise ; difficulté après retour extérieur ≠ faible confiance. **Aucun trait psychologique stable ne doit être dérivé de Q23–Q27.**
 
 **Q23 — Démarrage / retard à agir**
 - Formulation : « Ces derniers mois, t'est-il arrivé de décider de faire quelque chose d'important, puis de beaucoup tarder à commencer ou de ne pas commencer ? »
@@ -349,11 +397,12 @@ Raison déjà arbitrée : éviter une succession de questions centrées sur les 
 - Champs : « Qu'as-tu fait ? » / « Quand la personne t'a répondu, qu'as-tu fait ensuite ? » (+ « aucun »)
 - Objectif : comportement après retour extérieur. Limite : ne pas transformer en score de confiance ou de tolérance au rejet.
 
-**Q25 — Décision dans l'incertitude**
-- **CONDITIONNELLE / RÉCUPÉRATION.**
+**Q25 — Décision dans l'incertitude — CONSERVER MAIS À AJUSTER (VALIDÉ QG, fonction verrouillée, D-022)**
+- **RÉCUPÉRATION**, strictement conditionnelle.
+- **Fonction unique verrouillée :** obtenir au moins un épisode concret montrant ce que la personne a fait lorsqu'elle devait décider alors qu'elle ne disposait pas de toutes les informations qu'elle aurait souhaitées. Q25 n'est **pas** une question sur l'indécision, la tolérance psychologique à l'incertitude, la prise de risque, le courage décisionnel, ou un style général de décision.
 - Formulation : « Pense à une situation récente où tu devais avancer ou décider sans avoir toutes les informations que tu voulais. Qu'as-tu fait ? » (+ « aucun », pas d'exemples)
-- Relance si attente/blocage : « Qu'est-ce qui te manquait pour pouvoir avancer ou décider ? »
-- **Condition de SKIP** : peut être sautée si Q23/Q24 couvrent déjà suffisamment cette dimension — **mais uniquement si un signal structuré permet de le décider** (voir limite §18 en section 1 : pas d'IA sémantique en direct pour décider librement que Q23 « couvre » Q25). **Mécanisme exact de ce skip déterministe : À ARBITRER.**
+- Relance si attente/blocage : « Qu'est-ce qui te manquait pour pouvoir avancer ou décider ? » — **une seule relance maximale.**
+- **Condition de SKIP** : si Q23 ou Q24 a déjà fourni clairement un épisode de décision sous information incomplète, Q25 est inutile et peut être skippée ; sinon elle joue son rôle de récupération — **mais uniquement si un signal structuré permet de le décider** (pas d'IA sémantique en direct). **Mécanisme exact de ce skip déterministe : toujours À ARBITRER.**
 
 ### Étape 6 — Ce qui est possible pour toi aujourd'hui
 
@@ -371,6 +420,10 @@ Raison déjà arbitrée : éviter une succession de questions centrées sur les 
 - Choix : Non je peux prendre le temps / J'aimerais que cela arrive assez vite mais je peux attendre / Oui j'ai besoin d'un revenu supplémentaire dans les prochains mois / Oui ma situation financière rend cela très urgent / Ma situation varie beaucoup / Je préfère ne pas répondre
 - Si besoin réel/urgent : « À partir de quand aurais-tu besoin que cela commence à t'apporter un revenu ? » — moins d'un mois / 1-3 mois / 3-6 mois / 6-12 mois / plus d'un an / je ne sais pas
 - Objectif : horizon/pression économique. Un horizon urgent n'est pas une promesse de revenu — peut au contraire favoriser une voie emploi/mission/stabilisation avant un projet entrepreneurial.
+- **CONSERVER MAIS À AJUSTER (VALIDÉ QG, D-022) — trois règles verrouillées pour Ma feuille de route, aucune nouvelle question :**
+  1. **URGENCE DÉCLARÉE ≠ DÉLAI DE RÉSULTAT PRÉDIT.** L'horizon déclaré exprime le besoin économique de la personne, jamais une estimation CoachRedo du délai nécessaire, une prévision de revenu, ou une promesse. Exemple doctrinal : « J'ai besoin d'un effet économique en moins d'un mois » signifie *la route doit tenir compte d'une forte contrainte temporelle*, jamais *CoachRedo estime que cette route produira un revenu en moins d'un mois*.
+  2. **Pas d'automatisme de catégorie de voie.** Pas de « urgence forte → emploi/mission/stabilisation obligatoire ». Plus l'urgence est forte, moins CoachRedo doit faire dépendre la prochaine étape d'une voie longue, coûteuse ou hautement incertaine sans preuves suffisantes — en considérant explicitement emploi, mission, activité existante, petit service, réactivation d'une capacité ayant déjà créé de la valeur, ou autre voie étayée. **Q29 influence le poids du délai et de l'incertitude ; Q29 ne choisit jamais seule la voie.**
+  3. **Urgence ≠ prise de risque accrue.** Ne doit jamais justifier seule un investissement plus lourd, l'abandon prématuré d'une source de revenu existante, une atteinte aux dépenses essentielles, une voie moins réversible, ou une hypothèse présentée comme certitude. Preuves faibles + urgence forte → privilégier une prochaine étape courte, peu coûteuse, réversible, produisant rapidement une information terrain ou une valeur économique réelle.
 
 **Q30 — Mobilité réelle**
 - Formulation : « Aujourd'hui, jusqu'où peux-tu réellement te déplacer pour travailler ou développer une activité ? »
@@ -384,7 +437,7 @@ Raison déjà arbitrée : éviter une succession de questions centrées sur les 
 - Choix : Oui / Non / Je ne sais pas / Je préfère ne pas répondre
 - Si oui : « Quelle condition doit-elle respecter ? »
 - Relance si seulement la cause est donnée : « Concrètement, qu'est-ce que cela change dans ce que tu peux faire pour ta prochaine activité ? » — une relance → INCONNU
-- Distinction explicite : Q8 = important à préserver ; **Q31 = doit être respecté** (contrainte plus forte).
+- **Doctrine Q8/Q31 CORRIGÉE et verrouillée (D-022) — ne pas documenter Q31 comme « filtre éliminatoire » absolu :** Q8 = préférence importante → un compromis éventuel doit être rendu visible. Q31 = condition indispensable → CoachRedo ne doit pas recommander une route sous une forme qui viole cette condition **maintenant** — mais une voie peut être **adaptée** pour respecter Q31 plutôt qu'éliminée. Nuance temporelle verrouillée (cf. ÉTAT ACTUEL ≠ LIMITE PERMANENTE, §1) : Q31 doit être respectée maintenant ; sa permanence future ne doit pas être supposée sans données.
 
 **Q32 — Voies que la personne est prête à envisager**
 - Formulation : « Pour avancer vers ton objectif, qu'es-tu réellement prêt(e) à envisager aujourd'hui ? »
@@ -394,6 +447,8 @@ Raison déjà arbitrée : éviter une succession de questions centrées sur les 
 - **Distinction fondamentale à préserver** : CE QUE LA PERSONNE VEUT = Étape 2 ; CE QU'ELLE EST PRÊTE À ENVISAGER = Q32 ; CE QUI EST RÉALISTE AUJOURD'HUI = croisement de toutes les données. Le 3e niveau ne remplace pas l'objectif. CoachRedo doit montrer : ce qui peut être fait maintenant + pourquoi + ce que cela peut débloquer ensuite + comment cela rapproche de l'objectif moyen/long terme. **La volonté déclarée n'est jamais une preuve qu'une décision est bonne.**
 
 ### Étape 7 — Ce que tu observes autour de toi
+
+**Garde-fou transversal de l'Étape 7 — anti-« prison d'exploration », VERROUILLÉ (D-022, 2026-09-25) :** ce que la personne connaît (Q33/Q34) alimente l'exploration de CoachRedo ; cela ne délimite jamais son périmètre. Architecture : CE QUE LA PERSONNE SAIT/OBSERVE → matière initiale → COACHREDO EXPLORE ET RECHERCHE → hypothèses plausibles → LA PERSONNE DÉCIDE QUOI TESTER → LE TERRAIN VALIDE OU INFIRME → adaptation. CoachRedo doit pouvoir explorer à l'intérieur des environnements cités, autour, et **hors de ces environnements** lorsque les autres données du profil rendent d'autres pistes plausibles — sans devenir une génération illimitée d'idées sans rapport avec la personne (filtrée par objectif + capacités/preuves + mobilisabilité + ressources + contraintes + ouverture actuelle + environnement + données externes disponibles). « Aucun » en Q33 ne signifie jamais : aucune opportunité, aucune piste, aucune capacité à entreprendre, ou impossibilité pour CoachRedo d'explorer ailleurs.
 
 **Q33 — Environnements connus**
 - Formulation (dernière version de travail) : « Y a-t-il des personnes ou des activités que tu connais bien dans ta vie actuelle ou grâce à ton expérience ? »
@@ -419,44 +474,53 @@ Raison déjà arbitrée : éviter une succession de questions centrées sur les 
 - Objectif : accessibilité du terrain/testabilité. Limite : plus testable ≠ meilleure opportunité finale.
 - Distinction : Q22 (réseau d'aide général) ≠ Q35 (accès spécifique aux personnes concernées par le problème).
 
-**Q36 — Comportement actuel face au problème**
+**Q36 — Comportement actuel face au problème — CONSERVER MAIS À AJUSTER (VALIDÉ QG, D-022)**
 - **CONDITIONNELLE** : si Q34 contient un problème suffisamment concret.
 - Formulation : « Quand ces personnes rencontrent ce problème, que font-elles aujourd'hui pour essayer de le résoudre ? »
 - Aide : « Par exemple : elles se débrouillent seules, demandent de l'aide à quelqu'un, utilisent un outil ou un service, paient déjà pour une solution, ou ne font rien de particulier. »
 - Type : réponse courte + « je ne sais pas » — **pas de relance automatique** (« je ne sais pas » devient une information à vérifier sur le terrain, pas un manque à combler par relance)
 - Objectif : solution/comportement actuel déclaré. Distinguer observation réelle et supposition.
+- **Ajustement verrouillé :** une provenance minimale est distinguée après la réponse, sans preuve demandée ni transformation en étude de marché : observée directement / entendue de personnes concernées / supposée ou déduite / pas vraiment connue-je ne sais pas. Formulation UX exacte à spécifier ultérieurement. **Important : même « observée directement » reste DÉCLARÉE** — CoachRedo reçoit toujours le récit de l'utilisateur, jamais une vérification indépendante. Cette provenance sert uniquement à empêcher CoachRedo de présenter une supposition comme une observation ; elle ne transforme pas Q36 en validation de marché.
 
 ---
 
-## 3. Statut consolidé
+## 3. Statut consolidé — POST-CLÔTURE (D-022, 2026-09-25)
 
-### Éléments explicitement VALIDÉS (principes/mécanismes, cf. §1, et questions spécifiques Q1/Q4 cf. §2)
-Chaîne produit et 7 étapes ; principe temporel MAINTENANT→...→DIRECTION LONG TERME ; architecture de collecte SOCLE COMMUN→...→ANALYSE IA ; frontière IA déterministe/collecte vs IA/analyse ; limite V1 sur le skip sémantique ; charge cognitive et ordre des 7 étapes ; P0-P3 (mécanisme, avec la définition P1 mise à jour) ; règle 1 relance principale max ; INCONNU comme sortie légitime ; réutilisation des données (principe) ; règle aides/exemples ; discipline de preuve DÉCLARÉ/ÉTAYÉ/INFÉRÉ/CONTRADICTOIRE/INCONNU (terminologie canonique unifiée) ; Johari (mécanisme interne) ; voies/options/route ; principe d'action et de risque ; refus de Q37 ; mesure de longueur multi-critères ; ordre interne étape 5 (Q23→Q27→Q24→Q26→Q25) ; titre étape 6 ; suppression de l'ancienne Q4-B.
+### Éléments VALIDÉS (principes/mécanismes, cf. §1)
+Chaîne produit et 7 étapes ; principe temporel MAINTENANT→...→DIRECTION LONG TERME ; architecture de collecte SOCLE COMMUN→...→ANALYSE IA ; frontière IA déterministe/collecte vs IA/analyse ; limite V1 sur le skip sémantique ; charge cognitive et ordre des 7 étapes ; P0-P3 (mécanisme, avec la définition P1 mise à jour) ; règle 1 relance principale max ; INCONNU comme sortie légitime ; réutilisation des données (principe) ; règle aides/exemples ; discipline de preuve DÉCLARÉ/ÉTAYÉ/INFÉRÉ/CONTRADICTOIRE/INCONNU (terminologie canonique unifiée) ; Johari (mécanisme interne) ; voies/options/route ; principe d'action et de risque ; refus définitif de Q37 (reconfirmé après audit complet de Q33-Q36) ; mesure de longueur multi-critères ; ordre interne étape 5 (Q23→Q27→Q24→Q26→Q25, validé définitivement) ; titre étape 6 ; suppression de l'ancienne Q4-B ; **ÉTAT ACTUEL ≠ LIMITE PERMANENTE** (nouvelle doctrine transversale) ; **classification SOCLE/CONDITIONNELLE/RÉCUPÉRATION** (nouvelle, remplace toute notion de hiérarchie d'importance) ; garde-fou transversal Étape 5 (comportements passés calibrent sans enfermer) ; garde-fou transversal Étape 7 (anti-« prison d'exploration ») ; doctrine Q8/Q31 corrigée (adaptation possible, pas élimination automatique) ; trois règles Q29 (urgence ≠ délai prédit / automatisme de voie / prise de risque accrue) ; doctrine Q18 (preuve d'existence ≠ mobilisabilité actuelle, jamais fusionnées) ; doctrine Q16 (DÉCLARÉ dans tous les cas, jamais ÉTAYÉ seule, capacité ÉTAYÉE ≠ marché validé).
 
-### HYPOTHÈSE / À TESTER
+### Verdicts finaux par question (CONSERVER sauf mention contraire)
+Toutes les questions Q1–Q36 + les deux micro-données ajoutées ont reçu le verdict **CONSERVER**, à l'exception des suivantes en **CONSERVER MAIS À AJUSTER** (ajustement documenté au fil du §2, aucun n'est une remise en cause de la question elle-même) : Q10 (relance corrigée), Q15 (déclencheur corrigé), Q16 (niveau de preuve corrigé), Q18 (doctrine A/B), Q20 (principe à 3 niveaux route-relatif), Q25 (fonction verrouillée), Q29 (trois règles), Q36 (provenance ajoutée), la branche moyen/long terme de Q6 (justification corrigée). **Aucune suppression de question n'a résulté de l'audit.**
+
+### HYPOTHÈSE / À TESTER (non résolu par cette clôture)
 - Budget global de relances : **5 relances principales maximum (V1)** — à valider par les vrais usages.
 - Simulations de durée/nombre d'interactions par profil (précis/moyen/vague) — chiffres non validés produit.
 - Formulations des micro-transitions — exemples travaillés, non figés.
 
-### À ARBITRER (liste consolidée du handoff §29, préservée telle quelle)
-- Ajout éventuel à Q1 d'une catégorie « je gère déjà une activité ou une entreprise ».
+### À ARBITRER — liste finale après clôture (aucun ne remet en cause une question, tous relèvent de mécanismes techniques futurs)
 - Mécanisme exact d'exception `critical_for_route = true` (budget de relances).
 - Formulations finales des micro-transitions.
-- Détails exacts de certains skips déterministes lorsqu'une information a déjà été obtenue (notamment le skip Q23/Q24→Q25, et le skip de la branche moyen/long terme de Q6).
-- Éventuelle captation explicite d'une audience/communauté/réputation déjà mobilisable — trou potentiel identifié, aucune nouvelle question décidée.
-- Contexte géographique — besoin reconnu, mais pas de nouvelle question décidée avant vérification de ce que l'application connaît déjà.
-- Branche moyen/long terme de Q6 — validée conceptuellement, mécanique déterministe exacte encore à spécifier.
+- Mécanisme déterministe exact du skip Q23/Q24→Q25 (fonction de Q25 verrouillée, seul le déclencheur reste ouvert).
+- Mécanisme déterministe exact du skip de la branche moyen/long terme de Q6 (justification corrigée et verrouillée, seul le déclencheur reste ouvert).
+- Mécanisme déterministe exact du déclenchement de Q15 (corrigé : dépend de l'absence d'épisode concret dans Q10-Q14, pas de Q11 — seule la traduction en règle structurée reste ouverte).
+- Mécanisme de réutilisation UX pour les chevauchements Q16/branche activité existante de Q1, et Q11/Q33.
+- Seuils et algorithme du principe à 3 niveaux route-relatif de Q20.
+- Mécanisme de convergence DÉCLARÉ→ÉTAYÉ — explicitement non défini à ce stade par choix du QG, à traiter après spécification technique.
+- Mécanisme d'exploration élargie de CoachRedo hors des environnements spontanément cités (garde-fou conceptuel verrouillé, mise en œuvre non définie).
+- Position écran et numérotation définitive de Q1-Q36 et des deux micro-données ajoutées (territoire principal, actif relationnel mobilisable).
 - Métriques de durée — hypothèses uniquement avant tests réels.
 
-### À CONTRÔLER DANS LA MATRICE (rappel)
-L'intégralité de Q1-Q36 — y compris les éléments listés comme « VALIDÉS » ci-dessus, qui portent sur le principe et la dernière formulation de travail, pas sur une vérification finale de couverture décisionnelle (provenance, usage dans Ma feuille de route, décision influencée, risque d'interprétation — cf. §30 du handoff, non commencé).
+**Résolu depuis la version précédente de ce document (ne plus traiter comme ouvert) :**
+- ~~Ajout éventuel à Q1 d'une catégorie « je gère déjà une activité ou une entreprise »~~ → résolu différemment par une branche « activité existante » distincte rattachée à Q1 (§2, Étape 1).
+- ~~Éventuelle captation explicite d'une audience/communauté/réputation déjà mobilisable~~ → résolu par l'ajout de la micro-donnée « actif relationnel mobilisable » (§2, Étape 4).
+- ~~Contexte géographique~~ → résolu par l'ajout de la micro-donnée « territoire principal » (§2, Étape 1), après vérification factuelle que l'application ne connaît déjà rien de tel (`profiles.country` dormant).
 
 ---
 
-## 4. Ce que la matrice finale Q1-Q36 devra encore vérifier (rappel, non commencé)
+## 4. Ce que la matrice finale Q1-Q36 a vérifié — FAIT (D-022, 2026-09-25)
 
-Pour chaque question : Question utilisateur → aide/exemples → type de réponse → construit recherché → information réellement obtenue → données extraites → provenance/preuve → croisements → usage Ma feuille de route → usage filtre voies/Plan B → décision influencée → risque d'interprétation → P0/P1/P2/P3 → relance prédéfinie → STOP/INCONNU → effort/durée. Plus explicitement : AIDE/EXEMPLES → nécessaires ? oui/non → lesquels ? → risque d'influencer ?
+L'audit individuel de chaque question (aide/exemples, type de réponse, information obtenue, provenance/preuve, croisements, usage dans Ma feuille de route, décision influencée, risque d'interprétation, verdict) puis l'audit inverse global (parti des décisions que Ma feuille de route doit éclairer pour vérifier en sens inverse la couverture de Q1-Q36, recherche des tensions entre données, audit de la frontière personne/CoachRedo/terrain, audit de l'architecture en 12 sections du futur rapport) sont **terminés et arbitrés**.
 
-Test absolu retenu : **une question reste uniquement si sa réponse change une interprétation, un filtre, une voie, une recommandation ou une action.**
+Test absolu retenu et appliqué : **une question reste uniquement si sa réponse change une interprétation, un filtre, une voie, une recommandation ou une action.** Aucune question n'a été supprimée sur cette base ; deux micro-données ont été ajoutées après vérification qu'aucune donnée existante ne les couvrait déjà.
 
-La matrice doit aussi vérifier les derniers croisements/doublons, la provenance des preuves et les trous de couverture. **Non commencée à ce stade.**
+**Verdict final de l'audit : Q1-Q36 + les deux micro-données fournissent une matière suffisante pour construire Ma feuille de route, sous réserve des mécanismes d'exploitation listés en §3 (« À ARBITRER ») et `CURRENT_STATE.md` §8.** Le risque résiduel identifié ne porte plus sur un manque de données mais sur l'exploitation future de données par ailleurs suffisantes (mécanisme de convergence de preuve non appliqué rigoureusement, principe ÉTAT ACTUEL ≠ LIMITE PERMANENTE non respecté en rédaction, fonction de « Ton miroir CoachRedo » dérivant vers un profil psychologique).

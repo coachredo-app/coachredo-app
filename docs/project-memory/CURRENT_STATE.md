@@ -7,7 +7,7 @@ metadata:
 
 # CURRENT_STATE — CoachRedo App
 
-Dernière mise à jour : 2026-09-23 (V8 — édition papier de Plan B Rentable reconnue comme chantier dormant, D-021)
+Dernière mise à jour : 2026-09-25 (V9 — conception de collecte Mon point de départ V3 close, D-022)
 
 **Ce document est vivant.** Il doit être mis à jour à chaque incrément fonctionnel significatif validé (cf. règle dans `CLAUDE.md`). S'il contredit le repo réel au moment où vous le lisez, faites confiance au repo et signalez la contradiction au QG.
 
@@ -43,19 +43,19 @@ Dernière mise à jour : 2026-09-23 (V8 — édition papier de Plan B Rentable r
   **Non reproduit manuellement en Production** : le scénario « onglet Bilan déjà ouvert avant le déploiement de la fermeture » — sa robustesse repose sur la vérification du code faite avant déploiement (Server Actions gated par `BILAN_OPEN`, RLS inchangé), pas sur un test end-to-end en Production, pour ne pas manipuler inutilement des données réelles.
 - **Archivage des assets officiels CoachRedo Music** — commit `806a932` : 5 assets de marque officiels (avatar, logo horizontal, logo principal transparent, monochrome blanc transparent, monochrome or transparent) archivés dans `public/assets/brand/coachredo-music/`, plus le monogramme historique CoachRedo (marque mère) archivé séparément dans `public/assets/brand/coachredo/coachredo-monogram.png`. Copies vérifiées bit-à-bit (SHA-256) depuis les fichiers sources fournis par le QG. **Archivage uniquement — aucun de ces assets n'est encore intégré à l'interface CoachRedo App.**
 
-## 3. Chantier actif — Mon point de départ V3 (conception, architecture UX arbitrée)
+## 3. Chantier — Mon point de départ V3 (conception de collecte CLOSE, implémentation non ouverte)
 
 **Nommage produit V3, introduit le 2026-09-23** : **Mon point de départ** (Bilan) → **Ma feuille de route** (Rapport). Ne s'applique pas rétroactivement au produit actuellement en production, toujours nommé Bilan de Clarté V2 / Rapport CoachRedo (§2, ARCHITECTURE §3/§6) — ni aux identifiants techniques réels (`bilan_sessions`, `rapports`, `BILAN_OPEN`).
 
-L'audit stratégique indépendant post-Summit (Side Hustle Summit 2026, J1–J5) a servi de base à l'arbitrage. Séquence suivie (actée le 2026-09-11, mise à jour) : arbitrage ADOPTER / ADAPTER / REJETER → définition du Rapport idéal → matrice de compréhension CoachRedo → audit du Bilan V2 actuel → décision sur une future version → **architecture UX du hub/parcours** → **matrice finale de couverture Q1-Q36** → reprise de l'architecture technique de Ma feuille de route.
+L'audit stratégique indépendant post-Summit (Side Hustle Summit 2026, J1–J5) a servi de base à l'arbitrage. Séquence suivie (actée le 2026-09-11, complétée le 2026-09-25) : arbitrage ADOPTER / ADAPTER / REJETER → définition du Rapport idéal → matrice de compréhension CoachRedo → audit du Bilan V2 actuel → décision sur une future version → architecture UX du hub/parcours → **matrice finale de couverture Q1-Q36 (close, D-022)** → **prochaine étape : reprise de l'architecture technique de Ma feuille de route, non commencée (voir §8)**.
 
 **Les 7 étapes retenues** : Ta situation aujourd'hui / Ce que tu veux changer / Ton parcours / Ce que tu as déjà en main / Ta façon d'avancer / Ce qui est possible pour toi aujourd'hui / Ce que tu observes autour de toi. Ceci reformule et précise ce que cette mémoire documentait précédemment comme des « familles » (Situation réelle, WHY/Direction personnelle, Parcours & expériences) — même chantier conceptuel, la structure à 7 étapes est désormais la référence.
 
-**Conception détaillée du questionnaire (Q1-Q36) : documentée.** Handoff QG2 intégral transcrit dans `docs/project-memory/MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` — source de vérité pour le contenu des 36 questions, branches conditionnelles, relances prédéfinies, questions de récupération, règles P0-P3, budget de relances, réutilisation des données, INCONNU, et statuts VALIDÉ/HYPOTHÈSE-À TESTER/À ARBITRER par élément. **Cette conception ne remplace pas la matrice finale de couverture Q1-Q36 (non commencée, voir §8)** — elle en est la matière première.
+**Conception du questionnaire (Q1-Q36) : CLOSE (D-022, 2026-09-25).** `docs/project-memory/MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` est la source de vérité canonique pour le contenu des 36 questions + les deux micro-données ajoutées (territoire principal, Étape 1 ; actif relationnel mobilisable, Étape 4), les branches conditionnelles, les relances prédéfinies, les questions de récupération, les règles P0-P3, la réutilisation des données, INCONNU, et les verdicts finaux (CONSERVER / CONSERVER MAIS À AJUSTER) par question issus de l'audit individuel puis de l'audit inverse global de couverture décisionnelle. **Aucune suppression de question** n'a résulté de cet audit ; **aucun ajout futur « au cas où »** n'est autorisé — toute modification devra être justifiée par un besoin décisionnel démontré (D-022).
 
 **Épistémologie des données — vocabulaire unifié (2026-09-23) :** l'ancienne formulation `SELF-DECLARED / EVIDENCE-BASED / INFERRED / CONTRADICTOIRE / INCONNU`, précédemment documentée ici, et `DÉCLARÉ / ÉTAYÉ / INFÉRÉ / CONTRADICTOIRE / INCONNU` sont **le même cadre conceptuel** — la seconde est désormais la terminologie canonique pour Mon point de départ V3 / Ma feuille de route (confirmé explicitement par le QG, cf. `MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` §1). Ne concerne pas le cadre conversationnel volontairement distinct de `COACHING_DOCTRINE.md` §3.
 
-Règles de conception détaillées (P0-P3, modèle de Dilts, contradiction = signal de clarification, budget de relances, etc.) : voir `MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` §1 — non dupliquées ici pour ne pas surcharger ce fichier.
+Règles de conception détaillées (P0-P3, modèle de Dilts, contradiction = signal de clarification, budget de relances, classification SOCLE/CONDITIONNELLE/RÉCUPÉRATION, doctrine ÉTAT ACTUEL ≠ LIMITE PERMANENTE, etc.) : voir `MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` §1 — non dupliquées ici pour ne pas surcharger ce fichier.
 
 **Benchmark externe *Alchemy of Self* : terminé.** Son mécanisme « Journey Progress » (vue centrale des chapitres, déverrouillage progressif) a été étudié et challengé, **pas copié**.
 
@@ -63,7 +63,7 @@ Règles de conception détaillées (P0-P3, modèle de Dilts, contradiction = sig
 
 **Distinct de ce chantier** : le Bilan de clarté actuel (V2, en production) reste temporairement gelé (`BILAN_OPEN=false`, voir §2 et D-017) pour la phase testeurs du livre — un gel opérationnel réversible, pas une refonte, qui ne préjuge d'aucune décision sur la future version évoquée ci-dessus.
 
-**Chantier suivant, non commencé** : Matrice finale de couverture Q1-Q36 — voir §8.
+**Chantier suivant, non commencé** : architecture technique de Ma feuille de route (mécanisme de convergence DÉCLARÉ→ÉTAYÉ, mécanismes déterministes de skip/recovery, mécanisme de filtrage produisant les voies/options, sélection du premier test, fonction de la section « Ton miroir CoachRedo », etc.) — voir §8 pour le détail complet des reports.
 
 ## 4. Travail partiellement terminé / non implémenté (à ne pas supposer existant)
 
@@ -106,8 +106,21 @@ Fichiers présents dans `supabase/migrations/` : `001_schema`, `001_trading_boot
 
 ## 8. Prochaine action exacte
 
-**Matrice finale de couverture Q1-Q36** — **non commencée à ce stade**, à ouvrir explicitement par le QG. Pour chaque question/information à vérifier : donnée obtenue, provenance/niveau de preuve, décision influencée, filtre/voie influencé, utilisation dans Ma feuille de route, utilité pour MAINTENANT / PROCHAINE ÉTAPE / MOYEN TERME / DIRECTION LONG TERME. Objectifs : identifier toute question n'alimentant aucune décision utile, identifier toute décision importante manquant de données, vérifier la traçabilité collecte → analyse → Ma feuille de route. Test absolu retenu : une question reste uniquement si sa réponse change une interprétation, un filtre, une voie, une recommandation ou une action. Note : « Q1-Q36 » est propre à la nouvelle matrice V3 (7 étapes) — distinct des « 17 éléments requis » qui composent le Bilan V2 actuellement en production (PROJECT_BIBLE §4), deux versions différentes du produit. **Matière première déjà disponible** : `docs/project-memory/MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` (conception détaillée Q1-Q36, non encore passée au crible de cette matrice).
+**Matrice finale de couverture Q1-Q36 : CLOSE (D-022, 2026-09-25).** L'audit individuel des 36 questions puis l'audit inverse global (parti des décisions que Ma feuille de route doit éclairer pour vérifier en sens inverse la couverture de Q1-Q36) sont terminés et arbitrés. Aucune suppression de question, deux micro-données ajoutées (territoire principal en Étape 1, actif relationnel mobilisable en Étape 4). Détail canonique complet : `docs/project-memory/MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md`.
 
-Après verrouillage complet de cette matrice, la séquence prévue reste (voir §3) : décision sur la future version du Bilan/Mon point de départ → reprise de l'architecture technique de Ma feuille de route/Rapport → conception puis implémentation de la RPC `SECURITY DEFINER` de lecture contrôlée côté client (un utilisateur authentifié ne peut récupérer que son propre Rapport publié — champs strictement limités à `id, sections, contenu_coach, publie_le`, conformément à D-013), **sauf décision QG contraire issue de cette séquence**. Le choix du fournisseur IA reste **ouvert, différé et non bloquant**.
+**Chantier suivant, non commencé à ce stade, à ouvrir explicitement par le QG :** architecture technique de Ma feuille de route. Reports explicitement identifiés par l'audit de clôture (D-022), aucun n'est tranché :
+- Mécanisme de convergence DÉCLARÉ → ÉTAYÉ (comment plusieurs signaux DÉCLARÉS convergent vers un niveau de preuve supérieur) — aucun principe de scoring n'a été défini à dessein.
+- Mécanismes déterministes de skip/recovery (branche moyen/long terme de Q6, WHY conditionnel, Q15, Q25, et les autres triggers déjà identifiés dans le fichier questionnaire).
+- Mécanisme de réutilisation UX pour les chevauchements identifiés (Q16/branche activité existante de Q1, Q11/Q33).
+- Seuils et algorithme du principe à 3 niveaux de Q20 (action numérique requise par la route : autonome / accompagnement léger / acquisition significative).
+- Mécanisme d'exploration élargie de CoachRedo hors des environnements spontanément cités par la personne (Q33/Q34).
+- Mécanisme de filtrage/croisement produisant les voies/options elles-mêmes — cœur de l'architecture technique, aucune question ne le fournit directement (normal, c'est un produit d'analyse).
+- Mécanisme du point de choix de la personne dans l'architecture UX hub/étapes (« la personne décide »).
+- Fonction exacte de la section « Ton miroir CoachRedo » du futur rapport — **ne devra jamais devenir un profil psychologique ni une affirmation identitaire**, risque déjà identifié comme le plus élevé de l'architecture du rapport envisagée.
+- Position écran et numérotation définitive de Q1-Q36 et des deux micro-données ajoutées.
+- Opérationnalisation déterministe complète de P0/P1/P2/P3 et du budget global de relances (déjà HYPOTHÈSE V1 à tester).
+- Architecture détaillée de génération de Ma feuille de route et de sélection du premier test.
+
+Après ouverture explicite de ce chantier par le QG, la séquence prévue reste (voir §3) : architecture technique de Ma feuille de route/Rapport → conception puis implémentation de la RPC `SECURITY DEFINER` de lecture contrôlée côté client (un utilisateur authentifié ne peut récupérer que son propre Rapport publié — champs strictement limités à `id, sections, contenu_coach, publie_le`, conformément à D-013), **sauf décision QG contraire issue de cette séquence**. Le choix du fournisseur IA reste **ouvert, différé et non bloquant**.
 
 **En parallèle, sans lien avec ce qui précède** : le Bilan actuel (V2, en production) reste gelé (`BILAN_OPEN=false`, §2, §6, D-017) pendant la phase testeurs du livre. Ce gel n'est pas une action de ce chantier et n'a pas vocation à être réévalué automatiquement, sauf si le QG le demande explicitement.

@@ -7,7 +7,7 @@ metadata:
 
 # MON_POINT_DE_DEPART_V3 — Architecture UX arbitrée
 
-Dernière mise à jour : 2026-09-23
+Dernière mise à jour : 2026-09-25 (conception de collecte Q1-Q36 close, D-022 — pointeur vers la doctrine temporelle ajouté en §F/§O)
 
 Ce document enregistre l'arbitrage QG du chantier UX « Journey Progress / Mon point de départ V3 » (benchmark *Alchemy of Self* étudié comme mécanisme, non copié). Ce sont des décisions **produit/UX**, pas une spécification technique — voir §P pour ce qui reste explicitement ouvert. Aucune implémentation n'est engagée par ce document.
 
@@ -58,6 +58,8 @@ Lecture seule / modifiable peut rester une règle interne ou déterminer les act
 Ne PAS afficher le nombre de questions par étape — le nombre réel d'interactions varie (branches conditionnelles, relances, questions de récupération sautées, réutilisation d'informations déjà obtenues).
 
 Afficher en revanche une **durée estimée par étape**, pour réduire l'incertitude sans créer de fausse précision. Orientation retenue : **≈ 5–10 min**, présentée comme fourchette, pas comme un chiffre garanti. Durées exactes non définies — à calibrer plus tard une fois le parcours V3, les branches et les relances suffisamment stabilisés, idéalement avec des données d'usage. Une estimation globale du parcours pourra être envisagée si elle peut être suffisamment crédible.
+
+**Doctrine temporelle transversale, verrouillée le 2026-09-25 (D-022) : ÉTAT ACTUEL ≠ LIMITE PERMANENTE.** Toute donnée de Mon point de départ décrit la situation connue au moment de la collecte et calibre ce qui est réaliste maintenant — jamais projetée automatiquement par Ma feuille de route comme une limite à moyen/long terme, sauf si les données permettent réellement de soutenir cette permanence. Détail complet et vérification de couverture (temps, budget, mobilité, mobilisabilité d'une capacité, ouverture au changement, voies utilisées comme étapes) : `docs/project-memory/MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` §1.
 
 ## G. Progression à l'intérieur d'une étape
 
@@ -128,4 +130,4 @@ Non verrouillés à ce stade, chantiers ultérieurs séparés : durées exactes 
 
 ## Prochaine étape officielle
 
-Le prochain chantier QG n'est pas l'implémentation. Reprise exacte à la **Matrice finale de couverture Q1-Q36** — voir `CURRENT_STATE.md` §8 pour le détail. Non commencée à ce stade.
+**Matrice finale de couverture Q1-Q36 : close (D-022, 2026-09-25).** Le prochain chantier QG reste distinct de l'implémentation : reprise de l'architecture technique de Ma feuille de route (mécanisme de convergence DÉCLARÉ→ÉTAYÉ, mécanismes de skip/recovery, filtrage produisant les voies/options, sélection du premier test, fonction de « Ton miroir CoachRedo », etc.) — voir `CURRENT_STATE.md` §8 pour la liste complète des reports. Non commencée à ce stade, à ouvrir explicitement par le QG.
