@@ -7,7 +7,7 @@ metadata:
 
 # CURRENT_STATE — CoachRedo App
 
-Dernière mise à jour : 2026-09-25 (V9 — conception de collecte Mon point de départ V3 close, D-022)
+Dernière mise à jour : 2026-09-26 (V10 — architecture conceptuelle de Ma feuille de route V3 verrouillée, D-023)
 
 **Ce document est vivant.** Il doit être mis à jour à chaque incrément fonctionnel significatif validé (cf. règle dans `CLAUDE.md`). S'il contredit le repo réel au moment où vous le lisez, faites confiance au repo et signalez la contradiction au QG.
 
@@ -47,7 +47,7 @@ Dernière mise à jour : 2026-09-25 (V9 — conception de collecte Mon point de 
 
 **Nommage produit V3, introduit le 2026-09-23** : **Mon point de départ** (Bilan) → **Ma feuille de route** (Rapport). Ne s'applique pas rétroactivement au produit actuellement en production, toujours nommé Bilan de Clarté V2 / Rapport CoachRedo (§2, ARCHITECTURE §3/§6) — ni aux identifiants techniques réels (`bilan_sessions`, `rapports`, `BILAN_OPEN`).
 
-L'audit stratégique indépendant post-Summit (Side Hustle Summit 2026, J1–J5) a servi de base à l'arbitrage. Séquence suivie (actée le 2026-09-11, complétée le 2026-09-25) : arbitrage ADOPTER / ADAPTER / REJETER → définition du Rapport idéal → matrice de compréhension CoachRedo → audit du Bilan V2 actuel → décision sur une future version → architecture UX du hub/parcours → **matrice finale de couverture Q1-Q36 (close, D-022)** → **prochaine étape : reprise de l'architecture technique de Ma feuille de route, non commencée (voir §8)**.
+L'audit stratégique indépendant post-Summit (Side Hustle Summit 2026, J1–J5) a servi de base à l'arbitrage. Séquence suivie (actée le 2026-09-11, complétée le 2026-09-25) : arbitrage ADOPTER / ADAPTER / REJETER → définition du Rapport idéal → matrice de compréhension CoachRedo → audit du Bilan V2 actuel → décision sur une future version → architecture UX du hub/parcours → **matrice finale de couverture Q1-Q36 (close, D-022)** → **architecture conceptuelle de Ma feuille de route V3 (close, D-023)** → **prochain verrou conceptuel : mécanisme de convergence DÉCLARÉ→ÉTAYÉ, non commencé (voir §8)** ; l'architecture technique de Ma feuille de route est ultérieure et non ouverte à ce stade.
 
 **Les 7 étapes retenues** : Ta situation aujourd'hui / Ce que tu veux changer / Ton parcours / Ce que tu as déjà en main / Ta façon d'avancer / Ce qui est possible pour toi aujourd'hui / Ce que tu observes autour de toi. Ceci reformule et précise ce que cette mémoire documentait précédemment comme des « familles » (Situation réelle, WHY/Direction personnelle, Parcours & expériences) — même chantier conceptuel, la structure à 7 étapes est désormais la référence.
 
@@ -63,7 +63,7 @@ Règles de conception détaillées (P0-P3, modèle de Dilts, contradiction = sig
 
 **Distinct de ce chantier** : le Bilan de clarté actuel (V2, en production) reste temporairement gelé (`BILAN_OPEN=false`, voir §2 et D-017) pour la phase testeurs du livre — un gel opérationnel réversible, pas une refonte, qui ne préjuge d'aucune décision sur la future version évoquée ci-dessus.
 
-**Chantier suivant, non commencé** : architecture technique de Ma feuille de route (mécanisme de convergence DÉCLARÉ→ÉTAYÉ, mécanismes déterministes de skip/recovery, mécanisme de filtrage produisant les voies/options, sélection du premier test, fonction de la section « Ton miroir CoachRedo », etc.) — voir §8 pour le détail complet des reports.
+**Architecture conceptuelle de Ma feuille de route V3 : VERROUILLÉE (D-023, 2026-09-26).** Quatre arbitrages QG le même jour (production/moment de décision ; exploration/filtrage ; anatomie d'une voie ; architecture documentaire finale) ont déterminé : MFR = produit autonome complet (aucun choix capté requis pour son achèvement) ; pipeline `EXPLORER→ÉVALUER→FILTRER→PRÉSENTER` ; granularité VOIE→OPTION(S) ; anatomie à 7 blocs par voie (dont `PROCHAINE ACTION` = TEST ou ACTION DIRECTE) ; traitement des directions Q32 non considérées aujourd'hui (« Direction à garder en vue », en retrait) ; architecture documentaire finale à 7 sections + une clôture non numérotée (contre 12 sections historiques — 4 supprimées comme sections autonomes, fonctions absorbées). Détail canonique complet : `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md`. **Aucune architecture technique n'est décidée** — voir §8.
 
 ## 4. Travail partiellement terminé / non implémenté (à ne pas supposer existant)
 
@@ -106,21 +106,29 @@ Fichiers présents dans `supabase/migrations/` : `001_schema`, `001_trading_boot
 
 ## 8. Prochaine action exacte
 
-**Matrice finale de couverture Q1-Q36 : CLOSE (D-022, 2026-09-25).** L'audit individuel des 36 questions puis l'audit inverse global (parti des décisions que Ma feuille de route doit éclairer pour vérifier en sens inverse la couverture de Q1-Q36) sont terminés et arbitrés. Aucune suppression de question, deux micro-données ajoutées (territoire principal en Étape 1, actif relationnel mobilisable en Étape 4). Détail canonique complet : `docs/project-memory/MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md`.
+**Matrice finale de couverture Q1-Q36 : CLOSE (D-022, 2026-09-25).** Détail canonique complet : `docs/project-memory/MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md`.
 
-**Chantier suivant, non commencé à ce stade, à ouvrir explicitement par le QG :** architecture technique de Ma feuille de route. Reports explicitement identifiés par l'audit de clôture (D-022), aucun n'est tranché :
-- Mécanisme de convergence DÉCLARÉ → ÉTAYÉ (comment plusieurs signaux DÉCLARÉS convergent vers un niveau de preuve supérieur) — aucun principe de scoring n'a été défini à dessein.
+**Architecture conceptuelle de Ma feuille de route V3 : CLOSE (D-023, 2026-09-26).** Détail canonique complet : `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md`. **Prochain verrou conceptuel identifié, non commencé, à ouvrir explicitement par le QG : le mécanisme de convergence DÉCLARÉ → ÉTAYÉ** (comment plusieurs signaux DÉCLARÉS convergent vers un niveau de preuve supérieur — aucun principe de scoring défini à dessein). **Aucune architecture technique de Ma feuille de route n'est décidée à ce stade** : aucun provider IA choisi, aucun prompt final, aucune orchestration/nombre d'appels arbitré, aucun schéma de données ni RPC supplémentaire décidé.
+
+**Reports requalifiés à la lumière des Arbitrages 1-4 (D-023) — ne plus traiter comme ouverts :**
+- ~~Mécanisme du point de choix de la personne dans l'architecture UX hub/étapes (« la personne décide »)~~ → résolu conceptuellement : MFR n'a pas besoin de capturer un choix pour être complète (Arbitrage 1) ; Section « Pour t'aider à choisir » remplace « Ta décision » (Arbitrage 4).
+- ~~Fonction exacte de la section « Ton miroir CoachRedo »~~ → résolu : section supprimée comme section autonome (Arbitrage 4) — aucune fonction distincte et nécessaire trouvée au-delà d'un signal de tension factuelle résiduel, non tenu comme une section dédiée.
+- ~~Mécanisme de filtrage/croisement produisant les voies/options elles-mêmes~~ → **principe et pipeline conceptuel verrouillés** (`EXPLORER→ÉVALUER→FILTRER→PRÉSENTER`, granularité VOIE→OPTION, Arbitrage 2-3) ; l'**algorithme technique** de croisement lui-même reste ouvert (chantier technique futur).
+
+**Reports partiellement précisés par les Arbitrages 1-4, restant ouverts pour leur volet technique :**
+- Mécanisme d'exploration élargie de CoachRedo hors des environnements spontanément cités (Q33/Q34) — le principe opérationnel est désormais verrouillé (EXPLORER seedé au-delà de Q33/34 par l'objectif, le parcours, les capacités, les ressources, les contraintes, le territoire, les critères — Arbitrage 2), la mise en œuvre technique (quelles sources, quelle méthode) reste ouverte.
+- Architecture détaillée de génération de Ma feuille de route et de sélection du premier test — l'**anatomie conceptuelle** est désormais verrouillée (7 blocs par voie, `PROCHAINE ACTION` = TEST ou ACTION DIRECTE, trajectoire à 4 temps — Arbitrages 3-4) ; l'**architecture technique de génération** (provider, prompts, orchestration, nombre d'appels) reste explicitement ouverte.
+
+**Reports non affectés par les Arbitrages 1-4, toujours ouverts sans changement :**
+- Mécanisme de convergence DÉCLARÉ → ÉTAYÉ (voir ci-dessus, devient le prochain verrou conceptuel).
 - Mécanismes déterministes de skip/recovery (branche moyen/long terme de Q6, WHY conditionnel, Q15, Q25, et les autres triggers déjà identifiés dans le fichier questionnaire).
 - Mécanisme de réutilisation UX pour les chevauchements identifiés (Q16/branche activité existante de Q1, Q11/Q33).
 - Seuils et algorithme du principe à 3 niveaux de Q20 (action numérique requise par la route : autonome / accompagnement léger / acquisition significative).
-- Mécanisme d'exploration élargie de CoachRedo hors des environnements spontanément cités par la personne (Q33/Q34).
-- Mécanisme de filtrage/croisement produisant les voies/options elles-mêmes — cœur de l'architecture technique, aucune question ne le fournit directement (normal, c'est un produit d'analyse).
-- Mécanisme du point de choix de la personne dans l'architecture UX hub/étapes (« la personne décide »).
-- Fonction exacte de la section « Ton miroir CoachRedo » du futur rapport — **ne devra jamais devenir un profil psychologique ni une affirmation identitaire**, risque déjà identifié comme le plus élevé de l'architecture du rapport envisagée.
 - Position écran et numérotation définitive de Q1-Q36 et des deux micro-données ajoutées.
 - Opérationnalisation déterministe complète de P0/P1/P2/P3 et du budget global de relances (déjà HYPOTHÈSE V1 à tester).
-- Architecture détaillée de génération de Ma feuille de route et de sélection du premier test.
 
-Après ouverture explicite de ce chantier par le QG, la séquence prévue reste (voir §3) : architecture technique de Ma feuille de route/Rapport → conception puis implémentation de la RPC `SECURITY DEFINER` de lecture contrôlée côté client (un utilisateur authentifié ne peut récupérer que son propre Rapport publié — champs strictement limités à `id, sections, contenu_coach, publie_le`, conformément à D-013), **sauf décision QG contraire issue de cette séquence**. Le choix du fournisseur IA reste **ouvert, différé et non bloquant**.
+**Points ouverts propres aux Arbitrages 1-4, non résolus, listés dans `MA_FEUILLE_DE_ROUTE_V3.md` §G** : position exacte de « Direction(s) à garder en vue » dans le document ; wording UX final de toutes les sections. (Le fork Architecture I/Architecture II, un temps envisagé, est tranché — voir `MA_FEUILLE_DE_ROUTE_V3.md` §F : Architecture I retenue, Section 2 et Section 4 restent deux sections distinctes.)
+
+Après ouverture explicite du prochain chantier par le QG, la séquence prévue reste (voir §3) : mécanisme de convergence DÉCLARÉ→ÉTAYÉ → architecture technique de génération de Ma feuille de route → conception puis implémentation de la RPC `SECURITY DEFINER` de lecture contrôlée côté client (un utilisateur authentifié ne peut récupérer que son propre Rapport publié — champs strictement limités à `id, sections, contenu_coach, publie_le`, conformément à D-013), **sauf décision QG contraire issue de cette séquence**. Le choix du fournisseur IA reste **ouvert, différé et non bloquant**.
 
 **En parallèle, sans lien avec ce qui précède** : le Bilan actuel (V2, en production) reste gelé (`BILAN_OPEN=false`, §2, §6, D-017) pendant la phase testeurs du livre. Ce gel n'est pas une action de ce chantier et n'a pas vocation à être réévalué automatiquement, sauf si le QG le demande explicitement.
