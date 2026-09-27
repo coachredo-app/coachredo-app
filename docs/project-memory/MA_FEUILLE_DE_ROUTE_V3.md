@@ -1,15 +1,15 @@
 ---
 name: ma-feuille-de-route-v3
-description: Architecture conceptuelle verrouillée de Ma feuille de route V3 (pipeline exploration/filtrage, granularité voie/option, anatomie d'une voie, architecture documentaire finale à 7 sections) — décisions conceptuelles issues des Arbitrages 1-4, pas une architecture technique.
+description: Architecture conceptuelle verrouillée de Ma feuille de route V3 (pipeline exploration/filtrage, granularité voie/option, anatomie d'une voie, mécanisme de convergence de preuve, architecture documentaire finale à 7 sections) — décisions conceptuelles issues des Arbitrages 1-5, pas une architecture technique.
 metadata:
   type: project-memory
 ---
 
 # MA_FEUILLE_DE_ROUTE_V3 — Architecture conceptuelle verrouillée
 
-Dernière mise à jour : 2026-09-26 (D-023 — clôture des Arbitrages 1-4 MFR)
+Dernière mise à jour : 2026-09-26 (D-024 — verrouillage du mécanisme de convergence DÉCLARÉ→ÉTAYÉ, Arbitrage 5)
 
-Ce document enregistre l'architecture **conceptuelle** de Ma feuille de route V3, arbitrée par le QG en quatre tours le 2026-09-26 (Arbitrages 1 à 4). **Aucune architecture technique n'est décidée ici** : provider IA, prompts, orchestration, nombre d'appels, schéma de données et RPC restent explicitement ouverts (voir `CURRENT_STATE.md` §8). Ce document est le pendant, côté Ma feuille de route, de `MON_POINT_DE_DEPART_V3.md` (côté collecte).
+Ce document enregistre l'architecture **conceptuelle** de Ma feuille de route V3, arbitrée par le QG en cinq tours le 2026-09-26 (Arbitrages 1 à 5). **Aucune architecture technique n'est décidée ici** : provider IA, prompts, orchestration, nombre d'appels, schéma de données et RPC restent explicitement ouverts (voir `CURRENT_STATE.md` §8). Ce document est le pendant, côté Ma feuille de route, de `MON_POINT_DE_DEPART_V3.md` (côté collecte) — la doctrine de convergence de preuve vit ici, pas dans les fichiers MPD, pour éviter toute duplication.
 
 ---
 
@@ -88,13 +88,52 @@ Sept blocs conceptuels :
 - Si une incertitude décisive doit être réduite avant d'avancer intelligemment → **TEST** : `INCONNU/HYPOTHÈSE → QUESTION → TEST → SIGNAL OBSERVABLE`.
 - Si les preuves disponibles permettent déjà d'avancer intelligemment → **ACTION DIRECTE** : `PREUVES SUFFISANTES POUR CETTE ÉTAPE → ACTION DIRECTE`.
 
-Question directrice pour choisir : *qu'est-ce qui manque aujourd'hui pour avancer intelligemment ?* Exemple conceptuel verrouillé : une activité réelle qui fonctionne déjà ne doit jamais recevoir artificiellement un test destiné à vérifier ce qui est déjà suffisamment établi. Un test ne doit jamais devenir une recette générique (« parle à X personnes ») — il découle de l'incertitude critique propre à la voie.
+Question directrice pour choisir : *qu'est-ce qui manque aujourd'hui pour avancer intelligemment ?* Exemple conceptuel verrouillé : une activité réelle qui fonctionne déjà ne doit jamais recevoir artificiellement un test destiné à vérifier ce qui est déjà suffisamment établi. Un test ne doit jamais devenir une recette générique (« parle à X personnes ») — il découle de l'incertitude critique propre à la voie. **Pas de gate ÉTAYÉ (Arbitrage 5, §D.3) :** ÉTAYÉ n'est jamais une condition obligatoire d'ACTION DIRECTE — une action directe reste raisonnable avec une capacité seulement DÉCLARÉE si l'action elle-même est de risque suffisamment faible, réversible, proportionnée, et produit elle-même de l'information terrain. Un test peut être lui-même une action réelle.
 
 **Lecture du résultat d'un test, autonomie :** lorsqu'un test est proposé, MFR explique ce qu'il cherche à apprendre, les moyens nécessaires, les signaux à observer, ce que ces signaux peuvent raisonnablement indiquer, et ce qu'ils ne permettent pas encore de conclure — ceci relève de l'éducation à la preuve et de l'autonomie. MFR **ne préconstruit pas** une arborescence exhaustive d'adaptations futures (« si résultat A → action B → si B échoue → C… ») — l'analyse continue des résultats et les adaptations successives appartiennent à l'action autonome ultérieure ou au futur coaching facultatif.
 
 ### D.2 — Comparabilité sans classement
 
 Plusieurs voies suivent les mêmes règles de construction et les mêmes règles d'apparition des blocs conditionnels — mais pas nécessairement la même longueur, le même nombre d'options, le même nombre d'inconnues, ni la même quantité de texte. Une différence de profondeur est légitime lorsqu'elle découle réellement de la voie et des informations disponibles ; elle ne doit jamais être utilisée pour favoriser silencieusement une voie. Aucun score global, aucun classement, aucun gagnant, aucune « meilleure voie » désignée par CoachRedo.
+
+### D.3 — Mécanisme de convergence DÉCLARÉ → ÉTAYÉ (Arbitrage 5)
+
+**Pas une progression pendant la collecte.** La collecte MPD reste déterministe ; l'évaluation du niveau de preuve intervient **une seule fois, après la collecte**, sur l'ensemble des informations disponibles — une réponse ne « monte » jamais progressivement de statut au fil du questionnaire.
+
+**Signification de ÉTAYÉ :** suffisamment soutenu par le récit structuré pour être utilisé prudemment dans le raisonnement CoachRedo. Jamais une vérité certifiée, une preuve externe indépendante, une qualification professionnelle, une garantie de performance future, ou une validation marché.
+
+**Vocabulaire canonique : diversité des référents, jamais « indépendance des sources ».** Dans MPD, la source primaire reste généralement la personne — il ne peut donc jamais y avoir d'indépendance des signaux au sens strict. Ce qui compte : plusieurs éléments se rapportent-ils au même fait/épisode répété, ou à des faits/épisodes réellement distincts ? **Un même épisode raconté dans plusieurs réponses ne constitue qu'un seul référent.** La détection technique/automatique de cette identité de référent reste un problème d'implémentation ultérieur, explicitement non résolu à ce stade.
+
+**Règle de convergence, sans seuil numérique :** une proposition peut être ÉTAYÉE lorsqu'au moins deux référents réellement distincts apportent une corroboration substantielle de la même proposition, dont au moins un épisode concret. La seconde corroboration doit apporter une information nouvelle sur la réalité de la proposition, jamais une simple reformulation de la première. Cette règle reste à opérationnaliser techniquement, sans jamais la transformer silencieusement en score arbitraire.
+
+**Typologie des signaux — analytique, jamais numérique :** auto-évaluation abstraite ; contexte/provenance ; modèle comportemental agrégé rapporté ; épisode concret ; trace externe rapportée liée à un épisode ; éventuelle preuve externe vérifiée (catégorie future, hors MPD). Utile pour raisonner et auditer une décision — **ne devient jamais un score, un rang numérique additif, ni un seuil canonique.**
+
+**Les cinq statuts ne forment pas une échelle de confiance.** Ne jamais représenter INCONNU→DÉCLARÉ→INFÉRÉ→ÉTAYÉ ni DÉCLARÉ<INFÉRÉ<ÉTAYÉ — ce sont des natures épistémiques différentes :
+- **DÉCLARÉ** : la personne affirme X.
+- **ÉTAYÉ** : plusieurs référents substantiels distincts soutiennent précisément X.
+- **INFÉRÉ** : CoachRedo déduit prudemment Y à partir d'informations disponibles, au-delà de leur formulation littérale.
+- **CONTRADICTOIRE** : informations réellement incompatibles sur le même objet/référent, même période/granularité pertinente.
+- **INCONNU** : les informations disponibles ne permettent pas raisonnablement de conclure.
+
+**Objets concernés par ÉTAYÉ, principalement deux :**
+- **Capacités** — cas central. Étayée quand plusieurs référents substantiels distincts soutiennent précisément cette capacité.
+- **Certains comportements passés** — étayés uniquement dans leur portée factuelle/épisodique (« dans plusieurs situations rapportées, la personne a fait X »), jamais transformés en trait stable, personnalité, profil psychologique ou identité.
+
+**Objets qui restent naturellement DÉCLARÉS, jamais à faire monter artificiellement vers ÉTAYÉ :** préférences, contraintes, ressources, moyens disponibles, réseau d'aide, actif relationnel accessible, mobilisabilité actuelle, **et observation/connaissance déclarée d'un problème.** Ils peuvent être croisés et utilisés dans le raisonnement sans changer de statut. **Réseau d'aide (Q22) ≠ actif relationnel accessible (micro-donnée)** — deux faits DÉCLARÉS distincts ; leur coexistence ne produit jamais un « réseau ÉTAYÉ ».
+
+**Observation/connaissance d'un problème = DÉCLARÉE, explicitement hors du mécanisme de convergence.** Q33/Q34/Q36 peuvent rendre une observation plus pertinente pour l'exploration, sans jamais changer son statut. Maintenir strictement : problème observé ≠ demande ; plainte répétée ≠ volonté de payer ; connaissance d'un environnement ≠ marché validé ; solution existante ≠ opportunité viable.
+
+**Portée minimale de l'étayage.** CoachRedo étaye la proposition la plus précise raisonnablement supportée par les référents — jamais une généralisation. Toute généralisation, catégorie ou projection vers un contexte non testé bascule vers INFÉRÉ. Exemple verrouillé : ÉTAYÉ = « a coordonné plusieurs personnes dans plusieurs situations rapportées » ; INFÉRÉ = « pourrait disposer d'aptitudes utiles dans une fonction de coordination » ; jamais « est un manager » ou « a un profil de leader ».
+
+**Contradiction.** Une vraie contradiction suppose une incompatibilité réelle sur le même objet/référent et un périmètre temporel/granulaire comparable. Ne sont pas automatiquement contradictoires : capacité historiquement étayée + faible mobilisabilité actuelle ; succès passé + difficulté récente ; déclaration générale + absence de preuve concrète ; différence de contexte/période. Une contradiction locale n'invalide jamais automatiquement d'autres propositions étayées.
+
+**Axe A (preuve) ≠ Axe B (mobilisabilité), maintenu strictement.** Q18 reste sur l'axe B : ne produit jamais ÉTAYÉ, ne le renforce pas, ne dégrade jamais rétroactivement une preuve historique — sert uniquement à déterminer comment une capacité peut raisonnablement être mobilisée aujourd'hui. Une capacité peut donc être historiquement ÉTAYÉE et actuellement peu mobilisable, sans contradiction.
+
+**Aucun score.** Famille verrouillée : règles qualitatives déterministes. Rejet explicite : scoring pondéré, addition de points, seuil numérique arbitraire, score secondaire même « informatif ». Aucun score de preuve, interne ou visible utilisateur, pour V3.
+
+**Preuve personnelle ≠ validation terrain, verrou absolu.** Une capacité personnelle peut être ÉTAYÉE ; cela ne suffit jamais à étayer un marché, une demande, une volonté de payer, un prix, une offre, une rentabilité, ou la réussite future d'une voie — ces éléments restent INCONNUS ou éventuellement INFÉRÉS avec prudence jusqu'à recherche/test/terrain approprié. Maintenir : « L'IA explore. CoachRedo filtre et éclaire. La personne décide. Le terrain valide. »
+
+**Impact sur les blocs de l'anatomie (§D) :** « Pourquoi elle apparaît pour toi » distingue faits déclarés, propositions étayées et inférences pertinentes ; « Ce qu'elle demande » intègre la mobilisabilité actuelle sans la confondre avec la preuve historique ; « Ce que nous ne savons pas encore » conserve les inconnues réelles, notamment marché/opportunité ; « Ta prochaine action » dépend de l'incertitude déterminante, du risque, de la réversibilité et de l'information que l'action peut produire — jamais d'un simple statut de preuve (voir §D.1, pas de gate) ; la trajectoire devient plus conditionnelle quand les inconnues pertinentes augmentent, sans jamais utiliser la hiérarchie artificielle DÉCLARÉ<INFÉRÉ<ÉTAYÉ.
 
 ---
 
@@ -144,8 +183,10 @@ La suppression d'une section historique ne signifie jamais la suppression de sa 
 
 ## G. Ce qui reste explicitement ouvert
 
-Aucune architecture technique n'est décidée par les Arbitrages 1-4 : provider IA, prompts, orchestration interne (le nombre et la nature des opérations réelles — analyser/explorer/filtrer/construire/vérifier/rédiger ou une autre séquence — restent ouverts ; la décision conceptuelle ne se traduit pas par « un seul appel IA »), schéma de données, RPC, mise en page finale/PDF.
+Aucune architecture technique n'est décidée par les Arbitrages 1-5 : provider IA, prompts, orchestration interne (le nombre et la nature des opérations réelles — analyser/explorer/filtrer/construire/vérifier/rédiger ou une autre séquence — restent ouverts ; la décision conceptuelle ne se traduit pas par « un seul appel IA »), schéma de données, RPC, mise en page finale/PDF.
 
-Reports conceptuels encore ouverts, non résolus par les Arbitrages 1-4 : mécanisme de convergence DÉCLARÉ→ÉTAYÉ (aucun principe de scoring défini à dessein — **prochain verrou conceptuel**) ; algorithme technique exact du filtrage/croisement (le principe et le pipeline sont verrouillés, pas l'algorithme) ; seuils et algorithme du principe à 3 niveaux de Q20 ; mise en œuvre technique exacte de l'exploration élargie (le principe est verrouillé, pas la méthode) ; position exacte de « Direction(s) à garder en vue » dans le document ; wording UX final de toutes les sections. (Le fork Architecture I/Architecture II est tranché — voir §F, Section 2 : Architecture I retenue.)
+**Mécanisme de convergence DÉCLARÉ→ÉTAYÉ : conceptuellement verrouillé (§D.3, Arbitrage 5, D-024).** Reste ouvert, explicitement pour son seul volet technique : comment détecter de façon fiable qu'un même référent est cité sous deux questions différentes (§D.3).
 
-Voir `CURRENT_STATE.md` §8 pour le suivi vivant de ces reports, et `DECISIONS.md` D-023 pour la décision de clôture.
+Reports conceptuels encore ouverts, non résolus par les Arbitrages 1-5 : algorithme technique exact du filtrage/croisement produisant les voies elles-mêmes (le principe et le pipeline sont verrouillés, pas l'algorithme — candidat naturel pour un prochain verrou conceptuel, non ouvert à ce stade) ; seuils et algorithme du principe à 3 niveaux de Q20 ; mise en œuvre technique exacte de l'exploration élargie (le principe est verrouillé, pas la méthode) ; détection technique du référent partagé (ci-dessus) ; position exacte de « Direction(s) à garder en vue » dans le document ; wording UX final de toutes les sections. (Le fork Architecture I/Architecture II est tranché — voir §F, Section 2 : Architecture I retenue.)
+
+Voir `CURRENT_STATE.md` §8 pour le suivi vivant de ces reports, et `DECISIONS.md` D-023/D-024 pour les décisions de clôture.

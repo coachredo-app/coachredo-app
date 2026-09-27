@@ -507,7 +507,7 @@ Toutes les questions Q1–Q36 + les deux micro-données ajoutées ont reçu le v
 - Mécanisme déterministe exact du déclenchement de Q15 (corrigé : dépend de l'absence d'épisode concret dans Q10-Q14, pas de Q11 — seule la traduction en règle structurée reste ouverte).
 - Mécanisme de réutilisation UX pour les chevauchements Q16/branche activité existante de Q1, et Q11/Q33.
 - Seuils et algorithme du principe à 3 niveaux route-relatif de Q20.
-- Mécanisme de convergence DÉCLARÉ→ÉTAYÉ — mécanisme non défini à ce stade par choix du QG ; prochain verrou conceptuel à arbitrer avant l'architecture technique de Ma feuille de route (cf. `CURRENT_STATE.md` §8, D-023).
+- ~~Mécanisme de convergence DÉCLARÉ→ÉTAYÉ~~ → résolu conceptuellement (Arbitrage 5, D-024, 2026-09-26 — voir `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md` §D.3, non dupliqué ici). Reste ouvert uniquement pour son volet technique (détection du référent partagé).
 - Mécanisme d'exploration élargie de CoachRedo hors des environnements spontanément cités (garde-fou conceptuel verrouillé ; le principe opérationnel — EXPLORER seedé par l'objectif/le parcours/les capacités/les ressources au-delà de Q33-34 — est désormais précisé par l'Arbitrage 2 de Ma feuille de route V3, D-023 ; la mise en œuvre technique reste non définie).
 - Position écran et numérotation définitive de Q1-Q36 et des deux micro-données ajoutées (territoire principal, actif relationnel mobilisable).
 - Métriques de durée — hypothèses uniquement avant tests réels.

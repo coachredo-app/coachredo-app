@@ -7,7 +7,7 @@ metadata:
 
 # DECISIONS — CoachRedo App
 
-Dernière mise à jour : 2026-09-26 (V11 — D-023 ajoutée, clôture des Arbitrages 1-4 de l'architecture conceptuelle de Ma feuille de route V3)
+Dernière mise à jour : 2026-09-26 (V12 — D-024 ajoutée, verrouillage du mécanisme de convergence DÉCLARÉ→ÉTAYÉ, Arbitrage 5)
 
 Ce registre ne contient que les décisions structurantes — pas les discussions intermédiaires. Chaque entrée : sujet, décision, pourquoi, conséquence, statut. Une décision remplacée reste visible avec `Statut: SUPERSEDED`, jamais supprimée.
 
@@ -289,3 +289,26 @@ Les écritures d'autosauvegarde (réponses + étape courante), qui passaient aup
 **Pourquoi :** avant l'Arbitrage 1, l'analyse partait d'une prémisse non validée par le QG (le choix devait être capté pour que MFR soit complète) — corrigée en cours de route sans jamais avoir contredit une décision QG déjà verrouillée. L'architecture à 12 sections héritée de l'audit historique (D-022) était narrative, pas verrouillée comme contrainte de production ; les 4 arbitrages l'ont reprise fonction par fonction plutôt que section par section, pour déterminer ce qui restait réellement justifié une fois l'anatomie d'une voie et le pipeline d'analyse posés.
 **Conséquence :** nouveau fichier `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md` créé (détail complet, pendant de `MON_POINT_DE_DEPART_V3.md` côté collecte). `CURRENT_STATE.md` mis à jour : reports désormais résolus au niveau conceptuel (fonction du miroir, mécanisme du point de choix, pipeline de filtrage produisant les voies/options) ne sont plus listés comme ouverts ; reports non affectés (convergence DÉCLARÉ→ÉTAYÉ, mécanismes de skip/recovery MPD, seuils Q20, position écran Q1-Q36, opérationnalisation P0-P3) restent ouverts sans changement. **Aucune architecture technique n'est décidée** : provider IA, prompts, orchestration, schéma de données, RPC restent explicitement ouverts — le prochain verrou conceptuel identifié est le mécanisme de convergence DÉCLARÉ→ÉTAYÉ.
 **Statut :** ACTIVE — architecture conceptuelle verrouillée. Architecture technique non ouverte à ce stade.
+
+---
+
+### D-024 — Verrouillage du mécanisme de convergence DÉCLARÉ → ÉTAYÉ (Arbitrage 5)
+**Date :** 2026-09-26 (Arbitrage 5, cinquième tour d'arbitrage QG de la journée sur Ma feuille de route V3, après audit Claude soumis et corrigé)
+**Décision :** le QG verrouille le mécanisme conceptuel de convergence de preuve, avec plusieurs corrections substantielles par rapport à la proposition initiale de Claude :
+- **Pas une progression pendant la collecte** — l'évaluation du niveau de preuve intervient une seule fois, après la collecte, sur l'ensemble des informations disponibles.
+- **ÉTAYÉ signifie** : suffisamment soutenu par le récit structuré pour être utilisé prudemment dans le raisonnement CoachRedo — jamais une vérité certifiée, une preuve externe indépendante, une qualification professionnelle, une garantie de performance future, ou une validation marché.
+- **Vocabulaire canonique corrigé : « diversité des référents »**, pas « indépendance des signaux/sources » (la source reste la personne dans MPD). Un même épisode raconté plusieurs fois ne constitue qu'un seul référent — la détection technique de cette identité reste un problème d'implémentation futur, non résolu ici.
+- **Règle de convergence sans seuil numérique** — au moins deux référents réellement distincts apportant une corroboration substantielle de la même proposition, dont au moins un épisode concret ; la seconde corroboration doit apporter une information nouvelle, pas une reformulation. **Rejet explicite** de la formule initialement proposée par Claude (« ≥2 signaux de rang ≥2 dont un rang ≥3 »), jugée trop proche d'un scoring déguisé.
+- **Typologie des signaux conservée comme outil analytique/audit, jamais comme échelle numérique ou score.**
+- **Correction majeure : les cinq statuts ne forment pas une échelle de confiance** (pas de hiérarchie DÉCLARÉ<INFÉRÉ<ÉTAYÉ) — cinq natures épistémiques différentes.
+- **Objets concernés, resserrés par rapport à la proposition initiale :** capacités (cas central) et certains comportements passés (plafonnés à l'épisodique, jamais un trait stable). **Correction explicite : l'observation/connaissance déclarée d'un problème n'entre pas dans le mécanisme** — reste DÉCLARÉE, contrairement à ce que l'audit Claude avait proposé avec un pare-feu. Réseau d'aide (Q22) et actif relationnel (micro-donnée) restent deux faits DÉCLARÉS distincts, jamais fusionnés en un « réseau étayé ».
+- **Portée minimale de l'étayage verrouillée** : la proposition la plus précise réellement supportée, jamais une généralisation — toute généralisation bascule vers INFÉRÉ.
+- **Contradiction** : une vraie contradiction exige le même objet/référent et un périmètre temporel/granulaire comparable ; une contradiction locale n'invalide jamais automatiquement d'autres propositions étayées.
+- **Axe A (preuve) ≠ Axe B (mobilisabilité, Q18)** maintenu strictement — Q18 ne produit, ne renforce, ni ne dégrade jamais rétroactivement une preuve historique.
+- **Aucun score** — famille verrouillée : règles qualitatives déterministes. Rejet du scoring pondéré et de tout score secondaire même « informatif ».
+- **Preuve personnelle ≠ validation terrain**, verrou absolu — cohérent avec « le terrain valide ».
+- **Correction majeure sur l'impact produit : pas de gate ÉTAYÉ pour ACTION DIRECTE.** Le QG ne retient pas la règle initialement proposée par Claude (« ACTION DIRECTE exige capacité ÉTAYÉE + mobilisable »), jugée trop restrictive — une action directe reste raisonnable avec une capacité seulement DÉCLARÉE si l'action elle-même est de risque suffisamment faible, réversible, proportionnée, et produit elle-même de l'information terrain.
+
+**Pourquoi :** l'audit soumis par Claude (`~/Downloads/20260926_QG_MFR_arbitrage5_convergence_preuve.md`, non versionné) proposait une architecture globalement juste (règles qualitatives, diversité des référents, séparation des axes, plafond terrain) mais introduisait deux dérives que le QG a corrigées avant verrouillage : une quasi-formule de scoring déguisée sous un vocabulaire de « rangs », et une règle de gate trop restrictive entre ÉTAYÉ et ACTION DIRECTE. Le QG a également resserré le périmètre des objets concernés, retirant « connaissance d'un problème » que Claude avait inclus avec pare-feu.
+**Conséquence :** `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md` §D.3 créé (détail complet). `CURRENT_STATE.md` mis à jour : le report « mécanisme de convergence DÉCLARÉ→ÉTAYÉ » est requalifié comme résolu conceptuellement ; seul son volet technique (détection du référent partagé) reste ouvert, explicitement reporté à l'implémentation future. Un prochain verrou conceptuel candidat est proposé (mécanisme de filtrage produisant les voies elles-mêmes) mais **non ouvert** — le QG décidera de la séquence, sans ouverture automatique de l'architecture technique.
+**Statut :** ACTIVE — mécanisme conceptuel verrouillé. Détection technique du référent partagé et architecture technique de génération non ouvertes à ce stade.
