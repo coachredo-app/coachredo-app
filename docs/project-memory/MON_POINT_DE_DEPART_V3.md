@@ -7,7 +7,7 @@ metadata:
 
 # MON_POINT_DE_DEPART_V3 — Architecture UX arbitrée
 
-Dernière mise à jour : 2026-09-25 (conception de collecte Q1-Q36 close, D-022 — pointeur vers la doctrine temporelle ajouté en §F/§O)
+Dernière mise à jour : 2026-09-28 (mécanique déterministe de collecte close, A7/D-026 — pointeur mis à jour en fin de document)
 
 Ce document enregistre l'arbitrage QG du chantier UX « Journey Progress / Mon point de départ V3 » (benchmark *Alchemy of Self* étudié comme mécanisme, non copié). Ce sont des décisions **produit/UX**, pas une spécification technique — voir §P pour ce qui reste explicitement ouvert. Aucune implémentation n'est engagée par ce document.
 
@@ -130,4 +130,4 @@ Non verrouillés à ce stade, chantiers ultérieurs séparés : durées exactes 
 
 ## Prochaine étape officielle
 
-**Matrice finale de couverture Q1-Q36 : close (D-022, 2026-09-25).** **Architecture conceptuelle de Ma feuille de route V3 : close (D-023, D-024, D-025, 2026-09-26 à 2026-09-28)** — pipeline exploration/filtrage, granularité voie/option, anatomie d'une voie à 7 blocs, mécanisme de convergence de preuve DÉCLARÉ→ÉTAYÉ, mécanisme de plausibilité et de présentation des voies (Cohérence/Compatibilité/Actionnabilité/Disponibilité), architecture documentaire finale à 7 sections. Détail canonique complet : `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md`. Aucune architecture technique ouverte à ce stade — voir `CURRENT_STATE.md` §8 pour le suivi vivant des reports techniques.
+**Matrice finale de couverture Q1-Q36 : close (D-022, 2026-09-25).** **Architecture conceptuelle de Ma feuille de route V3 : close (D-023, D-024, D-025, 2026-09-26 à 2026-09-28)** — pipeline exploration/filtrage, granularité voie/option, anatomie d'une voie à 7 blocs, mécanisme de convergence de preuve DÉCLARÉ→ÉTAYÉ, mécanisme de plausibilité et de présentation des voies (Cohérence/Compatibilité/Actionnabilité/Disponibilité), architecture documentaire finale à 7 sections. Détail canonique complet : `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md`. **Mécanique déterministe de collecte (Mon point de départ, §D de ce document) : close (A7, D-026, 2026-09-28)** — frontière « adaptation déterministe pendant la collecte, IA après la collecte » précisée, P0/P1/P2/P3 et budget global de relances abandonnés, triggers de relance/branche/skip tous formalisés en syntaxe structurée, règles de réutilisation verrouillées. Détail canonique complet : `docs/project-memory/MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md`. Aucune architecture technique ouverte à ce stade — voir `CURRENT_STATE.md` §8 pour le suivi vivant des reports techniques.

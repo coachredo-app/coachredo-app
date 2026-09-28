@@ -7,7 +7,7 @@ metadata:
 
 # MON_POINT_DE_DEPART_V3_QUESTIONNAIRE — Source de vérité Q1-Q36
 
-Dernière mise à jour : 2026-09-25 (conception de collecte CLOSE, D-022 — statuts finaux post-audit individuel + audit inverse global, deux micro-données ajoutées)
+Dernière mise à jour : 2026-09-28 (mécanique déterministe de collecte close, A7/D-026 — abandon du budget de relances et de P0-P3 opérationnel, relances désormais strictement structurées)
 
 Ce document transcrit fidèlement le handoff QG2 (`HANDOFF_QG2_MON_POINT_DE_DEPART_V3.md`, transmis par le QG le 2026-09-23) sur le contenu détaillé du questionnaire Mon point de départ V3, **mis à jour avec les verdicts finaux de la matrice de couverture Q1-Q36** (audit individuel des 36 questions par étape, puis audit inverse global de couverture décisionnelle, clôturés et arbitrés le 2026-09-25, cf. DECISIONS D-022). **Aucune information n'a été comblée par supposition** — les points encore ouverts sont explicitement notés comme tels.
 
@@ -51,6 +51,8 @@ Aucune question générée librement par IA pendant la collecte. Exemples d'adap
 
 **Frontière IA (VALIDÉE) :** « Adaptation déterministe pendant la collecte. IA après la collecte. » Après la collecte : extraction structurée → croisements → contradictions → capacités possibles → inconnus → voies possibles → critique → priorisation → route → rédaction → QA → validation humaine initiale. L'IA ne doit pas inventer ce que la personne n'a pas dit. Une évolution future pourrait utiliser des **checkpoints IA** pour sélectionner parmi des questions déjà validées, mais **pas en V1**.
 
+**Précision verrouillée (A7, D-026, 2026-09-28) :** cette frontière signifie explicitement que la collecte **ne juge jamais sémantiquement la qualité d'un texte libre** pour décider du parcours (déclenchement de branche, relance, skip). Toute branche ou apparition conditionnelle repose exclusivement sur des choix, états ou signaux **structurés** (option sélectionnée, présence/absence d'une entrée, compte d'entrées, combinaison de choix). Le texte libre reste une **matière déclarée** dont l'interprétation appartient exclusivement à l'analyse post-collecte — une réponse libre pauvre, vague ou incomplète n'est ni jugée, ni relancée sur cette seule base pendant la collecte, ni transformée automatiquement en INCONNU : elle reste une donnée déclarée, appréciée après coup. Aucune IA live, classification sémantique cachée, NLP ou heuristique lexicale n'intervient pendant la collecte. Détail complet des relances et statuts d'apparition concernés : voir §1 (P0-P3/budget, superseded) et chaque question concernée en §2.
+
 **Limite V1 sur l'adaptation sémantique (VALIDÉE, §18) :** un skip du type « cette réponse libre à Q23 couvre déjà Q25 » nécessite une compréhension sémantique que le système ne peut pas garantir sans IA en direct. Règle : **skip sémantique uniquement si des signaux structurés déterministes permettent la décision** ; sinon, accepter une petite redondance plutôt qu'une architecture opaque. S'applique explicitement au skip Q23/Q24→Q25.
 
 **Charge cognitive et ordre (VALIDÉ, §19)** — courbe recherchée : 🟢 Situation → 🟠 Objectif → 🔴 Parcours → 🟢 Ressources → 🔴 Action → 🟢 Faisabilité → 🟠 Environnement. Seul changement d'ordre interne significatif : l'étape 5 (voir §5 ci-dessous).
@@ -59,41 +61,33 @@ Aucune question générée librement par IA pendant la collecte. Exemples d'adap
 
 ## 1. Règles transversales de collecte
 
-### P0 / P1 / P2 / P3 (VALIDÉ CONCEPTUELLEMENT)
+### P0 / P1 / P2 / P3 — **SUPERSEDED (A7, D-026, 2026-09-28), retiré de la mécanique opérationnelle active**
 
-Ce ne sont **jamais des notes attribuées à la personne** — uniquement la couverture d'une information nécessaire.
+**Historique, non actif.** Ce cadre avait été introduit (handoff QG2) pour distinguer les insuffisances selon leur importance pour la décision aval. L'audit A7 a établi qu'il ne produisait **aucune décision opérationnelle distincte** de ce que chaque relance prédéfinie par question encode déjà : la question de savoir si une relance a lieu est entièrement déterminée par la condition structurée propre à chaque question (§2), jamais par un niveau P consulté à l'exécution. Sa seule fonction distincte (prioriser les relances quand un budget global était sur le point d'être épuisé) disparaît avec l'abandon du budget (ci-dessous). **P0/P1/P2/P3 ne sont pas conservés comme doctrine active « au cas où »** — ils ne doivent plus apparaître comme mécanisme actif de MPD V3. Peuvent subsister comme repère historique de conception (pourquoi une question a ou n'a pas de relance), jamais comme mécanisme consulté pendant la collecte.
 
-- **P0** — information suffisamment obtenue → continuer.
-- **P1** — information exploitable mais améliorable → **continuer sans relance par défaut**. Le handoff note explicitement : « C'est une évolution importante de notre définition précédente. »
-- **P2** — information importante insuffisante, susceptible de modifier une voie/contrainte/recommandation/étape → une relance prédéfinie **si le budget de friction le permet**.
-- **P3** — information essentielle insuffisante (une conclusion importante pourrait être peu fiable sans elle) → une relance prédéfinie prioritaire. Ne donne jamais droit à une interrogation sans fin.
-- Après relance insuffisante (P2 ou P3) → **INCONNU → continuer.**
+### Maximum une relance principale (VALIDÉ, règle absolue — inchangée)
 
-**⚠️ Point à signaler, pas résolu silencieusement :** la mémoire `CURRENT_STATE.md` documentait jusqu'ici (avant cette synchronisation) une définition antérieure de P1 : « amélioration secondaire possible, relance seulement si le contexte la rend utile ». Le handoff QG2 indique explicitement que cette définition a évolué vers « continuer sans relance par défaut ». Cette synchronisation retient la définition **la plus récente** (celle ci-dessus, confirmée à la fois par le handoff et par le message QG transmettant cette mission), et retire l'ancienne formulation de `CURRENT_STATE.md` plutôt que de la laisser divergente — ce n'est pas une décision prise de ma propre initiative : c'est l'application directe de ce que le handoff et le QG ont déjà tranché.
+Question → réponse insuffisante selon une **condition structurée prédéfinie** → une relance prédéfinie → encore insuffisant → **INCONNU ou donnée déclarée telle quelle → suite.** Pas de chaîne (« pourquoi ? → exemple ? → précise ? » explicitement exclu). Cette règle reste la seule gouvernant l'existence d'une relance — **aucune priorisation globale, aucun budget, aucune exception.**
 
-### Maximum une relance principale (VALIDÉ, règle absolue V1)
+### Budget global de relances — **ABANDONNÉ (A7, D-026, 2026-09-28)**
 
-Question → réponse insuffisante → une relance prédéfinie → encore insuffisant → **INCONNU → suite.** Pas de chaîne (« pourquoi ? → exemple ? → précise → pourquoi encore ? » est explicitement exclu).
+**Historique, non actif.** L'hypothèse « 5 relances principales maximum » (V1, jamais validée par des usages réels) est abandonnée, de même que l'ordre de priorité qui en dépendait (« P3 avant P2 ») et l'exception `critical_for_route = true` qui n'existait que pour compenser la perte d'information que ce budget pouvait provoquer. L'audit A7 a établi qu'aucun de ces trois mécanismes ne conserve de fonction une fois le budget retiré : chaque question éligible porte sa propre relance, indépendante des autres — la protection qu'`critical_for_route` cherchait à apporter (ne jamais perdre une relance sur une donnée structurante faute de budget) est désormais **structurelle**, pas une exception. **Aucun de ces trois éléments ne doit apparaître comme règle active.**
 
-### Budget global de relances — **HYPOTHÈSE V1 À TESTER**
-
-Recommandation de travail après simulation : **5 relances principales maximum pour V1.** Priorité : P3 avant P2. P1 n'utilise normalement aucun budget.
-
-**Statut exact (à ne jamais présenter comme verrouillé) :** HYPOTHÈSE V1 À TESTER, pas une vérité méthodologique définitive — à valider par les vrais usages.
-
-**Exception envisagée, non arbitrée :** `critical_for_route = true`, pour éviter qu'une information absolument indispensable soit abandonnée uniquement parce que les 5 relances sont déjà consommées. **À ARBITRER.**
+**Principe local désormais seul actif :** une question ne possède une relance que si celle-ci est explicitement prévue par sa conception **et** déclenchable sans interprétation sémantique du texte libre. Quand elle existe : `question → condition structurée → une relance maximum → continuation`. Aucune chaîne, aucune priorisation globale.
 
 ### INCONNU (VALIDÉ)
 
 Sortie normale du système, pas un échec. Doctrine : « Quand CoachRedo ne sait pas, il questionne. Quand il ne peut pas encore savoir, il propose un test. Il n'invente jamais. » Une absence d'information peut devenir une partie de la feuille de route (« ce que nous devons encore vérifier »). Exemples : aucun problème observé→observation terrain ; capacité incertaine→test ; direction inconnue→exploration ; solution actuelle inconnue→conversation terrain. **INCONNU est un état de donnée, jamais un état UX d'étape** (cohérent avec `MON_POINT_DE_DEPART_V3.md` §E).
 
-### Réutilisation des données déjà obtenues (VALIDÉ)
+### Réutilisation des données déjà obtenues — **règles exactes verrouillées (A7, D-026, 2026-09-28)**
 
-« CoachRedo ne redemande pas à la personne une information qu'elle lui a déjà suffisamment donnée. » L'adaptation peut : réutiliser, rappeler, préremplir, croiser, éviter une répétition. Exemples travaillés (pas des règles génériques, des cas illustratifs) :
-- si Q11 contient déjà une longue expérience en restauration, Q33 pourrait rappeler cette information et ne demander que les environnements **additionnels** ;
-- Q14 et Q24 peuvent éventuellement exploiter un même épisode si les données nécessaires sont déjà disponibles.
+« CoachRedo ne redemande pas à la personne une information qu'elle lui a déjà suffisamment donnée » — mais **une ressemblance de vocabulaire n'est pas une équivalence de donnée**. Trois cas formalisés :
 
-Ne pas supposer qu'une IA sémantique en temps réel réalise cette tâche en V1 (cf. limite §18 ci-dessus).
+- **Q1 (branche activité) → Q16** : contextualisation uniquement — le contenu structuré de la branche activité (stade déclaré) peut **contextualiser le prompt de Q16** (ex. rappeler l'activité en cours pour cadrer l'exemple demandé). Il ne peut **ni remplacer Q16, ni préremplir une preuve de valeur, ni permettre de la skipper** — Q1 et Q16 répondent à des questions différentes (état actuel déclaré vs épisode concret de valeur produite), déjà verrouillé indépendamment de ce point.
+- **Q11 → Q33** : une information structurée de Q11 (ex. domaine/secteur d'un emploi passé) peut être rappelée **uniquement comme hypothèse à confirmer par la personne** (« Tu avais mentionné [environnement] plus tôt — est-ce aussi un environnement que tu connais suffisamment aujourd'hui ? »), **jamais transférée automatiquement** en donnée Q33. Ne jamais supposer que « source d'apprentissage » (Q11, un canal passé) équivaut à « environnement connu aujourd'hui » (Q33) — Q33 continue de demander les environnements additionnels dans tous les cas.
+- **Q14 / Q24** : **aucun mécanisme de réutilisation.** Leurs portées temporelles diffèrent structurellement (Q14 sans contrainte de récence ; Q24 explicitement une situation récente) et aucun signal structuré ne permet de détecter fiablement qu'il s'agit du même épisode. Si la personne raconte éventuellement le même épisode aux deux questions, cette répétition est **acceptée sans mécanisme particulier** — pas une IA sémantique en temps réel pour la détecter.
+
+Cette discipline reste distincte de la future détection post-collecte des référents pour la convergence DÉCLARÉ→ÉTAYÉ (D-024), qui intervient après la collecte, jamais pendant.
 
 ### Règle des aides et exemples (VALIDÉE)
 
@@ -123,6 +117,8 @@ Trois états d'apparition exclusivement, sans hiérarchie d'importance automatiq
 - **RÉCUPÉRATION** = apparaît seulement lorsque les questions précédentes n'ont pas suffisamment couvert une dimension.
 
 « Contextualisation » (une question qui qualifie/enrichit une donnée déjà obtenue sous un angle particulier, ex. Q14 et Q24) reste un **descripteur analytique secondaire** possible, **jamais un quatrième état d'apparition** — ne pas mélanger fonction analytique et logique UX d'apparition.
+
+**Précision verrouillée (A7, D-026) :** le passage CONDITIONNELLE/RÉCUPÉRATION est désormais exclusivement fondé sur des **triggers structurés** (choix explicite, présence/absence d'entrée, combinaison d'états déjà structurés) — jamais sur une évaluation sémantique du contenu d'un texte libre. Le détail exact par question figure en §2 ; la liste consolidée des mécanismes encore actifs figure dans `CURRENT_STATE.md` §8.
 
 ### Johari (VALIDÉ comme mécanisme interne)
 
@@ -211,7 +207,7 @@ Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton 
 **Q4 — Réalité récente du temps**
 - Formulation : « Pense à la semaine dernière. Qu'est-ce qui a pris le plus de ton temps ? » (jusqu'à 3 parmi : travail/activité pro, études/formation, enfants/famille, maison/tâches, déplacements, projet/activité personnelle, loisirs/sorties, repos, autre)
 - Question associée : « Cette semaine ressemblait-elle à une semaine habituelle pour toi ? » — Oui plutôt / Non elle était exceptionnelle / Ça varie beaucoup
-- Relance conditionnelle si tension Q3/Q4 : « Tu as indiqué pouvoir consacrer environ [X] heures par semaine à ton Plan B. Avec ton organisation actuelle, à quels moments pourrais-tu réellement trouver ce temps ? »
+- **Relance structurée conservée (A7, D-026) :** déclenchée par la réponse structurée à « cette semaine ressemblait-elle à une semaine habituelle ? » ≠ « Oui plutôt » (jamais par une comparaison sémantique du contenu de Q3/Q4) : « Tu as indiqué pouvoir consacrer environ [X] heures par semaine à ton Plan B. Avec ton organisation actuelle, à quels moments pourrais-tu réellement trouver ce temps ? »
 - Limite d'interprétation : un épisode d'une semaine = observation récente déclarée, **pas une preuve forte** d'une habitude générale
 - **Statut : VALIDÉ** — ancienne Q4-B (« Comment décrirais-tu cette semaine ? ») supprimée.
 
@@ -219,28 +215,31 @@ Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton 
 - Formulation : « Pourquoi cherches-tu à construire un Plan B maintenant ? »
 - Aide (sans exemple) : « Qu'est-ce qui, dans ta situation actuelle, t'a donné envie ou besoin de commencer à chercher une autre voie ? »
 - Type : réponse libre
-- Relance conditionnelle si événement/délai concret nécessitant précision : « À partir de quand cette situation risque-t-elle de devenir un vrai problème pour toi ? »
+- **Relance supprimée (A7, D-026)** — reposait sur une détection sémantique d'un événement/délai dans le texte libre, non déterminable sans IA en direct ; redondante avec Q29, qui collecte déjà l'horizon/urgence de façon structurée. Une réponse à Q5 reste une donnée déclarée telle quelle.
 - Objectif : déclencheur / WHY NOW. Ne pas confondre avec Q29 (pression économique).
 
 ### Étape 2 — Ce que tu veux changer
 
-**Q6 — Changement recherché**
+**Q6 — Changement recherché — SOCLE, RESTRUCTURÉE (A7, D-026, 2026-09-28)**
 - Formulation : « Si ton Plan B commençait vraiment à fonctionner, qu'aimerais-tu qu'il change concrètement dans ta vie ? »
 - Aide (sans exemple) : « Pense à ce que tu aimerais voir réellement changer dans ta situation ou dans ta vie. »
-- Relance si réponse vague : « Qu'est-ce qui serait concrètement différent dans ta vie si les choses allaient mieux ? »
-- Relance si réponse uniquement financière : « Si tu gagnais davantage grâce à ton Plan B, qu'est-ce que cela te permettrait concrètement de changer dans ta vie ? »
-- Objectif : destination/changement recherché. Règle : une motivation financière est légitime — ne pas chercher artificiellement une motivation « plus profonde ».
-- **Branche moyen/long terme, non numérotée — CONSERVER MAIS À AJUSTER (VALIDÉ QG avec justification corrigée, D-022).** Sa nécessité décisionnelle n'est **pas** d'éviter qu'une section de Ma feuille de route reste vide : elle est de **distinguer un objectif immédiat qui constitue la destination elle-même d'un objectif immédiat qui n'est qu'une première marche vers une direction plus lointaine.** Si Q6 ne donne qu'un objectif immédiat sans direction plus lointaine identifiable : « Et plus tard, si ce premier changement devient possible, vers quoi aimerais-tu que cela t'emmène ? » — réponse libre, INCONNU accepté, pas de seconde relance. **SKIP si Q6 contient déjà la trajectoire.** Mécanisme déterministe exact du skip : **toujours À ARBITRER** (pas de décision IA live).
+- **Aucune relance conditionnelle** (« vague » et « uniquement financière » supprimées — reposaient sur une lecture sémantique du texte libre, non déterminable sans IA en direct). Une réponse pauvre reste une donnée déclarée ; elle n'est pas enrichie artificiellement pendant la collecte.
+- Objectif : destination/changement recherché. Règle inchangée : une motivation financière est légitime — ne pas chercher artificiellement une motivation « plus profonde ».
 
-**Q7 — Priorité**
-- **Conditionnelle** : seulement si Q6 contient plusieurs changements sans hiérarchie.
-- Formulation : « Parmi les changements que tu viens de citer, lequel compte le plus pour toi aujourd'hui ? »
-- Aide : aucune. Si techniquement possible, réafficher les propres éléments de la personne plutôt que d'en proposer de nouveaux.
+**Q7 — Priorité — SOCLE, formulation autonome (A7, D-026)**
+- Formulation : « Parmi ce que tu viens de décrire, qu'est-ce qui compte le plus pour toi aujourd'hui ? »
+- Toujours posée, ne présuppose plus la présence de plusieurs changements dans Q6 (l'ancienne condition — compter des « changements distincts » dans un texte libre — n'était pas déterminable sans lecture sémantique).
+- Aide : aucune.
 
-**WHY conditionnel (non numéroté)**
-- **Condition d'apparition** : si Q6/Q7 disent quoi, mais pas pourquoi.
-- Formulation : « Pourquoi ce changement est-il important pour toi ? »
-- **SKIP** si le WHY est déjà suffisamment explicite.
+**WHY — SOCLE, toujours posée (A7, D-026)**
+- Formulation : « Pourquoi est-ce important pour toi ? »
+- Plus de condition d'apparition ni de skip (l'ancien déclencheur « pas encore explicite » exigeait une lecture sémantique de Q6/Q7).
+
+**Donnée structurée de direction, non numérotée — SOCLE, remplace l'ancienne branche moyen/long terme (A7, D-026)**
+- Formulation : « Et au-delà de ce changement, y a-t-il quelque chose de plus grand vers lequel tu aimerais avancer ? »
+- Choix : Oui / Non, ce changement correspond déjà à ce que je recherche / Je ne sais pas encore.
+- **Question ouverte conditionnelle**, uniquement si « Oui » : « À terme, vers quoi aimerais-tu que cela te mène ? » — réponse libre, INCONNU accepté, pas de relance. Si « Non » ou « Je ne sais pas encore » : aucune question supplémentaire.
+- Remplace intégralement l'ancien skip sémantique de la branche moyen/long terme — le choix Oui/Non/Je ne sais pas encore est un signal structuré, jamais une lecture de texte libre. Les deux catégories (destination immédiate / première marche) ne sont plus mutuellement exclusives dans la formulation : le texte libre de Q6 reste disponible à l'analyse post-collecte quel que soit le choix retenu ici.
 
 **Q8 — Ce qu'il faut préserver**
 - Formulation : « Pendant que tu construis ton Plan B, qu'est-ce qui est important pour toi de garder dans ta vie actuelle ? »
@@ -251,7 +250,7 @@ Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton 
 **Q9 — Signe de progression**
 - Formulation : « Qu'est-ce qui te montrerait concrètement que ton Plan B commence à avancer ? »
 - Aide (sans exemple) : « Pense à quelque chose que tu pourrais réellement constater. »
-- Relance si vague : « Qu'est-ce que tu pourrais voir ou constater qui te ferait dire : "oui, j'avance vraiment" ? »
+- **Relance supprimée (A7, D-026)** — reposait sur une lecture sémantique de « vague ». Une réponse déclarée reste exploitable telle quelle.
 - Limite : pas d'exemples spécifiques (pour ne pas fabriquer le critère de réussite de la personne). Ce n'est pas automatiquement un objectif contractuel imposé par CoachRedo.
 
 ### Étape 3 — Ton parcours
@@ -274,11 +273,11 @@ Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton 
 - Formulation : « Pour quelles choses les autres viennent-ils souvent te demander de l'aide, un conseil ou un avis ? »
 - Aide : « Cela peut concerner le travail, les études, une activité pratique, l'organisation, la technologie, les démarches du quotidien ou autre chose. Même si cela te paraît simple ou naturel. »
 - Type : jusqu'à 3 ; options « personne ne me demande particulièrement » / « je ne sais pas »
-- Relance si vague : « Concrètement, qu'est-ce qu'on te demande d'aider à faire ou à résoudre ? »
+- **Relance supprimée (A7, D-026)** — reposait sur une lecture sémantique de « vague ».
 - Objectif : trace déclarée de reconnaissance externe. Limite : ni preuve de compétence, ni preuve de valeur marchande.
 
 **Q13 — Question de récupération**
-- **CONDITIONNELLE / RÉCUPÉRATION** : seulement si Q10-Q12 donnent peu de matière sur les capacités.
+- **CONDITIONNELLE / RÉCUPÉRATION — trigger structuré verrouillé (A7, D-026) :** affichée si l'état structuré de Q10 = « aucune » **ET** l'état structuré de Q12 ∈ {« personne ne me demande particulièrement », « je ne sais pas »} — combinaison de sélections déjà structurées, jamais une évaluation du contenu texte de ces réponses.
 - Formulation : « Y a-t-il quelque chose que tu trouves assez facile à faire alors que d'autres personnes autour de toi trouvent cela plus difficile ? »
 - Aide : contextuelle seulement (travail/études/pratique/quotidien), pas d'exemples de capacités
 - Choix : Oui (→ quoi ?) / Non / Je ne sais pas
@@ -288,15 +287,15 @@ Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton 
 - Formulation : « As-tu déjà vécu une situation difficile ou exigeante qui t'a appris quelque chose d'utile pour la suite ? »
 - Choix : Oui / Non / Je ne sais pas / Je préfère ne pas répondre
 - Si oui : « Qu'est-ce que cette expérience t'a appris à faire ou à mieux gérer ? » — Aide : « pas besoin de raconter une histoire privée ; seulement ce qui a été appris. »
-- Relance si réponse abstraite : « Concrètement, qu'est-ce que tu fais différemment aujourd'hui grâce à ce que tu as appris ? »
+- **Relance supprimée (A7, D-026)** — « réponse abstraite » n'était pas déterminable sans lecture sémantique.
 - Limite stricte : pas de trauma mining, pas de diagnostic, pas d'étiquette « résilience ».
-- Réutilisation possible avec Q24 si même épisode (cf. §1).
+- Réutilisation avec Q24 : **aucun mécanisme** (A7, D-026) — coïncidence éventuelle d'un même épisode acceptée sans détection (voir §1, réutilisation).
 
-**Q15 — Stratégie d'apprentissage — CONSERVER MAIS À AJUSTER (VALIDÉ QG avec correction de la logique de déclenchement, D-022)**
-- **RÉCUPÉRATION** : le déclencheur **ne dépend pas de Q11** (Q11 = provenance/canal des apprentissages, nature de donnée incompatible pour tester une suffisance). Le vrai déclencheur : Q10–Q14 ont-ils déjà fourni un épisode suffisamment concret montrant comment la personne s'est réellement débrouillée pour apprendre quelque chose qu'elle ne savait pas faire ? Si oui → skip. Si non → Q15 apparaît, sur une seule situation. Traduction en règle déterministe structurée : **toujours à spécifier ultérieurement**, pas de décision IA live.
+**Q15 — Stratégie d'apprentissage — SOCLE (A7, D-026, 2026-09-28) — ancien statut RÉCUPÉRATION et skip sémantique abandonnés**
+- **Toujours posée, sur une seule situation.** L'ancien déclencheur (« Q10–Q14 ont-ils déjà fourni un épisode suffisamment concret ») exigeait une lecture sémantique de la qualité narrative des réponses précédentes, non déterminable sans IA en direct — abandonné.
 - Formulation : « Pense à une fois où tu as dû apprendre quelque chose d'important que tu ne savais pas faire au départ. Comment t'y es-tu pris ? »
 - Aide : volontairement aucune
-- Relance si vague : « Concrètement, qu'as-tu fait pour apprendre ? »
+- **Relance supprimée (A7, D-026)** — « réponse vague » non déterminable sans lecture sémantique.
 - Limite : un épisode ≠ style psychologique général. **Aucun typage VAK.**
 
 **Q16 — Valeur déjà apportée — CONSERVER MAIS À AJUSTER (VALIDÉ QG avec correction du niveau de preuve, D-022)**
@@ -304,10 +303,10 @@ Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton 
 - Aide : « Cela peut avoir été payé ou non. »
 - Choix : Oui / Non / Je ne sais pas
 - Si oui : « Donne-nous un exemple : qu'as-tu fait, pour qui, et qu'est-ce qui s'est passé ? » (pas de noms nécessaires)
-- Relance si trace de valeur externe absente : « Est-ce que cette personne t'a payé, donné quelque chose en échange, recommandé à quelqu'un ou demandé de recommencer ? »
+- **Sous-question posée systématiquement sur la branche Oui (A7, D-026)** : « Est-ce que cette personne t'a payé, donné quelque chose en échange, recommandé à quelqu'un ou demandé de recommencer ? » — toujours posée après un « Oui », le système ne tente plus de détecter dans le texte libre si cette trace est déjà mentionnée (non déterminable sans lecture sémantique).
 - Objectif : trace d'une valeur déjà créée pour quelqu'un. Limite : **pas une validation de marché**.
 - **Niveau de preuve corrigé (verrouillé) :** DÉCLARÉ dans tous les cas, **y compris lorsqu'un paiement, une recommandation, une répétition ou une action d'un tiers est rapporté(e) par la personne** — cela reste une trace externe déclarée particulièrement informative, mais **pas une corroboration indépendante**. Le passage éventuel vers ÉTAYÉ appartient exclusivement à l'analyse post-collecte par convergence avec d'autres signaux indépendants (ex. Q12), jamais à Q16 seule. Dans tous les cas : **capacité ÉTAYÉE ≠ marché validé**.
-- **Distinction avec la branche activité existante (Q1) — verrouillée :** Q1 = qu'est-ce qui existe actuellement et à quel stade déclaré ? Q16 = existe-t-il une expérience concrète où une capacité a déjà produit de la valeur pour quelqu'un ? **Q16 conservée même lorsqu'une activité existante est déclarée en Q1** — les deux répondent à des questions différentes. Chevauchement possible dans le sous-cas d'une activité déjà « fonctionne déjà »/« bien installée » : traité par réutilisation/rappel des données déjà connues dans l'UX, **pas un skip sémantique complexe** — mécanisme exact non spécifié, reste ouvert.
+- **Distinction avec la branche activité existante (Q1) — verrouillée :** Q1 = qu'est-ce qui existe actuellement et à quel stade déclaré ? Q16 = existe-t-il une expérience concrète où une capacité a déjà produit de la valeur pour quelqu'un ? **Q16 conservée même lorsqu'une activité existante est déclarée en Q1** — les deux répondent à des questions différentes. **Règle de réutilisation exacte verrouillée (A7, D-026, voir §1) :** Q1 peut uniquement contextualiser le prompt de Q16, jamais la remplacer, préremplir une preuve de valeur, ou permettre de la skipper.
 
 **Q17 — Ce qu'on veut réutiliser / éviter**
 - Deux champs sous une même question/écran :
@@ -374,7 +373,7 @@ Raison déjà arbitrée, confirmée après audit challengeant explicitement l'al
 - Formulation : « Ces derniers mois, t'est-il arrivé de décider de faire quelque chose d'important, puis de beaucoup tarder à commencer ou de ne pas commencer ? »
 - Choix : Oui / Non / Je ne sais pas — aucun exemple
 - Si oui : « Pense à un exemple récent. Qu'avais-tu décidé de faire, et qu'est-ce qui t'a empêché de commencer plus tôt ? » (pas d'exemples de raisons)
-- Relance si « je n'étais pas prêt » : « Concrètement, qu'est-ce qui te manquait pour commencer ? »
+- **Relance supprimée (A7, D-026)** — détecter un équivalent sémantique de « je n'étais pas prêt » dans le texte libre n'est pas déterminable sans IA en direct.
 - Limite : pas d'étiquette « procrastination ».
 
 **Q27 — Continuité**
@@ -382,27 +381,26 @@ Raison déjà arbitrée, confirmée après audit challengeant explicitement l'al
 - Aide contextuelle seulement : travail, études, projet, activité personnelle, habitude du quotidien
 - Champs : « Qu'est-ce que tu as réussi à continuer ? » / « Qu'est-ce qui t'a aidé à continuer ? » (+ « aucun »)
 - Limite : ne pas donner d'exemples de leviers comme discipline/routine — c'est précisément ce qu'on veut découvrir
-- Relance si abstrait : « Concrètement, qu'est-ce qui t'a aidé à continuer même quand c'était plus difficile ? »
+- **Relance supprimée (A7, D-026)** — « abstrait » non déterminable sans lecture sémantique.
 - Limite : pas d'étiquette discipline/résilience.
 
 **Q24 — Obstacle / adaptation**
 - Formulation : « Pense à une situation récente où tu avais commencé quelque chose, puis rencontré un obstacle ou obtenu un résultat moins bon que prévu. »
 - Champs : « Qu'est-ce qui s'est passé ? » / « Et qu'as-tu fait ensuite ? » (+ « aucun »)
-- Relance si logique de décision peu claire : « Qu'est-ce qui t'a fait décider de continuer, de changer d'approche ou d'arrêter ? »
+- **Relance supprimée (A7, D-026)** — « logique de décision peu claire » non déterminable sans lecture sémantique.
 - Limite : arrêter peut être une décision rationnelle (ne pas la traiter comme un échec).
-- Réutilisation possible avec Q14 si même épisode (cf. §1).
+- Réutilisation avec Q14 : **aucun mécanisme** (A7, D-026, voir §1) — coïncidence éventuelle acceptée sans détection.
 
 **Q26 — Exposition au retour extérieur**
 - Formulation : « Pense à une situation récente où tu as montré ton travail, proposé une idée ou demandé quelque chose à quelqu'un. »
 - Champs : « Qu'as-tu fait ? » / « Quand la personne t'a répondu, qu'as-tu fait ensuite ? » (+ « aucun »)
 - Objectif : comportement après retour extérieur. Limite : ne pas transformer en score de confiance ou de tolérance au rejet.
 
-**Q25 — Décision dans l'incertitude — CONSERVER MAIS À AJUSTER (VALIDÉ QG, fonction verrouillée, D-022)**
-- **RÉCUPÉRATION**, strictement conditionnelle.
-- **Fonction unique verrouillée :** obtenir au moins un épisode concret montrant ce que la personne a fait lorsqu'elle devait décider alors qu'elle ne disposait pas de toutes les informations qu'elle aurait souhaitées. Q25 n'est **pas** une question sur l'indécision, la tolérance psychologique à l'incertitude, la prise de risque, le courage décisionnel, ou un style général de décision.
+**Q25 — Décision dans l'incertitude — SOCLE (A7, D-026, 2026-09-28) — ancien statut RÉCUPÉRATION et skip sémantique abandonnés**
+- **Fonction unique verrouillée, inchangée :** obtenir au moins un épisode concret montrant ce que la personne a fait lorsqu'elle devait décider alors qu'elle ne disposait pas de toutes les informations qu'elle aurait souhaitées. Q25 n'est **pas** une question sur l'indécision, la tolérance psychologique à l'incertitude, la prise de risque, le courage décisionnel, ou un style général de décision.
+- **Toujours posée**, à sa position déjà définie dans l'ordre verrouillé de l'Étape 5. L'ancien skip (« si Q23 ou Q24 a déjà fourni un épisode ») exigeait une lecture sémantique explicitement identifiée comme hors de portée sans IA en direct (§0, « Limite V1 sur l'adaptation sémantique... s'applique explicitement au skip Q23/Q24→Q25 ») — aucun signal structuré équivalent n'existe dans Q23/Q24 ; conformément à la règle déjà posée dans cette même limite (« sinon, accepter une petite redondance »), Q25 est désormais systématiquement posée.
 - Formulation : « Pense à une situation récente où tu devais avancer ou décider sans avoir toutes les informations que tu voulais. Qu'as-tu fait ? » (+ « aucun », pas d'exemples)
-- Relance si attente/blocage : « Qu'est-ce qui te manquait pour pouvoir avancer ou décider ? » — **une seule relance maximale.**
-- **Condition de SKIP** : si Q23 ou Q24 a déjà fourni clairement un épisode de décision sous information incomplète, Q25 est inutile et peut être skippée ; sinon elle joue son rôle de récupération — **mais uniquement si un signal structuré permet de le décider** (pas d'IA sémantique en direct). **Mécanisme exact de ce skip déterministe : toujours À ARBITRER.**
+- **Relance supprimée (A7, D-026)** — « attente/blocage » non déterminable sans lecture sémantique.
 
 ### Étape 6 — Ce qui est possible pour toi aujourd'hui
 
@@ -428,7 +426,10 @@ Raison déjà arbitrée, confirmée après audit challengeant explicitement l'al
 **Q30 — Mobilité réelle**
 - Formulation : « Aujourd'hui, jusqu'où peux-tu réellement te déplacer pour travailler ou développer une activité ? »
 - Choix : principalement chez moi/très près, quartier, ville/zone de vie, occasionnellement plus loin si cela vaut la peine, régulièrement vers d'autres villes/zones, cela varie, autre
-- Relance si limité/variable : « Y a-t-il quelque chose d'important que CoachRedo doit prendre en compte concernant tes déplacements ? » (aide : pas besoin de détails privés, indiquer seulement l'effet pratique)
+- **Sous-question — trigger fermé, tranché en arbitrage final (A7, D-026, 2026-09-28) :** déclenchée uniquement si le choix structuré est **« principalement chez moi/très près »** ou **« cela varie »** — aucun autre choix (quartier, ville/zone de vie, occasionnellement plus loin, régulièrement vers d'autres villes/zones) ne la déclenche. Formulation : « Y a-t-il quelque chose d'important que CoachRedo doit prendre en compte concernant tes déplacements ? » Aide : « Pas besoin de donner de détails privés. Indique seulement ce que cela change concrètement pour les activités que tu peux envisager. »
+- **Pour « autre »** : couvert par le champ texte déjà associé au choix « autre » (même convention que pour les autres questions à choix de ce questionnaire incluant « autre », ex. Q1, Q28, Q32-Q34) — la précision de la situation y est déjà demandée, aucune relance supplémentaire.
+- Aucune catégorie abstraite « mobilité limitée » n'est conservée — la relance repose exclusivement sur les deux choix structurés nommés ci-dessus, jamais sur une notion de « limité/variable » interprétée.
+- *Ancienne mécanique abandonnée par D-026 : trigger générique « limité/variable » avec liste de choix qualifiants non déterminée — remplacé par le trigger fermé ci-dessus.*
 - Distinction : Q19 = moyen de transport disponible ; Q30 = rayon de mobilité réel.
 
 **Q31 — Condition indispensable**
@@ -436,7 +437,7 @@ Raison déjà arbitrée, confirmée après audit challengeant explicitement l'al
 - Aide : « Par exemple : certains horaires, rester près de chez toi, travailler principalement à distance, éviter certaines tâches ou respecter une responsabilité importante. »
 - Choix : Oui / Non / Je ne sais pas / Je préfère ne pas répondre
 - Si oui : « Quelle condition doit-elle respecter ? »
-- Relance si seulement la cause est donnée : « Concrètement, qu'est-ce que cela change dans ce que tu peux faire pour ta prochaine activité ? » — une relance → INCONNU
+- **Sous-question posée systématiquement sur la branche Oui (A7, D-026)** : « Concrètement, qu'est-ce que cela change dans ce que tu peux faire pour ta prochaine activité ? » — toujours posée après un « Oui », le système ne tente plus de déterminer sémantiquement si seule la cause a été donnée (non déterminable sans lecture sémantique).
 - **Doctrine Q8/Q31 CORRIGÉE et verrouillée (D-022) — ne pas documenter Q31 comme « filtre éliminatoire » absolu :** Q8 = préférence importante → un compromis éventuel doit être rendu visible. Q31 = condition indispensable → CoachRedo ne doit pas recommander une route sous une forme qui viole cette condition **maintenant** — mais une voie peut être **adaptée** pour respecter Q31 plutôt qu'éliminée. Nuance temporelle verrouillée (cf. ÉTAT ACTUEL ≠ LIMITE PERMANENTE, §1) : Q31 doit être respectée maintenant ; sa permanence future ne doit pas être supposée sans données.
 
 **Q32 — Voies que la personne est prête à envisager**
@@ -454,19 +455,19 @@ Raison déjà arbitrée, confirmée après audit challengeant explicitement l'al
 - Formulation (dernière version de travail) : « Y a-t-il des personnes ou des activités que tu connais bien dans ta vie actuelle ou grâce à ton expérience ? »
 - Aide : « Par exemple : des commerçants, des étudiants, des parents, des chauffeurs, des restaurateurs, des artisans, des sportifs, des vendeurs en ligne… Cela peut venir de ton travail, de ta famille, de ton quartier ou de tes activités. »
 - Type : jusqu'à 5 ; option « aucun ne me vient à l'esprit »
-- Relance si trop général : « De quel type de personnes, d'activité ou de milieu s'agit-il plus précisément ? » — une relance → INCONNU
+- **Relance supprimée (A7, D-026)** — « trop général » non déterminable sans lecture sémantique.
 - Objectif : environnement connu déclaré. Limite : ni expertise, ni preuve de marché, ni accès client, ni validation d'opportunité.
-- Réutilisation depuis Q11 (cf. exemple restauration, §1).
+- Réutilisation depuis Q11 : uniquement comme hypothèse à confirmer par la personne, jamais transférée automatiquement (voir §1, réutilisation).
 
 **Q34 — Problèmes observés**
 - Formulation : « Dans ta vie ou parmi les personnes que tu connais, quels problèmes vois-tu revenir souvent ? »
 - Aide (formulation finale travaillée) : « Pense à des choses qui te posent problème à toi aussi, ou dont les autres se plaignent, qui font perdre du temps ou de l'argent, qui sont compliquées à faire ou pour lesquelles on cherche souvent de l'aide. »
 - Type : jusqu'à 3 ; option « je n'en vois pas pour le moment »
-- Relance si vague : « Concrètement, quel problème rencontres-tu ou entends-tu le plus souvent ? » — une relance → INCONNU
+- **Relance supprimée (A7, D-026)** — « vague » non déterminable sans lecture sémantique.
 - Q34 reste indépendante de Q33. Limite forte : un problème personnel peut générer une **hypothèse**, jamais une validation de marché. Une plainte répétée ≠ volonté de payer.
 
 **Q35 — Accès aux personnes concernées**
-- **Conditionnelle** : selon existence d'un environnement/problème (Q33/Q34) permettant de la poser utilement.
+- **CONDITIONNELLE — trigger structuré verrouillé (A7, D-026) :** affichée si Q33 contient au moins une entrée différente de « aucun ne me vient à l'esprit » **OU** Q34 contient au moins une entrée différente de « je n'en vois pas pour le moment » — un test de présence sur des sélections déjà structurées, jamais un jugement de qualité/pertinence du contenu (correction d'un raisonnement antérieur qui faisait, à tort, dépendre ce trigger d'une relance de Q33/Q34 elle-même supprimée).
 - Formulation : « Parmi ces personnes, y en a-t-il à qui tu pourrais facilement parler pour mieux comprendre leurs problèmes ? »
 - Aide : « Par exemple : leur poser quelques questions, leur demander comment ils font aujourd'hui, ce qui leur pose le plus de difficultés ou ce qu'ils ont déjà essayé. »
 - Choix : Oui plusieurs / Oui quelques-unes / Peut-être mais ce ne serait pas facile / Non pas vraiment / Je ne sais pas
@@ -474,8 +475,8 @@ Raison déjà arbitrée, confirmée après audit challengeant explicitement l'al
 - Objectif : accessibilité du terrain/testabilité. Limite : plus testable ≠ meilleure opportunité finale.
 - Distinction : Q22 (réseau d'aide général) ≠ Q35 (accès spécifique aux personnes concernées par le problème).
 
-**Q36 — Comportement actuel face au problème — CONSERVER MAIS À AJUSTER (VALIDÉ QG, D-022)**
-- **CONDITIONNELLE** : si Q34 contient un problème suffisamment concret.
+**Q36 — Comportement actuel face au problème**
+- **CONDITIONNELLE — trigger structuré verrouillé (A7, D-026) :** affichée si Q34 contient au moins une entrée différente de « je n'en vois pas pour le moment » — présence structurée uniquement, jamais un jugement « suffisamment concret » du contenu (même correction qu'en Q35).
 - Formulation : « Quand ces personnes rencontrent ce problème, que font-elles aujourd'hui pour essayer de le résoudre ? »
 - Aide : « Par exemple : elles se débrouillent seules, demandent de l'aide à quelqu'un, utilisent un outil ou un service, paient déjà pour une solution, ou ne font rien de particulier. »
 - Type : réponse courte + « je ne sais pas » — **pas de relance automatique** (« je ne sais pas » devient une information à vérifier sur le terrain, pas un manque à combler par relance)
@@ -484,33 +485,41 @@ Raison déjà arbitrée, confirmée après audit challengeant explicitement l'al
 
 ---
 
-## 3. Statut consolidé — POST-CLÔTURE (D-022, 2026-09-25)
+## 3. Statut consolidé — POST-CLÔTURE (D-022, 2026-09-25 ; mécanique déterministe close A7/D-026, 2026-09-28)
 
 ### Éléments VALIDÉS (principes/mécanismes, cf. §1)
-Chaîne produit et 7 étapes ; principe temporel MAINTENANT→...→DIRECTION LONG TERME ; architecture de collecte SOCLE COMMUN→...→ANALYSE IA ; frontière IA déterministe/collecte vs IA/analyse ; limite V1 sur le skip sémantique ; charge cognitive et ordre des 7 étapes ; P0-P3 (mécanisme, avec la définition P1 mise à jour) ; règle 1 relance principale max ; INCONNU comme sortie légitime ; réutilisation des données (principe) ; règle aides/exemples ; discipline de preuve DÉCLARÉ/ÉTAYÉ/INFÉRÉ/CONTRADICTOIRE/INCONNU (terminologie canonique unifiée) ; Johari (mécanisme interne) ; voies/options/route ; principe d'action et de risque ; refus définitif de Q37 (reconfirmé après audit complet de Q33-Q36) ; mesure de longueur multi-critères ; ordre interne étape 5 (Q23→Q27→Q24→Q26→Q25, validé définitivement) ; titre étape 6 ; suppression de l'ancienne Q4-B ; **ÉTAT ACTUEL ≠ LIMITE PERMANENTE** (nouvelle doctrine transversale) ; **classification SOCLE/CONDITIONNELLE/RÉCUPÉRATION** (nouvelle, remplace toute notion de hiérarchie d'importance) ; garde-fou transversal Étape 5 (comportements passés calibrent sans enfermer) ; garde-fou transversal Étape 7 (anti-« prison d'exploration ») ; doctrine Q8/Q31 corrigée (adaptation possible, pas élimination automatique) ; trois règles Q29 (urgence ≠ délai prédit / automatisme de voie / prise de risque accrue) ; doctrine Q18 (preuve d'existence ≠ mobilisabilité actuelle, jamais fusionnées) ; doctrine Q16 (DÉCLARÉ dans tous les cas, jamais ÉTAYÉ seule, capacité ÉTAYÉE ≠ marché validé).
+Chaîne produit et 7 étapes ; principe temporel MAINTENANT→...→DIRECTION LONG TERME ; architecture de collecte SOCLE COMMUN→...→ANALYSE IA ; frontière IA déterministe/collecte vs IA/analyse, **précisée par A7 : aucun jugement sémantique de texte libre pendant la collecte, relances strictement structurées** ; règle 1 relance principale max, sans budget global ; INCONNU comme sortie légitime, jamais un état forcé pour une réponse pauvre ; réutilisation des données — règles exactes verrouillées (Q1→Q16 contextualisation seule, Q11→Q33 hypothèse à confirmer, Q14/Q24 sans mécanisme) ; règle aides/exemples ; discipline de preuve DÉCLARÉ/ÉTAYÉ/INFÉRÉ/CONTRADICTOIRE/INCONNU (terminologie canonique unifiée) ; Johari (mécanisme interne) ; voies/options/route ; principe d'action et de risque ; refus définitif de Q37 (reconfirmé après audit complet de Q33-Q36) ; mesure de longueur multi-critères ; ordre interne étape 5 (Q23→Q27→Q24→Q26→Q25, validé définitivement) ; titre étape 6 ; suppression de l'ancienne Q4-B ; **ÉTAT ACTUEL ≠ LIMITE PERMANENTE** (doctrine transversale) ; **classification SOCLE/CONDITIONNELLE/RÉCUPÉRATION**, désormais fondée exclusivement sur des triggers structurés (A7) ; garde-fou transversal Étape 5 (comportements passés calibrent sans enfermer) ; garde-fou transversal Étape 7 (anti-« prison d'exploration ») ; doctrine Q8/Q31 corrigée (adaptation possible, pas élimination automatique) ; trois règles Q29 (urgence ≠ délai prédit / automatisme de voie / prise de risque accrue) ; doctrine Q18 (preuve d'existence ≠ mobilisabilité actuelle, jamais fusionnées) ; doctrine Q16 (DÉCLARÉ dans tous les cas, jamais ÉTAYÉ seule, capacité ÉTAYÉE ≠ marché validé).
+
+**P0/P1/P2/P3 retiré de cette liste (A7, D-026) : superseded, non actif — voir §1.**
 
 ### Verdicts finaux par question (CONSERVER sauf mention contraire)
-Toutes les questions Q1–Q36 + les deux micro-données ajoutées ont reçu le verdict **CONSERVER**, à l'exception des suivantes en **CONSERVER MAIS À AJUSTER** (ajustement documenté au fil du §2, aucun n'est une remise en cause de la question elle-même) : Q10 (relance corrigée), Q15 (déclencheur corrigé), Q16 (niveau de preuve corrigé), Q18 (doctrine A/B), Q20 (principe à 3 niveaux route-relatif), Q25 (fonction verrouillée), Q29 (trois règles), Q36 (provenance ajoutée), la branche moyen/long terme de Q6 (justification corrigée). **Aucune suppression de question n'a résulté de l'audit.**
+Toutes les questions Q1–Q36 + les deux micro-données ajoutées ont reçu le verdict **CONSERVER**, à l'exception des suivantes en **CONSERVER MAIS À AJUSTER** (ajustement documenté au fil du §2, aucun n'est une remise en cause de la question elle-même) : Q10 (relance corrigée), Q15 (statut SOCLE, A7), Q16 (niveau de preuve corrigé + sous-question systématique, A7), Q18 (doctrine A/B), Q20 (principe à 3 niveaux route-relatif, hors A7), Q25 (fonction verrouillée + statut SOCLE, A7), Q29 (trois règles), Q30 (sous-question conservée, trigger fermé sur deux choix précis — voir §2), Q36 (provenance ajoutée), Q6/Q7/WHY (restructurés en donnée directionnelle structurée, A7). **Aucune suppression de question n'a résulté de l'audit initial D-022, ni de la mécanique A7.**
 
-### HYPOTHÈSE / À TESTER (non résolu par cette clôture)
-- Budget global de relances : **5 relances principales maximum (V1)** — à valider par les vrais usages.
-- Simulations de durée/nombre d'interactions par profil (précis/moyen/vague) — chiffres non validés produit.
+### HYPOTHÈSE / À TESTER (non résolu)
+- Simulations de durée/nombre d'interactions par profil (précis/moyen/vague) — chiffres non validés produit, **à rejouer sous les hypothèses A7** (absence de budget global, cf. Arbitrage 6.5 du chantier MFR pour le raisonnement).
 - Formulations des micro-transitions — exemples travaillés, non figés.
+
+**Budget global de relances (« 5 relances principales maximum ») : RETIRÉ de cette liste — ABANDONNÉ (A7, D-026, 2026-09-28), pas seulement non résolu. Voir §1.**
 
 **Mise à jour (2026-09-26, D-023) :** les reports relatifs à l'architecture conceptuelle de Ma feuille de route elle-même (pipeline de filtrage produisant les voies/options, choix utilisateur, fonction de « Ton miroir CoachRedo », anatomie de génération) ont été traités par les Arbitrages 1-4 et vivent désormais dans `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md` — non dupliqués ici. Ce fichier reste centré sur les mécanismes propres à la collecte Q1-Q36 elle-même.
 
-### À ARBITRER — liste finale après clôture (aucun ne remet en cause une question, tous relèvent de mécanismes techniques futurs)
-- Mécanisme exact d'exception `critical_for_route = true` (budget de relances).
-- Formulations finales des micro-transitions.
-- Mécanisme déterministe exact du skip Q23/Q24→Q25 (fonction de Q25 verrouillée, seul le déclencheur reste ouvert).
-- Mécanisme déterministe exact du skip de la branche moyen/long terme de Q6 (justification corrigée et verrouillée, seul le déclencheur reste ouvert).
-- Mécanisme déterministe exact du déclenchement de Q15 (corrigé : dépend de l'absence d'épisode concret dans Q10-Q14, pas de Q11 — seule la traduction en règle structurée reste ouverte).
-- Mécanisme de réutilisation UX pour les chevauchements Q16/branche activité existante de Q1, et Q11/Q33.
-- Seuils et algorithme du principe à 3 niveaux route-relatif de Q20.
-- ~~Mécanisme de convergence DÉCLARÉ→ÉTAYÉ~~ → résolu conceptuellement (Arbitrage 5, D-024, 2026-09-26 — voir `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md` §D.3, non dupliqué ici). Reste ouvert uniquement pour son volet technique (détection du référent partagé).
-- Mécanisme d'exploration élargie de CoachRedo hors des environnements spontanément cités (garde-fou conceptuel verrouillé ; le principe opérationnel — EXPLORER seedé par l'objectif/le parcours/les capacités/les ressources au-delà de Q33-34 — est désormais précisé par l'Arbitrage 2 de Ma feuille de route V3, D-023 ; la mise en œuvre technique reste non définie).
-- Position écran et numérotation définitive de Q1-Q36 et des deux micro-données ajoutées (territoire principal, actif relationnel mobilisable).
+### À ARBITRER — liste finale après A7/D-026 (aucun ne remet en cause une question)
+- Seuils et algorithme du principe à 3 niveaux route-relatif de Q20 — **hors périmètre A7**, chantier MFR-technique (Arbitrage 6, volet technique).
+- Mécanisme d'exploration élargie de CoachRedo hors des environnements spontanément cités (garde-fou conceptuel verrouillé ; le principe opérationnel — EXPLORER seedé par l'objectif/le parcours/les capacités/les ressources au-delà de Q33-34 — est précisé par l'Arbitrage 2 de Ma feuille de route V3, D-023 ; la mise en œuvre technique reste non définie).
+- Position écran technique définitive de Q1-Q36 et des deux micro-données (**la non-visibilité de toute numérotation est en revanche verrouillée, A7** — voir §2 introduction).
 - Métriques de durée — hypothèses uniquement avant tests réels.
+- Mécanisme technique de suppression/invalidation/historisation d'une réponse devenue non applicable lors d'une modification (principe conceptuel verrouillé A7 — « cesse de participer au dossier actif » — mécanisme technique non tranché).
+
+**Résolu par A7 (D-026, 2026-09-28) — ne plus traiter comme ouvert :**
+- ~~Q30 — liste exacte des choix structurés qualifiant « limité »~~ → tranché en arbitrage final : trigger fermé sur exactement deux choix (« principalement chez moi/très près » et « cela varie »), notion abstraite « limité/variable » abandonnée (voir §2).
+- ~~Mécanisme exact d'exception `critical_for_route = true`~~ → abandonné avec le budget global, sans fonction résiduelle démontrée (voir §1).
+- ~~Mécanisme déterministe exact du skip Q23/Q24→Q25~~ → abandonné ; Q25 devient SOCLE, toujours posée (voir §2).
+- ~~Mécanisme déterministe exact du skip de la branche moyen/long terme de Q6~~ → remplacé par une donnée structurée SOCLE (Oui/Non/Je ne sais pas encore), voir §2.
+- ~~Mécanisme déterministe exact du déclenchement de Q15~~ → abandonné ; Q15 devient SOCLE, toujours posée (voir §2).
+- ~~Mécanisme de réutilisation UX pour les chevauchements Q16/branche activité existante de Q1, et Q11/Q33~~ → règles exactes verrouillées (voir §1 et §2).
+
+### Résolu antérieurement (D-024/D-022), rappel
+- ~~Mécanisme de convergence DÉCLARÉ→ÉTAYÉ~~ → résolu conceptuellement (Arbitrage 5, D-024 — voir `MA_FEUILLE_DE_ROUTE_V3.md` §D.3, non dupliqué ici). Volet technique (détection du référent partagé) reste ouvert.
 
 **Résolu depuis la version précédente de ce document (ne plus traiter comme ouvert) :**
 - ~~Ajout éventuel à Q1 d'une catégorie « je gère déjà une activité ou une entreprise »~~ → résolu différemment par une branche « activité existante » distincte rattachée à Q1 (§2, Étape 1).
