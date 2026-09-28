@@ -1,15 +1,15 @@
 ---
 name: ma-feuille-de-route-v3
-description: Architecture conceptuelle verrouillée de Ma feuille de route V3 (pipeline exploration/filtrage, granularité voie/option, anatomie d'une voie, mécanisme de convergence de preuve, architecture documentaire finale à 7 sections) — décisions conceptuelles issues des Arbitrages 1-5, pas une architecture technique.
+description: Architecture conceptuelle verrouillée de Ma feuille de route V3 (pipeline exploration/filtrage, granularité voie/option, anatomie d'une voie, mécanisme de convergence de preuve, mécanisme de plausibilité et de présentation des voies, architecture documentaire finale à 7 sections) — décisions conceptuelles issues des Arbitrages 1-6, pas une architecture technique.
 metadata:
   type: project-memory
 ---
 
 # MA_FEUILLE_DE_ROUTE_V3 — Architecture conceptuelle verrouillée
 
-Dernière mise à jour : 2026-09-26 (D-024 — verrouillage du mécanisme de convergence DÉCLARÉ→ÉTAYÉ, Arbitrage 5)
+Dernière mise à jour : 2026-09-28 (D-025 — verrouillage du mécanisme de plausibilité et de présentation des voies, Arbitrage 6)
 
-Ce document enregistre l'architecture **conceptuelle** de Ma feuille de route V3, arbitrée par le QG en cinq tours le 2026-09-26 (Arbitrages 1 à 5). **Aucune architecture technique n'est décidée ici** : provider IA, prompts, orchestration, nombre d'appels, schéma de données et RPC restent explicitement ouverts (voir `CURRENT_STATE.md` §8). Ce document est le pendant, côté Ma feuille de route, de `MON_POINT_DE_DEPART_V3.md` (côté collecte) — la doctrine de convergence de preuve vit ici, pas dans les fichiers MPD, pour éviter toute duplication.
+Ce document enregistre l'architecture **conceptuelle** de Ma feuille de route V3, arbitrée par le QG en six tours (Arbitrages 1 à 6, 2026-09-26 à 2026-09-28). **Aucune architecture technique n'est décidée ici** : provider IA, prompts, orchestration, nombre d'appels, schéma de données et RPC restent explicitement ouverts (voir `CURRENT_STATE.md` §8). Ce document est le pendant, côté Ma feuille de route, de `MON_POINT_DE_DEPART_V3.md` (côté collecte) — la doctrine de convergence de preuve et de plausibilité vit ici, pas dans les fichiers MPD, pour éviter toute duplication.
 
 ---
 
@@ -56,6 +56,38 @@ Le **filtre est principalement un mécanisme interne** — la personne voit les 
 - Q31 (condition indispensable) — appelle d'abord une adaptation de la voie ; élimination seulement si aucune forme réaliste ne permet de la respecter.
 - Q32 (disponibilité actuelle) — agit sur la disponibilité à considérer une voie **aujourd'hui**, jamais sur sa possibilité permanente (voir §E).
 
+### B.1 — Mécanisme de plausibilité et de présentation des voies (Arbitrage 6, D-025)
+
+**Principe directeur.** Le passé fournit des preuves ; il ne fixe pas le plafond des possibilités. CoachRedo peut faire apparaître une voie que la personne n'a jamais pratiquée, jamais envisagée, ou pour laquelle elle ne possède encore aucune capacité démontrée — une expérience passée ou une capacité ÉTAYÉE n'est jamais une condition obligatoire de présentabilité. En contrepartie : CoachRedo peut ouvrir une possibilité nouvelle, il ne peut jamais la justifier uniquement parce qu'elle existe.
+
+**Quatre questions séquentielles.** L'échec d'une question antérieure n'est jamais compensé par la force d'une question suivante — aucune compensation additive entre elles.
+
+**1 — COHÉRENCE.** *Pourquoi cette voie mérite-t-elle d'exister dans l'analyse pour cette personne et sa direction ?* Une voie possède une base rationnelle **suffisamment individualisée** lorsqu'il est possible d'expliquer sa présence par la rencontre entre la direction recherchée, la situation réelle de la personne et les caractéristiques réelles de la voie — à partir des données effectivement disponibles et/ou d'informations externes pertinentes — sans inventer de fait personnel, de capacité, de préférence, de demande marché ou de validation terrain. Peut mobiliser : objectif/direction, situation actuelle, contraintes, ressources, capacités existantes, capacités raisonnablement constructibles, parcours pertinent, disponibilité, territoire, modalités d'accès, volonté d'apprentissage réellement établie, informations externes pertinentes. **Aucun antécédent personnel dans le domaine n'est obligatoire** — ni expérience passée, ni capacité déjà démontrée, ni capacité ÉTAYÉE, ni idée préalablement citée, ni signal Q33/Q34/Q36 pointant déjà vers cette voie. Mais un objectif générique + l'existence générale d'une activité ne suffisent pas (« gagner plus d'argent » + « cette activité existe » n'est pas une justification individualisée). L'exploration externe peut faire apparaître une possibilité nouvelle ; elle ne peut jamais fabriquer rétroactivement les faits personnels qui la justifieraient.
+
+**2 — COMPATIBILITÉ.** *Existe-t-il au moins une configuration réaliste de cette voie compatible avec les contraintes importantes de cette personne ?* Évalue la **forme possible** de la voie — jamais le coût, le délai ou l'effort nécessaires pour la construire depuis aujourd'hui (exclusivement ACTIONNABILITÉ, ci-dessous). Raisonnement `VOIE → OPTION(S)` : une option incompatible n'élimine jamais automatiquement la voie si une autre configuration réaliste reste possible. Q31 est une source de contrainte bloquante particulièrement forte, mais pas l'unique source possible. Une contrainte est bloquante aujourd'hui uniquement lorsqu'elle est nécessaire à toute configuration réaliste et qu'elle ne peut ni être respectée, ni être contournée par une configuration alternative raisonnable.
+
+**3 — ACTIONNABILITÉ.** *À partir de sa situation actuelle, existe-t-il une prochaine étape réaliste et proportionnée permettant d'avancer intelligemment vers cette voie ?* Évalue le **chemin depuis aujourd'hui** vers une configuration compatible — c'est ici, et exclusivement ici, qu'interviennent coût, délai, effort, ressources nécessaires, contraintes, horizon pertinent, réversibilité, information produite. Une prochaine étape peut être : ACTION DIRECTE, TEST, apprentissage, acquisition progressive d'une capacité ou d'une ressource, création d'un accès au terrain, action préalable permettant ensuite d'obtenir un signal terrain. **Une capacité ou ressource théoriquement acquérable n'est jamais automatiquement une simple friction** — son coût/délai/effort réel doit être examiné qualitativement. **Q29 informe l'horizon pertinent et donc la proportionnalité de la prochaine étape ; il ne sélectionne ni n'élimine jamais une voie à lui seul** (cohérent avec son rôle déjà verrouillé, §B).
+
+Trois états, non hiérarchiques — jamais une note ni une échelle :
+- **ACTIONNABLE MAINTENANT** — une prochaine étape réaliste et proportionnée existe depuis la situation actuelle.
+- **CONSTRUCTIBLE MAIS PRÉMATURÉE AUJOURD'HUI** — une route de construction reste raisonnablement identifiable, mais une condition préalable ou le coût/délai/effort nécessaire rend son engagement disproportionné aujourd'hui. Alimente Direction à garder en vue (§E).
+- **SANS ROUTE RAISONNABLE IDENTIFIABLE AUJOURD'HUI** — aucune progression suffisamment rationnelle vers une première action, un premier apprentissage décisionnel ou un premier signal utile n'est identifiable sans engagement disproportionné. Peut conduire à Ne pas présenter.
+
+**Cumul d'inconnues et de préalables.** Le nombre d'inconnues ou de préalables n'est pas en lui-même un motif d'exclusion — CoachRedo cherche d'abord un séquençage intelligent : la prochaine étape doit prioritairement réduire l'incertitude qui conditionne le plus rationnellement la suite, ou produire plusieurs informations utiles à faible coût lorsqu'une même action le permet. **Garde-fou :** une chaîne de préalables ne devient pas raisonnable simplement parce que son premier maillon est accessible — le premier pas doit avoir une fonction décisionnelle réelle, produisant directement ou après une séquence courte et intelligible une information, une capacité ou un accès suffisamment utile pour décider de la suite, sans exiger d'abord un engagement disproportionné. Aucun nombre maximal mécanique de préalables ou d'étapes, aucun score de complexité — l'évaluation reste qualitative, destinée à empêcher de « sauver » artificiellement une voie par une chaîne arbitrairement longue de préalables théoriquement possibles.
+
+**Testabilité et Q35.** Q35 informe la testabilité ; il ne la décide jamais seul. L'absence actuelle d'accès au public ne suffit pas à éliminer une voie lorsqu'une étape préalable réaliste et proportionnée peut créer cet accès. Question de contrôle : *existe-t-il une manière réaliste et proportionnée d'obtenir le prochain signal terrain nécessaire, directement ou après une étape préalable raisonnable ?* Ne jamais confondre accès déclaré, accès constructible, demande, volonté de payer, client, marché validé.
+
+**4 — DISPONIBILITÉ AUJOURD'HUI.** *La personne est-elle prête à considérer cette voie maintenant ?* Q32 intervient ici, **après** Cohérence, Compatibilité et Actionnabilité — jamais avant. PRÊT À CONSIDÉRER AUJOURD'HUI ≠ LIMITE PERMANENTE. Q32 ne peut jamais : rendre cohérente une voie incohérente, rendre compatible une configuration incompatible, rendre actionnable une voie qui ne l'est pas, valider le marché, compenser une absence de base rationnelle.
+
+**Trois sorties, jamais un score ni un classement :**
+- **PRÉSENTER MAINTENANT** — base rationnelle individualisée + au moins une configuration compatible + ACTIONNABLE MAINTENANT + disponible aujourd'hui. Entre dans « Tes voies plausibles », anatomie à 7 blocs (§D).
+- **DIRECTION À GARDER EN VUE** — justification déjà suffisamment individualisée pour rester cohérente avec la direction, mais une condition importante (Q32, capacité/ressource à construire, étape intermédiaire, accès terrain à construire, disponibilité insuffisante, condition externe/territoriale, coût/délai/effort disproportionné) empêche raisonnablement de l'engager aujourd'hui. Voir §E — jamais l'anatomie complète, jamais une action immédiate, jamais une pression à agir.
+- **NE PAS PRÉSENTER** — base rationnelle insuffisamment individualisée, ou aucune configuration réaliste compatible identifiable, ou aucune route raisonnable identifiable aujourd'hui vers une première information/action utile sans engagement disproportionné. N'apparaît nulle part dans le document. **Ni un rejet définitif, ni un jugement de valeur — seulement l'absence, aujourd'hui, d'une base suffisante pour justifier une présence dans MFR.**
+
+**Filtrage ≠ classement, réaffirmé.** Aucun score, pourcentage, ranking, gagnant, « meilleure voie », compensation additive entre critères, niveau « très/moyennement plausible », seuil numérique caché. Une matrice descriptive non numérique peut structurer/expliquer le raisonnement, jamais décider par agrégation. La nuance vient des raisons, des contraintes, des inconnues, de la prochaine action, de la conditionnalité de la trajectoire — jamais d'un chiffre.
+
+**Cohérence avec D-024, réaffirmée sans modification.** Les statuts de preuve ne forment pas une hiérarchie ; ÉTAYÉ n'est jamais un gate obligatoire de présentabilité ; absence de preuve historique ≠ élimination ; capacité ÉTAYÉE ≠ marché validé ; ACTION DIRECTE ne requiert pas automatiquement une capacité ÉTAYÉE ; Q18 informe la mobilisabilité, jamais la preuve ; marché/demande/prix/volonté de payer/offre/rentabilité/succès futur ne deviennent jamais ÉTAYÉS par MPD ; le terrain reste l'autorité de validation.
+
 ---
 
 ## C. Granularité et vocabulaire (Arbitrage 2-3)
@@ -64,6 +96,8 @@ Le **filtre est principalement un mécanisme interne** — la personne voit les 
 - **OPTION** — possibilité concrète à l'intérieur d'une voie, uniquement lorsque cette déclinaison apporte réellement de la valeur. Aucun nombre artificiel.
 - **ROUTE** — séquence de progression depuis la situation actuelle vers l'objectif, **pour une voie donnée** (pas une notion transversale à toutes les voies présentées).
 - **TEST** — expérience limitée destinée à produire une donnée terrain et réduire une incertitude précise.
+
+**Détermination du niveau, avant tout filtrage (Arbitrage 6, D-025) :** une étape qui n'a de sens que comme opération nécessaire à l'intérieur d'une voie reste une étape de ROUTE, même si elle demande un effort important. Une étape intermédiaire peut en revanche constituer sa **propre VOIE** lorsqu'elle représente elle-même une stratégie autonome de progression, avec sa propre logique d'action et sa propre trajectoire — tout en restant explicitement reliée à la direction long terme. Ne jamais transformer automatiquement un emploi, une mission freelance, un apprentissage ou une petite activité en destination finale lorsqu'il ne s'agit que d'une étape vers l'objectif.
 
 Le nom produit **« Ma feuille de route »** reste valide : son singulier désigne le document personnel global, qui peut contenir plusieurs voies et donc plusieurs routes candidates sans contradiction de nommage. Point clos.
 
@@ -137,11 +171,13 @@ Plusieurs voies suivent les mêmes règles de construction et les mêmes règles
 
 ---
 
-## E. Q32 — direction plausible mais non considérée aujourd'hui (Arbitrage 3-4)
+## E. Direction à garder en vue (Arbitrage 3-4, admission élargie par l'Arbitrage 6/D-025)
 
-**PRÊT À CONSIDÉRER AUJOURD'HUI ≠ LIMITE PERMANENTE.** Une direction suffisamment plausible mais explicitement non considérée aujourd'hui peut apparaître **en retrait**, uniquement si sa présence apporte une réelle valeur — cette catégorie n'a aucune obligation d'exister.
+**PRÊT À CONSIDÉRER AUJOURD'HUI ≠ LIMITE PERMANENTE.** Une voie déjà cohérente (§B.1, Question 1 — COHÉRENCE) mais dont la présentation aujourd'hui est empêchée par une condition importante — Q32, une capacité/ressource à construire, une étape intermédiaire nécessaire, un accès terrain à construire, une disponibilité insuffisante, une condition externe/territoriale, ou un coût/délai/effort disproportionné (état CONSTRUCTIBLE MAIS PRÉMATURÉE AUJOURD'HUI, §B.1) — peut apparaître **en retrait**, uniquement si sa présence apporte une réelle valeur. Cette catégorie n'a aucune obligation d'exister.
 
-Anatomie légère :
+**Ni une poubelle de voies rejetées, ni un lot de consolation.** Une voie dont la cohérence elle-même est insuffisante, ou qui ne dispose d'aucune route raisonnable même en principe (état SANS ROUTE RAISONNABLE IDENTIFIABLE, §B.1), n'y entre jamais — elle est simplement absente (Ne pas présenter, §B.1).
+
+Anatomie légère (inchangée) :
 1. Nom de la direction.
 2. Pourquoi elle reste cohérente avec l'objectif.
 3. Ce qui devrait évoluer pour qu'elle devienne éventuellement pertinente.
@@ -183,10 +219,14 @@ La suppression d'une section historique ne signifie jamais la suppression de sa 
 
 ## G. Ce qui reste explicitement ouvert
 
-Aucune architecture technique n'est décidée par les Arbitrages 1-5 : provider IA, prompts, orchestration interne (le nombre et la nature des opérations réelles — analyser/explorer/filtrer/construire/vérifier/rédiger ou une autre séquence — restent ouverts ; la décision conceptuelle ne se traduit pas par « un seul appel IA »), schéma de données, RPC, mise en page finale/PDF.
+Aucune architecture technique n'est décidée par les Arbitrages 1-6 : provider IA, prompts, orchestration interne (le nombre et la nature des opérations réelles — analyser/explorer/filtrer/construire/vérifier/rédiger ou une autre séquence — restent ouverts ; la décision conceptuelle ne se traduit pas par « un seul appel IA »), schéma de données, RPC, persistance des micro-data, mise en page finale/PDF.
 
 **Mécanisme de convergence DÉCLARÉ→ÉTAYÉ : conceptuellement verrouillé (§D.3, Arbitrage 5, D-024).** Reste ouvert, explicitement pour son seul volet technique : comment détecter de façon fiable qu'un même référent est cité sous deux questions différentes (§D.3).
 
-Reports conceptuels encore ouverts, non résolus par les Arbitrages 1-5 : algorithme technique exact du filtrage/croisement produisant les voies elles-mêmes (le principe et le pipeline sont verrouillés, pas l'algorithme — candidat naturel pour un prochain verrou conceptuel, non ouvert à ce stade) ; seuils et algorithme du principe à 3 niveaux de Q20 ; mise en œuvre technique exacte de l'exploration élargie (le principe est verrouillé, pas la méthode) ; détection technique du référent partagé (ci-dessus) ; position exacte de « Direction(s) à garder en vue » dans le document ; wording UX final de toutes les sections. (Le fork Architecture I/Architecture II est tranché — voir §F, Section 2 : Architecture I retenue.)
+**Mécanisme de plausibilité et de présentation des voies (Cohérence/Compatibilité/Actionnabilité/Disponibilité, trois sorties) : conceptuellement verrouillé (§B.1, Arbitrage 6, D-025).** Reste ouvert, explicitement pour son seul volet technique : l'algorithme réel du moteur qui applique ces quatre questions, produit/filtre les VOIES et OPTIONS, sélectionne techniquement entre ACTION DIRECTE et TEST, et détecte les chaînes de préalables — aucun de ces mécanismes techniques n'est décidé par D-025.
 
-Voir `CURRENT_STATE.md` §8 pour le suivi vivant de ces reports, et `DECISIONS.md` D-023/D-024 pour les décisions de clôture.
+Reports conceptuels encore ouverts, non résolus par les Arbitrages 1-6 : seuils et algorithme du principe à 3 niveaux de Q20 ; mise en œuvre technique exacte de l'exploration élargie (le principe est verrouillé, pas la méthode) ; détection technique du référent partagé (ci-dessus) ; position exacte de « Direction(s) à garder en vue » dans le document ; wording UX final de toutes les sections. (Le fork Architecture I/Architecture II est tranché — voir §F, Section 2 : Architecture I retenue.)
+
+Reports techniques MPD non affectés, toujours ouverts sans changement : mécanique déterministe skip/recovery ; réutilisation UX Q16/Q1 et Q11/Q33 ; budget de relances P0-P3 et exception `critical_for_route=true`.
+
+Voir `CURRENT_STATE.md` §8 pour le suivi vivant de ces reports, et `DECISIONS.md` D-023/D-024/D-025 pour les décisions de clôture.
