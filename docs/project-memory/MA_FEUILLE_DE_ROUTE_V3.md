@@ -7,7 +7,7 @@ metadata:
 
 # MA_FEUILLE_DE_ROUTE_V3 — Architecture conceptuelle verrouillée
 
-Dernière mise à jour : 2026-09-28 (D-025 — verrouillage du mécanisme de plausibilité et de présentation des voies, Arbitrage 6)
+Dernière mise à jour : 2026-09-28 (§G — résidu documentaire post-D-026 corrigé, résolution Q20 dans Actionnabilité ; D-025 — verrouillage du mécanisme de plausibilité et de présentation des voies, Arbitrage 6)
 
 Ce document enregistre l'architecture **conceptuelle** de Ma feuille de route V3, arbitrée par le QG en six tours (Arbitrages 1 à 6, 2026-09-26 à 2026-09-28). **Aucune architecture technique n'est décidée ici** : provider IA, prompts, orchestration, nombre d'appels, schéma de données et RPC restent explicitement ouverts (voir `CURRENT_STATE.md` §8). Ce document est le pendant, côté Ma feuille de route, de `MON_POINT_DE_DEPART_V3.md` (côté collecte) — la doctrine de convergence de preuve et de plausibilité vit ici, pas dans les fichiers MPD, pour éviter toute duplication.
 
@@ -225,8 +225,10 @@ Aucune architecture technique n'est décidée par les Arbitrages 1-6 : provider 
 
 **Mécanisme de plausibilité et de présentation des voies (Cohérence/Compatibilité/Actionnabilité/Disponibilité, trois sorties) : conceptuellement verrouillé (§B.1, Arbitrage 6, D-025).** Reste ouvert, explicitement pour son seul volet technique : l'algorithme réel du moteur qui applique ces quatre questions, produit/filtre les VOIES et OPTIONS, sélectionne techniquement entre ACTION DIRECTE et TEST, et détecte les chaînes de préalables — aucun de ces mécanismes techniques n'est décidé par D-025.
 
-Reports conceptuels encore ouverts, non résolus par les Arbitrages 1-6 : seuils et algorithme du principe à 3 niveaux de Q20 ; mise en œuvre technique exacte de l'exploration élargie (le principe est verrouillé, pas la méthode) ; détection technique du référent partagé (ci-dessus) ; position exacte de « Direction(s) à garder en vue » dans le document ; wording UX final de toutes les sections. (Le fork Architecture I/Architecture II est tranché — voir §F, Section 2 : Architecture I retenue.)
+**Q20 (autonomie numérique) : conceptuellement résolue (micro-arbitrage post-D-026, 2026-09-28).** L'ancienne classification à 3 niveaux (autonome/accompagnement léger/acquisition significative), antérieure à l'existence de ce mécanisme, est abandonnée — Q20 est traitée comme une capacité/ressource acquérable parmi d'autres au sein d'Actionnabilité (§B.1, question 3), confrontée aux exigences numériques concrètes de chaque voie/option/prochaine action, sans classification globale ni seuil propre. Détail : `MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` §2 (Q20) et §3.
 
-Reports techniques MPD non affectés, toujours ouverts sans changement : mécanique déterministe skip/recovery ; réutilisation UX Q16/Q1 et Q11/Q33 ; budget de relances P0-P3 et exception `critical_for_route=true`.
+Reports conceptuels encore ouverts, non résolus par les Arbitrages 1-6 : mise en œuvre technique exacte de l'exploration élargie (le principe est verrouillé, pas la méthode) ; détection technique du référent partagé (ci-dessus) ; position exacte de « Direction(s) à garder en vue » dans le document ; wording UX final de toutes les sections. (Le fork Architecture I/Architecture II est tranché — voir §F, Section 2 : Architecture I retenue.)
 
-Voir `CURRENT_STATE.md` §8 pour le suivi vivant de ces reports, et `DECISIONS.md` D-023/D-024/D-025 pour les décisions de clôture.
+**Mécanique déterministe de collecte MPD (Arbitrage 7, D-026, 2026-09-28) : conceptuellement close.** P0/P1/P2/P3, le budget global de relances et `critical_for_route=true` sont **abandonnés** comme mécanique active (traçables uniquement comme historique superseded) ; les mécanismes de skip/recovery et la réutilisation UX (Q1→Q16, Q11→Q33, Q14/Q24) sont **conceptuellement résolus**, avec des triggers désormais tous structurés. Seules leurs **implémentations techniques** (persistance, moteur d'exécution des triggers, suppression/invalidation d'une réponse) restent ouvertes. Détail canonique complet : `MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` §1-§3 ; décision : `DECISIONS.md` D-026.
+
+Voir `CURRENT_STATE.md` §8 pour le suivi vivant de ces reports, et `DECISIONS.md` D-023/D-024/D-025/D-026/D-027 pour les décisions de clôture.

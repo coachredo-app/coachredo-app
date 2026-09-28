@@ -7,7 +7,7 @@ metadata:
 
 # MON_POINT_DE_DEPART_V3_QUESTIONNAIRE — Source de vérité Q1-Q36
 
-Dernière mise à jour : 2026-09-28 (mécanique déterministe de collecte close, A7/D-026 — abandon du budget de relances et de P0-P3 opérationnel, relances désormais strictement structurées)
+Dernière mise à jour : 2026-09-28 (Q20 — classification à 3 niveaux abandonnée, absorbée dans Actionnabilité, micro-arbitrage post-D-026 ; mécanique déterministe de collecte close, A7/D-026 — abandon du budget de relances et de P0-P3 opérationnel, relances désormais strictement structurées)
 
 Ce document transcrit fidèlement le handoff QG2 (`HANDOFF_QG2_MON_POINT_DE_DEPART_V3.md`, transmis par le QG le 2026-09-23) sur le contenu détaillé du questionnaire Mon point de départ V3, **mis à jour avec les verdicts finaux de la matrice de couverture Q1-Q36** (audit individuel des 36 questions par étape, puis audit inverse global de couverture décisionnelle, clôturés et arbitrés le 2026-09-25, cf. DECISIONS D-022). **Aucune information n'a été comblée par supposition** — les points encore ouverts sont explicitement notés comme tels.
 
@@ -107,7 +107,7 @@ Généralise deux doctrines déjà verrouillées isolément : les trois règles 
 
 **Nuance verrouillée pour Q31** : la condition indispensable doit être respectée **maintenant** (doctrine Q8/Q31 inchangée, aucune obligation immédiate affaiblie) ; seule sa **permanence future** ne doit pas être présumée sans données. Deux choses distinctes, non contradictoires.
 
-Cas couverts explicitement (vérifiés sans contradiction lors de l'audit de clôture) : temps disponible (Q3/Q4), mobilisabilité d'une capacité (Q18), budget de test (Q28), mobilité réelle (Q30), condition indispensable (Q31, avec la nuance ci-dessus), ouverture au changement (Q32), et toute voie de stabilisation présentée comme étape.
+Cas couverts explicitement (vérifiés sans contradiction lors de l'audit de clôture) : temps disponible (Q3/Q4), mobilisabilité d'une capacité (Q18), **autonomie numérique (Q20, ajouté au micro-arbitrage post-D-026, 2026-09-28)**, budget de test (Q28), mobilité réelle (Q30), condition indispensable (Q31, avec la nuance ci-dessus), ouverture au changement (Q32), et toute voie de stabilisation présentée comme étape.
 
 ### Classification des questions — logique d'apparition UX (VERROUILLÉ, D-022, 2026-09-25)
 
@@ -332,12 +332,14 @@ Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton 
 - Objectif : ressources matérielles mobilisables. Principe : absence de ressource ≠ élimination automatique d'une voie — chercher d'abord un test adapté aux moyens disponibles.
 - Distinction : Q19 = moyen de transport disponible (≠ Q30 = rayon de mobilité réel).
 
-**Q20 — Autonomie numérique**
+**Q20 — Autonomie numérique — CONSERVER MAIS À AJUSTER (VALIDÉ QG, micro-arbitrage post-D-026, 2026-09-28)**
 - Formulation : « Avec un smartphone ou un ordinateur, qu'est-ce que tu sais faire seul(e) aujourd'hui ? »
 - Aide : « Choisis seulement ce que tu peux faire sans avoir besoin qu'on te guide à chaque étape. »
 - Actions : rechercher sur Internet, messages/photos/documents, e-mail, formulaires/démarches en ligne, documents simples, tableur basique, visuel/présentation, publication réseaux sociaux, gestion d'un compte social professionnel, appel vidéo, acheter/vendre/recevoir une commande en ligne, paiement numérique, outils IA pour rechercher/écrire/créer/travailler, autre, peu de choses seul(e)
 - Objectif : capacités numériques fonctionnelles, **pas un score digital global**.
-- **Principe verrouillé pour l'analyse post-collecte (CONSERVER MAIS À AJUSTER, D-022) :** pas de taxonomie universelle « lacune de fond vs lacune superficielle ». Pour une action numérique requise par la route : (1) déjà autonome → directement mobilisable ; (2) non autonome mais accompagnement raisonnablement léger au regard du test envisagé → intégrer un préalable ; (3) non autonome et acquisition significative au regard du test → adapter la forme du test ou la route. Seuils et algorithme **toujours à spécifier**. Aucun score numérique global, aucune nouvelle question.
+- **Principe d'exploitation verrouillé (micro-arbitrage post-D-026, 2026-09-28) :** Q20 collecte les capacités numériques fonctionnelles actuelles de manière structurée. MFR les confronte aux exigences numériques concrètes de chaque voie, option ou prochaine action — la conséquence est déterminée par le mécanisme général d'Actionnabilité (`MA_FEUILLE_DE_ROUTE_V3.md` §B.1), **jamais par une classification numérique globale préalable de la personne**. Q20 reste une donnée structurée spécifique ; elle n'est jamais réduite à une étiquette globale. Selon la voie considérée, une capacité numérique absente aujourd'hui peut : être sans importance ; être compensée par une modalité différente ou une aide accessible (ex. réseau d'aide Q22, actif relationnel) ; nécessiter un apprentissage proportionné intégré comme préalable ; nécessiter l'acquisition progressive d'une capacité ; ou contribuer à rendre la voie CONSTRUCTIBLE MAIS PRÉMATURÉE / SANS ROUTE RAISONNABLE si l'engagement nécessaire avant un signal utile devient disproportionné. **Q20 seule n'exclut jamais mécaniquement une voie.** Aucun score, aucun seuil numérique, aucune catégorie globale de personne, aucun sous-moteur propre à Q20.
+- **Historique, superseded (D-022, 2026-09-25) :** une première classification à trois niveaux (autonome / accompagnement raisonnablement léger / acquisition significative), avec seuils et algorithme à spécifier, avait été validée avec la réserve explicite « CONSERVER MAIS À AJUSTER ». Conçue avant l'existence du mécanisme général d'Actionnabilité (D-025, postérieur de 3 jours), cette classification globale est **abandonnée** par le micro-arbitrage post-D-026 : elle ne conserve aucune fonction distincte une fois Q20 traitée comme une capacité/ressource acquérable parmi d'autres au sein du mécanisme général déjà verrouillé pour ce cas. **Ne plus documenter les trois niveaux comme mécanique active.**
+- Cas ajouté à la liste des cas couverts par ÉTAT ACTUEL ≠ LIMITE PERMANENTE (§1) : une capacité numérique actuelle n'est jamais une limite permanente.
 
 **Q21 — Langues fonctionnelles**
 - Formulation : « Quelles langues peux-tu utiliser aujourd'hui, même si tu ne les maîtrises pas parfaitement ? »
@@ -493,7 +495,7 @@ Chaîne produit et 7 étapes ; principe temporel MAINTENANT→...→DIRECTION LO
 **P0/P1/P2/P3 retiré de cette liste (A7, D-026) : superseded, non actif — voir §1.**
 
 ### Verdicts finaux par question (CONSERVER sauf mention contraire)
-Toutes les questions Q1–Q36 + les deux micro-données ajoutées ont reçu le verdict **CONSERVER**, à l'exception des suivantes en **CONSERVER MAIS À AJUSTER** (ajustement documenté au fil du §2, aucun n'est une remise en cause de la question elle-même) : Q10 (relance corrigée), Q15 (statut SOCLE, A7), Q16 (niveau de preuve corrigé + sous-question systématique, A7), Q18 (doctrine A/B), Q20 (principe à 3 niveaux route-relatif, hors A7), Q25 (fonction verrouillée + statut SOCLE, A7), Q29 (trois règles), Q30 (sous-question conservée, trigger fermé sur deux choix précis — voir §2), Q36 (provenance ajoutée), Q6/Q7/WHY (restructurés en donnée directionnelle structurée, A7). **Aucune suppression de question n'a résulté de l'audit initial D-022, ni de la mécanique A7.**
+Toutes les questions Q1–Q36 + les deux micro-données ajoutées ont reçu le verdict **CONSERVER**, à l'exception des suivantes en **CONSERVER MAIS À AJUSTER** (ajustement documenté au fil du §2, aucun n'est une remise en cause de la question elle-même) : Q10 (relance corrigée), Q15 (statut SOCLE, A7), Q16 (niveau de preuve corrigé + sous-question systématique, A7), Q18 (doctrine A/B), Q20 (classification à 3 niveaux abandonnée, absorbée dans le mécanisme général d'Actionnabilité — micro-arbitrage post-D-026), Q25 (fonction verrouillée + statut SOCLE, A7), Q29 (trois règles), Q30 (sous-question conservée, trigger fermé sur deux choix précis — voir §2), Q36 (provenance ajoutée), Q6/Q7/WHY (restructurés en donnée directionnelle structurée, A7). **Aucune suppression de question n'a résulté de l'audit initial D-022, ni de la mécanique A7.**
 
 ### HYPOTHÈSE / À TESTER (non résolu)
 - Simulations de durée/nombre d'interactions par profil (précis/moyen/vague) — chiffres non validés produit, **à rejouer sous les hypothèses A7** (absence de budget global, cf. Arbitrage 6.5 du chantier MFR pour le raisonnement).
@@ -503,12 +505,14 @@ Toutes les questions Q1–Q36 + les deux micro-données ajoutées ont reçu le v
 
 **Mise à jour (2026-09-26, D-023) :** les reports relatifs à l'architecture conceptuelle de Ma feuille de route elle-même (pipeline de filtrage produisant les voies/options, choix utilisateur, fonction de « Ton miroir CoachRedo », anatomie de génération) ont été traités par les Arbitrages 1-4 et vivent désormais dans `docs/project-memory/MA_FEUILLE_DE_ROUTE_V3.md` — non dupliqués ici. Ce fichier reste centré sur les mécanismes propres à la collecte Q1-Q36 elle-même.
 
-### À ARBITRER — liste finale après A7/D-026 (aucun ne remet en cause une question)
-- Seuils et algorithme du principe à 3 niveaux route-relatif de Q20 — **hors périmètre A7**, chantier MFR-technique (Arbitrage 6, volet technique).
+### À ARBITRER — liste finale après A7/D-026 et micro-arbitrage Q20 (aucun ne remet en cause une question)
 - Mécanisme d'exploration élargie de CoachRedo hors des environnements spontanément cités (garde-fou conceptuel verrouillé ; le principe opérationnel — EXPLORER seedé par l'objectif/le parcours/les capacités/les ressources au-delà de Q33-34 — est précisé par l'Arbitrage 2 de Ma feuille de route V3, D-023 ; la mise en œuvre technique reste non définie).
 - Position écran technique définitive de Q1-Q36 et des deux micro-données (**la non-visibilité de toute numérotation est en revanche verrouillée, A7** — voir §2 introduction).
 - Métriques de durée — hypothèses uniquement avant tests réels.
 - Mécanisme technique de suppression/invalidation/historisation d'une réponse devenue non applicable lors d'une modification (principe conceptuel verrouillé A7 — « cesse de participer au dossier actif » — mécanisme technique non tranché).
+
+**Résolu par le micro-arbitrage Q20 (post-D-026, 2026-09-28) — ne plus traiter comme ouvert :**
+- ~~Q20 — principe d'exploitation route-relatif, seuils et algorithme de la classification à 3 niveaux~~ → la classification globale (autonome/accompagnement léger/acquisition significative) est **abandonnée** ; Q20 est absorbée dans le mécanisme général d'Actionnabilité (D-025 §B.1) comme une capacité/ressource acquérable parmi d'autres, évaluée relativement aux exigences numériques de chaque voie — aucun seuil, aucun score, aucune classification globale propre à Q20 (voir §2 et `MA_FEUILLE_DE_ROUTE_V3.md` §B.1).
 
 **Résolu par A7 (D-026, 2026-09-28) — ne plus traiter comme ouvert :**
 - ~~Q30 — liste exacte des choix structurés qualifiant « limité »~~ → tranché en arbitrage final : trigger fermé sur exactement deux choix (« principalement chez moi/très près » et « cela varie »), notion abstraite « limité/variable » abandonnée (voir §2).
