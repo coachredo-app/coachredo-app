@@ -7,7 +7,7 @@ metadata:
 
 # DECISIONS — CoachRedo App
 
-Dernière mise à jour : 2026-09-29 (V16 — D-028 ajoutée, verrouillage du contrat métier MPD V3 → MFR V3, indépendant de toute architecture technique)
+Dernière mise à jour : 2026-09-29 (V17 — D-029 ajoutée, verrouillage de l'architecture logique de persistance MPD V3 → MFR V3, T1→T3)
 
 Ce registre ne contient que les décisions structurantes — pas les discussions intermédiaires. Chaque entrée : sujet, décision, pourquoi, conséquence, statut. Une décision remplacée reste visible avec `Statut: SUPERSEDED`, jamais supprimée.
 
@@ -410,3 +410,45 @@ COLLECTE MPD → DOSSIER MPD COMPLET ET COHÉRENT → ÉTAT LOGIQUE SOURCE LORS 
 **Conséquence :** nouvelle entrée D-028 dans `DECISIONS.md`. `CURRENT_STATE.md` §8 mis à jour : chantier « Contrat métier MPD V3 → MFR V3 » enregistré comme clos conceptuellement, prochain verrou technique explicitement non engagé. Aucune modification de `MON_POINT_DE_DEPART_V3_QUESTIONNAIRE.md` (voir ci-dessus) ni de `MA_FEUILLE_DE_ROUTE_V3.md`/`MON_POINT_DE_DEPART_V3.md`/`ARCHITECTURE.md` au-delà d'un éventuel pointeur, sauf résidu de contradiction détecté à l'audit.
 
 **Statut :** ACTIVE — contrat métier conceptuellement verrouillé. Architecture technique (schéma, persistance, moteur analytique, provider IA, orchestration) explicitement non ouverte par cette décision.
+
+---
+
+### D-029 — Architecture logique de persistance MPD V3 → MFR V3 (verrouillage conceptuel, T1→T3)
+**Date :** 2026-09-29 (T1 audit factuel de l'existant, T2 candidates et arbitrages, T3 fermeture des arbitrages structurants)
+**Décision :** le QG verrouille l'**architecture logique** de persistance de Mon point de départ V3 — comment le contrat métier D-028 doit se traduire en principes de persistance, **indépendamment de tout nom physique de table/colonne, de tout SQL, de toute migration, de tout choix Supabase concret**. Aucun de ces éléments physiques n'est engagé par cette décision.
+
+**Séparation V2/V3, verrouillée :** MPD V3 utilise des structures dédiées, distinctes. Aucune réutilisation physique de `bilan_sessions`, `bilan_responses`, `rapports` — ces tables et les mécanismes V1/V2 existants (RPC `create_upgrade_bilan_session`, `migrate_legacy_session`, RLS associées) restent **intacts**, non modifiés par ce chantier. Seuls les **patterns techniques déjà éprouvés** de ce repo sont réutilisés (ownership RLS, Server Actions pour l'écriture unitaire, RPC `SECURITY DEFINER` pour les opérations transactionnelles sensibles, `auth.uid()` exclusif, verrous `FOR UPDATE`, idempotence par relecture + gestion de collision nommée) — jamais les tables elles-mêmes. Aucune migration de données V2→V3 n'est requise ni supposée.
+
+**Identités, verrouillées :** DOSSIER MPD MUTABLE ≠ ÉTAT LOGIQUE SOURCE IMMUABLE — deux identités techniques distinctes, nécessaires parce que le dossier doit rester modifiable après une consommation (D-028) alors qu'une référence déjà consommée doit rester immuable ; ces deux exigences ne peuvent coexister sans distinction d'identité. Le modèle doit être **capable** de supporter 1 utilisateur → N dossiers MPD ; l'UX V3 initiale reste libre de n'exposer qu'un dossier courant — capacité du modèle ≠ fonctionnalité immédiatement exposée.
+
+**État courant, verrouillé :** une représentation courante **mutable** par question applicable/répondue (une valeur active par question, modifiable en place, à l'image du pattern déjà éprouvé `saveBilanResponseAction`). **Pas d'append-only intégral** : aucune exigence de conserver chaque frappe ou chaque autosave — une modification métier est un changement de la valeur retenue pour une question, pas chaque caractère tapé côté client.
+
+**Historique contrôlé, verrouillé :** conservation ciblée, limitée aux événements métier ayant une valeur d'audit réelle — notamment la valeur d'une réponse devenue inactive après une modification amont (conservée pour audit, exclue de la matière active). Une réponse redevenue applicable ultérieurement **n'est jamais réactivée silencieusement** : une nouvelle confirmation active de la personne est requise pour qu'elle redevienne une réponse active — par analogie directe avec la règle de réutilisation déjà verrouillée Q11→Q33 (D-026), qui interdit tout transfert automatique d'une donnée ancienne.
+
+**Correction explicite, verrouillée** : la consommation elle-même **n'a pas à être dupliquée** dans le journal d'historique contrôlé. Elle possède son propre mécanisme, distinct — le snapshot immuable de l'état logique source (ci-dessous). Une donnée déjà figée dans ce snapshot n'a pas à être recopiée dans le journal, sauf nécessité technique ultérieure démontrée le moment venu.
+
+**État logique source, verrouillé :** créé automatiquement lors de la consommation d'un dossier complet et cohérent pour produire une MFR — un **snapshot immuable** des données actives effectivement consommées à cet instant (pas une simple référence vers l'état courant, qui resterait mutable sous elle). Un ancien snapshot n'est jamais réinterprété à partir de l'état courant modifié. Un dossier modifié ultérieurement peut produire un nouvel état logique distinct, sans affecter les états logiques et MFR déjà produits.
+
+**Définition canonique, verrouillée :** source de vérité dans le code TypeScript versionné (pattern déjà éprouvé de ce repo), portant des identifiants stables et une version canonique explicite. Le snapshot conserve, pour chaque donnée consommée, les métadonnées minimales nécessaires à l'interprétation autonome de la valeur historique par l'application elle-même — en particulier, pour les questions à choix structurés, les valeurs/libellés de choix exacts en vigueur à ce moment — sans recopier inutilement l'intégralité du questionnaire (formulation, aides) à chaque état logique. Une simple référence de version + historique Git ne suffit pas : l'application en production ne peut pas aller chercher un ancien commit à l'exécution.
+
+**Réponses, verrouillées :** granularité par question/instance métier ; valeur structurée (JSONB) retenue conceptuellement, au sein d'un **ensemble fermé** de formes de payload (texte, choix unique, choix avec précision, multi-sélection, items avec sous-réponse, texte avec provenance) — jamais une forme libre/ad hoc. INCONNU explicitement déclaré reste une vraie instance de réponse (un statut, pas une absence). Jamais applicable reste une absence totale d'instance (aucun stockage nécessaire pour ce cas). Tout sous-champ possédant sa propre condition d'apparition distincte devient sa propre instance canonique, jamais imbriqué dans le payload d'une autre question. Validation runtime obligatoire (Server Action en rempart primaire, contrainte DB en rempart secondaire) — un payload JSONB n'est jamais accepté comme un blob arbitraire.
+
+**Frontières, verrouillées :**
+```
+COLLECTE/PERSISTANCE MPD → ÉTAT LOGIQUE SOURCE → ANALYSE POST-COLLECTE → MFR
+```
+MPD ne référence jamais l'analyse. L'analyse référence l'état logique source (et transitivement MPD). MFR référence son état logique/analyse source. Un champ de nature analytique apparaissant dans une structure de la couche Collecte/Persistance MPD est, par cette règle, un signal de dérive à corriger.
+
+**Analyse, verrouillée :** référents, propositions analytiques, statuts épistémiques et liaisons de provenance nécessaires sont persistés, rattachés à l'état logique source précis qui les a produits — jamais recalculés silencieusement plus tard avec une doctrine différente. Objectif explicite : auditabilité et explicabilité historique — **jamais une promesse de rejeu bit-à-bit du raisonnement IA** (structurellement impossible à garantir), et aucune trace interne inutile du modèle analytique.
+
+**Transaction de consommation, principes verrouillés (pas de SQL dans cette mémoire) :** l'opération créant un état logique source est atomique ; l'ownership est revérifié côté serveur/DB (jamais présumé depuis un contrôle client antérieur) ; le dossier est verrouillé pendant toute la capture ; la complétude/cohérence est revérifiée sous ce même verrou ; le snapshot créé est cohérent (capture d'un seul instant logique) ; une protection équivalente contre la double consommation concurrente existe (idempotence, à l'image de `create_upgrade_bilan_session`) ; une intégrité référentielle empêche tout mélange de données entre utilisateurs ou dossiers.
+
+**Types, verrouillé :** les types DB générés sont une **amélioration d'outillage**, pas une décision d'architecture obligatoire — orthogonaux à tout ce qui précède. Un type TypeScript métier n'est **jamais** une validation runtime. La validation runtime (Server Action + contrainte DB) est le seul garde-fou réel et obligatoire.
+
+**Pourquoi :** avant toute conception physique (schéma, RLS, migrations), il fallait déterminer comment le contrat métier D-028 devait se traduire en principes de persistance sans hériter des contraintes et de la complexité déjà accumulées dans le schéma Bilan V2 (T1), et sans sur-construire (l'audit T3 a corrigé une première conclusion T2 — append-only intégral — qui excédait ce que D-028 exige réellement). Trois phases d'audit et de conception progressive (cartographie factuelle exhaustive de l'existant sans supposer de réutilisation ni de refonte totale ; comparaison de candidates architecturales cohérentes de bout en bout ; challenge explicite et correction assumée des conclusions techniques préliminaires) ont abouti à un modèle logique sans contradiction avec D-019/D-022/D-026/D-027/D-028.
+
+**Conséquence :** nouvelle entrée D-029 dans `DECISIONS.md`. `CURRENT_STATE.md` §8 mis à jour : architecture logique de persistance MPD V3 enregistrée comme verrouillée, chantiers T1-T3 clos, prochain chantier (conception physique du schéma/sécurité/migration) explicitement non engagé. `ARCHITECTURE.md` : pointeur ajouté si les frontières techniques stables le justifient, sans dupliquer le contenu de cette décision.
+
+**Reports explicitement préservés, non tranchés par D-029 :** noms physiques définitifs des tables/colonnes ; SQL ; numéro/nom de migration ; détail exact des policies RLS ; détail exact des RPC ; lifecycle de régénération d'une MFR après modification du MPD ; présentation UX exacte lorsqu'une réponse historique redevient applicable ; adoption ou non des types DB générés.
+
+**Statut :** ACTIVE — architecture logique de persistance verrouillée. Conception physique du schéma (tables, colonnes, RLS, RPC, migrations) explicitement non ouverte par cette décision.
