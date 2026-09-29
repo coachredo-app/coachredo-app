@@ -7,7 +7,7 @@ metadata:
 
 # MA_FEUILLE_DE_ROUTE_V3 — Architecture conceptuelle verrouillée
 
-Dernière mise à jour : 2026-09-28 (§G — résidu documentaire post-D-026 corrigé, résolution Q20 dans Actionnabilité ; D-025 — verrouillage du mécanisme de plausibilité et de présentation des voies, Arbitrage 6)
+Dernière mise à jour : 2026-09-29 (§D.3 — modèle des référents précisé par le contrat métier MPD→MFR, D-028 ; §G — résidu documentaire post-D-026 corrigé, résolution Q20 dans Actionnabilité ; D-025 — verrouillage du mécanisme de plausibilité et de présentation des voies, Arbitrage 6)
 
 Ce document enregistre l'architecture **conceptuelle** de Ma feuille de route V3, arbitrée par le QG en six tours (Arbitrages 1 à 6, 2026-09-26 à 2026-09-28). **Aucune architecture technique n'est décidée ici** : provider IA, prompts, orchestration, nombre d'appels, schéma de données et RPC restent explicitement ouverts (voir `CURRENT_STATE.md` §8). Ce document est le pendant, côté Ma feuille de route, de `MON_POINT_DE_DEPART_V3.md` (côté collecte) — la doctrine de convergence de preuve et de plausibilité vit ici, pas dans les fichiers MPD, pour éviter toute duplication.
 
@@ -136,7 +136,7 @@ Plusieurs voies suivent les mêmes règles de construction et les mêmes règles
 
 **Signification de ÉTAYÉ :** suffisamment soutenu par le récit structuré pour être utilisé prudemment dans le raisonnement CoachRedo. Jamais une vérité certifiée, une preuve externe indépendante, une qualification professionnelle, une garantie de performance future, ou une validation marché.
 
-**Vocabulaire canonique : diversité des référents, jamais « indépendance des sources ».** Dans MPD, la source primaire reste généralement la personne — il ne peut donc jamais y avoir d'indépendance des signaux au sens strict. Ce qui compte : plusieurs éléments se rapportent-ils au même fait/épisode répété, ou à des faits/épisodes réellement distincts ? **Un même épisode raconté dans plusieurs réponses ne constitue qu'un seul référent.** La détection technique/automatique de cette identité de référent reste un problème d'implémentation ultérieur, explicitement non résolu à ce stade.
+**Vocabulaire canonique : diversité des référents, jamais « indépendance des sources ».** Dans MPD, la source primaire reste généralement la personne — il ne peut donc jamais y avoir d'indépendance des signaux au sens strict. Ce qui compte : plusieurs éléments se rapportent-ils au même fait/épisode répété, ou à des faits/épisodes réellement distincts ? **Un même référent conserve une identité unique quel que soit le nombre d'extraits ou de propositions qu'il soutient — il n'est jamais compté plusieurs fois comme corroborations indépendantes, directement ou indirectement (précisé par le contrat métier MPD→MFR, D-028).** La détection technique/automatique de cette identité de référent reste un problème d'implémentation ultérieur, explicitement non résolu à ce stade.
 
 **Règle de convergence, sans seuil numérique :** une proposition peut être ÉTAYÉE lorsqu'au moins deux référents réellement distincts apportent une corroboration substantielle de la même proposition, dont au moins un épisode concret. La seconde corroboration doit apporter une information nouvelle sur la réalité de la proposition, jamais une simple reformulation de la première. Cette règle reste à opérationnaliser techniquement, sans jamais la transformer silencieusement en score arbitraire.
 
@@ -221,7 +221,7 @@ La suppression d'une section historique ne signifie jamais la suppression de sa 
 
 Aucune architecture technique n'est décidée par les Arbitrages 1-6 : provider IA, prompts, orchestration interne (le nombre et la nature des opérations réelles — analyser/explorer/filtrer/construire/vérifier/rédiger ou une autre séquence — restent ouverts ; la décision conceptuelle ne se traduit pas par « un seul appel IA »), schéma de données, RPC, persistance des micro-data, mise en page finale/PDF.
 
-**Mécanisme de convergence DÉCLARÉ→ÉTAYÉ : conceptuellement verrouillé (§D.3, Arbitrage 5, D-024).** Reste ouvert, explicitement pour son seul volet technique : comment détecter de façon fiable qu'un même référent est cité sous deux questions différentes (§D.3).
+**Mécanisme de convergence DÉCLARÉ→ÉTAYÉ : conceptuellement verrouillé (§D.3, Arbitrage 5, D-024), modèle des référents et éligibilité D→E précisés par le contrat métier MPD→MFR (D-028).** Reste ouvert, explicitement pour son seul volet technique : comment détecter de façon fiable qu'un même référent est cité sous deux questions différentes (§D.3).
 
 **Mécanisme de plausibilité et de présentation des voies (Cohérence/Compatibilité/Actionnabilité/Disponibilité, trois sorties) : conceptuellement verrouillé (§B.1, Arbitrage 6, D-025).** Reste ouvert, explicitement pour son seul volet technique : l'algorithme réel du moteur qui applique ces quatre questions, produit/filtre les VOIES et OPTIONS, sélectionne techniquement entre ACTION DIRECTE et TEST, et détecte les chaînes de préalables — aucun de ces mécanismes techniques n'est décidé par D-025.
 
