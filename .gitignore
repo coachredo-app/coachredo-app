@@ -49,3 +49,8 @@ next-env.d.ts
 
 # Rapports internes (coordination multi-fenêtres, ne pas publier)
 handoff/
+
+# Artefacts locaux du CLI Supabase (project-ref lié, versions de services,
+# URL de pooler) — jamais lus par le code applicatif (voir T6.1), ne
+# doivent pas être versionnés (T6.2).
+supabase/.temp/
