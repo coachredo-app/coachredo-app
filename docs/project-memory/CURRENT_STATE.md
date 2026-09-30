@@ -7,7 +7,7 @@ metadata:
 
 # CURRENT_STATE — CoachRedo App
 
-Dernière mise à jour : 2026-09-30 (V17 — D-030/D-031/D-032 synchronisées ; vision élargie de l'écosystème CoachRedo synchronisée, D-033)
+Dernière mise à jour : 2026-09-30 (V18 — patrimoine de données et apprentissage continu CoachRedo synchronisé, D-034)
 
 **Ce document est vivant.** Il doit être mis à jour à chaque incrément fonctionnel significatif validé (cf. règle dans `CLAUDE.md`). S'il contredit le repo réel au moment où vous le lisez, faites confiance au repo et signalez la contradiction au QG.
 
@@ -42,6 +42,7 @@ Dernière mise à jour : 2026-09-30 (V17 — D-030/D-031/D-032 synchronisées ; 
   **Validé fonctionnellement en Production** pour les scénarios testables manuellement : Bilan V2 completed toujours consultable, legacy nécessitant upgrade suspendu (données conservées), utilisateur sans Bilan → écran « Bientôt disponible » (dashboard, synthese, et `/bilan` en accès direct par URL).
   **Non reproduit manuellement en Production** : le scénario « onglet Bilan déjà ouvert avant le déploiement de la fermeture » — sa robustesse repose sur la vérification du code faite avant déploiement (Server Actions gated par `BILAN_OPEN`, RLS inchangé), pas sur un test end-to-end en Production, pour ne pas manipuler inutilement des données réelles.
 - **Vision élargie de l'écosystème CoachRedo** (Academy, B2C, B2B, frontière avec un futur projet de commerce/distribution en réseau, indépendance pédagogique, coaching IA, environnement des coachs, Master Coaches) — synchronisée dans la mémoire durable le 2026-09-30 (D-033, `PROJECT_BIBLE.md` §12-§19). Vision stratégique enregistrée avec ses éléments explicitement NON DÉCIDÉS ; aucune implémentation, aucun chantier Academy/coaching IA/B2B/Trading ouvert par cette synchronisation.
+- **Patrimoine de données et apprentissage continu** — vision d'architecture produit long terme synchronisée dans la mémoire durable le 2026-09-30 (D-034, `PROJECT_BIBLE.md` §20). Élabore, sans le remplacer, le principe déjà posé en §6/D-015 (« les modules possèdent leurs données métier ; CoachRedo possède l'histoire de transformation de la personne »). Vision enregistrée avec une longue liste d'éléments explicitement NON DÉCIDÉS ; **aucun impact sur la migration candidate `013_mpd_v3_foundation.sql`** (le point CASCADE/RESTRICT documenté dans ce fichier reste volontairement non résolu physiquement) ; aucun schéma, aucune table, aucun mécanisme d'anonymisation/rétention créé. Un chantier Privacy/Data Governance distinct sera nécessaire avant toute production de la future couche d'apprentissage (voir §7).
 - **Archivage des assets officiels CoachRedo Music** — commit `806a932` : 5 assets de marque officiels (avatar, logo horizontal, logo principal transparent, monochrome blanc transparent, monochrome or transparent) archivés dans `public/assets/brand/coachredo-music/`, plus le monogramme historique CoachRedo (marque mère) archivé séparément dans `public/assets/brand/coachredo/coachredo-monogram.png`. Copies vérifiées bit-à-bit (SHA-256) depuis les fichiers sources fournis par le QG. **Archivage uniquement — aucun de ces assets n'est encore intégré à l'interface CoachRedo App.**
 
 ## 3. Chantier — Mon point de départ V3 (conception de collecte CLOSE, implémentation non ouverte)
@@ -103,7 +104,7 @@ Fichiers présents dans `supabase/migrations/` : `001_schema`, `001_trading_boot
 - Statut de `HANDOFF_CHATGPT.md` et `TECHNICAL_HANDOFF.md` (racine, trackés, obsolètes par endroits) — restent intacts pour l'instant ; leur archivage/suppression sera décidé dans un ménage séparé, une fois la nouvelle mémoire installée et validée. Ne bloque pas le chantier Rapport.
 - Durée de la phase testeurs du livre et date de réouverture du Bilan — non fixée à ce stade ; dépend de l'avancement de cette phase, pas du calendrier du chantier Rapport.
 
-**Chantiers dédiés futurs identifiés, mentionnés mais non ouverts :** nettoyage des surfaces coaching legacy dans l'admin ; nettoyage du module Trading legacy ; redesign du suivi coaching (post-P3) ; audit de l'usage réel de `stripe`.
+**Chantiers dédiés futurs identifiés, mentionnés mais non ouverts :** nettoyage des surfaces coaching legacy dans l'admin ; nettoyage du module Trading legacy ; redesign du suivi coaching (post-P3) ; audit de l'usage réel de `stripe` ; chantier Privacy / Data Governance pour le futur patrimoine de données et l'apprentissage collectif (D-034, `PROJECT_BIBLE.md` §20) — requis avant toute production de cette couche, non ouvert à ce stade.
 
 ## 8. Prochaine action exacte
 
