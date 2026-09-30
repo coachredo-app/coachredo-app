@@ -7,7 +7,7 @@ metadata:
 
 # PROJECT_BIBLE — CoachRedo
 
-Dernière mise à jour : 2026-09-30 (V5 — synchronisation du patrimoine de données et de l'apprentissage continu CoachRedo, D-034)
+Dernière mise à jour : 2026-09-30 (V6 — cycle de vie et suppression des données CoachRedo, D-035 — précise D-034 sans le remplacer)
 
 Ce document explique qui est CoachRedo, pourquoi il existe, et la relation entre ses produits. Il change rarement — seulement quand la vision ou les principes durables évoluent réellement, pas à chaque chantier.
 
@@ -153,7 +153,7 @@ Directions identifiées comme réelles, sans constituer une feuille de route ent
 - **Identité cohérente et continuité longitudinale, sans invariant technique figé.** L'écosystème CoachRedo doit préserver une identité cohérente et, lorsque pertinent, une continuité longitudinale de la personne entre ses produits et domaines. L'organisation technique future — application unique, modules, services ou autres architectures — sera décidée selon les besoins réels et **ne constitue pas aujourd'hui un invariant stratégique**.
 - **CoachRedo Trading et CoachRedo Music**, chacun avec son propre rythme de développement (§8, §9) — Trading comme vision future de l'écosystème dont la forme d'intégration (domaine d'accompagnement, outil, ou autre) reste à décider (§6, §9), Music comme branche identitaire (§6).
 - **CoachRedo Academy, B2C, B2B, coaching IA, environnement des coachs et Master Coaches** — vision élargie validée le 2026-09-30 (D-033), détaillée en §12-§19 ci-dessous.
-- **Patrimoine de données et apprentissage continu** — vision d'architecture produit long terme validée le 2026-09-30 (D-034), détaillée en §20 ci-dessous.
+- **Patrimoine de données et apprentissage continu** — vision d'architecture produit long terme validée le 2026-09-30 (D-034), détaillée en §20 ci-dessous. Son volet cycle de vie/suppression est précisé par D-035, §21.
 
 Il est normal — et attendu — que ce document ne prédise pas aujourd'hui toutes les futures directions de CoachRedo. Cette liste s'enrichira au fil des décisions réelles ; son incomplétude n'est pas, en soi, un point à arbitrer.
 
@@ -263,3 +263,35 @@ CoachRedo peut former et accompagner les équipes ou réseaux d'une entreprise c
 **NON DÉCIDÉ, explicitement, chacun un point ouvert :** durées exactes de conservation ; conservation identifiable « à vie » ; mécanisme technique exact d'anonymisation ; mécanisme technique exact de pseudonymisation ; identifiant longitudinal pseudonyme ; schéma SQL du futur patrimoine collectif ; tables d'apprentissage ; APIs/fournisseurs de connaissance externe ; fréquence exacte de veille ; horizons 30/90/180 jours ; taxonomie DB définitive des niveaux de preuve ; modèle statistique/ML ; mécanisme de réentraînement d'un modèle ; mécanisme exact de suppression de compte ; base juridique ou consentement applicable ; conclusion juridique sur ce qui peut être conservé après effacement ; modification CASCADE/RESTRICT de la migration 013. Un **chantier Privacy / Data Governance distinct** sera nécessaire avant toute production de la future couche d'apprentissage concernée.
 
 **Impact sur la migration 013 : aucun.** Le point déjà documenté dans le fichier candidat (`auth.users → mpd_dossiers` `ON DELETE CASCADE` combiné à `mpd_dossiers → mpd_etats_logiques` `ON DELETE RESTRICT`) reste volontairement non résolu physiquement — `RESTRICT` n'est pas remplacé par `CASCADE`, aucune procédure de suppression n'est créée. Détail complet : `DECISIONS.md` D-034.
+
+---
+
+## 21. Cycle de vie et suppression des données CoachRedo (D-035)
+
+**VISION D'ARCHITECTURE PRODUIT LONG TERME VALIDÉE (QG, 2026-09-30).** Cette section **précise le volet gouvernance/cycle de vie déjà posé en §20.G (D-034) — elle ne le remplace pas.**
+
+**Trois catégories conceptuelles de données**, distinguées par CoachRedo :
+
+**A. Données personnelles individuelles** — compte utilisateur, dossier MPD, réponses individuelles, historique personnel, snapshots/états logiques encore rattachables à la personne, et toute autre donnée permettant de reconstruire son parcours individuel. La suppression du compte doit permettre leur suppression, selon les règles de cycle de vie applicables.
+
+**B. Expériences structurées encore rattachables ou pseudonymisées** — une expérience dont le nom ou l'identifiant direct a été retiré **n'est pas automatiquement anonyme** : une trajectoire suffisamment riche peut permettre une réidentification. Ces données restent soumises à une procédure contrôlée de suppression ou de dissociation.
+
+**C. Connaissance collective suffisamment dissociée** — statistiques agrégées, tendances consolidées, connaissances dérivées de plusieurs expériences, apprentissages collectifs ne permettant plus raisonnablement de remonter à une personne. Conservables lorsque leur conservation est permise par les règles applicables.
+
+**Suppression d'un compte — jamais une cascade aveugle.** La suppression d'un compte CoachRedo ne doit pas être conçue comme une simple cascade technique depuis `auth.users`. Elle doit devenir une **procédure métier contrôlée**, conceptuellement :
+```
+DEMANDE DE SUPPRESSION → IDENTIFICATION DES DONNÉES PERSONNELLES → TRAITEMENT DES DÉPENDANCES
+→ SUPPRESSION / DISSOCIATION SELON CATÉGORIE → VÉRIFICATION → SUPPRESSION DU COMPTE
+```
+La relation personnelle avec CoachRedo et les données qui doivent disparaître doivent pouvoir être supprimées sans imposer automatiquement la destruction d'un patrimoine collectif réellement dissocié, lorsqu'il peut légitimement être conservé.
+
+**Architecture future de transformation** (non construite aujourd'hui) :
+```
+DONNÉES INDIVIDUELLES BRUTES → EXPÉRIENCE STRUCTURÉE → RÉDUCTION / DISSOCIATION / AGRÉGATION
+→ PATRIMOINE D'APPRENTISSAGE → CONNAISSANCE / STATISTIQUES / MODÈLES
+```
+Fera l'objet d'une architecture dédiée ultérieure — **aucune table ni mécanisme correspondant n'est créé aujourd'hui.**
+
+**NON DÉCIDÉ, explicitement, chacun un point ouvert** (ne pas verrouiller silencieusement) : durées exactes de conservation ; critères techniques exacts d'anonymisation ; mécanisme exact de pseudonymisation ; seuils d'agrégation ; éventuel identifiant longitudinal pseudonyme ; procédure SQL exacte de suppression ; mécanisme de dissociation ; architecture des futures tables d'apprentissage collectif ; base juridique ; consentement lorsque nécessaire ; règles territoriales applicables ; conclusion juridique sur la conservation après effacement. Ces points devront être traités explicitement avant la mise en production du parcours MPD V3 concerné, lorsque requis.
+
+**Impact sur la migration 013 : aucun changement.** Les FK `ON DELETE RESTRICT` (`mpd_dossiers → mpd_etats_logiques`) sont **conservées telles quelles en V1**, comme garde-fou empêchant une suppression physique accidentelle d'un compte ayant déjà produit des états logiques consommés — elles ne constituent **pas** la procédure définitive de suppression. 013 reste inchangée (SHA-256 `76ea80fbe0edaa057db7ff7a2408e4c124e81be73c9806fc7aff5bef30e01668`). Détail complet : `DECISIONS.md` D-035.
