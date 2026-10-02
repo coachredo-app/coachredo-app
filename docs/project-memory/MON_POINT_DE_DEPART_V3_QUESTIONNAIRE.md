@@ -156,9 +156,9 @@ Refus explicite d'un objectif arbitraire type « 20-30 questions maximum ». Cri
 
 Un utilisateur vague ne doit pas être puni par le parcours le plus long. Cohérent avec D-019 : pas de nombre affiché dans l'UX, durée par étape en fourchette prudente, calibration réelle encore à faire.
 
-### Micro-transitions — exemples de travail (formulations non figées)
+### Micro-transitions — textes finalisés (VALIDÉS, D-036)
 
-Pas de nouvelles questions. Exemples travaillés, non définitifs : après *Ton parcours* → « Merci. Maintenant, regardons ce que tu peux réellement mobiliser aujourd'hui. » ; après *Ta façon d'avancer* → « Nous allons maintenant revenir à quelque chose de très concret : ce qui est possible pour toi aujourd'hui. » ; avant l'étape 7 → « Dernière étape : regardons maintenant ce que tu connais déjà autour de toi. » But : éviter l'impression de formulaire administratif. **Formulations finales non figées.**
+Pas de nouvelles questions. **Les 6 textes finaux des micro-transitions sont désormais verrouillés (D-036, 2026-10-02)** — voir `MON_POINT_DE_DEPART_V3.md` §I pour le contenu exact et à jour. Ce paragraphe ne duplique plus les textes (pour éviter toute dérive entre les deux documents) ; les formulations de travail précédemment listées ici sont superseded.
 
 ---
 
