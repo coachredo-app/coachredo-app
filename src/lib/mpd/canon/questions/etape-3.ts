@@ -17,6 +17,12 @@ export const etape3Questions: readonly QuestionCanonique[] = [
     aide: 'Cela peut être quelque chose que tu as réalisé, appris, amélioré ou aidé à résoudre, dans ton travail, tes études, ta famille, une activité ou ta vie quotidienne.',
     formeReponse: 'texte',
     cardinalite: { min: 0, max: 3 },
+    // Option NA présentée comme alternative au texte libre plafonné
+    // (T7.4C — gap corrigé : « jusqu'à 3 + « aucune » », symétrique à
+    // Q12/Q33/Q34, nécessaire pour que le trigger Q13 et la relance
+    // ci-dessous — tous deux déjà rédigés contre "aucune" — soient
+    // structurellement satisfiables).
+    options: [{ value: 'aucune', label: 'Aucune' }],
     relance: {
       // Déclenchée si au moins une réussite a été déclarée (≠ "aucune") —
       // une seule relance, jamais une par réussite.
