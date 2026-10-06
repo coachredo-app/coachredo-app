@@ -1,0 +1,152 @@
+// ============================================================
+// MPD V3 — Page famille : consultation + point d'entrée modification — T7.8E
+// ============================================================
+// Socle commun T7.8/T7.9 (GO QG T7.8E, option 2 verrouillée) :
+// remplace l'ancien concept "entrer toujours par la première question"
+// (T7.8B, famille/[etape]/modifier/page.tsx, supprimé). Consultation
+// des questions ACTUELLEMENT applicables de cette famille et de leur
+// réponse ACTIVE, pour TOUTE famille TERMINEE (verrouillée ou
+// modifiable, consommée ou non — §15/§17). Point de départ de la
+// modification ciblée (un bouton « Modifier » par réponse, jamais une
+// action globale de famille) uniquement si modifiable et dossier non
+// consommé. Relit l'état serveur frais à chaque accès — jamais une
+// confiance héritée du hub ou de l'URL. Ce n'est volontairement PAS
+// un questionnaire : lecture seule + liens, rien d'autre (§3).
+
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getOuCreerDossierCourant } from '@/lib/mpd/server/dossier'
+import { MPD_CANON_V1, type Etape } from '@/lib/mpd/canon'
+import { getApplicableQuestions } from '@/lib/mpd/engine/applicabilite'
+import { getFamilyStates } from '@/lib/mpd/engine/progression'
+import type { ReponseCourante, StatutReponse } from '@/lib/mpd/types-runtime'
+import { FAMILLES_MPD } from '../../familles'
+import { ReponseLectureSeule } from './ReponseLectureSeule'
+
+interface FamillePageProps {
+  params: Promise<{ locale: string; etape: string }>
+}
+
+export default async function FamillePage({ params }: FamillePageProps) {
+  const { locale, etape: etapeParam } = await params
+  const etapeNombre = Number(etapeParam)
+
+  // Garde paramètre (T7.8E §7) : etape invalide → hub, pas de crash.
+  if (!Number.isInteger(etapeNombre) || etapeNombre < 1 || etapeNombre > 7) redirect(`/${locale}/plan-b`)
+  const etape = etapeNombre as Etape
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect(`/${locale}/auth/login`)
+
+  const dossier = await getOuCreerDossierCourant(supabase, user.id)
+  if ('error' in dossier) redirect(`/${locale}/plan-b`)
+
+  const { data: etatLogique } = await supabase
+    .from('mpd_etats_logiques')
+    .select('id')
+    .eq('dossier_id', dossier.dossierId)
+    .limit(1)
+    .maybeSingle()
+  const consomme = Boolean(etatLogique)
+
+  const { data: reponsesRows } = await supabase
+    .from('mpd_reponses_courantes')
+    .select('question_id, statut, payload')
+    .eq('dossier_id', dossier.dossierId)
+
+  const reponses = new Map<string, ReponseCourante>(
+    (reponsesRows ?? []).map(r => [
+      r.question_id as string,
+      { questionId: r.question_id as string, statut: r.statut as StatutReponse, payload: r.payload },
+    ])
+  )
+
+  // Garde famille (T7.8E §3/§15) : la page famille n'est une
+  // consultation que pour une famille déjà Terminée — avant cela, le
+  // parcours reste exclusivement /plan-b/parcours (hors périmètre).
+  const familyStates = getFamilyStates(MPD_CANON_V1, reponses)
+  const etatFamille = familyStates.find(f => f.etape === etape)
+  if (!etatFamille || etatFamille.statut !== 'TERMINEE') redirect(`/${locale}/plan-b`)
+
+  // T7.11 correction navigation §2/§3/§4 : MPD réellement complet =
+  // les 7 familles Terminées, dérivé de la MÊME lecture getFamilyStates
+  // ci-dessus — aucune seconde définition de « MPD terminé », rien de
+  // persisté côté client. Recalculé à chaque chargement de cette page.
+  const mpdComplet = familyStates.every(f => f.statut === 'TERMINEE')
+
+  // T7.8E §15/§17 : modifiable UNIQUEMENT si la famille l'autorise ET
+  // le dossier n'est pas consommé — sinon consultation pure.
+  const modifiable = etatFamille.modifiable && !consomme
+  const famille = FAMILLES_MPD.find(f => f.etape === etape)!
+
+  // T7.8E §4 : fondé sur l'état ACTIF actuel — questions actuellement
+  // applicables uniquement, jamais une réponse DEVENUE_INACTIVE
+  // présentée comme courante (elle a, par construction, disparu de
+  // `reponses` et n'apparaît donc jamais ici).
+  const questions = getApplicableQuestions(MPD_CANON_V1, reponses).filter(q => q.etape === etape)
+
+  return (
+    <div className="max-w-2xl space-y-6">
+      <div>
+        <Link href={`/${locale}/plan-b`} className="text-sm text-cr-text-secondary hover:text-cr-text">
+          ← Mon Point de Départ
+        </Link>
+        <h1 className="text-xl font-bold text-cr-text mt-2">{famille.nom}</h1>
+        <p className="text-sm text-cr-text-secondary mt-1">{famille.description}</p>
+      </div>
+
+      <div className="space-y-3">
+        {questions.map(question => {
+          const reponse = reponses.get(question.stableId) ?? null
+          // T7.8F §4/§5 : referenceEditoriale est une métadonnée
+          // canonique interne — seules les unités réellement numérotées
+          // (« Q1 », « Q2 »...) sont un repère utile pour l'utilisateur.
+          // Les autres valeurs (« branche ... rattachée à Qx »,
+          // « micro-donnée ... », « WHY », « donnée structurée... non
+          // numérotée ») sont strictement éditoriales/internes — jamais
+          // affichées, sans pour autant masquer la VRAIE question (libelle).
+          const numeroVisible = /^Q\d+$/.test(question.referenceEditoriale) ? question.referenceEditoriale : null
+          return (
+            <div key={question.stableId} className="bg-surface rounded-xl border border-cr-border p-4 space-y-2">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  {numeroVisible && <p className="text-xs text-cr-text-muted">{numeroVisible}</p>}
+                  <p className="text-sm font-medium text-cr-text">{question.libelle}</p>
+                </div>
+                {modifiable && (
+                  <Link
+                    href={`/${locale}/plan-b/famille/${etape}/modifier/${question.stableId}`}
+                    className="flex-shrink-0 text-sm text-cr-accent hover:underline"
+                  >
+                    Modifier
+                  </Link>
+                )}
+              </div>
+              <ReponseLectureSeule question={question} reponse={reponse} />
+            </div>
+          )
+        })}
+      </div>
+
+      {/* T7.11 correction navigation §2 : sortie claire vers la clôture
+          dédiée, uniquement depuis la consultation de F7, uniquement
+          si le MPD est réellement complet et non consommé — jamais une
+          redirection automatique, l'utilisateur consulte F7 normalement. */}
+      {etape === 7 && mpdComplet && !consomme && (
+        <div className="bg-surface rounded-xl border border-cr-border p-6 space-y-3">
+          <p className="text-sm font-medium text-cr-text">Ton Point de Départ est terminé.</p>
+          <Link
+            href={`/${locale}/plan-b/cloture`}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-cr-accent text-white text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            Passer à l’étape suivante →
+          </Link>
+        </div>
+      )}
+    </div>
+  )
+}
