@@ -188,7 +188,7 @@ Pas de nouvelles questions. **Les 6 textes finaux des micro-transitions sont dé
 - Formulation : « Depuis quel pays ou territoire envisages-tu principalement de développer ton Plan B aujourd'hui ? » — pays/territoire sélectionnable + Autre / Je ne sais pas encore.
 - Doctrine : ce n'est pas la nationalité ; ce n'est pas nécessairement le pays administratif de résidence ; c'est le territoire principal pertinent pour l'action envisagée aujourd'hui. Aucune adresse, aucune géolocalisation IP, aucune ville obligatoire dans MPD — une précision géographique supplémentaire pourra être demandée ultérieurement uniquement si une recherche/un test concret l'exige.
 - Soumise à ÉTAT ACTUEL ≠ LIMITE PERMANENTE (le territoire déclaré n'est pas présumé définitif).
-- Ajoutée après audit factuel du repo (lecture seule, 2026-09-24) confirmant qu'aucune donnée géographique exploitable n'existe actuellement dans le produit : `profiles.country` (`supabase/migrations/001_schema.sql:13`) existe en base mais est une colonne dormante, jamais peuplée ni utilisée nulle part dans `src/`.
+- Ajoutée après audit factuel du repo (lecture seule, 2026-09-24) confirmant qu'aucune donnée géographique exploitable n'existe actuellement dans le produit : `profiles.country` (`supabase/migrations/001_schema.sql:13`) existe en base mais est une colonne dormante, jamais peuplée ni utilisée nulle part dans `src/`. **[Correction, voir `DECISIONS.md` D-044, 2026-10-08] : cette affirmation était erronée — la colonne n'existait en réalité pas en base avant la migration 015 (exécutée le 2026-10-07), plutôt que « dormante ». Sans incidence sur cette micro-donnée canonique, qui reste distincte de `profiles.country`.**
 - Fonction d'apparition : SOCLE.
 
 **Q2 — Occupations importantes**
@@ -528,7 +528,7 @@ Toutes les questions Q1–Q36 + les deux micro-données ajoutées ont reçu le v
 **Résolu depuis la version précédente de ce document (ne plus traiter comme ouvert) :**
 - ~~Ajout éventuel à Q1 d'une catégorie « je gère déjà une activité ou une entreprise »~~ → résolu différemment par une branche « activité existante » distincte rattachée à Q1 (§2, Étape 1).
 - ~~Éventuelle captation explicite d'une audience/communauté/réputation déjà mobilisable~~ → résolu par l'ajout de la micro-donnée « actif relationnel mobilisable » (§2, Étape 4).
-- ~~Contexte géographique~~ → résolu par l'ajout de la micro-donnée « territoire principal » (§2, Étape 1), après vérification factuelle que l'application ne connaît déjà rien de tel (`profiles.country` dormant).
+- ~~Contexte géographique~~ → résolu par l'ajout de la micro-donnée « territoire principal » (§2, Étape 1), après vérification factuelle que l'application ne connaissait déjà rien de tel à l'époque (`profiles.country` crue dormante — correction : la colonne n'existait en réalité pas, voir `DECISIONS.md` D-044).
 
 ---
 

@@ -70,7 +70,7 @@ Middleware unique : `src/proxy.ts`. Branche `isAppRoute` (reader legacy, pas de 
 
 ### Auth / rôle admin
 
-**Il n'existe aucune notion de rôle en base.** Pas de colonne `role` ou `is_admin` sur `profiles`, pas de claim JWT custom, pas de policy RLS dédiée admin. L'admin est un unique compte identifié par comparaison d'email :
+**Aucune notion de rôle n'est utilisée pour l'admin applicatif, bien qu'une colonne existe.** `profiles.is_admin` **existe réellement** en base (confirmé par audit du schéma réel, chantier pays/devise/onboarding, 2026-10 — voir sous-section `profiles` ci-dessous ; corrige une affirmation antérieure de cette mémoire selon laquelle aucune telle colonne n'existerait) mais n'est lue ni écrite par aucun code applicatif connu dans ce repo. Pas de claim JWT custom, pas de policy RLS dédiée admin. L'admin reste un unique compte identifié par comparaison d'email, jamais par `is_admin` :
 
 ```ts
 // src/lib/admin.ts — point d'entrée unique, centralisé le 2026-08-25
@@ -97,7 +97,7 @@ Chaque table utilisateur a RLS activé. Règle par défaut : un utilisateur ne v
 | Table | Rôle | Note |
 |---|---|---|
 | `rapports` | Fondation Rapport CoachRedo | Créée par la migration 012 (2026-09-10, commit `34f2ca1`). Table vide en production. RLS activé, **aucune policy** — accès exclusif `service_role` en attendant la future RPC de lecture client `SECURITY DEFINER` (non implémentée). Voir §6 pour le schéma et les invariants complets. |
-| `profiles` | Étend `auth.users` | `bilan_completed_at` : dénormalisation legacy, **ne pas utiliser comme source canonique** du statut Bilan (cf. `bilan_sessions`) |
+| `profiles` | Étend `auth.users` | `bilan_completed_at` : dénormalisation legacy, **ne pas utiliser comme source canonique** du statut Bilan (cf. `bilan_sessions`). Schéma réel complet, `is_admin`, `country`/`preferred_currency` (migrations 014/015) et dérive historique migrations↔production : voir sous-section dédiée ci-dessous. |
 | `book_access` | Gate d'accès Plan B Rentable | 1 ligne/utilisateur |
 | `access_codes` | Codes d'accès admin | `access_type` : `'book'` \| `'trading'` |
 | `reading_progress` | **Source de vérité** progression lecture | `(user_id, chapter_id)`, lu server-side par dashboard et guards |
@@ -108,6 +108,28 @@ Chaque table utilisateur a RLS activé. Règle par défaut : un utilisateur ne v
 | `user_missions` | Missions coaching | `statut`: `en_cours`\|`terminée`\|`abandonnée` ; 1 seule `en_cours` par user (index `idx_user_missions_one_active`, migration 008). **Statut de production : considéré comme exécuté et P2 clôturé/déployé, selon l'historique QG validé** — le repo prouve la définition du fichier de migration, l'historique QG validé constitue la preuve opérationnelle déclarée. Voir DECISIONS D-007. |
 | `diagnostics`, `user_signals`, `coach_journal`, `user_missions` (blocs UI) | Coaching legacy | Surfaces admin encore actives mais classées **legacy / à auditer puis nettoyer** — voir §9. Ne jamais supprimer les données automatiquement du fait du retrait d'une UI. |
 | `trading_*` | Module Trading (accès, scores, trades, locks) | **Legacy** — première phase exploratoire abandonnée comme approche, voir §8 |
+
+### `profiles` — schéma réel et dérive migrations↔production (confirmé par audit, chantier pays/devise/onboarding, 2026-10-07/08)
+
+Le schéma réel observé en production (projet `ggeohumiyxqhknnftydi` / PlanB App) **ne correspond pas exactement** à `supabase/migrations/001_schema.sql` — **ne jamais supposer qu'un ancien fichier de migration reflète fidèlement le schéma réel sans le revérifier par audit direct**. Colonnes réelles confirmées (18, après exécution des migrations 014/015 le 2026-10-07) :
+
+```
+id, name, whatsapp, access_type (default 'no_access'), activated_at, expires_at,
+created_at, is_admin, bilan_completed_at, nom, telephone, livre_completed,
+livre_completed_at, trading_mode, trading_level, trading_last_active_at,
+preferred_currency, country
+```
+
+- **`is_admin` existe réellement** — corrige §3 « Auth / rôle admin » ci-dessus : la colonne existe, mais n'est utilisée par aucun code applicatif connu (l'admin reste identifié par email, jamais par cette colonne).
+- **`country` et `preferred_currency` n'existaient PAS avant le chantier pays/devise/onboarding (2026-10-07/08)**, malgré ce que `001_schema.sql` pouvait laisser supposer et malgré une affirmation antérieure de cette mémoire (`DECISIONS.md` D-022, désormais corrigée par D-044) selon laquelle `profiles.country` existerait déjà, dormante. Fait réel vérifié : `country` a été ajoutée par la migration **015** (`015_profiles_country.sql`, CHECK `NULL` ou `^[A-Z]{2}$`), `preferred_currency` par la migration **014** (`014_profiles_preferred_currency.sql`, `text` nullable) — les deux **exécutées en production le 2026-10-07** (SHA-256 vérifiés avant exécution : `014` = `7b6cbbf74ab259a42b7c9f3461756b25de3a7695d46037c670f62929e40e789d`, `015` = `91dc640f4c509ec6bdc747d8af447157076c4af73bd32d88e0007c7f9f0e3553`). Ni l'une ni l'autre n'a été réexécutée depuis — ne jamais le refaire.
+- **Trigger réel `handle_new_user()`** (vérifié par audit du schéma réel, antérieur au chantier pays/devise) : `insert into profiles (id, name, whatsapp) values (new.id, coalesce(new.raw_user_meta_data->>'name', ''), new.raw_user_meta_data->>'whatsapp')` — ne peuple ni `country` ni `preferred_currency` (écrites uniquement par le mini-onboarding, `src/app/[locale]/onboarding/actions.ts`, voir DECISIONS D-044) ; diffère de la version documentée dans `001_schema.sql` (qui lit `full_name`, pas `name` — voir dette signup ci-dessous).
+- **RLS sur `profiles`** : 4 policies actives, dont 2 paires fonctionnellement redondantes (2 nommées en français déjà préexistantes + 2 anglaises `_own` issues de `002_rls.sql`) — redondance observée, non corrigée (dette, voir ci-dessous). **Distinct de `profiles_update_own`** (§5) qui reste sans restriction de colonnes — dette déjà documentée séparément.
+
+**Dettes ouvertes, confirmées par cet audit, non corrigées (ne jamais corriger sans nouveau GO QG explicite) :**
+1. **`profiles.completion_percentage`** — **absent du schéma réel** ci-dessus, mais toujours lu par la branche legacy `/quiz` dans `src/proxy.ts` (`.select('completion_percentage')`) — dette préexistante à ce chantier, ni introduite ni corrigée par lui, intégralement non touchée.
+2. **Signup legacy — `full_name` jamais réellement capté** : `src/app/(auth)/signup/page.tsx` envoie la métadonnée `full_name` à l'inscription ; `001_schema.sql` documente un trigger qui la lirait — mais le trigger réellement actif en production lit `name` (voir ci-dessus), jamais `full_name`. La métadonnée envoyée par le formulaire de signup legacy n'est donc, en réalité, jamais capturée dans `profiles`. Observé, non corrigé.
+3. **RLS `profiles` redondantes** (voir ci-dessus) — observées, non corrigées.
+4. **Dérive historique migrations ↔ production** — ne jamais considérer automatiquement qu'un ancien fichier de migration (`001_schema.sql` en tête) reflète fidèlement le schéma réel sans le revérifier par audit direct. Cette dérive a déjà produit une affirmation erronée dans cette mémoire (`DECISIONS.md` D-022 pt.1, corrigée par D-044) — rien ne garantit qu'elle soit la seule.
 
 ### Bilan de Clarté — schéma exact (`bilan_sessions`)
 
@@ -241,3 +263,17 @@ Ces surfaces sont classées **legacy / à auditer puis nettoyer** — pas à sup
 - Toute nouvelle fonction `SECURITY DEFINER` : `auth.uid()` uniquement (jamais un paramètre user_id passé par le caller), `SET search_path = public`, `REVOKE`/`GRANT` explicites.
 - `handoff/` reste hors git (`.gitignore`) — ne jamais le retirer du `.gitignore` sans décision QG explicite (contient des cartographies de sécurité internes).
 - **Aucune suppression destructive de tables, colonnes ou données historiques** (coaching legacy, Trading legacy ou autre) sans audit préalable et GO explicite — le retrait d'une UI ne justifie jamais, à lui seul, la suppression des données sous-jacentes.
+- **Garde onboarding pays — centrale et unique** : le contrôle `profiles.country` absent → redirection `/onboarding` vit exclusivement dans `src/proxy.ts` (DECISIONS D-044) — ne jamais le dupliquer dans une page individuelle (`dashboard/page.tsx` ne porte qu'un commentaire explicatif, aucune logique).
+- **`/plan-b` (MPD) ne vérifie actuellement PAS l'achèvement du Livre** — accessible à tout utilisateur authentifié avec `country` renseigné, indépendamment de l'état Livre. Écart connu et décidé comme devant être corrigé par T7.13 (DECISIONS D-045, **non implémenté**) — ne pas supposer cette garde existante avant que T7.13 ne soit explicitement fermé.
+
+---
+
+## 11. [DÉCIDÉ — NON IMPLÉMENTÉ, T7.13] Architecture produit cible : Activation → Livre → Carte → MPD → MFR
+
+Décision produit verrouillée par le QG (DECISIONS D-045, 2026-10-08) — **décrit une cible, pas l'état actuel du code**. Rien dans cette section n'est implémenté ; ne jamais la confondre avec l'état réel décrit §2/§10.
+
+- **Parcours cible** : Activation → Livre Plan B Rentable → Carte de parcours → Mon Point de Départ → Ma Feuille de Route.
+- **Garde décidée, absente aujourd'hui** : la fin du Livre (7/7) doit devenir la condition technique de déverrouillage **à la fois** de la Carte et du MPD. Aujourd'hui, `/plan-b` ignore totalement l'état du Livre (voir §10).
+- **Carte (`/synthese`, réutilisée telle quelle)** : reste l'étape pédagogique **recommandée** avant le MPD, **jamais** une condition technique supplémentaire — décision explicite qu'aucune donnée `carte_consultee` ne sera créée pour forcer son passage. Futur travail identifié, non engagé : retargeter son CTA legacy (actuellement `/bilan`) vers `/plan-b`.
+- **Bilan legacy (V2) et ancien message « Rapport CoachRedo »** : décidé de les masquer du parcours client — **jamais supprimés**, données historiques strictement conservées, aucune suppression DB. Motif : les comptes historiquement concernés par ce flux étaient des comptes tests gratuits.
+- **Rien de ceci n'est implémenté** : aucune garde Livre ajoutée à `src/proxy.ts` pour `/plan-b`, aucun retargeting de CTA Carte, aucun masquage Bilan effectué. Chantier technique distinct (T7.13), non engagé.
