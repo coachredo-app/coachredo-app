@@ -1,5 +1,6 @@
 // ============================================================
 // MPD V3 — Page famille : consultation + point d'entrée modification — T7.8E
+// réponses précédentes ajoutées T7.12
 // ============================================================
 // Socle commun T7.8/T7.9 (GO QG T7.8E, option 2 verrouillée) :
 // remplace l'ancien concept "entrer toujours par la première question"
@@ -12,13 +13,23 @@
 // consommé. Relit l'état serveur frais à chaque accès — jamais une
 // confiance héritée du hub ou de l'URL. Ce n'est volontairement PAS
 // un questionnaire : lecture seule + liens, rien d'autre (§3).
+//
+// T7.12 : « Réponses précédentes » — projection lecture seule de
+// mpd_historique_evenements (D-028 pt.4/D-037 §F, mécanisme
+// DEVENUE_INACTIVE déjà verrouillé, inchangé). L'historique n'est
+// JAMAIS injecté dans une ReponsesParId utilisée comme état courant —
+// il ne passe jamais à getFamilyStates/getApplicableQuestions, et ne
+// sert ici qu'à construire un objet d'affichage indépendant. La
+// pertinence d'affichage (question actuellement non applicable) est
+// recalculée à chaque rendu via estApplicable, exactement comme pour
+// toute question active — aucun mapping par stableId.
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getOuCreerDossierCourant } from '@/lib/mpd/server/dossier'
-import { MPD_CANON_V1, type Etape } from '@/lib/mpd/canon'
-import { getApplicableQuestions } from '@/lib/mpd/engine/applicabilite'
+import { MPD_CANON_V1, MPD_CANON_PAR_ID, type Etape, type QuestionCanonique } from '@/lib/mpd/canon'
+import { estApplicable, getApplicableQuestions } from '@/lib/mpd/engine/applicabilite'
 import { getFamilyStates } from '@/lib/mpd/engine/progression'
 import type { ReponseCourante, StatutReponse } from '@/lib/mpd/types-runtime'
 import { FAMILLES_MPD } from '../../familles'
@@ -89,6 +100,47 @@ export default async function FamillePage({ params }: FamillePageProps) {
   // `reponses` et n'apparaît donc jamais ici).
   const questions = getApplicableQuestions(MPD_CANON_V1, reponses).filter(q => q.etape === etape)
 
+  // T7.12 — lecture seule de l'historique de désactivation, protégée
+  // par les mêmes RLS/auth déjà en place (aucune nouvelle policy).
+  // Jamais passé à getFamilyStates/getApplicableQuestions.
+  const { data: historiqueRows } = await supabase
+    .from('mpd_historique_evenements')
+    .select('question_id, statut_capture, payload_capture, cree_le')
+    .eq('dossier_id', dossier.dossierId)
+    .eq('type_evenement', 'DEVENUE_INACTIVE')
+
+  // CAS C : dédupliquer par question_id, ne garder que l'événement le
+  // plus récent (comparaison par date réelle, pas par tri de chaîne).
+  const dernierEvenementParQuestion = new Map<
+    string,
+    { readonly statut: StatutReponse; readonly payload: unknown; readonly creeLe: string }
+  >()
+  for (const ligne of historiqueRows ?? []) {
+    const questionId = ligne.question_id as string
+    const existant = dernierEvenementParQuestion.get(questionId)
+    if (!existant || new Date(ligne.cree_le as string) > new Date(existant.creeLe)) {
+      dernierEvenementParQuestion.set(questionId, {
+        statut: ligne.statut_capture as StatutReponse,
+        payload: ligne.payload_capture,
+        creeLe: ligne.cree_le as string,
+      })
+    }
+  }
+
+  // CAS B : une question réactivée depuis ne doit plus apparaître ici —
+  // seule l'applicabilité ACTUELLE (recalculée, jamais déduite de la
+  // seule présence d'un événement) décide de l'affichage. Générique :
+  // aucun stableId Q13/Q35/Q36 codé en dur.
+  const reponsesPrecedentes = [...dernierEvenementParQuestion.entries()]
+    .map(([questionId, evenement]) => {
+      const question = MPD_CANON_PAR_ID.get(questionId)
+      if (!question || question.etape !== etape) return null
+      if (estApplicable(question, reponses)) return null
+      const reponse: ReponseCourante = { questionId, statut: evenement.statut, payload: evenement.payload }
+      return { question, reponse }
+    })
+    .filter((v): v is { question: QuestionCanonique; reponse: ReponseCourante } => v !== null)
+
   return (
     <div className="max-w-2xl space-y-6">
       <div>
@@ -131,6 +183,33 @@ export default async function FamillePage({ params }: FamillePageProps) {
           )
         })}
       </div>
+
+      {/* T7.12 — « Réponses précédentes » : lecture seule stricte,
+          aucun lien « Modifier », aucune restauration. Présentation
+          secondaire/atténuée minimale uniquement — pas de revue design. */}
+      {reponsesPrecedentes.length > 0 && (
+        <div className="space-y-3">
+          <div>
+            <h2 className="text-sm font-semibold text-cr-text-secondary">Réponses précédentes</h2>
+            <p className="text-xs text-cr-text-muted mt-1">
+              Ces réponses ne sont plus utilisées dans ton Point de Départ actuel, car ta situation a changé.
+            </p>
+          </div>
+          {reponsesPrecedentes.map(({ question, reponse }) => {
+            return (
+              <div
+                key={question.stableId}
+                className="bg-background rounded-xl border border-cr-border p-4 space-y-2 opacity-75"
+              >
+                <div>
+                  <p className="text-sm font-medium text-cr-text-secondary">{question.libelle}</p>
+                </div>
+                <ReponseLectureSeule question={question} reponse={reponse} />
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       {/* T7.11 correction navigation §2 : sortie claire vers la clôture
           dédiée, uniquement depuis la consultation de F7, uniquement
