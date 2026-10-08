@@ -27,6 +27,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getOuCreerDossierCourant } from '@/lib/mpd/server/dossier'
 import { MPD_CANON_V1 } from '@/lib/mpd/canon'
 import { getFamilyStates } from '@/lib/mpd/engine/progression'
+import { lirePreferredCurrency } from '@/lib/profile/preferred-currency'
 import type { ReponseCourante, StatutReponse } from '@/lib/mpd/types-runtime'
 import { ParcoursRenderer } from './ParcoursRenderer'
 import { determinerVueParcours, hrefDeCible } from './resolution'
@@ -92,6 +93,12 @@ export default async function ParcoursPage({ params, searchParams }: ParcoursPag
     ])
   )
 
+  // GO QG (intégration Q28, validé post-migration) : devise préférée
+  // du profil — lecture isolée dans lirePreferredCurrency ; toute
+  // anomalie de lecture est désormais journalisée, jamais silencieuse.
+  // `undefined` (préférence absente) reste un état métier normal.
+  const preferredCurrency = await lirePreferredCurrency(supabase, user.id)
+
   const vue = determinerVueParcours(reponses, { q, transition, apres })
 
   // T7.11C : le MPD réellement complet redirige vers la page de
@@ -151,6 +158,7 @@ export default async function ParcoursPage({ params, searchParams }: ParcoursPag
           question={vue.question}
           reponseExistante={vue.reponseExistante}
           retourHref={hrefDeCible(vue.retour, locale)}
+          preferredCurrency={preferredCurrency}
         />
       )}
     </div>

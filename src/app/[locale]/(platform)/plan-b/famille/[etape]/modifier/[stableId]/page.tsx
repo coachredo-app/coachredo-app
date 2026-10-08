@@ -21,6 +21,7 @@ import { MPD_CANON_V1, MPD_CANON_PAR_ID, type Etape } from '@/lib/mpd/canon'
 import { getApplicableQuestions } from '@/lib/mpd/engine/applicabilite'
 import { getFamilyStates } from '@/lib/mpd/engine/progression'
 import type { ReponseCourante, StatutReponse } from '@/lib/mpd/types-runtime'
+import { lirePreferredCurrency } from '@/lib/profile/preferred-currency'
 import { FamilyRevisionRenderer } from '../FamilyRevisionRenderer'
 
 interface ModifierQuestionPageProps {
@@ -88,6 +89,10 @@ export default async function ModifierQuestionPage({ params }: ModifierQuestionP
     getApplicableQuestions(MPD_CANON_V1, reponses).some(q => q.stableId === stableId)
   if (!question || !estApplicableIci) redirect(`/${locale}/plan-b/famille/${etape}`)
 
+  // GO QG (intégration Q28) : voir parcours/page.tsx — même lecture
+  // isolée, même distinction d'erreur explicite.
+  const preferredCurrency = await lirePreferredCurrency(supabase, user.id)
+
   return (
     <div className="max-w-xl space-y-6">
       <h1 className="text-xl font-bold text-cr-text">Mon Point de Départ</h1>
@@ -98,6 +103,7 @@ export default async function ModifierQuestionPage({ params }: ModifierQuestionP
         etape={etape}
         question={question}
         reponseExistante={reponses.get(question.stableId) ?? null}
+        preferredCurrency={preferredCurrency}
       />
     </div>
   )

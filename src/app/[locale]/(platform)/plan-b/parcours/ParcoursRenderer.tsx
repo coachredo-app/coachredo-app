@@ -26,6 +26,7 @@ interface ParcoursRendererProps {
   readonly question: QuestionCanonique
   readonly reponseExistante: ReponseCourante | null
   readonly retourHref: string
+  readonly preferredCurrency?: string
 }
 
 export function ParcoursRenderer({
@@ -35,6 +36,7 @@ export function ParcoursRenderer({
   question,
   reponseExistante,
   retourHref,
+  preferredCurrency,
 }: ParcoursRendererProps) {
   const router = useRouter()
 
@@ -51,6 +53,7 @@ export function ParcoursRenderer({
         revision={revision}
         question={question}
         reponseExistante={reponseExistante ?? undefined}
+        preferredCurrency={preferredCurrency}
         onSuccess={() => router.push(`/${locale}/plan-b/parcours?apres=${question.stableId}`)}
       />
     </div>

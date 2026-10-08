@@ -159,6 +159,24 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
+  // GO QG (garde onboarding centrale) : tant que profiles.country n'est
+  // pas renseigné, l'espace plateforme protégé reste inaccessible — un
+  // seul contrôle, ici, jamais dispersé page par page. '/onboarding'
+  // n'appartient pas à PLATFORM_PROTECTED (ci-dessus) : jamais concerné
+  // par cette redirection, donc aucune boucle possible. '/auth/*' n'y
+  // appartient pas non plus — toujours accessible.
+  if (isProtected && user) {
+    const { data: profil } = await supabase
+      .from('profiles')
+      .select('country')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (!profil?.country) {
+      return NextResponse.redirect(new URL(`/${locale}/onboarding`, request.url))
+    }
+  }
+
   return response
 }
 

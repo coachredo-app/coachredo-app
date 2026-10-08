@@ -30,6 +30,7 @@ interface FamilyRevisionRendererProps {
   readonly etape: Etape
   readonly question: QuestionCanonique
   readonly reponseExistante: ReponseCourante | null
+  readonly preferredCurrency?: string
 }
 
 export function FamilyRevisionRenderer({
@@ -39,6 +40,7 @@ export function FamilyRevisionRenderer({
   etape,
   question: questionInitiale,
   reponseExistante: reponseInitiale,
+  preferredCurrency,
 }: FamilyRevisionRendererProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -75,6 +77,7 @@ export function FamilyRevisionRenderer({
         revision={revision}
         question={question}
         reponseExistante={reponseExistante ?? undefined}
+        preferredCurrency={preferredCurrency}
         onSuccess={apresSauvegarde}
       />
 

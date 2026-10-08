@@ -99,10 +99,18 @@ export function SelectionField({
   options,
   value,
   onChange,
+  preferredCurrency,
 }: {
   options: readonly Option[]
   value: unknown
   onChange: (value: unknown) => void
+  // GO QG (intégration Q28) : valeur initiale UNIQUEMENT — pré-remplit
+  // la devise d'une precision nombre_devise au premier choix de
+  // l'option (jamais sur une réponse déjà existante, jamais sur le
+  // montant lui-même). Purement générique : n'importe quelle future
+  // question nombre_devise en bénéficierait de la même façon, aucun
+  // branchement spécifique à Q28.
+  preferredCurrency?: string
 }) {
   const selection =
     typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -110,7 +118,14 @@ export function SelectionField({
       : undefined
 
   function choisir(option: Option) {
-    onChange(option.precision ? { value: option.value, precision: undefined } : { value: option.value })
+    if (!option.precision) {
+      onChange({ value: option.value })
+      return
+    }
+    const precisionInitiale = option.precision.type === 'nombre_devise' && preferredCurrency
+      ? { devise: preferredCurrency }
+      : undefined
+    onChange({ value: option.value, precision: precisionInitiale })
   }
 
   return (

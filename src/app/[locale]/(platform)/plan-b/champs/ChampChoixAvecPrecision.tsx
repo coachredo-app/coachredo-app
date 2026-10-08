@@ -7,10 +7,12 @@ export function ChampChoixAvecPrecision({
   question,
   value,
   onChange,
+  preferredCurrency,
 }: {
   question: QuestionCanonique
   value: unknown
   onChange: (value: unknown) => void
+  preferredCurrency?: string
 }) {
   // Lot A (chemin unique REFUS) : masque à l'affichage uniquement
   // l'option métier historique de même libellé que le bouton système
@@ -26,5 +28,5 @@ export function ChampChoixAvecPrecision({
     if (option.redondantAvecInconnu) return false
     return true
   })
-  return <SelectionField options={options} value={value} onChange={onChange} />
+  return <SelectionField options={options} value={value} onChange={onChange} preferredCurrency={preferredCurrency} />
 }

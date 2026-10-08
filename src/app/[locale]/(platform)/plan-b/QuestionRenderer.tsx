@@ -22,6 +22,11 @@ interface QuestionRendererProps {
   // omis (reponseExistante=undefined, onSuccess=undefined).
   readonly reponseExistante?: ReponseCourante
   readonly onSuccess?: (revision: number) => void
+  // GO QG (intégration Q28) : devise préférée du PROFIL — valeur
+  // initiale uniquement, jamais une autorité. L'utilisateur reste
+  // libre de la changer pour cette réponse ; aucune modification du
+  // profil n'est jamais déclenchée depuis ici.
+  readonly preferredCurrency?: string
 }
 
 const MESSAGES_ERREUR: Record<string, string> = {
@@ -55,10 +60,12 @@ function ChampDispatcher({
   question,
   value,
   onChange,
+  preferredCurrency,
 }: {
   question: QuestionCanonique
   value: unknown
   onChange: (value: unknown) => void
+  preferredCurrency?: string
 }) {
   switch (question.formeReponse) {
     case 'texte':
@@ -66,7 +73,9 @@ function ChampDispatcher({
     case 'choix_unique':
       return <ChampChoixUnique question={question} value={value} onChange={onChange} />
     case 'choix_avec_precision':
-      return <ChampChoixAvecPrecision question={question} value={value} onChange={onChange} />
+      return (
+        <ChampChoixAvecPrecision question={question} value={value} onChange={onChange} preferredCurrency={preferredCurrency} />
+      )
     case 'multi_selection':
       return <ChampMultiSelection question={question} value={value} onChange={onChange} />
     case 'items_avec_sous_reponse':
@@ -83,6 +92,7 @@ export function QuestionRenderer({
   question,
   reponseExistante,
   onSuccess,
+  preferredCurrency,
 }: QuestionRendererProps) {
   // Préremplissage T7.8B : préserve strictement le statut exact
   // (DECLARE/INCONNU/REFUS) et le payload exact de la réponse active
@@ -177,7 +187,7 @@ export function QuestionRenderer({
       </div>
 
       {statut === 'DECLARE' && (
-        <ChampDispatcher question={question} value={payload} onChange={setPayload} />
+        <ChampDispatcher question={question} value={payload} onChange={setPayload} preferredCurrency={preferredCurrency} />
       )}
 
       {error && <p className="text-sm text-red-600">{error}</p>}

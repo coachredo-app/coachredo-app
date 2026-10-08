@@ -92,6 +92,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       .maybeSingle(),
   ])
 
+  // GO QG (garde onboarding centrale, correction) : ce contrôle vit
+  // désormais exclusivement dans le middleware (src/proxy.ts), seule
+  // garde centrale pour tout l'espace plateforme protégé — jamais
+  // dupliqué ici, pour éviter toute dérive entre deux implémentations.
   const hasAccess = bookAccessResult.data?.has_access === true
   const reading = getReadingProgress(readingResult.data ?? [])
 
