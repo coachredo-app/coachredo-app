@@ -25,6 +25,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getOuCreerDossierCourant } from '@/lib/mpd/server/dossier'
+import { MPD_CANON_V1 } from '@/lib/mpd/canon'
+import { getFamilyStates } from '@/lib/mpd/engine/progression'
 import type { ReponseCourante, StatutReponse } from '@/lib/mpd/types-runtime'
 import { ParcoursRenderer } from './ParcoursRenderer'
 import { determinerVueParcours, hrefDeCible } from './resolution'
@@ -98,9 +100,30 @@ export default async function ParcoursPage({ params, searchParams }: ParcoursPag
   // jamais une confiance héritée de cette redirection.
   if (vue.type === 'termine') redirect(`/${locale}/plan-b/cloture`)
 
+  // Lot A — même sémantique de progression que le hub (getFamilyStates,
+  // réutilisé tel quel), visible pendant tout le parcours linéaire —
+  // jamais un X/41 ni un pourcentage.
+  const familyStates = getFamilyStates(MPD_CANON_V1, reponses)
+  const nbFamillesTerminees = familyStates.filter(f => f.statut === 'TERMINEE').length
+
   return (
     <div className="max-w-xl space-y-6">
       <h1 className="text-xl font-bold text-cr-text">Mon Point de Départ</h1>
+
+      <div className="space-y-2">
+        <p className="text-sm text-cr-text-secondary">
+          {nbFamillesTerminees} famille{nbFamillesTerminees === 1 ? '' : 's'} sur 7 terminée
+          {nbFamillesTerminees === 1 ? '' : 's'}
+        </p>
+        <div className="flex gap-1.5" aria-hidden="true">
+          {familyStates.map(f => (
+            <span
+              key={f.etape}
+              className={`h-2 flex-1 rounded-full ${f.statut === 'TERMINEE' ? 'bg-cr-accent' : 'bg-cr-border'}`}
+            />
+          ))}
+        </div>
+      </div>
 
       {vue.type === 'transition' && (
         <div className="bg-surface rounded-xl border border-cr-border p-6 space-y-4">

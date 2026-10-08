@@ -154,19 +154,15 @@ export default async function FamillePage({ params }: FamillePageProps) {
       <div className="space-y-3">
         {questions.map(question => {
           const reponse = reponses.get(question.stableId) ?? null
-          // T7.8F §4/§5 : referenceEditoriale est une métadonnée
-          // canonique interne — seules les unités réellement numérotées
-          // (« Q1 », « Q2 »...) sont un repère utile pour l'utilisateur.
-          // Les autres valeurs (« branche ... rattachée à Qx »,
-          // « micro-donnée ... », « WHY », « donnée structurée... non
-          // numérotée ») sont strictement éditoriales/internes — jamais
-          // affichées, sans pour autant masquer la VRAIE question (libelle).
-          const numeroVisible = /^Q\d+$/.test(question.referenceEditoriale) ? question.referenceEditoriale : null
+          // GO QG (verrou final referenceEditoriale) : plus aucune
+          // forme de referenceEditoriale affichée à l'utilisateur, y
+          // compris « Qxx » — jamais remplacée par un autre identifiant
+          // interne, simplement absente. La VRAIE question (libelle)
+          // reste évidemment affichée.
           return (
             <div key={question.stableId} className="bg-surface rounded-xl border border-cr-border p-4 space-y-2">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  {numeroVisible && <p className="text-xs text-cr-text-muted">{numeroVisible}</p>}
                   <p className="text-sm font-medium text-cr-text">{question.libelle}</p>
                 </div>
                 {modifiable && (

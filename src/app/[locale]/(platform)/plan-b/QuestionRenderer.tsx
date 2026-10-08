@@ -128,7 +128,10 @@ export function QuestionRenderer({
   return (
     <div className="bg-surface rounded-xl border border-cr-border p-6 space-y-4">
       <div>
-        <p className="text-xs text-cr-text-muted mb-1">{question.referenceEditoriale}</p>
+        {/* GO QG (verrou final referenceEditoriale) : plus aucune
+            forme de referenceEditoriale affichée à l'utilisateur, y
+            compris « Qxx » — jamais remplacée par un autre identifiant
+            interne, simplement absente. */}
         <h2 className="text-base font-semibold text-cr-text">{question.libelle}</h2>
         {question.aide && question.aide !== 'aucune' && (
           <p className="text-sm text-cr-text-secondary mt-1">{question.aide}</p>

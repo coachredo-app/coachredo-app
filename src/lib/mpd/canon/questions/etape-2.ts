@@ -38,7 +38,6 @@ export const etape2Questions: readonly QuestionCanonique[] = [
     ordre: 9,
     versionCanonique: CANON_VERSION,
     libelle: 'Parmi ce que tu viens de décrire, qu’est-ce qui compte le plus pour toi aujourd’hui ?',
-    aide: 'aucune',
     formeReponse: 'texte',
     eligibiliteInconnu: true,
     eligibiliteRefus: false,
@@ -70,7 +69,7 @@ export const etape2Questions: readonly QuestionCanonique[] = [
     etape: 2,
     ordre: 11,
     versionCanonique: CANON_VERSION,
-    libelle: 'Et au-delà de ce changement, y a-t-il quelque chose de plus grand vers lequel tu aimerais avancer ?',
+    libelle: 'Et plus tard, qu’aimerais-tu que ce changement t’apporte dans ta vie ?',
     formeReponse: 'choix_avec_precision',
     options: [
       {
@@ -100,7 +99,7 @@ export const etape2Questions: readonly QuestionCanonique[] = [
     formeReponse: 'choix_avec_precision',
     options: [
       { value: 'rien_de_particulier', label: 'Rien de particulier' },
-      { value: 'preserver', label: '(réponse libre)', precision: { type: 'texte' } },
+      { value: 'preserver', label: 'Préciser', precision: { type: 'texte', label: 'Ce qui est important pour toi' } },
     ],
     eligibiliteInconnu: true,
     eligibiliteRefus: false,

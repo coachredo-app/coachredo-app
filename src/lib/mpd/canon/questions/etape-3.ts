@@ -55,7 +55,7 @@ export const etape3Questions: readonly QuestionCanonique[] = [
         ],
         formation_metier: [{ id: 'domaine', label: 'Domaine', formeReponse: 'texte' }],
         travail: [
-          { id: 'domaines', label: 'Domaines (max 3)', formeReponse: 'texte', cardinalite: { min: 0, max: 3 } },
+          { id: 'domaines', label: 'Domaines (jusqu’à 3)', formeReponse: 'texte', cardinalite: { min: 0, max: 3 } },
           { id: 'duree_approximative', label: 'Durée approximative', formeReponse: 'texte' },
         ],
         activite_familiale: [
@@ -73,7 +73,7 @@ export const etape3Questions: readonly QuestionCanonique[] = [
       { value: 'activite_familiale', label: 'Activité familiale' },
       { value: 'autodidacte', label: 'Autodidacte' },
       { value: 'online', label: 'Formations en ligne' },
-      { value: 'autre', label: 'Autre', precision: { type: 'texte' } },
+      { value: 'autre', label: 'Autre', precision: { type: 'texte', label: 'Précise' } },
       { value: 'je_debute', label: 'Je débute / j’ai encore peu d’expérience' },
     ],
     eligibiliteInconnu: true,
@@ -120,7 +120,9 @@ export const etape3Questions: readonly QuestionCanonique[] = [
     options: [
       { value: 'oui', label: 'Oui', precision: { type: 'texte', label: 'Quoi ?' } },
       { value: 'non', label: 'Non' },
-      { value: 'je_ne_sais_pas', label: 'Je ne sais pas' },
+      // GO QG (finalisation INCONNU) : doublon UX avec le statut système
+      // INCONNU, masqué pour les nouvelles réponses — value conservée.
+      { value: 'je_ne_sais_pas', label: 'Je ne sais pas', redondantAvecInconnu: true },
     ],
     applicabilite: 'RECUPERATION',
     trigger: {
@@ -159,7 +161,12 @@ export const etape3Questions: readonly QuestionCanonique[] = [
         },
       },
       { value: 'non', label: 'Non' },
-      { value: 'je_ne_sais_pas', label: 'Je ne sais pas' },
+      // GO QG (finalisation INCONNU, 9e occurrence) : audité — aucun
+      // trigger ni dépendance aval ne lit cette value (seuls Q13/Q35/
+      // Q36 portent un trigger, aucun ne référence apprentissage_
+      // depuis_difficulte) ; doublon UX avec le statut système INCONNU,
+      // masqué pour les nouvelles réponses — value conservée.
+      { value: 'je_ne_sais_pas', label: 'Je ne sais pas', redondantAvecInconnu: true },
       { value: 'je_prefere_ne_pas_repondre', label: 'Je préfère ne pas répondre' },
     ],
     // Relance supprimée (A7, D-026). Réutilisation avec Q24 : aucun
@@ -222,7 +229,7 @@ export const etape3Questions: readonly QuestionCanonique[] = [
                 { value: 'paye', label: 'Payé(e)' },
                 { value: 'donne_en_echange', label: 'Donné quelque chose en échange' },
                 { value: 'recommande', label: 'Recommandé à quelqu’un' },
-                { value: 'redemande', label: 'Demandé de recommencer' },
+                { value: 'redemande', label: 'T’a demandé de refaire la même chose' },
                 { value: 'aucun', label: 'Aucun de ces éléments' },
               ],
             },
@@ -230,7 +237,9 @@ export const etape3Questions: readonly QuestionCanonique[] = [
         },
       },
       { value: 'non', label: 'Non' },
-      { value: 'je_ne_sais_pas', label: 'Je ne sais pas' },
+      // GO QG (finalisation INCONNU) : doublon UX avec le statut système
+      // INCONNU, masqué pour les nouvelles réponses — value conservée.
+      { value: 'je_ne_sais_pas', label: 'Je ne sais pas', redondantAvecInconnu: true },
     ],
     eligibiliteInconnu: true,
     eligibiliteRefus: false,
@@ -257,7 +266,7 @@ export const etape3Questions: readonly QuestionCanonique[] = [
           formeReponse: 'choix_avec_precision',
           options: [
             { value: 'aucun', label: 'Aucun' },
-            { value: 'reponse', label: '(réponse libre)', precision: { type: 'texte' } },
+            { value: 'reponse', label: 'Préciser', precision: { type: 'texte', label: 'Ce que tu aimerais réutiliser' } },
           ],
         },
         {
@@ -266,7 +275,7 @@ export const etape3Questions: readonly QuestionCanonique[] = [
           formeReponse: 'choix_avec_precision',
           options: [
             { value: 'aucun', label: 'Aucun' },
-            { value: 'reponse', label: '(réponse libre)', precision: { type: 'texte' } },
+            { value: 'reponse', label: 'Préciser', precision: { type: 'texte', label: 'Ce que tu préfères éviter' } },
           ],
         },
       ],

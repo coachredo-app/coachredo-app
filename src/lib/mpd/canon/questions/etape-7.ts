@@ -70,7 +70,9 @@ export const etape7Questions: readonly QuestionCanonique[] = [
       },
       { value: 'peut_etre_pas_facile', label: 'Peut-être mais ce ne serait pas facile' },
       { value: 'non_pas_vraiment', label: 'Non pas vraiment' },
-      { value: 'je_ne_sais_pas', label: 'Je ne sais pas' },
+      // GO QG (finalisation INCONNU) : doublon UX avec le statut système
+      // INCONNU, masqué pour les nouvelles réponses — value conservée.
+      { value: 'je_ne_sais_pas', label: 'Je ne sais pas', redondantAvecInconnu: true },
     ],
     applicabilite: 'CONDITIONNELLE',
     trigger: {
@@ -109,14 +111,21 @@ export const etape7Questions: readonly QuestionCanonique[] = [
       // (« Formulation UX exacte à spécifier ultérieurement ») — les
       // 4 catégories structurelles sont néanmoins déjà verrouillées.
       provenanceOptions: [
-        { value: 'observee_directement', label: 'Observée directement' },
-        { value: 'entendue_personnes_concernees', label: 'Entendue de personnes concernées' },
-        { value: 'supposee_deduite', label: 'Supposée ou déduite' },
-        { value: 'pas_vraiment_connue', label: 'Pas vraiment connue / je ne sais pas' },
+        { value: 'observee_directement', label: 'Je l’ai vu moi-même' },
+        { value: 'entendue_personnes_concernees', label: 'Ces personnes m’en ont parlé' },
+        { value: 'supposee_deduite', label: 'Je le suppose, mais je n’en suis pas sûr' },
+        { value: 'pas_vraiment_connue', label: 'Je ne sais pas vraiment' },
       ],
       formulationFigee: false,
     },
     options: [{ value: 'je_ne_sais_pas', label: 'Je ne sais pas' }],
+    // Anomalie 13 (Lot B) : cette alternative fait doublon avec le
+    // statut système INCONNU (aucune fonction propre — contrairement à
+    // la provenance « pas_vraiment_connue », qui qualifie une réponse
+    // réellement fournie). Masquée dans le rendu des NOUVELLES
+    // réponses ; la value reste lue pour les réponses DECLARE déjà
+    // enregistrées.
+    alternativeRedondanteAvecInconnu: true,
     // Pas de relance automatique — « je ne sais pas » devient une
     // information à vérifier sur le terrain, pas un manque à combler.
     applicabilite: 'CONDITIONNELLE',

@@ -23,7 +23,7 @@ export const etape1Questions: readonly QuestionCanonique[] = [
       { value: 'en_recherche_emploi', label: 'En recherche d’emploi' },
       { value: 'sans_activite', label: 'Sans activité professionnelle actuellement' },
       { value: 'retraite', label: 'Retraité(e)' },
-      { value: 'autre', label: 'Autre', precision: { type: 'texte' } },
+      { value: 'autre', label: 'Autre', precision: { type: 'texte', label: 'Précise ta situation' } },
     ],
     eligibiliteInconnu: true,
     eligibiliteRefus: false,
@@ -92,8 +92,12 @@ export const etape1Questions: readonly QuestionCanonique[] = [
     // seules les deux valeurs structurantes du questionnaire source
     // sont représentées explicitement.
     options: [
-      { value: 'territoire', label: '(pays/territoire sélectionnable)', precision: { type: 'texte' } },
-      { value: 'autre', label: 'Autre', precision: { type: 'texte' } },
+      {
+        value: 'territoire',
+        label: 'Préciser le pays ou le territoire',
+        precision: { type: 'texte', label: 'Ex. France, Sénégal, Canada…' },
+      },
+      { value: 'autre', label: 'Autre', precision: { type: 'texte', label: 'Précise lequel' } },
       { value: 'je_ne_sais_pas_encore', label: 'Je ne sais pas encore' },
     ],
     eligibiliteInconnu: true,
@@ -120,7 +124,7 @@ export const etape1Questions: readonly QuestionCanonique[] = [
       { value: 'etudes_formation', label: 'Études / formation' },
       { value: 'autre_travail_activite', label: 'Autre travail / activité' },
       { value: 'association_communaute', label: 'Association / communauté' },
-      { value: 'autre', label: 'Autre', precision: { type: 'texte' } },
+      { value: 'autre', label: 'Autre', precision: { type: 'texte', label: 'Précise' } },
       { value: 'rien_de_particulier', label: 'Rien de particulier' },
     ],
     eligibiliteInconnu: true,
@@ -166,7 +170,7 @@ export const etape1Questions: readonly QuestionCanonique[] = [
             { value: 'week_end', label: 'Week-end' },
             { value: 'blocs_longs', label: 'Blocs de temps plus longs' },
             { value: 'cela_varie', label: 'Cela varie' },
-            { value: 'autre', label: 'Autre', precision: { type: 'texte' } },
+            { value: 'autre', label: 'Autre', precision: { type: 'texte', label: 'Précise à quels moments' } },
           ],
         },
       ],
@@ -178,7 +182,16 @@ export const etape1Questions: readonly QuestionCanonique[] = [
     conserveLibellesChoixHistoriques: true,
   },
 
-  // Q4 — Réalité récente du temps
+  // Q4 — Réalité récente du temps — RESTRUCTURÉE (Lot B, anomalie 7) :
+  // le formeReponse racine passe de multi_selection à
+  // items_avec_sous_reponse pour collecter RÉELLEMENT le caractère
+  // habituel de la semaine, déjà prévu par le canon mais jamais rendu
+  // (le sous-champ était déclaré sous un formeReponse qui ne le lisait
+  // jamais). Compatibilité : une ancienne réponse (tableau brut, sans
+  // `semaine_habituelle`) reste lisible via normaliserChampsFixesLegacy
+  // (engine/compatibilite.ts, lecture seule, jamais réinjectée) ; une
+  // nouvelle soumission exige les deux champs (validerChampsFixes,
+  // générique, inchangé).
   {
     stableId: 'temps_semaine_recente',
     referenceEditoriale: 'Q4',
@@ -186,22 +199,27 @@ export const etape1Questions: readonly QuestionCanonique[] = [
     ordre: 6,
     versionCanonique: CANON_VERSION,
     libelle: 'Pense à la semaine dernière. Qu’est-ce qui a pris le plus de ton temps ?',
-    formeReponse: 'multi_selection',
-    cardinalite: { min: 0, max: 3 },
-    options: [
-      { value: 'travail_activite_pro', label: 'Travail / activité pro' },
-      { value: 'etudes_formation', label: 'Études / formation' },
-      { value: 'enfants_famille', label: 'Enfants / famille' },
-      { value: 'maison_taches', label: 'Maison / tâches' },
-      { value: 'deplacements', label: 'Déplacements' },
-      { value: 'projet_activite_perso', label: 'Projet / activité personnelle' },
-      { value: 'loisirs_sorties', label: 'Loisirs / sorties' },
-      { value: 'repos', label: 'Repos' },
-      { value: 'autre', label: 'Autre', precision: { type: 'texte' } },
-    ],
+    formeReponse: 'items_avec_sous_reponse',
     itemsAvecSousReponse: {
       motif: 'champs_fixes',
       champs: [
+        {
+          id: 'activites',
+          label: 'Qu’est-ce qui a pris le plus de ton temps ?',
+          formeReponse: 'multi_selection',
+          cardinalite: { min: 0, max: 3 },
+          options: [
+            { value: 'travail_activite_pro', label: 'Travail / activité pro' },
+            { value: 'etudes_formation', label: 'Études / formation' },
+            { value: 'enfants_famille', label: 'Enfants / famille' },
+            { value: 'maison_taches', label: 'Maison / tâches' },
+            { value: 'deplacements', label: 'Déplacements' },
+            { value: 'projet_activite_perso', label: 'Projet / activité personnelle' },
+            { value: 'loisirs_sorties', label: 'Loisirs / sorties' },
+            { value: 'repos', label: 'Repos' },
+            { value: 'autre', label: 'Autre', precision: { type: 'texte', label: 'Précise' } },
+          ],
+        },
         {
           id: 'semaine_habituelle',
           label: 'Cette semaine ressemblait-elle à une semaine habituelle pour toi ?',
@@ -217,6 +235,8 @@ export const etape1Questions: readonly QuestionCanonique[] = [
     relance: {
       // Déclenchée si la réponse structurée à "semaine_habituelle" ≠
       // "oui_plutot" — jamais une comparaison sémantique du contenu.
+      // Toujours inerte (aucun renderer ne la consomme, A7/D-026) —
+      // inchangée par cette restructuration, hors périmètre.
       condition: 'semaine_habituelle != oui_plutot',
       libelle:
         'Tu as indiqué pouvoir consacrer environ [X] heures par semaine à ton Plan B. Avec ton organisation actuelle, à quels moments pourrais-tu réellement trouver ce temps ?',

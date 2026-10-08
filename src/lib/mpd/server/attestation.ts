@@ -21,6 +21,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import type { ChampFixe, ItemsAvecSousReponse, Option, PrecisionOption, QuestionCanonique } from '../canon'
 import type { StatutReponse } from '../types-runtime'
 import type { ReponsesParId } from '../engine/applicabilite'
+import { normaliserChampsFixesLegacy } from '../engine/compatibilite'
 
 export interface AttestationEcritureParams {
   readonly userId: string
@@ -232,7 +233,14 @@ function libellesItemsAvecSousReponse(
   valeur: unknown
 ): Record<string, string> | null {
   if (structure.motif === 'champs_fixes') {
-    const obj = typeof valeur === 'object' && valeur !== null && !Array.isArray(valeur) ? (valeur as Record<string, unknown>) : {}
+    // Lot B (anomalie 7, Q4) : une ancienne réponse (tableau brut)
+    // reste résoluble en libellés historiques — jamais une valeur
+    // inventée pour le(s) champ(s) manquant(s) (ex. semaine_habituelle).
+    const normalise = normaliserChampsFixesLegacy(structure.champs, valeur)
+    const obj =
+      typeof normalise === 'object' && normalise !== null && !Array.isArray(normalise)
+        ? (normalise as Record<string, unknown>)
+        : {}
     return fusionnerLibelles(...structure.champs.map(champ => libellesChampFixe(champ, obj[champ.id])))
   }
 

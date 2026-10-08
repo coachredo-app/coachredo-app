@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { QuestionCanonique, ItemsAvecSousReponse } from '@/lib/mpd/canon'
+import { normaliserChampsFixesLegacy } from '@/lib/mpd/engine/compatibilite'
 import { ChampFixeField, SelectionField } from './core'
 
 type StructureListeDeclaree = Extract<ItemsAvecSousReponse, { motif: 'liste_declaree' }>
@@ -18,9 +19,14 @@ export function ChampItemsAvecSousReponse({ question, value, onChange }: Props) 
   if (!structure) return null
 
   if (structure.motif === 'champs_fixes') {
+    // Lot B (anomalie 7, Q4) : une ancienne réponse (tableau brut, avant
+    // la collecte réelle du caractère habituel de la semaine) reste
+    // pré-remplissable — jamais une valeur inventée pour le(s) champ(s)
+    // manquant(s).
+    const normalise = normaliserChampsFixesLegacy(structure.champs, value)
     const obj =
-      typeof value === 'object' && value !== null && !Array.isArray(value)
-        ? (value as Record<string, unknown>)
+      typeof normalise === 'object' && normalise !== null && !Array.isArray(normalise)
+        ? (normalise as Record<string, unknown>)
         : {}
     return (
       <div className="space-y-4">

@@ -43,6 +43,11 @@
 
 import type { ChampFixe, ItemsAvecSousReponse, Option, PrecisionOption, QuestionCanonique } from '@/lib/mpd/canon'
 import type { ReponseCourante } from '@/lib/mpd/types-runtime'
+import {
+  champsFixesComposites,
+  extraireChampsFixesOrphelins,
+  normaliserChampsFixesLegacy,
+} from '@/lib/mpd/engine/compatibilite'
 
 /** Marqueur structurel générique du canon (§1 ci-dessus) — jamais un
  * contenu utilisateur réel, toujours remplaçable par sa précision. */
@@ -68,7 +73,20 @@ function libelleOption(options: readonly Option[] | undefined, value: string): s
 function formaterPrecisionScalaire(precision: PrecisionOption, value: unknown): string | null {
   if (value === undefined || value === null) return null
   if (precision.type === 'texte') return typeof value === 'string' && value.length > 0 ? value : null
-  if (precision.type === 'nombre_devise') return typeof value === 'number' ? String(value) : null
+  if (precision.type === 'nombre_devise') {
+    // Lot B (anomalie 8) : ancienne forme (nombre nu) ET nouvelle forme
+    // ({ montant, devise }) — la devise n'est jamais inventée quand
+    // absente (ancienne réponse, ou nouvelle réponse sans devise).
+    if (typeof value === 'number') return String(value)
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      const obj = value as { montant?: unknown; devise?: unknown }
+      if (typeof obj.montant !== 'number') return null
+      return typeof obj.devise === 'string' && obj.devise.trim().length > 0
+        ? `${obj.montant} ${obj.devise}`
+        : String(obj.montant)
+    }
+    return null
+  }
   return null
 }
 
@@ -169,7 +187,9 @@ function formaterItemsAvecSousReponse(
   value: unknown
 ): readonly string[] {
   if (structure.motif === 'champs_fixes') {
-    return formaterPrecisionCompositeLignes(structure.champs, value)
+    // Lot B (anomalie 7, Q4) : une ancienne réponse (tableau brut) reste
+    // affichable — jamais une valeur inventée pour le champ manquant.
+    return formaterPrecisionCompositeLignes(structure.champs, normaliserChampsFixesLegacy(structure.champs, value))
   }
 
   if (structure.motif === 'liste_declaree') {
@@ -214,7 +234,24 @@ function formaterPayload(question: QuestionCanonique, payload: unknown): readonl
     case 'choix_unique':
     case 'choix_avec_precision': {
       const lignes = formaterSelectionLignes(question.options, payload)
-      return lignes.length > 0 ? lignes : ['—']
+      if (lignes.length > 0) return lignes
+      // Lot B (anomalie 10, Q29) : une ancienne réponse enregistrée
+      // avant que le choix principal ne soit réellement collecté
+      // n'a pas de `value` — ses champs fixes orphelins (ex. horizon)
+      // restent affichables, résolus génériquement parmi les
+      // precisions composites des options actuelles. Le choix
+      // principal n'est jamais inventé pour autant.
+      const orphelin = extraireChampsFixesOrphelins(payload)
+      if (orphelin) {
+        const lignesOrphelines = champsFixesComposites(question.options)
+          .map(champ => {
+            const ligne = formaterChampFixeLigne(champ, orphelin[champ.id])
+            return ligne ? `${champ.label} : ${ligne}` : null
+          })
+          .filter((v): v is string => v !== null)
+        if (lignesOrphelines.length > 0) return lignesOrphelines
+      }
+      return ['—']
     }
     case 'multi_selection': {
       const ligne = formaterMultiSelectionLigne(question.options, payload)

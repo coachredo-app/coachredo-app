@@ -36,10 +36,25 @@ function validerPrecision(precisionDef: PrecisionOption, payload: unknown): Vali
   switch (precisionDef.type) {
     case 'texte':
       return estTexteNonVide(payload) ? VALIDE : invalide('precision_texte_invalide')
-    case 'nombre_devise':
-      return typeof payload === 'number' && Number.isFinite(payload)
-        ? VALIDE
-        : invalide('precision_nombre_invalide')
+    case 'nombre_devise': {
+      // Lot B (anomalie 8) : nouvelle forme exigée en écriture — montant
+      // obligatoire, devise optionnelle (jamais inventée si absente).
+      // Jamais appelé en lecture d'une ancienne réponse (nombre nu) :
+      // ce validateur ne s'exécute qu'à la soumission d'une NOUVELLE
+      // réponse (soumettreReponse) — l'ancien format n'est jamais
+      // revalidé ni réécrit.
+      if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) {
+        return invalide('precision_nombre_devise_invalide')
+      }
+      const obj = payload as { montant?: unknown; devise?: unknown }
+      if (typeof obj.montant !== 'number' || !Number.isFinite(obj.montant)) {
+        return invalide('precision_nombre_invalide')
+      }
+      if (obj.devise !== undefined && (typeof obj.devise !== 'string' || obj.devise.trim().length === 0)) {
+        return invalide('precision_devise_invalide')
+      }
+      return VALIDE
+    }
     case 'composite': {
       if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) {
         return invalide('precision_composite_invalide')
@@ -65,7 +80,14 @@ function validerSelection(options: readonly Option[] | undefined, payload: unkno
   if (!option) return invalide('option_inconnue')
 
   if (option.precision) {
-    if (obj.precision === undefined) return invalide('precision_manquante')
+    if (obj.precision === undefined) {
+      // Lot B : precision facultative (Q30 uniquement, cf. canon/types.ts)
+      // — absente est une réponse valide, jamais remplacée par une
+      // valeur inventée.
+      return option.precision.type === 'texte' && option.precision.optionnel
+        ? VALIDE
+        : invalide('precision_manquante')
+    }
     return validerPrecision(option.precision, obj.precision)
   }
   if (obj.precision !== undefined) return invalide('precision_non_attendue')

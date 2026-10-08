@@ -14,7 +14,7 @@ export const etape5Questions: readonly QuestionCanonique[] = [
     etape: 5,
     ordre: 28,
     versionCanonique: CANON_VERSION,
-    libelle: 'Ces derniers mois, t’est-il arrivé de décider de faire quelque chose d’important, puis de beaucoup tarder à commencer ou de ne pas commencer ?',
+    libelle: 'Ces derniers mois, as-tu décidé de faire quelque chose d’important, puis beaucoup tardé à commencer ou finalement ne pas commencé ?',
     formeReponse: 'choix_avec_precision',
     options: [
       {
@@ -26,7 +26,9 @@ export const etape5Questions: readonly QuestionCanonique[] = [
         },
       },
       { value: 'non', label: 'Non' },
-      { value: 'je_ne_sais_pas', label: 'Je ne sais pas' },
+      // GO QG (finalisation INCONNU) : doublon UX avec le statut système
+      // INCONNU, masqué pour les nouvelles réponses — value conservée.
+      { value: 'je_ne_sais_pas', label: 'Je ne sais pas', redondantAvecInconnu: true },
     ],
     // Relance supprimée (A7, D-026).
     eligibiliteInconnu: true,
@@ -56,7 +58,11 @@ export const etape5Questions: readonly QuestionCanonique[] = [
           formeReponse: 'choix_avec_precision',
           options: [
             { value: 'aucun', label: 'Aucun' },
-            { value: 'reponse', label: '(réponse libre)', precision: { type: 'texte' } },
+            {
+              value: 'reponse',
+              label: 'Oui, voici ce qui m’a aidé',
+              precision: { type: 'texte', label: 'Ce qui t’a aidé' },
+            },
           ],
         },
       ],
@@ -88,7 +94,11 @@ export const etape5Questions: readonly QuestionCanonique[] = [
           formeReponse: 'choix_avec_precision',
           options: [
             { value: 'aucun', label: 'Aucun' },
-            { value: 'reponse', label: '(réponse libre)', precision: { type: 'texte' } },
+            {
+              value: 'reponse',
+              label: 'Oui, voici ce que j’ai fait',
+              precision: { type: 'texte', label: 'Ce que tu as fait' },
+            },
           ],
         },
       ],
@@ -121,7 +131,11 @@ export const etape5Questions: readonly QuestionCanonique[] = [
           formeReponse: 'choix_avec_precision',
           options: [
             { value: 'aucun', label: 'Aucun' },
-            { value: 'reponse', label: '(réponse libre)', precision: { type: 'texte' } },
+            {
+              value: 'reponse',
+              label: 'Oui, voici ce que j’ai fait',
+              precision: { type: 'texte', label: 'Ce que tu as fait' },
+            },
           ],
         },
       ],
@@ -144,7 +158,11 @@ export const etape5Questions: readonly QuestionCanonique[] = [
     formeReponse: 'choix_avec_precision',
     options: [
       { value: 'aucun', label: 'Aucun' },
-      { value: 'reponse', label: '(réponse libre)', precision: { type: 'texte' } },
+      {
+        value: 'reponse',
+        label: 'Oui, voici ce que j’ai fait',
+        precision: { type: 'texte', label: 'Ce que tu as fait' },
+      },
     ],
     // Relance supprimée (A7, D-026).
     eligibiliteInconnu: true,

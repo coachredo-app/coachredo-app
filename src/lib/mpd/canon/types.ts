@@ -77,7 +77,13 @@ export interface Cardinalite {
  * champs nommés distincts (ex. branche activité existante de Q1, Q16).
  */
 export type PrecisionOption =
-  | { readonly type: 'texte'; readonly label?: string }
+  // `optionnel` (Lot B, Q30 uniquement) : faux par défaut partout
+  // ailleurs dans le canon — une precision déclarée reste exigée dès
+  // que l'option est choisie (comportement historique inchangé, ex.
+  // Q13/Q23/Q35). Vrai uniquement quand la precision est documentée
+  // comme un complément facultatif (« rien d'important à signaler »
+  // reste une réponse valide sans texte).
+  | { readonly type: 'texte'; readonly label?: string; readonly aide?: string; readonly optionnel?: boolean }
   | { readonly type: 'nombre_devise'; readonly label?: string }
   | { readonly type: 'composite'; readonly champs: readonly ChampFixe[] }
 
@@ -85,6 +91,26 @@ export interface Option {
   readonly value: string
   readonly label: string
   readonly precision?: PrecisionOption
+  /** Lot B (anomalie 12, Q32 uniquement) : vrai seulement quand cette
+   * option exprime une absence de décision incompatible avec tout
+   * choix concret dans le même multi_selection (ex. « Je ne sais pas
+   * encore ») — la sélectionner désélectionne les autres et
+   * réciproquement. Jamais une exclusion de confort entre deux choix
+   * concrets : seules les exclusions sémantiquement certaines portent
+   * ce marqueur. Faux par défaut. */
+  readonly exclusif?: boolean
+  /** GO QG (finalisation INCONNU, 9 occurrences) : vrai uniquement
+   * quand cette option, au sein d'un choix_avec_precision/choix_unique,
+   * fait strictement doublon avec le statut système INCONNU (D-030) et
+   * n'a aucune autre fonction. Masquée dans le rendu des NOUVELLES
+   * réponses — jamais retirée du canon, pour que les réponses DECLARE
+   * déjà enregistrées avec cette value restent valides et lisibles.
+   * Jamais posé sur reconnaissance_exterieure (Q12, dont le
+   * `je_ne_sais_pas` reste DECLARE et continue de déclencher Q13), ni
+   * sur une alternative « je_ne_sais_pas_encore » (indécision
+   * temporelle, sémantique différente — GO QG explicite). Faux par
+   * défaut. */
+  readonly redondantAvecInconnu?: boolean
 }
 
 /**
@@ -186,6 +212,18 @@ export interface QuestionCanonique {
    * où le questionnaire source porte littéralement "Je préfère ne pas
    * répondre" (3 questions exactement, T7.2). */
   readonly eligibiliteRefus: boolean
+  /** Lot B (anomalie 13, Q36 uniquement) : vrai seulement quand
+   * l'alternative structurelle (options[0]) d'un formeReponse
+   * texte/texte_avec_provenance porte EXACTEMENT la même sémantique
+   * que le statut système INCONNU (D-030). L'option reste dans le
+   * canon pour la lecture d'anciennes réponses DECLARE — seul le
+   * rendu des NOUVELLES réponses ne la propose plus séparément, le
+   * bouton système INCONNU restant l'unique chemin visible. Faux par
+   * défaut — aucune présomption d'équivalence sans ce marquage
+   * explicite (ex. Q10/Q33/Q34 : leurs alternatives « Aucune »/« Aucun
+   * ne me vient à l'esprit » ne portent jamais ce marqueur, elles
+   * expriment une absence réelle, pas une méconnaissance). */
+  readonly alternativeRedondanteAvecInconnu?: boolean
   readonly natureObjet: NatureObjet
   readonly applicabilite: Applicabilite
   /** Présent uniquement si applicabilite ∈ {CONDITIONNELLE, RECUPERATION}. */

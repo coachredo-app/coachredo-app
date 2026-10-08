@@ -27,25 +27,52 @@ export function PrecisionInput({
 }) {
   if (precision.type === 'texte') {
     return (
-      <input
-        type="text"
-        value={typeof value === 'string' ? value : ''}
-        onChange={e => onChange(e.target.value)}
-        placeholder={precision.label}
-        className={`mt-2 ${champTexte}`}
-      />
+      <div className="mt-2 space-y-1">
+        <input
+          type="text"
+          value={typeof value === 'string' ? value : ''}
+          onChange={e => onChange(e.target.value)}
+          placeholder={precision.label}
+          className={champTexte}
+        />
+        {precision.aide && <p className="text-xs text-cr-text-muted">{precision.aide}</p>}
+      </div>
     )
   }
 
   if (precision.type === 'nombre_devise') {
+    // Lot B (anomalie 8) : montant + devise réelle, devise optionnelle
+    // (jamais inventée). Une ancienne réponse (nombre nu) reste lisible
+    // en pré-remplissage ; toute nouvelle saisie produit la forme
+    // { montant, devise }, jamais réécrite dans l'ancien format.
+    const obj =
+      typeof value === 'object' && value !== null && !Array.isArray(value)
+        ? (value as { montant?: number; devise?: string })
+        : undefined
+    const montantActuel = obj ? obj.montant : typeof value === 'number' ? value : undefined
+    const deviseActuelle = obj?.devise ?? ''
     return (
-      <input
-        type="number"
-        value={typeof value === 'number' ? value : ''}
-        onChange={e => onChange(e.target.value === '' ? undefined : Number(e.target.value))}
-        placeholder={precision.label}
-        className={`mt-2 ${champTexte}`}
-      />
+      <div className="mt-2 space-y-2">
+        <input
+          type="number"
+          value={montantActuel ?? ''}
+          onChange={e =>
+            onChange({
+              montant: e.target.value === '' ? undefined : Number(e.target.value),
+              devise: deviseActuelle || undefined,
+            })
+          }
+          placeholder={precision.label}
+          className={champTexte}
+        />
+        <input
+          type="text"
+          value={deviseActuelle}
+          onChange={e => onChange({ montant: montantActuel, devise: e.target.value || undefined })}
+          placeholder="Devise (ex. Euros, FCFA, Dirhams…) — si tu ne sais pas, laisse vide"
+          className={champTexte}
+        />
+      </div>
     )
   }
 
@@ -130,7 +157,19 @@ export function MultiSelectionField({
   function basculer(option: Option, coche: boolean) {
     if (coche) {
       if (cardinalite && selections.length >= cardinalite.max) return
-      onChange([...selections, option.precision ? { value: option.value, precision: undefined } : { value: option.value }])
+      const nouvelleEntree: SelectionValue = option.precision
+        ? { value: option.value, precision: undefined }
+        : { value: option.value }
+      // Anomalie 12 (Lot B) : une option exclusive (ex. Q32 « Je ne
+      // sais pas encore ») remplace toute sélection concrète existante ;
+      // sélectionner une option concrète alors qu'une option exclusive
+      // est déjà cochée la retire. Jamais appliqué entre deux options
+      // concrètes — uniquement vis-à-vis d'une option marquée exclusif.
+      if (option.exclusif) {
+        onChange([nouvelleEntree])
+      } else {
+        onChange([...selections.filter(s => !options.find(o => o.value === s.value)?.exclusif), nouvelleEntree])
+      }
     } else {
       onChange(selections.filter(s => s.value !== option.value))
     }
