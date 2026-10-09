@@ -39,12 +39,6 @@ export const CONCLUSION =
 export const CHROME = {
   home: '⌂ Mon espace',
   print: '↓ Imprimer / Enregistrer en PDF',
-  cta: {
-    in_progress: 'Reprendre le Bilan →',
-    completed:   'Revoir mon Bilan →',
-    default:     'Accéder au Bilan de clarté →',
-    closed_new:    'Bientôt disponible',
-    closed_paused: 'Ton Bilan est conservé — bientôt de retour',
-  },
+  cta: 'Commencer Mon Point de Départ →',
   rotateInvitation: 'Tourne ton téléphone pour voir la carte complète',
 }

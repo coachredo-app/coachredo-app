@@ -16,9 +16,7 @@ function detectView(): View {
   return 'portrait'
 }
 
-interface Props { bilanStatut: string | null; bilanOpen: boolean }
-
-export function MindMap({ bilanStatut, bilanOpen }: Props) {
+export function MindMap() {
   // null = pre-hydration (avoid SSR/client mismatch)
   const [view, setView] = useState<View | null>(null)
 
@@ -38,7 +36,7 @@ export function MindMap({ bilanStatut, bilanOpen }: Props) {
     <>
       {/* Always mounted — sole printable element regardless of active screen view */}
       <div className={view !== 'desktop' ? 'mm-print-desktop-hidden' : undefined}>
-        <MindMapDesktop bilanStatut={bilanStatut} bilanOpen={bilanOpen} />
+        <MindMapDesktop />
       </div>
       {/* Screen-only views — suppressed during print */}
       {view === null        && <div className="mm-screen-only" style={{ backgroundColor: '#0B0F1A', minHeight: '100dvh' }} />}

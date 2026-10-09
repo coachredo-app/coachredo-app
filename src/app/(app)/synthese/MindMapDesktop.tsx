@@ -17,15 +17,7 @@ const TEXT_COLOR: Record<string, string> = {
   agir: '#F1F4F8',
 }
 
-interface Props { bilanStatut: string | null; bilanOpen: boolean }
-
-export function MindMapDesktop({ bilanStatut, bilanOpen }: Props) {
-  const ctaLabel = !bilanOpen
-    ? (bilanStatut === null ? CHROME.cta.closed_new : CHROME.cta.closed_paused)
-    : bilanStatut === 'in_progress' ? CHROME.cta.in_progress
-    : bilanStatut === 'completed'  ? CHROME.cta.completed
-    : CHROME.cta.default
-
+export function MindMapDesktop() {
   return (
     <div
       className="mm-page-wrapper"
@@ -362,43 +354,24 @@ export function MindMapDesktop({ bilanStatut, bilanOpen }: Props) {
         className="mm-cta"
         style={{ textAlign: 'center', padding: '40px 20px 48px' }}
       >
-        {bilanOpen ? (
-          <Link
-            href="/bilan"
-            style={{
-              display: 'inline-block',
-              padding: '14px 32px',
-              backgroundColor: '#C9A84C',
-              color: '#0B0F1A',
-              borderRadius: 16,
-              fontWeight: 700,
-              fontSize: 14,
-              fontFamily: 'var(--font-jakarta), sans-serif',
-              letterSpacing: '.03em',
-              boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
-              textDecoration: 'none',
-            }}
-          >
-            {ctaLabel}
-          </Link>
-        ) : (
-          <span
-            style={{
-              display: 'inline-block',
-              padding: '14px 32px',
-              backgroundColor: 'transparent',
-              color: '#6b7280',
-              borderRadius: 16,
-              fontWeight: 700,
-              fontSize: 14,
-              fontFamily: 'var(--font-jakarta), sans-serif',
-              letterSpacing: '.03em',
-              border: '1px solid #1f2937',
-            }}
-          >
-            {ctaLabel}
-          </span>
-        )}
+        <Link
+          href="/fr/plan-b"
+          style={{
+            display: 'inline-block',
+            padding: '14px 32px',
+            backgroundColor: '#C9A84C',
+            color: '#0B0F1A',
+            borderRadius: 16,
+            fontWeight: 700,
+            fontSize: 14,
+            fontFamily: 'var(--font-jakarta), sans-serif',
+            letterSpacing: '.03em',
+            boxShadow: '0 4px 20px rgba(201,168,76,0.25)',
+            textDecoration: 'none',
+          }}
+        >
+          {CHROME.cta}
+        </Link>
       </div>
     </div>
   )

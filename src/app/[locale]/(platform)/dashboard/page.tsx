@@ -2,16 +2,13 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getReadingProgress, REQUIRED_TOTAL } from '@/lib/reading-chapters'
-import { REQUIRED_QUESTION_IDS } from '@/lib/bilan-questions'
-import { BILAN_OPEN } from '@/lib/bilan-flag'
+import { lireDossierCourant } from '@/lib/mpd/server/dossier'
+import { MPD_CANON_V1 } from '@/lib/mpd/canon'
+import { getFamilyStates } from '@/lib/mpd/engine/progression'
+import type { ReponseCourante, StatutReponse } from '@/lib/mpd/types-runtime'
 
 interface DashboardPageProps {
   params: Promise<{ locale: string }>
-}
-
-function fmt(d: string | null | undefined) {
-  if (!d) return ''
-  return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 type ParcourStepStatus = 'done' | 'partial' | 'empty' | 'locked'
@@ -50,46 +47,9 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/${locale}/auth/login`)
 
-  const [
-    bookAccessResult,
-    readingResult,
-    profileResult,
-    legacyV1Result,
-    completedV2Result,
-    activeSessionResult,
-  ] = await Promise.all([
+  const [bookAccessResult, readingResult] = await Promise.all([
     supabase.from('book_access').select('has_access').eq('user_id', user.id).single(),
     supabase.from('reading_progress').select('chapter_id, chapter_order, completed_at').eq('user_id', user.id),
-    supabase.from('profiles').select('bilan_completed_at').eq('id', user.id).single(),
-    // Existence d'un Bilan V1 completed — détermine l'éligibilité legacy upgrade
-    supabase
-      .from('bilan_sessions')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('statut', 'completed')
-      .is('bilan_version', null)
-      .eq('session_type', 'standard')
-      .limit(1)
-      .maybeSingle(),
-    // Session V2 completed la plus récente — pour bilanCompleted et date d'affichage
-    supabase
-      .from('bilan_sessions')
-      .select('id, completed_at')
-      .eq('user_id', user.id)
-      .eq('statut', 'completed')
-      .eq('bilan_version', 2)
-      .order('session_num', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    // Session in_progress active — pour compteur de réponses
-    supabase
-      .from('bilan_sessions')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('statut', 'in_progress')
-      .order('session_num', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
   ])
 
   // GO QG (garde onboarding centrale, correction) : ce contrôle vit
@@ -99,46 +59,69 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const hasAccess = bookAccessResult.data?.has_access === true
   const reading = getReadingProgress(readingResult.data ?? [])
 
-  // Règle métier Bilan
-  const hasV1History = legacyV1Result.data !== null
-  const hasCompletedV2 = completedV2Result.data !== null
-  const needsUpgrade = hasV1History && !hasCompletedV2
-  const bilanCompleted = hasCompletedV2
-
-  const completedV2Session = completedV2Result.data ?? null
-  const activeSession = activeSessionResult.data ?? null
-
-  // Compteur de réponses — uniquement hors état upgrade requis
-  let bilanAnswered = 0
-  if (activeSession && !needsUpgrade) {
-    const { data: countData } = await supabase
-      .from('bilan_responses')
-      .select('question_id')
-      .eq('session_id', activeSession.id)
-      .in('question_id', [...REQUIRED_QUESTION_IDS])
-    bilanAnswered = countData?.length ?? 0
-  }
+  // GO QG (T7.13) : activation et complétion du Livre sont deux
+  // vérités distinctes — jamais l'une tenue comme preuve indirecte de
+  // l'autre. Carte/MPD/MFR ne deviennent disponibles que si les DEUX
+  // sont vraies — exactement la même condition que la garde /plan-b/**
+  // (src/proxy.ts). Un accès révoqué après un Livre 7/7 historique ne
+  // doit jamais afficher ces étapes comme disponibles ici non plus.
+  const livreDebloquePourSuite = hasAccess && reading.fullyDone
 
   // Statuts parcours
   const livreStatus: ParcourStepStatus =
-    reading.fullyDone ? 'done' : reading.startedCount > 0 ? 'partial' : hasAccess ? 'empty' : 'locked'
-  const bilanStatus: ParcourStepStatus =
-    !reading.fullyDone ? 'locked' :
-    bilanCompleted ? 'done' :
-    needsUpgrade ? 'partial' :
-    bilanAnswered > 0 ? 'partial' :
-    'empty'
+    !hasAccess ? 'locked' : reading.fullyDone ? 'done' : reading.startedCount > 0 ? 'partial' : 'empty'
 
   const livreDetail =
     reading.fullyDone ? `${REQUIRED_TOTAL}/${REQUIRED_TOTAL}` :
     reading.startedCount > 0 ? `${reading.completedCount}/${REQUIRED_TOTAL} ch.` :
     undefined
 
-  const bilanDetail =
-    bilanCompleted ? `Complété le ${fmt(completedV2Session?.completed_at ?? profileResult.data?.bilan_completed_at)}` :
-    needsUpgrade ? 'À compléter pour ton Rapport' :
-    bilanAnswered > 0 ? `${bilanAnswered}/13 réponses` :
-    undefined
+  // La Carte n'a jamais d'état « consulté » persisté (aucune donnée
+  // carte_consultee) — seulement verrouillée ou disponible.
+  const carteStatus: ParcourStepStatus = livreDebloquePourSuite ? 'empty' : 'locked'
+
+  // Projection MPD — lecture strictement read-only (lireDossierCourant,
+  // jamais getOuCreerDossierCourant) : la seule consultation de ce
+  // tableau de bord ne doit jamais créer de dossier MPD. N'est même
+  // interrogée que si le Livre débloque réellement la suite — aucune
+  // requête MPD sinon. Réutilise exactement les primitives déjà
+  // verrouillées du moteur (getFamilyStates, mpd_etats_logiques),
+  // aucun second moteur de progression.
+  type EtapeMpd = 'NON_COMMENCE' | 'EN_COURS' | 'COMPLET' | 'CONSOMME'
+  let etapeMpd: EtapeMpd = 'NON_COMMENCE'
+
+  if (livreDebloquePourSuite) {
+    const dossier = await lireDossierCourant(supabase, user.id)
+
+    if (dossier) {
+      const [{ data: reponsesRows }, { data: etatLogique }] = await Promise.all([
+        supabase.from('mpd_reponses_courantes').select('question_id, statut, payload').eq('dossier_id', dossier.dossierId),
+        supabase.from('mpd_etats_logiques').select('id').eq('dossier_id', dossier.dossierId).limit(1).maybeSingle(),
+      ])
+
+      const reponses = new Map<string, ReponseCourante>(
+        (reponsesRows ?? []).map(r => [
+          r.question_id as string,
+          { questionId: r.question_id as string, statut: r.statut as StatutReponse, payload: r.payload },
+        ])
+      )
+
+      const toutesTerminees = getFamilyStates(MPD_CANON_V1, reponses).every(f => f.statut === 'TERMINEE')
+      etapeMpd = etatLogique ? 'CONSOMME' : toutesTerminees ? 'COMPLET' : 'EN_COURS'
+    }
+  }
+
+  const mpdStatus: ParcourStepStatus =
+    !livreDebloquePourSuite ? 'locked' :
+    etapeMpd === 'NON_COMMENCE' ? 'empty' :
+    etapeMpd === 'EN_COURS' ? 'partial' :
+    'done'
+
+  // MFR n'est jamais présentée comme active pour un MPD COMPLET non
+  // consommé — seule la consommation réelle (D-041) ouvre cette étape,
+  // jamais le seul fait que sa route sache afficher un état A.
+  const mfrDisponible = livreDebloquePourSuite && etapeMpd === 'CONSOMME'
+  const mfrStatus: ParcourStepStatus = mfrDisponible ? 'empty' : 'locked'
 
   // CTA Livre selon l'état de lecture
   const livreCta = reading.fullyDone
@@ -146,14 +129,6 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     : reading.startedCount > 0
     ? { label: 'Continuer le livre', href: '/resume' }
     : { label: 'Commencer le livre', href: '/intro' }
-
-  // Fermeture temporaire du Bilan — la consultation d'un V2 déjà completed reste active
-  const bilanCtaActive = reading.fullyDone && (BILAN_OPEN || bilanCompleted)
-  const bilanLockedReason = !reading.fullyDone
-    ? 'Disponible après avoir terminé le livre'
-    : needsUpgrade || bilanAnswered > 0
-    ? 'Conservé — temporairement en pause'
-    : 'Bientôt disponible'
 
   return (
     <div className="space-y-8 max-w-2xl">
@@ -164,55 +139,19 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <p className="text-cr-text-secondary mt-1 text-sm">{user.email}</p>
       </div>
 
-      {/* Parcours */}
+      {/* Parcours — Livre → Carte → Mon Point de Départ → Ma Feuille
+          de Route (D-045/T7.13). */}
       <section>
         <h2 className="text-xs font-semibold uppercase tracking-widest text-cr-accent mb-3">
           Mon parcours
         </h2>
         <div className="grid grid-cols-2 gap-3">
           <ParcourStep label="Livre" status={livreStatus} detail={livreDetail} />
-          <ParcourStep label="Bilan" status={bilanStatus} detail={bilanDetail} />
+          <ParcourStep label="Carte du parcours" status={carteStatus} />
+          <ParcourStep label="Mon Point de Départ" status={mpdStatus} />
+          <ParcourStep label="Ma Feuille de Route" status={mfrStatus} />
         </div>
       </section>
-
-      {/* Bilan legacy — mise à niveau requise */}
-      {needsUpgrade && reading.fullyDone && (
-        <section>
-          <div className="bg-surface rounded-xl border border-cr-border p-6 space-y-4">
-            <p className="text-cr-text font-medium text-sm">
-              Complète ton Bilan pour préparer ton Rapport CoachRedo.
-            </p>
-            <p className="text-cr-text-secondary text-sm">
-              Ton Bilan précédent est conservé. Quelques informations complémentaires
-              sont nécessaires pour que ton Rapport personnalisé puisse être préparé.
-            </p>
-            {BILAN_OPEN ? (
-              <Link
-                href="/bilan"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cr-accent text-white text-sm font-medium hover:opacity-90 transition-opacity"
-              >
-                Compléter mon Bilan →
-              </Link>
-            ) : (
-              <p className="text-cr-text-muted text-sm">
-                Ta mise à jour est temporairement suspendue. Tes réponses précédentes sont
-                conservées, la nouvelle expérience est en préparation.
-              </p>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* Bilan V2 validé — Rapport en préparation */}
-      {bilanCompleted && hasAccess && (
-        <section>
-          <div className="bg-surface rounded-xl border border-cr-border p-6">
-            <p className="text-cr-text font-medium text-sm">
-              Ton Bilan de clarté est validé. Ton Rapport CoachRedo personnalisé est en cours de préparation.
-            </p>
-          </div>
-        </section>
-      )}
 
       {/* Accès au contenu */}
       {hasAccess && (
@@ -229,7 +168,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               <span>→</span>
             </Link>
 
-            {reading.fullyDone && (
+            {livreDebloquePourSuite && (
               <Link
                 href="/synthese"
                 className="flex items-center justify-between px-4 py-3 rounded-lg border border-cr-border bg-surface text-cr-text text-sm font-medium hover:bg-background transition-colors"
@@ -239,30 +178,24 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </Link>
             )}
 
-            {bilanCtaActive ? (
+            {livreDebloquePourSuite && (
               <Link
-                href="/bilan"
+                href={`/${locale}/plan-b`}
                 className="flex items-center justify-between px-4 py-3 rounded-lg border border-cr-border bg-surface text-cr-text text-sm font-medium hover:bg-background transition-colors"
               >
-                <span>
-                  Bilan de Clarté
-                  {bilanCompleted && <span className="ml-2 text-xs text-success font-normal">✓ Complété</span>}
-                  {needsUpgrade && <span className="ml-2 text-xs text-amber-600 font-normal">À mettre à jour</span>}
-                  {!bilanCompleted && !needsUpgrade && bilanAnswered > 0 && (
-                    <span className="ml-2 text-xs text-cr-text-muted font-normal">{bilanAnswered}/13</span>
-                  )}
-                </span>
+                <span>Mon Point de Départ</span>
                 <span className="text-cr-text-muted">→</span>
               </Link>
-            ) : (
-              <div className="flex items-start justify-between px-4 py-3 rounded-lg border border-cr-border bg-background cursor-default">
-                <span className="text-sm font-medium text-cr-text-muted">
-                  🔒 Bilan de Clarté
-                  <span className="block text-xs font-normal mt-0.5">
-                    {bilanLockedReason}
-                  </span>
-                </span>
-              </div>
+            )}
+
+            {mfrDisponible && (
+              <Link
+                href={`/${locale}/plan-b/feuille-de-route`}
+                className="flex items-center justify-between px-4 py-3 rounded-lg border border-cr-border bg-surface text-cr-text text-sm font-medium hover:bg-background transition-colors"
+              >
+                <span>Ma Feuille de Route</span>
+                <span className="text-cr-text-muted">→</span>
+              </Link>
             )}
           </div>
         </section>

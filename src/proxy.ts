@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import createIntlMiddleware from 'next-intl/middleware'
 import { NextResponse, type NextRequest } from 'next/server'
 import { routing } from './lib/i18n/routing'
+import { getReadingProgress } from './lib/reading-chapters'
 
 /** Routes du reader existant (legacy — pas de i18n) */
 const READER_PUBLIC = ['/login', '/signup', '/access', '/reset-password']
@@ -174,6 +175,37 @@ export async function proxy(request: NextRequest) {
 
     if (!profil?.country) {
       return NextResponse.redirect(new URL(`/${locale}/onboarding`, request.url))
+    }
+
+    // GO QG (T7.13, garde /plan-b) : au-delà du pays, l'espace MPD
+    // exige l'activation (book_access) PUIS le Livre terminé (7/7) —
+    // contrat AUTH → COUNTRY → ACTIVATION → LIVRE → ALLOW. Scopé
+    // strictement à ce segment — jamais aux autres (dashboard reste
+    // la destination normale d'un Livre inachevé, jamais gardé par
+    // lui-même). fullyDone n'est jamais considéré comme une preuve
+    // indirecte d'activation : les deux conditions sont vérifiées
+    // séparément, dans cet ordre, jamais fusionnées.
+    if (segment === 'plan-b') {
+      const { data: access } = await supabase
+        .from('book_access')
+        .select('has_access')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (access?.has_access !== true) {
+        return NextResponse.redirect(new URL('/access', request.url))
+      }
+
+      const { data: readingRows } = await supabase
+        .from('reading_progress')
+        .select('chapter_id, completed_at')
+        .eq('user_id', user.id)
+
+      const { fullyDone } = getReadingProgress(readingRows ?? [])
+
+      if (!fullyDone) {
+        return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
+      }
     }
   }
 
