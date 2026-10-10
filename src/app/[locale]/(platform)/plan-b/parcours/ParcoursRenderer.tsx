@@ -40,11 +40,37 @@ export function ParcoursRenderer({
 }: ParcoursRendererProps) {
   const router = useRouter()
 
+  // GO QG (navigation explicite vers le hub) : resolution.ts ne produit
+  // `{ kind: 'hub' }` que dans un seul cas précis (construireVueQuestion
+  // — la toute première question de F1, confirmé par audit lecture
+  // seule) — jamais ailleurs dans la vue 'question'. Comparer la
+  // destination déjà calculée au hub est donc une détection fiable de
+  // ce cas précis, purement présentationnelle : aucune nouvelle donnée,
+  // aucun changement de resolution.ts, aucune duplication de sa logique.
+  const hubHref = `/${locale}/plan-b`
+  const retourMeneDejaAuHub = retourHref === hubHref
+
   return (
     <div className="space-y-3">
-      <Link href={retourHref} className="text-sm text-cr-text-secondary hover:text-cr-text">
-        ← Retour
-      </Link>
+      {retourMeneDejaAuHub ? (
+        // Première question de F1 : une seule destination (le hub) —
+        // jamais deux liens qui mèneraient au même endroit.
+        <Link href={retourHref} className="text-sm text-cr-text-secondary hover:text-cr-text">
+          ← Mon Point de Départ
+        </Link>
+      ) : (
+        <div className="flex items-center gap-3">
+          <Link href={retourHref} className="text-sm text-cr-text-secondary hover:text-cr-text">
+            ← Retour
+          </Link>
+          <span className="text-cr-border" aria-hidden="true">
+            ·
+          </span>
+          <Link href={hubHref} className="text-sm text-cr-text-secondary hover:text-cr-text">
+            Mon Point de Départ
+          </Link>
+        </div>
+      )}
 
       <QuestionRenderer
         key={question.stableId}
