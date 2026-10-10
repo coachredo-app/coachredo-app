@@ -20,6 +20,11 @@ interface FamilyCardProps {
   readonly numero: number
   readonly nom: string
   readonly description: string
+  /** GO QG (D-047) : conseil pédagogique court, affiché uniquement sur
+   * la famille actuellement active (À commencer/En cours) — jamais sur
+   * les autres cartes, jamais un contrôle qualité des réponses déjà
+   * données. */
+  readonly conseil: string
   readonly statut: StatutFamille
   readonly modifiable: boolean
   readonly consomme: boolean
@@ -76,7 +81,7 @@ function StatusIndicator({ statut, estVerrouillee }: { statut: StatutFamille; es
   )
 }
 
-export function FamilyCard({ numero, nom, description, statut, modifiable, consomme, locale }: FamilyCardProps) {
+export function FamilyCard({ numero, nom, description, conseil, statut, modifiable, consomme, locale }: FamilyCardProps) {
   const estCliquable = (statut === 'A_COMMENCER' || statut === 'EN_COURS') && !consomme
   const estVerrouillee = statut === 'TERMINEE' && (!modifiable || consomme)
   // T7.8E §15/§17 : consultable pour TOUTE famille Terminée, y compris
@@ -111,6 +116,11 @@ export function FamilyCard({ numero, nom, description, statut, modifiable, conso
 
       {/* 4. Description — secondaire */}
       <p className="text-sm text-cr-text-secondary mt-1.5 flex-1">{description}</p>
+
+      {/* GO QG (D-047) : conseil pédagogique, uniquement sur la famille
+          actuellement active — jamais répété sur les 7 cartes à la
+          fois, jamais un contrôle qualité des réponses déjà données. */}
+      {estCliquable && <p className="text-xs text-cr-text-muted mt-2 italic">{conseil}</p>}
 
       {/* 5. Zone d'état/action en bas */}
       {estCliquable && (

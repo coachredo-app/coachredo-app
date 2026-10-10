@@ -20,12 +20,14 @@ import { estApplicable, getApplicableQuestions, getNextQuestion, type ReponsesPa
 import { getFamilyStates, type EtatFamille } from '@/lib/mpd/engine/progression'
 import type { ReponseCourante } from '@/lib/mpd/types-runtime'
 import { TRANSITIONS_MPD } from './transitions'
+import { FAMILLES_MPD } from '../familles'
 
 export type CibleNavigation =
   | { readonly kind: 'q'; readonly stableId: string }
   | { readonly kind: 'transition'; readonly versEtape: Etape }
   | { readonly kind: 'hub' }
   | { readonly kind: 'parcours' }
+  | { readonly kind: 'famille'; readonly etape: Etape }
 
 export type VueParcours =
   | {
@@ -34,7 +36,26 @@ export type VueParcours =
       readonly reponseExistante: ReponseCourante | null
       readonly retour: CibleNavigation
     }
-  | { readonly type: 'transition'; readonly versEtape: Etape; readonly texte: string; readonly continuer: CibleNavigation }
+  | {
+      readonly type: 'transition'
+      readonly versEtape: Etape
+      readonly texte: string
+      readonly continuer: CibleNavigation
+      /** GO QG (D-047) : conseil pédagogique de la famille qui s'ouvre
+       * — donnée éditoriale pure (familles.ts), jamais une décision
+       * métier. */
+      readonly conseilFamilleSuivante: string
+      /** GO QG (D-047) : état RÉEL (déjà dérivé par getFamilyStates,
+       * jamais recalculé) de la famille qui vient d'être terminée —
+       * gouverne uniquement l'affichage du bloc de relecture, jamais le
+       * verrouillage lui-même. `false` si la transition est revisitée
+       * après qu'une réponse a déjà été écrite dans la famille
+       * suivante (cas §4 de l'audit). */
+      readonly famillePrecedenteModifiable: boolean
+      /** Cible du lien « Revoir mes réponses » — la page de
+       * consultation déjà existante (D-039), jamais une nouvelle route. */
+      readonly revoirFamillePrecedente: CibleNavigation
+    }
   | { readonly type: 'termine' }
 
 /** Famille « active » du parcours linéaire — jamais TERMINEE (réservé
@@ -83,7 +104,34 @@ function construireVueTransition(
       ? { kind: 'q', stableId: premiereQuestion.stableId }
       : { kind: 'parcours' }
 
-  return { type: 'transition', versEtape, texte, continuer }
+  // GO QG (D-047) : conseil pédagogique de la famille qui s'ouvre —
+  // donnée éditoriale pure, jamais une décision métier ; `versEtape`
+  // est toujours une étape valide du canon (TRANSITIONS_MPD ne couvre
+  // que 2..7), ce `!` reflète cette garantie déjà existante (T7.10D),
+  // jamais une nouvelle hypothèse.
+  const conseilFamilleSuivante = FAMILLES_MPD.find(f => f.etape === versEtape)!.conseil
+
+  // GO QG (D-047) : la famille qui vient d'être terminée est toujours
+  // versEtape - 1 (transitions strictement N→N+1, T7.10D). Son état
+  // `modifiable` est lu tel quel depuis familyStates déjà calculé —
+  // AUCUNE seconde logique de verrouillage. Si la transition est
+  // revisitée après qu'une réponse a déjà été écrite dans la famille
+  // suivante (URL forgée ?transition=N), eMax a progressé et
+  // modifiable devient false ici automatiquement, sans rien recalculer
+  // explicitement — c'est la même donnée qui gouverne déjà le reste du
+  // produit (hub, famille/[etape]).
+  const etapePrecedente = (versEtape - 1) as Etape
+  const famillePrecedenteModifiable = familyStates.find(f => f.etape === etapePrecedente)?.modifiable ?? false
+
+  return {
+    type: 'transition',
+    versEtape,
+    texte,
+    continuer,
+    conseilFamilleSuivante,
+    famillePrecedenteModifiable,
+    revoirFamillePrecedente: { kind: 'famille', etape: etapePrecedente },
+  }
 }
 
 /** `?q=`/`?apres=` partagent la même garde (GO QG T7.10B/C) : la
@@ -180,5 +228,7 @@ export function hrefDeCible(cible: CibleNavigation, locale: string): string {
       return `/${locale}/plan-b`
     case 'parcours':
       return `/${locale}/plan-b/parcours`
+    case 'famille':
+      return `/${locale}/plan-b/famille/${cible.etape}`
   }
 }

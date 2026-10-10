@@ -134,7 +134,39 @@ export default async function ParcoursPage({ params, searchParams }: ParcoursPag
 
       {vue.type === 'transition' && (
         <div className="bg-surface rounded-xl border border-cr-border p-6 space-y-4">
+          {/* Texte narratif D-040 — inchangé, non réécrit. */}
           <p className="text-sm text-cr-text">{vue.texte}</p>
+
+          {/* GO QG (D-047) : conseil pédagogique de la famille qui
+              s'ouvre — enrichit cet écran, ne remplace jamais le texte
+              D-040 ci-dessus. */}
+          <p className="text-sm text-cr-text-secondary italic">{vue.conseilFamilleSuivante}</p>
+
+          {/* GO QG (D-047) : relecture avant verrouillage — affichée
+              UNIQUEMENT si la famille précédente est réellement encore
+              modifiable (donnée déjà dérivée par getFamilyStates,
+              jamais une seconde logique de verrouillage). Si la
+              transition est revisitée après verrouillage réel, ce bloc
+              disparaît silencieusement — le reste de l'écran continue
+              de fonctionner exactement comme avant T7.10D. */}
+          {vue.famillePrecedenteModifiable && (
+            <div className="border-t border-cr-border pt-4 space-y-2">
+              <p className="text-sm font-medium text-cr-text">Avant de continuer</p>
+              <p className="text-sm text-cr-text-secondary">
+                Tu peux encore vérifier les réponses de l’étape que tu viens de terminer.
+              </p>
+              <p className="text-sm text-cr-text-secondary">
+                Dès que tu répondras à la première question de l’étape suivante, ces réponses seront verrouillées.
+              </p>
+              <Link
+                href={hrefDeCible(vue.revoirFamillePrecedente, locale)}
+                className="text-sm text-cr-accent font-medium hover:underline inline-block"
+              >
+                Revoir mes réponses
+              </Link>
+            </div>
+          )}
+
           <div className="flex items-center gap-4">
             <Link
               href={hrefDeCible(vue.continuer, locale)}
