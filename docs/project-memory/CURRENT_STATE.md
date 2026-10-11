@@ -7,7 +7,7 @@ metadata:
 
 # CURRENT_STATE — CoachRedo App
 
-Dernière mise à jour : 2026-10-09 (V24 — T7.13 clos et publié, D-046 : parcours Activation → Livre → Carte → Mon Point de Départ → Ma Feuille de Route implémenté)
+Dernière mise à jour : 2026-10-10 (V25 — D-047 publiée et validée Production : responsabilisation MPD, conseils pédagogiques, relecture avant verrouillage, navigation explicite vers le hub)
 
 **Ce document est vivant.** Il doit être mis à jour à chaque incrément fonctionnel significatif validé (cf. règle dans `CLAUDE.md`). S'il contredit le repo réel au moment où vous le lisez, faites confiance au repo et signalez la contradiction au QG.
 
@@ -18,10 +18,10 @@ Dernière mise à jour : 2026-10-09 (V24 — T7.13 clos et publié, D-046 : parc
 | Élément | Valeur |
 |---|---|
 | Branche | `main` |
-| Baseline poussée connue (= `origin/main` ref locale, = `HEAD`) | `94bac35030983f1f3828cf09f8f9456c01374719` — `feat(journey): connect book map MPD and roadmap` (T7.13, clôture D-046). Checkpoint vérifié le 2026-10-09 : `HEAD = origin/main`, `ahead/behind = 0/0`. **Baseline officielle pour le prochain chantier.** |
-| État de push (baseline ci-dessus) | Poussé manuellement sur `origin/main` par Coach Redouane, confirmé. Chaîne complète depuis la précédente baseline documentée (`d9fe2b1`) : `d9fe2b1` → `9010e69` (T7.12, D-042) → `78d87f0` (pédagogie/compatibilité MPD, D-043) → `c64abc3` (pays/devise/onboarding, D-044) → `94bac35` (T7.13, D-046) — les 4 commits intermédiaires, un temps locaux et non poussés lors d'une synchronisation mémoire antérieure, sont désormais tous publiés. |
+| Baseline poussée connue (= `origin/main` ref locale, = `HEAD`) | `eca86b1f7083652dd50f6e1d9322ee250e391b4d` — `feat(mpd): add explicit navigation back to journey hub` (D-047 pt.7). Checkpoint vérifié le 2026-10-10 : `HEAD = origin/main`, `ahead/behind = 0/0`. **Baseline officielle pour le prochain chantier.** |
+| État de push (baseline ci-dessus) | Poussé manuellement sur `origin/main` par Coach Redouane, confirmé, Vercel Production `Ready`. Chaîne complète depuis la précédente baseline documentée (`94bac35`) : `94bac35` (T7.13, D-046) → `fab7c55` (D-047 pts.1-6, responsabilisation/conseils/relecture MPD) → `eca86b1` (D-047 pt.7, navigation explicite vers le hub). |
 | Vercel Production | `Ready` |
-| Smoke test production | Validé le 2026-09-09 par le QG |
+| Smoke test production | Validé le 2026-10-10 par le QG — D-047 + navigation explicite vers le hub PASS |
 | Migration 012 (Fondation Rapport) | Exécutée en production le 2026-09-10, vérifications post-exécution confirmées (voir §5) |
 | Migration 013 (Fondation MPD V3) | Exécutée sur le projet réel `ggeohumiyxqhknnftydi`/PlanB App le 2026-10-01 via `psql` direct (Session Pooler 5432, hors moteur de migrations CLI), postcheck T6.10 conforme, commit `4e6c0e84594e73109c37a661032deba6306807bd` — voir §5 et §8 |
 | Fermeture temporaire du Bilan (`BILAN_OPEN`) | `BILAN_OPEN=false` actif en Production depuis le 2026-09-11, phase testeurs du livre — voir §2 et D-017 |
@@ -190,8 +190,10 @@ Fichiers présents dans `supabase/migrations/` : `001_schema`, `001_trading_boot
 
 **5. Bilan legacy — retiré du parcours client visible, rien d'autre touché :** carte Bilan, banners upgrade/Rapport, ligne « Mon programme », CTA Carte→Bilan — tous retirés. **Routes `/bilan*`, données (`bilan_sessions`, `bilan_responses`), RPC (`migrate_legacy_session`, `create_upgrade_bilan_session`) et écrans admin Bilan strictement inchangés** — accessibles par URL directe comme avant, `BILAN_OPEN=false` toujours actif (§2/§6/D-017, sans lien avec ce chantier). **Aucune migration, aucune suppression DB.**
 
-**Commit publié :** `94bac35030983f1f3828cf09f8f9456c01374719` — `feat(journey): connect book map MPD and roadmap`. **Baseline officielle pour le prochain chantier.** Détail complet : `DECISIONS.md` D-046 (clôture) et D-045 (décision produit d'origine, inchangée).
+**Commit publié :** `94bac35030983f1f3828cf09f8f9456c01374719` — `feat(journey): connect book map MPD and roadmap`. Détail complet : `DECISIONS.md` D-046 (clôture) et D-045 (décision produit d'origine, inchangée).
 
-**Aucune prochaine tranche n'est annoncée à ce stade.**
+**D-047 — Responsabilisation MPD, conseils pédagogiques, relecture avant verrouillage, navigation explicite vers le hub : CLOS ET PUBLIÉ EN PRODUCTION (2026-10-10).** Trois mécanismes UX légers (contrat « Avant de commencer » affiché tant que le dossier n'a aucune réponse ; conseil pédagogique court par famille, sur la carte active du hub et sur l'écran de transition ; bloc « Avant de continuer » + « Revoir mes réponses » sur la micro-transition D-040, affiché uniquement tant que la famille précédente reste modifiable) plus un complément de navigation (lien explicite « Mon Point de Départ » vers le hub depuis une question du parcours linéaire, séparé de « ← Retour » qui conserve sa navigation locale existante). **Aucune règle métier, aucun canon, aucune DB, aucune migration touchés** — détail technique complet : `DECISIONS.md` D-047. Commits publiés : `fab7c55463611eb6568ca8c3f44686a9c8ec0e1a` (pts.1-6) puis `eca86b1f7083652dd50f6e1d9322ee250e391b4d` (pt.7, navigation hub). **Validé par smoke test Production** : contrat initial, conseil F1, transition F1→F2, relecture, verrouillage F1 après 1ʳᵉ réponse F2, navigation hub explicite sur question intermédiaire F2 — tous PASS. Le MPD fonctionnel (canon + moteur + navigation + responsabilisation) est considéré **stable** sur ce périmètre.
+
+**Prochain chantier produit annoncé (non engagé) : reprise de la conception MFR**, avec le **Catalogue CoachRedo V1** (familles de modèles d'activité fermées et versionnées, appariement déterministe au dossier utilisateur) comme prochaine brique de conception — aucune architecture technique, aucun schéma, aucun appel IA engagés à ce stade.
 
 **En parallèle, sans lien avec ce qui précède** : le Bilan actuel (V2, en production) reste gelé (`BILAN_OPEN=false`, §2, §6, D-017) pendant la phase testeurs du livre. Ce gel n'est pas une action de ce chantier et n'a pas vocation à être réévalué automatiquement, sauf si le QG le demande explicitement.
