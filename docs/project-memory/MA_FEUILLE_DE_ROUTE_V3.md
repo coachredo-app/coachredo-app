@@ -13,6 +13,18 @@ Ce document enregistre l'architecture **conceptuelle** de Ma feuille de route V3
 
 ---
 
+## Note de synchronisation — D-048 (2026-10-13)
+
+Ce document reste tel qu'arbitré par les Arbitrages 1-6 (D-023/D-024/D-025) et n'est pas réécrit par cette note — il doit être lu à la lumière de `DECISIONS.md` D-048 (moteur de formation ancrage-driven, niveaux de vérité, Catalogue M1-M6, Transformations, Direction Candidate/Piste/Hypothèse rejetée) sur les points suivants :
+
+- **VOIE.** Partout où ce document emploie VOIE comme objet métier canonique évalué par le mécanisme de plausibilité (§B.1, §C, §D, §D.2), lire désormais DIRECTION CANDIDATE avant D-025, puis DIRECTION PRÉSENTÉE après une sortie PRÉSENTER MAINTENANT (D-048 §AL.1). OPTION et ROUTE (§C) sont inchangées. Le mot « voie » employé comme langage naturel destiné à l'utilisateur (ex. titre de Section 6, « Tes voies plausibles », §F) n'est pas concerné — il ne désigne pas un objet métier distinct et n'a pas besoin d'être modifié.
+- **Pipeline EXPLORER → ÉVALUER → FILTRER → PRÉSENTER (§B).** Ce pipeline reste valide comme description macro. Sa partie EXPLORER/ÉVALUER, jusqu'ici non spécifiée mécaniquement, est désormais explicitée par le moteur de FORMATION de D-048 (MPD figé → Faits → Propositions analytiques → Ancrages → dérivation directe ou transformations contrôlées → Hypothèse économique → mécanisme(s) → Acteurs & flux → contrôle de formation) : ce que ce pipeline appelait EXPLORER/ÉVALUER correspond à FORMATION ; FILTRER correspond à D-025 ; PRÉSENTER reste PRÉSENTER.
+- **COHÉRENCE (§B.1, question 1).** Sa fonction d'individualisation économique (« base rationnelle suffisamment individualisée ») est désormais assurée par le contrôle de formation de D-048 (notamment l'Ancrage constitutif, §T.2), en amont de D-025. COHÉRENCE reste le premier des quatre filtres mais est recentrée sur l'alignement entre une Direction Candidate déjà formée et ce que la personne cherche réellement à construire ou changer — jamais une question de disponibilité temporelle, qui reste exclusivement celle de DISPONIBILITÉ (D-048 §Y).
+- **« jamais recommandée » (§B, vocabulaire verrouillé).** Partiellement superseded (D-048 §AD/§AE/§AL.2) : CoachRedo peut désormais désigner 0 ou 1 Direction recommandée aujourd'hui parmi les Directions PRÉSENTER MAINTENANT, sans score, classement, podium ni « meilleure voie ». L'interdiction du mot « prometteuse », dans la même phrase source, n'est pas affectée.
+- **Convergence DÉCLARÉ→ÉTAYÉ (§D.3).** Intégralement inchangée — D-048 ne supersède pas D-024/§D.3. D-048 clarifie seulement que la suffisance d'un Ancrage constitutif (formation) et le statut ÉTAYÉ (épistémique) sont deux dimensions distinctes, jamais à confondre.
+
+---
+
 ## A. Principe produit (Arbitrage 1)
 
 Ma feuille de route est un **produit autonome complet**. Elle doit être exploitable sans que CoachRedo connaisse le choix final de la personne — le choix d'une voie n'est jamais une condition nécessaire à son achèvement, c'est un résultat qu'elle doit permettre à la personne de prendre de manière suffisamment éclairée.
