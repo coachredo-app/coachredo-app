@@ -120,7 +120,7 @@ Ce principe doit empêcher les décisions présentes de fermer inutilement les p
 - La plateforme applicative `coachredo.app` (ce repo).
 - Le site vitrine statique `coachredo.com` (repo séparé `coachredo-vitrine`), qui présente l'écosystème et vend Plan B Rentable.
 - Une communauté (groupe WhatsApp).
-- **CoachRedo Music** — branche artistique/culturelle **officielle** de l'écosystème.
+- **CoachRedo Music** — branche artistique/culturelle **officielle** de l'écosystème. Checkpoint durable (mission, doctrine artistique, enseignements Suno, Albums 1-3, business de chansons personnalisées à étudier) : `docs/project-memory/COACHREDO_MUSIC.md`.
 
 **Correction du 2026-09-09 :** *CoachRedo Media* est retiré des composantes actuelles — la version précédente de ce document le mentionnait à tort comme pilier actif de l'écosystème.
 
