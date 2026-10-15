@@ -25,7 +25,14 @@ type SupabaseServiceClient = ReturnType<typeof createServiceClient>
 
 export type DemarrerPremiereAnalyseResultat =
   | { readonly analyseId: string; readonly created: boolean }
-  | { readonly error: 'cycle_introuvable' | 'cycle_publie' | 'premiere_analyse_deja_tentee' | 'erreur' }
+  | {
+      readonly error:
+        | 'cycle_introuvable'
+        | 'cycle_publie'
+        | 'premiere_analyse_deja_tentee'
+        | 'Non authentifié'
+        | 'erreur'
+    }
 
 export async function demarrerPremiereAnalyse(
   supabase: SupabaseServerClient,
@@ -42,8 +49,11 @@ export async function demarrerPremiereAnalyse(
   })
 
   if (error) return { error: 'erreur' }
+  if (!data) return { error: 'erreur' }
   if (data?.error) {
-    return { error: data.error as 'cycle_introuvable' | 'cycle_publie' | 'premiere_analyse_deja_tentee' }
+    return {
+      error: data.error as 'cycle_introuvable' | 'cycle_publie' | 'premiere_analyse_deja_tentee' | 'Non authentifié',
+    }
   }
 
   return { analyseId: data.analyse_id as string, created: Boolean(data.created) }
@@ -64,6 +74,7 @@ export async function finirAnalyseEchec(
   })
 
   if (error) return { error: 'erreur' }
+  if (!data) return { error: 'erreur' }
   if (data?.error) return { error: data.error as 'analyse_introuvable' }
 
   return { ok: true, alreadyTerminal: Boolean(data.already_terminal) }
@@ -86,6 +97,7 @@ export async function finirAnalyseSucces(
   })
 
   if (error) return { error: 'erreur' }
+  if (!data) return { error: 'erreur' }
   if (data?.error) return { error: data.error as 'analyse_introuvable' | 'cycle_publie' }
 
   return { ok: true, alreadyTerminal: Boolean(data.already_terminal) }

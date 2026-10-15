@@ -25,6 +25,7 @@ export async function obtenirOuCreerCycle(
   })
 
   if (error) return { error: 'Erreur lors de la création du cycle MFR.' }
+  if (!data) return { error: 'Erreur lors de la création du cycle MFR.' }
   if (data?.error) return { error: data.error as string }
 
   return { cycleId: data.cycle_id as string, created: Boolean(data.created) }
