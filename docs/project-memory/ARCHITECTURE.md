@@ -86,7 +86,7 @@ export async function requireAdminService() {
 
 Toutes les Server Actions admin (13 call-sites au moment de la centralisation) passent par cette fonction unique. Les trois pages Server Component admin (`admin/page.tsx`, `admin/codes/page.tsx`, `admin/users/[id]/page.tsx`) font le même check inline mais avec `redirect()` au lieu de `throw` — pattern distinct et volontairement non fusionné (mécanisme Next.js différent).
 
-`createClient()` = client RLS (utilisateur), pour toute lecture/écriture respectant la propriété de l'utilisateur courant. `createServiceClient()` = client `service_role`, bypass RLS — **réservé aux usages admin passant par `requireAdminService()`**, jamais exposé côté client.
+`createClient()` = client RLS (utilisateur), pour toute lecture/écriture respectant la propriété de l'utilisateur courant. `createServiceClient()` = client `service_role`, bypass RLS — **utilisable dans des modules serveur privilégiés, explicitement bornés à une table/opération précise et jamais exposés côté client**, jamais directement via une Server Action grand public. Admin (`requireAdminService()`, identité `ADMIN_EMAIL`) est un cas particulier de ce principe, pas sa définition générale : un second cas déjà existant et explicitement autorisé par D-031, hors tout contexte admin, est `src/lib/mpd/server/attestation.ts` (écriture de `mpd_attestations_canoniques`, ownership déjà vérifié par le client RLS appelant avant d'y accéder). Doctrine précisée par D-051 (T-MFR.2A, 2026-10-15) — corrige une formulation antérieure de cette mémoire qui présentait l'usage admin comme la seule justification légitime de `service_role`, alors que le code réel la contredisait déjà.
 
 ### RLS — principe général
 

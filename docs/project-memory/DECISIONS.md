@@ -943,3 +943,85 @@ Les stratégies dont le mécanisme principal est l'exposition de capital à un r
 **Conséquence :** T-MFR.1 Fondation DB est désormais l'état réel de la base — tout futur chantier fonctionnel MFR (Catalogue CoachRedo V1, orchestration/génération IA, RPC d'écriture analytique à privilège minimal) peut s'appuyer directement sur ce schéma sans refaire l'audit de fondation. **Aucune architecture technique de génération n'est engagée par cette décision** (provider IA, prompts, orchestration, RPC d'écriture restent explicitement hors périmètre, cf. D-048 §AN). `db push`/`migration up`/`migration repair` restent interdits sans GO QG explicite distinct et sans chantier dédié de normalisation du registre (double `001` à trancher au préalable).
 
 **Statut :** DEPLOYED — migration exécutée, postcheck PASS, registre Supabase volontairement inchangé.
+
+---
+
+### D-051 — T-MFR.2A : protocole d'orchestration technique MFR (cycle, lancement d'analyse, transactions) — verrouillé conceptuellement, aucun code écrit
+**Date :** 2026-10-15 (audit technique ciblé + arbitrages QG, en amont de toute écriture de code/migration/RPC)
+
+**Décision :** le QG verrouille le **protocole** (pas le code) gouvernant l'orchestration MFR, traduction opérationnelle de D-049, en amont de toute RPC/migration/provider.
+
+**Cycle :** `mfr_cycles` est créé en *lazy get-or-create* au premier accès MFR après consommation du snapshot MPD (pas immédiatement à la consommation) ; la création du cycle est un événement distinct du lancement d'une analyse ; l'unicité DB déjà posée sur `etat_logique_id` (016) rend ce get-or-create nativement idempotent.
+
+**Première génération :** déclenchée depuis le parcours utilisateur, lorsqu'il demande explicitement la préparation de sa MFR — ne déclenche jamais de publication automatique, intégralement soumise à validation humaine (D-048 §AJ, inchangé).
+
+**Régénération :** un retry technique du même lancement (double clic, requête dupliquée, refresh) n'est jamais une régénération volontaire — une régénération volontaire crée toujours une nouvelle tentative (`mfr_analyses.id` nouveau). En V1, réservée à une action privilégiée CoachRedo/Admin, pas à l'utilisateur final.
+
+**Concurrence (V1) :** un cycle ne doit avoir qu'un lancement d'analyse métier actif à la fois — contrainte explicitement de V1, jamais une vérité éternelle du domaine.
+
+**Protocole transactionnel :** START transactionnel (réservation `EN_COURS`, verrouillée) → commit → appel provider strictement hors transaction → validation TypeScript pure (hors transaction) → FINISH SUCCESS transactionnel et atomique (écriture complète du graphe analytique + passage `SUCCES`) ou FINISH FAILURE. Au FINISH SUCCESS, revérifier explicitement, au moment du commit et pas seulement au lancement : que l'analyse est toujours `EN_COURS`, et que le cycle est toujours non publié.
+
+**EN_COURS orphelin :** aucun lease/heartbeat en V1 ; distinguer le statut stocké (`EN_COURS`) d'un état opérationnel dérivé (calculé en lecture, jamais persisté) signalant qu'une tentative est probablement orpheline ; aucune résolution automatique — seule une récupération explicite par un acteur privilégié peut clore une tentative suspecte.
+
+**SELECT RETAINED :** réservé à l'acteur CoachRedo privilégié ; analyse ciblée obligatoirement `SUCCES` ; même cycle (déjà garanti structurellement par la FK composite 016) ; cycle non publié ; gel définitif de `analyse_retenue_id` après publication en V1 (invariant purement applicatif, aucune garde DB ne l'impose aujourd'hui).
+
+**Doctrine `service_role`/RPC** (corrige une formulation incomplète d'`ARCHITECTURE.md` §3, déjà contredite par le code réel avant ce chantier) : `service_role` est utilisable dans des modules serveur privilégiés, explicitement bornés et jamais exposés au client — admin (`requireAdminService()`) est un cas particulier de ce principe, pas sa définition générale (un second cas déjà existant et autorisé par D-031 : `src/lib/mpd/server/attestation.ts`, hors tout contexte admin). Une RPC `SECURITY DEFINER` étroite est requise chaque fois qu'une atomicité transactionnelle multi-table est réellement nécessaire — **vérifié, pas supposé** : aucune transaction multi-appels n'existe via `service_role`/PostgREST dans ce repo (aucun driver Postgres direct, `pg`/Prisma/Knex, confirmé absent). La validation métier/du contrat IA reste en TypeScript, jamais encodée en PL/pgSQL, chaque fois que possible.
+
+**Pourquoi :** même discipline que D-029/D-031/D-049 — verrouiller le protocole d'orchestration avant d'écrire la moindre ligne de RPC/migration, pour que l'implémentation future suive un contrat déjà arbitré plutôt que des choix pris au fil du code.
+
+**Conséquence :** aucun code, aucune migration, aucune RPC écrite par cette décision. `ARCHITECTURE.md` §3 corrigé a minima pour refléter la doctrine `service_role` ci-dessus. **Dettes explicitement différées, non bloquantes, aucune migration créée maintenant :** (1) la politique temporelle exacte de détection d'une tentative « probablement orpheline » dépend du provider/timeouts réels, non choisis ; (2) le besoin d'un jeton d'idempotence persistant pour les retries séquentiels tardifs reste différable ; (3) l'opportunité d'un index unique partiel empêchant plusieurs `EN_COURS` par cycle doit être réévaluée lors de la conception SQL réelle de START ANALYSIS (un verrou transactionnel `FOR UPDATE` dans une RPC est jugé suffisant en première intention).
+
+**Statut :** VERROUILLÉ CONCEPTUELLEMENT — protocole fermé, aucune implémentation engagée.
+
+---
+
+### D-052 — T-MFR.2B : contrat structuré d'analyse MFR (frontières source/IA/moteur, D-025, échec, reproductibilité) — verrouillé conceptuellement, aucun code écrit
+**Date :** 2026-10-15 (audit ciblé + vérification canonique D-025 contre `MA_FEUILLE_DE_ROUTE_V3.md` §B.1, arbitrages QG)
+
+**Décision :** le QG verrouille le **contrat conceptuel** (pas le schéma JSON final, pas le prompt) que la future étape IA d'analyse devra respecter, en amont de tout provider/prompt.
+
+**A. Principe d'autorité :** MPD FIGÉ → CONTEXTE SOURCE DÉTERMINISTE → RAISONNEMENT IA → VALIDATION/CALCUL MOTEUR → PERSISTANCE STRUCTURÉE → VALIDATION HUMAINE. L'IA n'est jamais l'autorité sur les faits sources ni sur les règles déterministes du système.
+
+**B. Dossier source canonique :** un `MfrAnalysisContext` conceptuel, construit côté serveur exclusivement depuis le snapshot MPD consommé (`mpd_etat_logique_reponses` de l'`etat_logique_id` concerné) et des métadonnées canoniques explicitement autorisées (Catalogue M1-M6) — jamais une donnée profil/externe (D-048 §C : la MFR part exclusivement du MPD figé). INCONNU et REFUS restent explicitement représentables, jamais omis silencieusement.
+
+**C. Identifiants source :** chaque réponse-source transmise au modèle reçoit un identifiant opaque déterministe (`SRC_001`, `SRC_002`...), en mapping 1:1 avec les lignes `mpd_etat_logique_reponses`, détenu exclusivement par l'application, stable entre tentatives d'un même cycle (corollaire du déterminisme du context-builder, pas un mécanisme séparé) — jamais d'UUID DB ni de `question_id` interne exposé au modèle sans nécessité. Une référence à un SRC inexistant invalide mécaniquement la sortie.
+
+**D. Trois frontières :** SOURCE/DÉTERMINISTE (construite depuis le snapshot, l'IA ne peut ni la créer ni la modifier), IA/ANALYTIQUE (jugement/interprétation/proposition du modèle), VALIDATION/MOTEUR (règle fermée, calcul, contrôle référentiel, dérivation mécanique). Tout ce qui est mécaniquement recalculable doit être recalculé/vérifié par le moteur, jamais accepté sur la seule affirmation de l'IA.
+
+**E. Propositions analytiques :** l'IA propose formulation/nature/qualification épistémique/relations ; elle n'a jamais autorité finale pour auto-certifier DÉCLARÉ ou ÉTAYÉ lorsqu'une condition mécanique est vérifiable (ÉTAYÉ : ≥2 référents distincts dont ≥1 épisode concret, D-024, déjà partiellement gardé en DB par 013 — `nature_objet ∈ {capacite, comportement_passe}`). Le moteur applique les règles mécaniquement vérifiables et peut rejeter/rétrograder une qualification non soutenue ; il ne prétend jamais vérifier mécaniquement une fidélité sémantique qu'il ne sait pas établir (continuité/anti-blanchiment d'inférence, D-048 §P — différé à la validation humaine).
+
+**F. Référents :** identité logique canonicalisée/dérivée par le moteur depuis l'ensemble de sources cité — deux ensembles strictement identiques au sein d'une même analyse ne créent jamais deux Référents logiquement distincts (fusion mécanique sûre) ; un recoupement partiel reste une ambiguïté non résolue mécaniquement, laissée à la relecture humaine.
+
+**G. Ancrages :** un Référent seul n'est jamais une justification suffisante — la chaîne auditable complète Hypothèse → Ancrage constitutif → Proposition analytique → Référent → Source MPD doit être intégralement vérifiée par le moteur avant d'accepter un statut `DIRECTION_CANDIDATE`.
+
+**H. Catalogue/transformations :** Catalogue V1 fermé (M1 INTERVENIR, M2 PRODUIRE, M3 DISTRIBUER, M4 RELIER, M5 TRANSMETTRE, M6 DONNER ACCÈS — déjà verrouillé D-048 §Q, non rouvert ici) — aucun M7 libre ; l'IA choisit, le moteur ne contrôle que la fermeture de l'enum, jamais la pertinence sémantique. Même principe pour les transformations contrôlées (D-048 §M, non rouvert ici).
+
+**I. Formation :** FORMATION produit DIRECTION CANDIDATE/PISTE/HYPOTHÈSE REJETÉE (D-048 §U, non rouvert ici). Principe verrouillé : **« le moteur peut rejeter ce qui est mécaniquement invalide ; il ne peut pas, à lui seul, certifier toute la pertinence sémantique ou économique d'une Direction. »** La validation humaine reste constitutive du lancement V1 (D-048 §AJ, confirmé).
+
+**J. D-025 — mapping déterministe confirmé contre `MA_FEUILLE_DE_ROUTE_V3.md` §B.1** (séquence fermée COHÉRENCE→COMPATIBILITÉ→ACTIONNABILITÉ→DISPONIBILITÉ, sans compensation, D-025/D-048 inchangés) :
+1. COHÉRENCE fail → `NE_PAS_PRESENTER`.
+2. COHÉRENCE ok + COMPATIBILITÉ fail → `NE_PAS_PRESENTER`.
+3. cohérence+compatibilité ok + ACTIONNABILITÉ = `SANS_ROUTE_RAISONNABLE` → `NE_PAS_PRESENTER`.
+4. cohérence+compatibilité ok + ACTIONNABILITÉ = `CONSTRUCTIBLE_MAIS_PREMATUREE` → `DIRECTION_A_GARDER_EN_VUE`.
+5. cohérence+compatibilité ok + ACTIONNABILITÉ = `ACTIONNABLE_MAINTENANT` + DISPONIBILITÉ fail → `DIRECTION_A_GARDER_EN_VUE`.
+6. les quatre filtres passent → `PRESENTER_MAINTENANT`.
+
+Les 6 cas sont intégralement déductibles du texte canon, aucune complétion par intuition. L'IA produit les jugements qualitatifs de chaque filtre ; **le moteur calcule/vérifie `sortie` à partir de cette table, jamais l'IA**. **Fait vérifié sur le schéma réel** : le CHECK de la migration 016 (`mfr_evaluations_d025_sequentialite_check`) garantit uniquement la **séquentialité de remplissage**, jamais la **fidélité** entre la combinaison des filtres et `sortie` — cette fidélité relève intégralement du moteur applicatif, pas de la DB.
+
+**K. 0-3 directions :** D-025 détermine l'éligibilité analytique, jamais un top 3 fabriqué artificiellement (D-048 §AF, inchangé). Si 0-3 directions sont `PRESENTER_MAINTENANT`, toutes peuvent être candidates à la composition de la MFR. **Si plus de 3 sont `PRESENTER_MAINTENANT`** : aucune n'est rétrogradée artificiellement, leur résultat analytique (`mfr_evaluations_d025.sortie`) reste inchangé ; un acteur humain CoachRedo sélectionne au maximum 3 directions pour la version MFR publiée ; cette sélection éditoriale n'est ni `DIRECTION_A_GARDER_EN_VUE` ni `NE_PAS_PRESENTER` — un acte distinct, sans équivalent dans le vocabulaire D-025. Confirmé sans contradiction avec D-048 §AA (« peut apparaître », pas « doit ») et D-048 §AJ (pouvoir de validation humaine déjà accordé) — une sélection éditoriale humaine n'est pas le ranking/score interdit par D-048 §AE, qui vise les mécanismes algorithmiques.
+
+**L. Recommandation :** parmi les `PRESENTER_MAINTENANT`, zéro ou une seule (D-048 §AD/§AE, inchangé) — l'IA peut la proposer avec justification, le moteur vérifie les seules contraintes structurelles déjà en DB (016 : au plus une par analyse, uniquement parmi `PRESENTER_MAINTENANT`), CoachRedo confirme ou retire avant publication. Aucun score/classement/podium.
+
+**M. `output_brut` :** artefact d'audit/debug/reproductibilité — jamais vérité métier opérationnelle. Confirmé sans contradiction avec le schéma réel de 016 (aucune table/trigger n'en dérive quoi que ce soit). Après FINISH SUCCESS, seuls les objets structurés persistés et validés constituent la vérité opérationnelle.
+
+**N. Validation runtime :** avant FINISH SUCCESS, le futur validateur devra couvrir structure JSON, enums fermés, unicité des ids locaux, existence des références locales et des `SRC` cités, fermeture M1-M6/transformations, cohérence relationnelle, ancrage constitutif pour CANDIDATE, règles Piste, séquentialité **et fidélité** du mapping D-025 (§J), au plus une recommandation, absence de source inventée, absence d'objet orphelin, cohérence cycle/snapshot — en quatre catégories (structurel, référentiel, métier, épistémique), cette dernière n'étant que partiellement mécanisable.
+
+**O. Échec :** l'analyse est atomique — une violation bloquante empêche tout passage en `SUCCES`, jamais de persistance partielle, jamais de réparation IA silencieuse dans la même tentative. V1 : sortie invalide → `ECHEC` tracé → nouvelle tentative contrôlée si nécessaire (reprompt/retry toujours tracé comme un essai distinct).
+
+**P. Reproductibilité :** conserver `provider`/`model`/`prompt_version`/`schema_version`/`catalogue_version` (déjà NOT NULL en 016) + contexte source reconstructible déterministiquement + un hash de vérification + `output_brut`. Ne pas imposer le stockage intégral du prompt contenant des données personnelles lorsque la reproductibilité peut être obtenue sans cette duplication (évite d'aggraver le périmètre de gouvernance/suppression déjà posé par D-034/D-035).
+
+**Pourquoi :** verrouiller la frontière exacte entre ce que l'IA peut légitimement proposer et ce que le moteur doit mécaniquement vérifier/calculer, avant tout choix de provider ou rédaction de prompt — pour que l'implémentation future ne redécide pas au fil du code des arbitrages qui engagent directement les garde-fous déjà verrouillés par D-048.
+
+**Conséquence :** aucun schéma JSON final, aucun prompt, aucun provider, aucun code de validateur écrits par cette décision. **Dettes explicitement différées, non bloquantes pour T-MFR.2, aucune migration créée maintenant :** (1) **traçabilité éditoriale** — la migration 016 ne relie structurellement aucune `mfr_version`/`mfr_redaction` aux Directions analytiques effectivement sélectionnées en cas de dépassement du quota de 3 (§K) ; à réexaminer avant verrouillage définitif de la couche rédaction/versioning, pas avant ; (2) **Pistes** — `mfr_pistes` n'a aucune relation structurée directe vers Hypothèse/Ancrage/PA/Référent (016, confirmé) ; V1 peut fonctionner sans cette relation (traçabilité en texte libre uniquement) ; à réexaminer après les premiers cas réels ou avant verrouillage définitif de l'auditabilité avancée.
+
+**Statut :** VERROUILLÉ CONCEPTUELLEMENT — contrat fermé, aucune implémentation engagée. Le mapping D-025 (§J) a été vérifié directement contre le texte canonique de `MA_FEUILLE_DE_ROUTE_V3.md` §B.1, pas supposé.
