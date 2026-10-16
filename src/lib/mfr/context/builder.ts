@@ -48,11 +48,13 @@ import {
   type ConstructionResultat,
   type MfrAnalysisContext,
   type MfrAnalysisSource,
+  type SourceBindings,
 } from './types'
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
 
 interface LigneSnapshot {
+  readonly id: string
   readonly question_id: string
   readonly statut: StatutReponse
   readonly payload: unknown
@@ -416,7 +418,7 @@ export async function construireMfrAnalysisContext(
 
   const { data: lignesBrutes } = await supabase
     .from('mpd_etat_logique_reponses')
-    .select('question_id, statut, payload')
+    .select('id, question_id, statut, payload')
     .eq('etat_logique_id', etatLogiqueId)
 
   const lignesParQuestion = new Map<string, LigneSnapshot>(
@@ -433,6 +435,7 @@ export async function construireMfrAnalysisContext(
   const applicables = getApplicableQuestions(canon, reponsesParId)
 
   const sources: MfrAnalysisSource[] = []
+  const sourceBindings = new Map<string, string>()
   let compteur = 0
 
   for (const question of applicables) {
@@ -446,6 +449,10 @@ export async function construireMfrAnalysisContext(
 
     compteur += 1
     const src = `SRC_${String(compteur).padStart(3, '0')}`
+    // Binding privé serveur, jamais transmis au provider, jamais dans
+    // MfrAnalysisContext/contextHash (T-MFR.3C, D-054 §C) — produit par
+    // la même passe que `sources`, jamais une re-dérivation séparée.
+    sourceBindings.set(src, ligne.id)
 
     if (ligne.statut !== 'DECLARE') {
       sources.push({
@@ -494,5 +501,5 @@ export async function construireMfrAnalysisContext(
     contextHash,
   }
 
-  return { ok: true, context }
+  return { ok: true, context, sourceBindings: sourceBindings as SourceBindings }
 }

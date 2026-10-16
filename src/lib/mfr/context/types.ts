@@ -96,6 +96,16 @@ export type ConstructionAnomalie =
    * QG, micro-correction T-MFR.3B). */
   | { readonly type: 'reponse_ininterpretable'; readonly stableId: string }
 
+/**
+ * Correspondance privée serveur SRC_xxx → mpd_etat_logique_reponses.id —
+ * T-MFR.3C (D-054 §C). JAMAIS transmise au provider, JAMAIS incluse dans
+ * MfrAnalysisContext ni dans contextHash — structure serveur strictement
+ * séparée du contexte public/déterministe ci-dessus. Produite par la
+ * même passe que `sources` (jamais une re-dérivation indépendante, pour
+ * exclure tout risque de divergence — arbitrage D-054 §C).
+ */
+export type SourceBindings = ReadonlyMap<string, string>
+
 export type ConstructionResultat =
-  | { readonly ok: true; readonly context: MfrAnalysisContext }
+  | { readonly ok: true; readonly context: MfrAnalysisContext; readonly sourceBindings: SourceBindings }
   | { readonly ok: false; readonly anomalie: ConstructionAnomalie }
