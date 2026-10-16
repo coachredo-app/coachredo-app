@@ -283,7 +283,7 @@ Décision produit verrouillée par le QG (DECISIONS D-045, 2026-10-08), **réell
 
 ## 12. [PARTIELLEMENT IMPLÉMENTÉ] Pipeline d'analyse MFR — orchestration déployée, contrat de sortie verrouillé, code de validation non écrit
 
-Fondation DB déployée (migrations `016_mfr_v1_foundation.sql`, `017_mfr_orchestration_rpc.sql`, D-050/D-053) et contexte source déployé (T-MFR.3B, commit `1435fa6`, D-052 §B-C). Le contrat conceptuel de l'étape suivante (sortie IA → graphe validé) est verrouillé (D-054) mais **aucun validateur n'est encore écrit**.
+Fondation DB déployée (migrations `016_mfr_v1_foundation.sql`, `017_mfr_orchestration_rpc.sql`, D-050/D-053) et contexte source déployé (T-MFR.3B, commit `1435fa6`, D-052 §B-C). FINISH FAILURE étendue et déployée (migration `018_mfr_finish_failure_output_brut.sql`, D-055) — `output_brut` désormais conservé même en cas d'échec avant FINISH SUCCESS. Le contrat conceptuel de l'étape suivante (sortie IA → graphe validé) est verrouillé (D-054) mais **aucun validateur n'est encore écrit**.
 
 **Pipeline officiel verrouillé :**
 ```
@@ -305,8 +305,8 @@ MfrAnalysisContext (src/lib/mfr/context/types.ts, builder.ts — DÉPLOYÉ)
 
 **Doctrine all-or-nothing (D-054 §F) :** toute violation bloquante (quelle que soit la catégorie) → aucune persistance structurée partielle, FINISH SUCCESS jamais appelé, tentative terminée en `ECHEC`. Cohérent avec 017 : `mfr_finir_analyse_succes` est une transaction unique, déjà tout-ou-rien par construction.
 
-**Gap connu sur 017 (déployée, non modifiée rétroactivement, D-054 §L) :** `mfr_finir_analyse_echec(p_analyse_id uuid, p_erreur text)` n'accepte pas `output_brut` et ne l'écrit jamais — toute tentative qui échoue avant FINISH SUCCESS perd aujourd'hui sa sortie IA brute. Une migration additive future (évolution de FINISH FAILURE) est requise avant le câblage réel du provider ; **non créée**.
+**Gap sur 017 (D-054 §L) : FERMÉ par la migration 018 (D-055, 2026-10-16).** `mfr_finir_analyse_echec` a désormais une signature unique `(p_analyse_id uuid, p_erreur text, p_output_brut jsonb)` — l'ancienne signature `(uuid, text)` a été supprimée (`DROP FUNCTION`, sans `CASCADE`), remplacée par cette unique nouvelle fonction (017 non modifiée rétroactivement). Toute tentative qui échoue avant FINISH SUCCESS peut désormais conserver sa sortie IA brute (`output_brut = p_output_brut`, écrit dans la même transition atomique que `statut='ECHEC'`/`terminee_le`/`erreur`), avec `NULL` explicitement autorisé si aucune réponse provider n'a été reçue — aucun `DEFAULT`, l'orchestrateur doit toujours décider explicitement. Postcheck structurel PASS. **Dette documentaire non bloquante** : l'en-tête commentaire de 017 affirme encore « NON EXÉCUTÉE » — n'est pas la source de vérité, voir D-053/D-055.
 
 **`output_brut` :** artefact d'audit/debug/reproductibilité, jamais vérité opérationnelle — après FINISH SUCCESS, seul le graphe structuré validé (`AnalyseGrapheResolu` persisté) est la vérité opérationnelle (D-052 §M, inchangé).
 
-**Reste non implémenté** : `AnalyseSortieBrute`, le validateur (`src/lib/mfr/analysis/{types,validator}.ts`, pas encore créés), l'extension de `builder.ts` pour `sourceBindings`, tout provider IA, la migration additive `output_brut`/FINISH FAILURE. Détail canonique complet : `DECISIONS.md` D-051, D-052, D-053, D-054.
+**Reste non implémenté** : `AnalyseSortieBrute`, le validateur (`src/lib/mfr/analysis/{types,validator}.ts`, pas encore créés), l'extension de `builder.ts` pour `sourceBindings`, tout provider IA. Détail canonique complet : `DECISIONS.md` D-051, D-052, D-053, D-054, D-055.
