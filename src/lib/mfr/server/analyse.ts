@@ -66,11 +66,13 @@ export type FinirAnalyseEchecResultat =
 export async function finirAnalyseEchec(
   service: SupabaseServiceClient,
   analyseId: string,
-  erreur: string
+  erreur: string,
+  outputBrut: unknown
 ): Promise<FinirAnalyseEchecResultat> {
   const { data, error } = await service.rpc('mfr_finir_analyse_echec', {
     p_analyse_id: analyseId,
     p_erreur: erreur,
+    p_output_brut: outputBrut,
   })
 
   if (error) return { error: 'erreur' }
