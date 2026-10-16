@@ -278,3 +278,35 @@ Décision produit verrouillée par le QG (DECISIONS D-045, 2026-10-08), **réell
 - **Dashboard** : 4 étapes permanentes (« Mon parcours » — Livre/Carte/Mon Point de Départ/Ma Feuille de Route, toujours rendues y compris verrouillées) distinctes de « Mon programme » (actions actuellement disponibles, conditionnelles). Projection MPD strictement read-only (`lireDossierCourant`, nouveau sibling additif de `getOuCreerDossierCourant` dans `src/lib/mpd/server/dossier.ts`, celle-ci inchangée) — la consultation du dashboard ne crée jamais de dossier MPD. MFR reste verrouillée tant que le MPD n'est pas réellement **consommé** (D-041) — un MPD complet non consommé n'active jamais MFR.
 - **Bilan legacy (V2) et ancien message « Rapport CoachRedo »** : retirés du parcours client visible (carte dashboard, banners, CTA Carte) — **jamais supprimés** : routes `/bilan*`, données, RPC et écrans admin strictement inchangés, aucune suppression DB. Motif produit : les comptes historiquement concernés par ce flux étaient des comptes tests gratuits.
 - Détail technique complet (fichiers, tests, ordre exact des gardes) : `DECISIONS.md` D-046.
+
+---
+
+## 12. [PARTIELLEMENT IMPLÉMENTÉ] Pipeline d'analyse MFR — orchestration déployée, contrat de sortie verrouillé, code de validation non écrit
+
+Fondation DB déployée (migrations `016_mfr_v1_foundation.sql`, `017_mfr_orchestration_rpc.sql`, D-050/D-053) et contexte source déployé (T-MFR.3B, commit `1435fa6`, D-052 §B-C). Le contrat conceptuel de l'étape suivante (sortie IA → graphe validé) est verrouillé (D-054) mais **aucun validateur n'est encore écrit**.
+
+**Pipeline officiel verrouillé :**
+```
+MfrAnalysisContext (src/lib/mfr/context/types.ts, builder.ts — DÉPLOYÉ)
+  + sourceBindings privés serveur (SRC_xxx → mpd_etat_logique_reponses.id — PAS ENCORE IMPLÉMENTÉ, builder.ts à étendre, D-054 §C)
+→ IA (provider non choisi)
+→ AnalyseSortieBrute (nouveau contrat — PAS ENCORE ÉCRIT, D-054 §B)
+→ validation déterministe complète (STRUCTURAL/REFERENTIAL/BUSINESS/EPISTEMIC, all-or-nothing — PAS ENCORE ÉCRITE, D-054 §E-G)
+→ résolution moteur
+→ AnalyseGrapheResolu (src/lib/mfr/server/types.ts — DÉJÀ EXISTANT depuis T-MFR.3A, reste l'unique contrat validé, jamais dupliqué)
+→ FINISH SUCCESS atomique (mfr_finir_analyse_succes, 017 — DÉPLOYÉE)
+```
+
+**Frontière SOURCE / IA / MOTEUR / HUMAIN (D-052, D-054) :**
+- **SOURCE** (déterministe, dérivée exclusivement du MPD figé) : `MfrAnalysisContext`, jamais modifiable par l'IA.
+- **IA** (analytique, jamais autorité sur un fait ou une règle système) : formulation, regroupements de sources proposés, jugements qualitatifs D-025 (`coherenceOk`/`compatibiliteOk`/`actionnabiliteResultat`/`disponibiliteOk`), choix de mécanisme(s)/transformation(s) dans le catalogue fermé M1-M6.
+- **MOTEUR** (garde-fou déterministe, jamais une seconde IA) : canonicalisation des Référents (`canonicalKey = sorted(unique(SRC_xxx))`), calcul exclusif de `sortie` D-025 (mapping à 6 cas, D-052 §J, inchangé), rejet bloquant de tout ce qui est mécaniquement invalide — **sans jamais inventer un statut de remplacement** (ÉTAYÉ/CANDIDATE mécaniquement invalides → `ECHEC` de toute l'analyse, jamais de rétrogradation automatique vers INFÉRÉ/REJETÉE/PISTE, D-054 §E).
+- **HUMAIN** : confirme/retire la recommandation avant publication, sélectionne au plus 3 Directions à publier si plus de 3 sont `PRESENTER_MAINTENANT` (D-052 §K, inchangé) — jamais une rétrogradation analytique.
+
+**Doctrine all-or-nothing (D-054 §F) :** toute violation bloquante (quelle que soit la catégorie) → aucune persistance structurée partielle, FINISH SUCCESS jamais appelé, tentative terminée en `ECHEC`. Cohérent avec 017 : `mfr_finir_analyse_succes` est une transaction unique, déjà tout-ou-rien par construction.
+
+**Gap connu sur 017 (déployée, non modifiée rétroactivement, D-054 §L) :** `mfr_finir_analyse_echec(p_analyse_id uuid, p_erreur text)` n'accepte pas `output_brut` et ne l'écrit jamais — toute tentative qui échoue avant FINISH SUCCESS perd aujourd'hui sa sortie IA brute. Une migration additive future (évolution de FINISH FAILURE) est requise avant le câblage réel du provider ; **non créée**.
+
+**`output_brut` :** artefact d'audit/debug/reproductibilité, jamais vérité opérationnelle — après FINISH SUCCESS, seul le graphe structuré validé (`AnalyseGrapheResolu` persisté) est la vérité opérationnelle (D-052 §M, inchangé).
+
+**Reste non implémenté** : `AnalyseSortieBrute`, le validateur (`src/lib/mfr/analysis/{types,validator}.ts`, pas encore créés), l'extension de `builder.ts` pour `sourceBindings`, tout provider IA, la migration additive `output_brut`/FINISH FAILURE. Détail canonique complet : `DECISIONS.md` D-051, D-052, D-053, D-054.
