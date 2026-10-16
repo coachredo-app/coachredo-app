@@ -1165,3 +1165,27 @@ Les 6 cas sont intégralement déductibles du texte canon, aucune complétion pa
 **Conséquence :** aucun code, aucune migration, aucune modification métier. Cette décision encadre les futurs chantiers Music/Academy et toute future évolution du dashboard, sans changer la priorité produit actuelle — le prochain chantier technique de CoachRedo App reste **T-MFR.3C GO CODE** (`AnalyseSortieBrute`, validateur, extension `sourceBindings`), non engagé par cette décision, qui est un checkpoint transverse intermédiaire.
 
 **Statut :** VERROUILLÉ CONCEPTUELLEMENT — doctrine écosystème adoptée, aucune implémentation engagée, aucune migration créée, aucun refactor Plan B/MPD/MFR.
+
+---
+
+### D-057 — T-MFR.3C : contrat de sortie IA + validation/résolution déterministe — implémenté, commité et poussé (STRICT CLOSED-WORLD)
+
+**Date :** 2026-10-16 (implémentation sur GO QG, audit adversarial du diff, correction STRICT CLOSED-WORLD sur arbitrage QG distinct, commit et push manuels)
+
+**Décision :** le QG verrouille le déploiement réel de T-MFR.3C, traduction opérationnelle du contrat conceptuel D-054. Commit `12661e3aecdc25b64617ba23c4fb0d3ebcee33ab` (`feat(mfr): add deterministic analysis output validation`), poussé sur `origin/main`. Quatre fichiers : `src/lib/mfr/context/types.ts` et `src/lib/mfr/context/builder.ts` (modifiés), `src/lib/mfr/analysis/types.ts` et `src/lib/mfr/analysis/validator.ts` (nouveaux).
+
+**A. `sourceBindings` privés serveur** (`src/lib/mfr/context/types.ts`/`builder.ts`, extension de T-MFR.3B) : correspondance `SRC_xxx → mpd_etat_logique_reponses.id`, construite dans la **même passe** que `sources[]` public (jamais une re-dérivation séparée, D-054 §C). Jamais inclus dans `MfrAnalysisContext`/`MfrAnalysisSource` ; `contextHash`/`canonicalJSON`/`MFR_ANALYSIS_CONTEXT_VERSION` **strictement inchangés** — zéro UUID DB n'entre dans ce qui serait transmis au provider.
+
+**B. `AnalyseSortieBrute`** (nouveau, `src/lib/mfr/analysis/types.ts`) : contrat de la sortie IA avant validation — uniquement `idLocal` opaques et `SRC_xxx`, jamais d'UUID DB. Mécanismes/transformations pluriels par hypothèse (catalogue M1-M6/4 transformations, D-048 §Q/§M, inchangé). `sortie` (D-025) **structurellement absent** de ce contrat — n'appartient à aucun champ. `AnalyseGrapheResolu` (`src/lib/mfr/server/types.ts`, T-MFR.3A) reste l'unique contrat validé, non modifié, non dupliqué.
+
+**C. Validateur déterministe** (nouveau, `src/lib/mfr/analysis/validator.ts`) : 4 catégories séquentielles STRUCTURAL→REFERENTIAL→BUSINESS→EPISTEMIC, all-or-nothing (D-054 §F/§G) — toute violation bloquante → `ECHEC` de toute l'analyse, aucune persistance partielle, aucune réparation sémantique (ÉTAYÉ/CANDIDATE mécaniquement invalides → `ECHEC`, jamais de rétrogradation automatique vers INFÉRÉ/REJETÉE/PISTE, D-054 §E). Une hypothèse `REJETEE` ne peut jamais être ciblée par une évaluation D-025 (D-054 §G).
+
+**D. STRICT CLOSED-WORLD (correction ajoutée en cours de chantier, au-delà de la seule interdiction de `sortie` initialement spécifiée par D-054 §H) :** toute propriété présente dans le JSON provider hors du contrat exact attendu — à la racine, dans un référent, une proposition analytique, un ancrage, une hypothèse, un mécanisme associé, une piste, ou une évaluation D-025 — produit une violation STRUCTURAL bloquante (« drift provider »), via un mécanisme unique centralisé (listes de clés autorisées typées `keyof <Interface>`, jamais dupliquées). `sortie` n'apparaît dans aucune de ces listes — son interdiction devient un cas particulier de cette règle générale, plus un mécanisme séparé.
+
+**E. Référents, D-025, recommandation (inchangés dans leur doctrine, désormais codés) :** identité canonique = ensemble exact trié/unique des SRC (chevauchement partiel jamais fusionné, aucune fusion cross-analyse, D-054 §D) ; `sortie` D-025 calculée **exclusivement** par le moteur, jamais lue depuis l'IA, selon la séquence COHÉRENCE→COMPATIBILITÉ→ACTIONNABILITÉ→DISPONIBILITÉ et le mapping à 6 cas (D-052 §J, inchangé) ; au plus une recommandation, uniquement parmi `PRESENTER_MAINTENANT`, jamais choisie/classée par le moteur (D-048 §AD/§AE) ; plus de 3 `PRESENTER_MAINTENANT` n'est jamais une erreur et n'est jamais tronqué (D-052 §K, inchangé).
+
+**Pourquoi :** exécuter le contrat déjà verrouillé par D-054, en fermant au passage un point que D-054 n'avait pas explicitement spécifié (rejet des propriétés provider non prévues, au-delà de `sortie` seule) sur arbitrage QG distinct, avant tout câblage réel d'un provider.
+
+**Conséquence :** aucune migration, aucun SQL, aucune mutation Supabase, aucune nouvelle RPC — `AnalyseGrapheResolu`, `mfr_finir_analyse_succes`/`mfr_finir_analyse_echec` (017/018) **strictement inchangés**. **Explicitement hors périmètre, non ouvert par cette décision** : choix du provider IA ; câblage réel de l'orchestration — aucun fichier de `src/lib/mfr/server/{analyse,cycle}.ts` n'appelle encore ce validateur ; FINISH SUCCESS/FAILURE pas encore réellement invoquées depuis cette nouvelle chaîne ; persistance bout-en-bout non testée contre la base réelle ; rendu/UI utilisateur. Le découpage exact des prochaines tranches n'est pas préjugé par cette décision.
+
+**Statut :** CODE ÉCRIT, COMMITÉ ET POUSSÉ (`12661e3aecdc25b64617ba23c4fb0d3ebcee33ab`) — aucune migration, aucune mutation Supabase. La chaîne complète MFR (provider → orchestration → persistance → rendu) reste un chantier ultérieur distinct, non ouvert.

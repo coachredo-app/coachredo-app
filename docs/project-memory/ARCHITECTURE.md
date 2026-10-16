@@ -282,21 +282,29 @@ Décision produit verrouillée par le QG (DECISIONS D-045, 2026-10-08), **réell
 
 ---
 
-## 12. [PARTIELLEMENT IMPLÉMENTÉ] Pipeline d'analyse MFR — orchestration déployée, contrat de sortie verrouillé, code de validation non écrit
+## 12. [PARTIELLEMENT IMPLÉMENTÉ] Pipeline d'analyse MFR — orchestration déployée, contrat de sortie + validation déterministe codés (D-057), provider/câblage/persistance/rendu restants
 
-Fondation DB déployée (migrations `016_mfr_v1_foundation.sql`, `017_mfr_orchestration_rpc.sql`, D-050/D-053) et contexte source déployé (T-MFR.3B, commit `1435fa6`, D-052 §B-C). FINISH FAILURE étendue et déployée (migration `018_mfr_finish_failure_output_brut.sql`, D-055) — `output_brut` désormais conservé même en cas d'échec avant FINISH SUCCESS. Le contrat conceptuel de l'étape suivante (sortie IA → graphe validé) est verrouillé (D-054) mais **aucun validateur n'est encore écrit**.
+Fondation DB déployée (migrations `016_mfr_v1_foundation.sql`, `017_mfr_orchestration_rpc.sql`, D-050/D-053) et contexte source déployé (T-MFR.3B, commit `1435fa6`, D-052 §B-C). FINISH FAILURE étendue et déployée (migration `018_mfr_finish_failure_output_brut.sql`, D-055) — `output_brut` désormais conservé même en cas d'échec avant FINISH SUCCESS. Le contrat conceptuel de l'étape suivante (sortie IA → graphe validé) est verrouillé (D-054) et **désormais codé, commité et poussé** (D-057, commit `12661e3aecdc25b64617ba23c4fb0d3ebcee33ab`) — mais **ce code n'est encore appelé par aucun orchestrateur** : aucun fichier de `src/lib/mfr/server/{analyse,cycle}.ts` n'invoque le nouveau validateur, aucun provider IA n'est choisi, et FINISH SUCCESS/FAILURE ne sont pas encore réellement déclenchées depuis cette chaîne. Le pipeline reste donc **PARTIELLEMENT IMPLÉMENTÉ**, pas opérationnel de bout en bout.
 
-**Pipeline officiel verrouillé :**
+**Pipeline officiel verrouillé — chemins réels par brique (D-057) :**
 ```
-MfrAnalysisContext (src/lib/mfr/context/types.ts, builder.ts — DÉPLOYÉ)
-  + sourceBindings privés serveur (SRC_xxx → mpd_etat_logique_reponses.id — PAS ENCORE IMPLÉMENTÉ, builder.ts à étendre, D-054 §C)
-→ IA (provider non choisi)
-→ AnalyseSortieBrute (nouveau contrat — PAS ENCORE ÉCRIT, D-054 §B)
-→ validation déterministe complète (STRUCTURAL/REFERENTIAL/BUSINESS/EPISTEMIC, all-or-nothing — PAS ENCORE ÉCRITE, D-054 §E-G)
-→ résolution moteur
+MfrAnalysisContext (src/lib/mfr/context/types.ts, builder.ts — DÉPLOYÉ, T-MFR.3B)
+  + sourceBindings privés serveur (SRC_xxx → mpd_etat_logique_reponses.id
+    — ÉCRIT, D-057 : type dans src/lib/mfr/context/types.ts, construction
+    dans src/lib/mfr/context/builder.ts, même passe que `sources[]`,
+    jamais dans MfrAnalysisContext/contextHash/MFR_ANALYSIS_CONTEXT_VERSION,
+    tous trois inchangés)
+→ IA (provider non choisi — toujours non engagé)
+→ AnalyseSortieBrute (contrat — ÉCRIT, D-057, src/lib/mfr/analysis/types.ts)
+→ validation déterministe complète (STRUCTURAL/REFERENTIAL/BUSINESS/EPISTEMIC,
+  all-or-nothing, STRICT CLOSED-WORLD — ÉCRITE, D-057, src/lib/mfr/analysis/validator.ts
+  — pas encore appelée par un orchestrateur)
+→ résolution moteur (même fichier, src/lib/mfr/analysis/validator.ts)
 → AnalyseGrapheResolu (src/lib/mfr/server/types.ts — DÉJÀ EXISTANT depuis T-MFR.3A, reste l'unique contrat validé, jamais dupliqué)
-→ FINISH SUCCESS atomique (mfr_finir_analyse_succes, 017 — DÉPLOYÉE)
+→ FINISH SUCCESS atomique (mfr_finir_analyse_succes, 017 — DÉPLOYÉE, pas encore réellement invoquée depuis cette nouvelle chaîne)
 ```
+
+**Restant explicitement à construire, non préjugé par D-057** : choix du provider IA ; câblage réel de l'orchestration (appel du validateur depuis `src/lib/mfr/server/analyse.ts`/`cycle.ts` ou un futur module dédié) ; FINISH SUCCESS/FAILURE réellement invoquées depuis cette chaîne ; persistance bout-en-bout testée contre la base réelle ; rendu/UI utilisateur. Le découpage exact de ces prochaines tranches n'est pas tranché ici.
 
 **Frontière SOURCE / IA / MOTEUR / HUMAIN (D-052, D-054) :**
 - **SOURCE** (déterministe, dérivée exclusivement du MPD figé) : `MfrAnalysisContext`, jamais modifiable par l'IA.
@@ -310,4 +318,4 @@ MfrAnalysisContext (src/lib/mfr/context/types.ts, builder.ts — DÉPLOYÉ)
 
 **`output_brut` :** artefact d'audit/debug/reproductibilité, jamais vérité opérationnelle — après FINISH SUCCESS, seul le graphe structuré validé (`AnalyseGrapheResolu` persisté) est la vérité opérationnelle (D-052 §M, inchangé).
 
-**Reste non implémenté** : `AnalyseSortieBrute`, le validateur (`src/lib/mfr/analysis/{types,validator}.ts`, pas encore créés), l'extension de `builder.ts` pour `sourceBindings`, tout provider IA. Détail canonique complet : `DECISIONS.md` D-051, D-052, D-053, D-054, D-055.
+**Reste non implémenté** : tout provider IA ; le câblage réel de l'orchestration (aucun appel au validateur depuis `src/lib/mfr/server/{analyse,cycle}.ts`) ; FINISH SUCCESS/FAILURE réellement invoquées depuis cette nouvelle chaîne ; la persistance bout-en-bout testée contre la base réelle ; le rendu/UI utilisateur. `AnalyseSortieBrute`/le validateur (`src/lib/mfr/analysis/{types,validator}.ts`) et l'extension de `builder.ts`/`context/types.ts` pour `sourceBindings` sont désormais écrits, commités et poussés (D-057, commit `12661e3aecdc25b64617ba23c4fb0d3ebcee33ab`). Détail canonique complet : `DECISIONS.md` D-051, D-052, D-053, D-054, D-055, D-057.
