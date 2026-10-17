@@ -40,6 +40,7 @@ import type {
   AnalyseSortieBrute,
   Diagnostic,
   EvaluationD025Brute,
+  ExtraitSrcBrut,
   HypotheseAncrageBrut,
   HypotheseBrute,
   MecanismeAssocieBrut,
@@ -138,10 +139,11 @@ const CLES_EVALUATION_D025: readonly (keyof EvaluationD025Brute)[] = [
   'recommandeeAujourdhui',
   'justification',
 ]
-// `transformations[]` sont des chaînes, pas des objets — aucune clé à
-// fermer (fermé par nature). `extraits` (dans ReferentBrut) est un
-// dictionnaire SRC_xxx → texte à clés dynamiques, pas un objet à forme
-// fixe — la fermeture de clés ne s'y applique jamais, par conception.
+const CLES_EXTRAIT_SRC: readonly (keyof ExtraitSrcBrut)[] = ['src', 'extrait']
+// `transformations[]`, `modalitesProposees[]`, `exigences[]`,
+// `etatExigences[]`, `inconnuesCritiques[]`, `variablesTest[]` sont des
+// tableaux de chaînes, pas des objets — aucune clé à fermer (fermé par
+// nature).
 
 // ────────────────────────────────────────────────────────────
 // Guards génériques
@@ -233,21 +235,41 @@ function parserReferents(raw: unknown, diagnostics: Diagnostic[]): readonly Refe
       )
       return
     }
-    let extraitsValides: Record<string, string> | undefined
-    if (extraits !== undefined) {
-      if (!estObjet(extraits)) {
-        diagnostics.push(diag('STRUCTURAL', 'referent_extraits_invalide', '`extraits` doit être un objet.', chemin))
+    // `extraits` absent et `[]` ont la même sémantique (aucune véritable
+    // absence de clé possible en mode strict provider) — toujours
+    // normalisé en tableau concret ici. L'appartenance de `extrait.src`
+    // aux `sources` ci-dessus est une question d'existence de référence,
+    // jamais de forme — vérifiée REFERENTIAL (validerReferentiel),
+    // jamais ici (arbitrage QG, T-MFR.3D).
+    const extraitsRaw = extraits === undefined ? [] : extraits
+    if (!estTableau(extraitsRaw)) {
+      diagnostics.push(diag('STRUCTURAL', 'referent_extraits_invalide', '`extraits` doit être un tableau de {src, extrait}.', chemin))
+      return
+    }
+    const extraitsValides: ExtraitSrcBrut[] = []
+    const srcExtraitsVus = new Set<string>()
+    for (const [i, e] of extraitsRaw.entries()) {
+      const cheminExtrait = `${chemin}.extraits[${i}]`
+      if (!estObjet(e)) {
+        diagnostics.push(diag('STRUCTURAL', 'referent_extrait_invalide', 'Entrée de `extraits` doit être un objet {src, extrait}.', cheminExtrait))
         return
       }
-      for (const [cle, valeur] of Object.entries(extraits)) {
-        if (typeof valeur !== 'string' || !longueurEntre(valeur, 0, 4999)) {
-          diagnostics.push(
-            diag('STRUCTURAL', 'referent_extrait_invalide', `Extrait invalide pour ${cle} (< 5000 caractères).`, chemin)
-          )
-          return
-        }
+      if (verifierClesFermees(e, CLES_EXTRAIT_SRC, cheminExtrait, diagnostics)) return
+      const { src, extrait } = e
+      if (!estChaineNonVide(src)) {
+        diagnostics.push(diag('STRUCTURAL', 'referent_extrait_src_invalide', '`src` doit être une chaîne non vide.', cheminExtrait))
+        return
       }
-      extraitsValides = extraits as Record<string, string>
+      if (srcExtraitsVus.has(src)) {
+        diagnostics.push(diag('STRUCTURAL', 'referent_extrait_src_duplique', `SRC_xxx dupliqué dans \`extraits\` : ${src}.`, chemin))
+        return
+      }
+      srcExtraitsVus.add(src)
+      if (!estChaineNonVide(extrait) || !longueurEntre(extrait, 1, 4999)) {
+        diagnostics.push(diag('STRUCTURAL', 'referent_extrait_texte_invalide', '`extrait` doit être une chaîne non vide de moins de 5000 caractères.', cheminExtrait))
+        return
+      }
+      extraitsValides.push({ src, extrait })
     }
     resultat.push({ idLocal, sources: sources as readonly string[], extraits: extraitsValides })
   })
@@ -386,15 +408,18 @@ function parserHypotheses(raw: unknown, diagnostics: Diagnostic[]): readonly Hyp
         return
       }
     }
+    if (acteursFlux !== null && (typeof acteursFlux !== 'string' || !longueurEntre(acteursFlux, 1, 20000))) {
+      diagnostics.push(diag('STRUCTURAL', 'hypothese_acteurs_flux_invalide', '`acteursFlux` doit être une chaîne non vide ou `null`.', chemin))
+      return
+    }
     for (const [champ, valeur] of [
-      ['acteursFlux', acteursFlux],
       ['modalitesProposees', modalitesProposees],
       ['exigences', exigences],
       ['etatExigences', etatExigences],
       ['inconnuesCritiques', inconnuesCritiques],
     ] as const) {
-      if (!tailleJsonSousLimite(valeur, 100000)) {
-        diagnostics.push(diag('STRUCTURAL', 'hypothese_champ_jsonb_trop_volumineux', `\`${champ}\` dépasse la borne de taille DB.`, chemin))
+      if (!estTableau(valeur) || !valeur.every(v => estChaineNonVide(v)) || !tailleJsonSousLimite(valeur, 100000)) {
+        diagnostics.push(diag('STRUCTURAL', 'hypothese_champ_liste_invalide', `\`${champ}\` doit être un tableau de chaînes non vides.`, chemin))
         return
       }
     }
@@ -429,11 +454,11 @@ function parserHypotheses(raw: unknown, diagnostics: Diagnostic[]): readonly Hyp
       formulation,
       mecanismes: mecanismes as HypotheseBrute['mecanismes'],
       transformations: transformations as HypotheseBrute['transformations'],
-      acteursFlux,
-      modalitesProposees,
-      exigences,
-      etatExigences,
-      inconnuesCritiques,
+      acteursFlux: acteursFlux as HypotheseBrute['acteursFlux'],
+      modalitesProposees: modalitesProposees as HypotheseBrute['modalitesProposees'],
+      exigences: exigences as HypotheseBrute['exigences'],
+      etatExigences: etatExigences as HypotheseBrute['etatExigences'],
+      inconnuesCritiques: inconnuesCritiques as HypotheseBrute['inconnuesCritiques'],
       ancrages: ancragesTypes,
     })
   })
@@ -466,11 +491,11 @@ function parserPistes(raw: unknown, diagnostics: Diagnostic[]): readonly PisteBr
       diagnostics.push(diag('STRUCTURAL', 'piste_action_invalide', '`actionReduction` doit être une chaîne de 1 à 20000 caractères.', chemin))
       return
     }
-    if (!tailleJsonSousLimite(variablesTest, 100000)) {
-      diagnostics.push(diag('STRUCTURAL', 'piste_variables_test_trop_volumineux', '`variablesTest` dépasse la borne de taille DB.', chemin))
+    if (!estTableau(variablesTest) || !variablesTest.every(v => estChaineNonVide(v)) || !tailleJsonSousLimite(variablesTest, 100000)) {
+      diagnostics.push(diag('STRUCTURAL', 'piste_variables_test_invalide', '`variablesTest` doit être un tableau de chaînes non vides.', chemin))
       return
     }
-    resultat.push({ idLocal, incertitudeConstitutive, actionReduction, variablesTest })
+    resultat.push({ idLocal, incertitudeConstitutive, actionReduction, variablesTest: variablesTest as PisteBrute['variablesTest'] })
   })
   return resultat
 }
@@ -524,8 +549,8 @@ function parserEvaluationsD025(raw: unknown, diagnostics: Diagnostic[]): readonl
       diagnostics.push(diag('STRUCTURAL', 'evaluation_recommandee_invalide', '`recommandeeAujourdhui` doit être un booléen.', chemin))
       return
     }
-    if (!tailleJsonSousLimite(justification, 100000)) {
-      diagnostics.push(diag('STRUCTURAL', 'evaluation_justification_trop_volumineuse', '`justification` dépasse la borne de taille DB.', chemin))
+    if (justification !== null && (typeof justification !== 'string' || !longueurEntre(justification, 1, 20000))) {
+      diagnostics.push(diag('STRUCTURAL', 'evaluation_justification_invalide', '`justification` doit être une chaîne non vide ou `null`.', chemin))
       return
     }
     resultat.push({
@@ -535,7 +560,7 @@ function parserEvaluationsD025(raw: unknown, diagnostics: Diagnostic[]): readonl
       actionnabiliteResultat: actionnabiliteResultat as ActionnabiliteResultat | null | undefined,
       disponibiliteOk: disponibiliteOk as boolean | null | undefined,
       recommandeeAujourdhui,
-      justification,
+      justification: justification as EvaluationD025Brute['justification'],
     })
   })
   return resultat
@@ -603,6 +628,17 @@ function validerReferentiel(sortie: AnalyseSortieBrute, sourceBindings: SourceBi
     for (const src of r.sources) {
       if (!sourceBindings.has(src)) {
         diagnostics.push(diag('REFERENTIAL', 'src_inconnu', `SRC_xxx inexistant dans le contexte : ${src}.`, r.idLocal))
+      }
+    }
+    // extrait.src ∈ sources du MÊME référent — question d'existence de
+    // référence (REFERENTIAL), jamais de forme (arbitrage QG, T-MFR.3D) :
+    // même principe que « chaque SRC_xxx cité existe » (D-052 §N).
+    const sourcesDisponibles = new Set(r.sources)
+    for (const e of r.extraits ?? []) {
+      if (!sourcesDisponibles.has(e.src)) {
+        diagnostics.push(
+          diag('REFERENTIAL', 'extrait_src_hors_sources', `\`extrait.src\` (${e.src}) doit appartenir aux sources du même référent.`, r.idLocal)
+        )
       }
     }
   }
@@ -852,8 +888,8 @@ function idReferentResolu(idLocal: string, canon: CanonicalisationReferents): st
 
 function extraitPourSource(groupe: GroupeReferentCanonique, src: string): string | null {
   for (const brut of groupe.bruts) {
-    const valeur = brut.extraits?.[src]
-    if (valeur) return valeur
+    const paire = brut.extraits?.find(e => e.src === src)
+    if (paire) return paire.extrait
   }
   return null
 }

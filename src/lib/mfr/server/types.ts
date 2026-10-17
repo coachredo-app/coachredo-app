@@ -85,18 +85,18 @@ export interface HypotheseResolue {
   readonly formulation: string
   readonly mecanismes?: unknown
   readonly transformations?: unknown
-  readonly acteurs_flux?: unknown
-  readonly modalites_proposees?: unknown
-  readonly exigences?: unknown
-  readonly etat_exigences?: unknown
-  readonly inconnues_critiques?: unknown
+  readonly acteurs_flux: string | null
+  readonly modalites_proposees: readonly string[]
+  readonly exigences: readonly string[]
+  readonly etat_exigences: readonly string[]
+  readonly inconnues_critiques: readonly string[]
 }
 
 export interface PisteResolue {
   readonly id: string
   readonly incertitude_constitutive: string
   readonly action_reduction: string
-  readonly variables_test?: unknown
+  readonly variables_test: readonly string[]
 }
 
 export interface HypotheseAncrageResolue {
@@ -115,7 +115,7 @@ export interface EvaluationD025Resolue {
   readonly disponibilite_ok?: boolean | null
   readonly sortie: SortieD025
   readonly recommandee_aujourdhui: boolean
-  readonly justification?: unknown
+  readonly justification: string | null
 }
 
 /** Forme exacte du paramètre p_graphe de mfr_finir_analyse_succes. */

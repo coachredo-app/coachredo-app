@@ -11,7 +11,10 @@
 // (D-025/D-054 §H — « sortie n'appartient pas au contrat IA », arbitrage
 // QG GO CODE confirmant qu'une présence de ce champ dans le JSON brut
 // reçu du provider est une violation STRUCTURAL bloquante, jamais une
-// omission silencieuse) — voir validator.ts, verifierChampSortieInterdit.
+// omission silencieuse) — voir validator.ts, verifierClesFermees
+// (STRICT CLOSED-WORLD, correction QG — `sortie` n'apparaît dans aucune
+// liste de clés autorisées, son interdiction est un cas particulier de
+// la fermeture générale, jamais un mécanisme séparé).
 
 import type {
   ActionnabiliteResultat,
@@ -21,6 +24,11 @@ import type {
   StatutEpistemique,
   StatutHypothese,
 } from '../server/types'
+
+/** Version du contrat `AnalyseSortieBrute` lui-même (distincte de
+ * `MFR_ANALYSIS_CONTEXT_VERSION`, T-MFR.3B) — alimente `schema_version`
+ * au démarrage de l'analyse (`AnalyseMetadata`, server/types.ts). */
+export const MFR_ANALYSE_SORTIE_BRUTE_SCHEMA_VERSION = 1 as const
 
 export type MecanismeCatalogue = 'M1' | 'M2' | 'M3' | 'M4' | 'M5' | 'M6'
 export type RoleMecanisme = 'principal' | 'secondaire' | 'co_principal' | 'operationnel'
@@ -32,6 +40,21 @@ export interface MecanismeAssocieBrut {
 }
 
 /**
+ * Un extrait d'audit pour un SRC_xxx cité par le référent qui le porte.
+ * Forme fermée (tableau de paires), remplace l'ancien dictionnaire
+ * dynamique `Record<string,string>` — incompatible avec le mode strict
+ * des providers Structured Outputs (arbitrage QG, T-MFR.3D). `src` doit
+ * appartenir aux `sources` du MÊME référent — vérifié REFERENTIAL
+ * (validator.ts), jamais STRUCTURAL : ce n'est pas une question de forme,
+ * mais d'existence d'une référence, au même titre qu'un SRC_xxx cité
+ * (D-052 §N/D-054 §G).
+ */
+export interface ExtraitSrcBrut {
+  readonly src: string
+  readonly extrait: string
+}
+
+/**
  * Un regroupement de sources proposé par l'IA. L'identité canonique
  * (fusion déterministe par ensemble exact de SRC_xxx trié/unique)
  * appartient exclusivement au moteur (validator.ts) — jamais à l'IA.
@@ -39,9 +62,11 @@ export interface MecanismeAssocieBrut {
 export interface ReferentBrut {
   readonly idLocal: string
   readonly sources: readonly string[]
-  /** Extraits optionnels par SRC_xxx cité — jamais inventés, jamais
-   * requis. Chaque clé doit être un élément de `sources` ci-dessus. */
-  readonly extraits?: Readonly<Record<string, string>>
+  /** Extraits d'audit optionnels — absent et `[]` ont la même sémantique
+   * (le mode strict des providers Structured Outputs n'offre aucune
+   * véritable absence de clé ; un tableau vide est la représentation
+   * naturelle de « aucun extrait fourni »). */
+  readonly extraits?: readonly ExtraitSrcBrut[]
 }
 
 export interface PropositionAnalytiqueBrute {
@@ -72,11 +97,23 @@ export interface HypotheseBrute {
   readonly formulation: string
   readonly mecanismes?: readonly MecanismeAssocieBrut[]
   readonly transformations?: readonly TransformationControlee[]
-  readonly acteursFlux?: unknown
-  readonly modalitesProposees?: unknown
-  readonly exigences?: unknown
-  readonly etatExigences?: unknown
-  readonly inconnuesCritiques?: unknown
+  /** Relation économique minimale intelligible (D-048 §S/§T pt.5) —
+   * texte narratif, jamais une structure figée (la doctrine refuse
+   * elle-même de l'imposer). `null` si rien d'identifiable. */
+  readonly acteursFlux: string | null
+  /** Modalités de test/exécution proposées (D-048 §D pt.4) — liste
+   * ouverte, jamais un schéma de champs fixes. */
+  readonly modalitesProposees: readonly string[]
+  /** Exigences réelles identifiées — distinct de leur état ci-dessous
+   * (D-049/016, colonnes DB déjà séparées, non rouvert). Restent deux
+   * listes distinctes, jamais fusionnées, jamais alignées par un
+   * mécanisme automatique (arbitrage QG, T-MFR.3D). */
+  readonly exigences: readonly string[]
+  /** État des exigences ci-dessus — même discipline, même arbitrage. */
+  readonly etatExigences: readonly string[]
+  /** Non-contamination (D-048 §T pt.7) — ce qui reste explicitement
+   * `INCONNU`, jamais supposé. */
+  readonly inconnuesCritiques: readonly string[]
   readonly ancrages: readonly HypotheseAncrageBrut[]
 }
 
@@ -84,7 +121,8 @@ export interface PisteBrute {
   readonly idLocal: string
   readonly incertitudeConstitutive: string
   readonly actionReduction: string
-  readonly variablesTest?: unknown
+  /** Variables de test explicites (D-048 §U pt.2) — liste de noms. */
+  readonly variablesTest: readonly string[]
 }
 
 /**
@@ -99,7 +137,9 @@ export interface EvaluationD025Brute {
   readonly actionnabiliteResultat?: ActionnabiliteResultat | null
   readonly disponibiliteOk?: boolean | null
   readonly recommandeeAujourdhui?: boolean
-  readonly justification?: unknown
+  /** Explication narrative du jugement proposé (D-052 §L) — texte
+   * simple, jamais une structure. `null` si aucune justification. */
+  readonly justification: string | null
 }
 
 export interface AnalyseSortieBrute {
