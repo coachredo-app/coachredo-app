@@ -50,6 +50,10 @@ next-env.d.ts
 # Rapports internes (coordination multi-fenêtres, ne pas publier)
 handoff/
 
+# Ledger budgétaire local du benchmark MFR (état d'exécution, jamais
+# mémoire versionnée, jamais Supabase — BENCHMARK-MFR V1 Phase 2A).
+scripts/mfr-benchmark/.ledger/
+
 # Artefacts locaux du CLI Supabase (project-ref lié, versions de services,
 # URL de pooler) — jamais lus par le code applicatif (voir T6.1), ne
 # doivent pas être versionnés (T6.2).
