@@ -1,7 +1,8 @@
 // ============================================================
 // MFR V1 — Orchestrateur d'analyse réelle — T-MFR.3D
 // ============================================================
-// Compose exactement : obtenirOuCreerCycle → demarrerPremiereAnalyse →
+// Compose exactement : obtenirOuCreerCycle → demarrerPremiereAnalyse OU
+// relancerAnalyseApresEchec (mode, T-MFR.3D migration 019) →
 // construireMfrAnalysisContext → provider (injecté) → contrôle de
 // l'enveloppe → validerEtResoudreSortieBrute → finirAnalyseSucces OU
 // finirAnalyseEchec. Aucune brique ci-dessous n'est réécrite — toutes
@@ -28,7 +29,7 @@
 // des fakes, sans toucher Supabase/OpenAI réels ni réécrire la logique.
 
 import { construireMfrAnalysisContext } from '../context/builder'
-import { demarrerPremiereAnalyse, finirAnalyseEchec, finirAnalyseSucces } from '../server/analyse'
+import { demarrerPremiereAnalyse, relancerAnalyseApresEchec, finirAnalyseEchec, finirAnalyseSucces } from '../server/analyse'
 import { obtenirOuCreerCycle } from '../server/cycle'
 import type { AnalyseMetadata } from '../server/types'
 import { validerEtResoudreSortieBrute } from '../analysis/validator'
@@ -44,6 +45,7 @@ type SupabaseService = Parameters<typeof finirAnalyseSucces>[0]
 export interface LancerAnalyseMfrDeps {
   readonly obtenirOuCreerCycle: typeof obtenirOuCreerCycle
   readonly demarrerPremiereAnalyse: typeof demarrerPremiereAnalyse
+  readonly relancerAnalyseApresEchec: typeof relancerAnalyseApresEchec
   readonly construireMfrAnalysisContext: typeof construireMfrAnalysisContext
   readonly finirAnalyseEchec: typeof finirAnalyseEchec
   readonly finirAnalyseSucces: typeof finirAnalyseSucces
@@ -52,6 +54,7 @@ export interface LancerAnalyseMfrDeps {
 const DEPS_REELLES: LancerAnalyseMfrDeps = {
   obtenirOuCreerCycle,
   demarrerPremiereAnalyse,
+  relancerAnalyseApresEchec,
   construireMfrAnalysisContext,
   finirAnalyseEchec,
   finirAnalyseSucces,
@@ -76,6 +79,12 @@ export interface LancerAnalyseMfrParams {
   readonly supabaseService: SupabaseService
   readonly etatLogiqueId: string
   readonly metadata: AnalyseMetadata
+  /** Discriminant de démarrage — seul ce choix varie entre les deux
+   * modes ; contexte/provider/validation/FINISH/gestion d'erreurs
+   * restent strictement identiques (arbitrage QG, T-MFR.3D, migration
+   * 019). Défaut PREMIERE_ANALYSE pour préserver tout appelant
+   * existant. */
+  readonly mode?: 'PREMIERE_ANALYSE' | 'REPRISE_APRES_ECHEC'
   readonly promptSysteme: string
   /** Injecté — jamais importé en dur, pour rester exerçable par fakes. */
   readonly appelerProvider: AppelProviderFn
@@ -161,7 +170,12 @@ export async function lancerAnalyseMfr(params: LancerAnalyseMfrParams): Promise<
     return { statut: 'ECHEC_AVANT_ANALYSE', erreur: cycleResultat.error }
   }
 
-  const demarrageResultat = await deps.demarrerPremiereAnalyse(params.supabaseAuthentifie, cycleResultat.cycleId, params.metadata)
+  // Seul le démarrage varie selon le mode — tout le reste de la
+  // fonction est strictement identique quel que soit le mode choisi.
+  const demarrageResultat =
+    params.mode === 'REPRISE_APRES_ECHEC'
+      ? await deps.relancerAnalyseApresEchec(params.supabaseAuthentifie, cycleResultat.cycleId, params.metadata)
+      : await deps.demarrerPremiereAnalyse(params.supabaseAuthentifie, cycleResultat.cycleId, params.metadata)
   if ('error' in demarrageResultat) {
     return { statut: 'ECHEC_AVANT_ANALYSE', erreur: demarrageResultat.error }
   }

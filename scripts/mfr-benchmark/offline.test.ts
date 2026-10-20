@@ -67,6 +67,21 @@ async function main() {
   verifier('2. prompt généré, non vide', typeof prompt1 === 'string' && prompt1.length > 0)
   verifier('2. prompt déterministe (même contenu à chaque appel)', prompt1 === prompt2)
 
+  // 2b. Garde-fou de non-régression (post-mortem premier E2E réel,
+  // analyse 11f77bcf-24ed-4dee-84f5-6e5cc55124cc, ECHEC STRUCTURAL
+  // referent_extrait_src_duplique) : le prompt doit communiquer
+  // explicitement l'unicité du SRC dans `extraits` POUR UN MÊME
+  // référent — jamais formulée comme « un SRC ne peut appartenir qu'à
+  // un seul référent », ce qui serait une règle différente et fausse.
+  verifier(
+    '2b. le prompt communique explicitement l’unicité du SRC dans extraits (par référent)',
+    prompt1.includes('un même SRC_xxx ne doit apparaître qu\'une seule fois à l\'intérieur d\'un référent')
+  )
+  verifier(
+    '2b. le prompt ne formule jamais la règle fausse « un SRC ne peut appartenir qu’à un seul référent »',
+    !prompt1.toLowerCase().includes('un seul référent') || prompt1.includes('n\'interdit pas à un même SRC_xxx d\'apparaître dans un autre référent')
+  )
+
   // 3. Récupération du JSON Schema
   const schema = construireJsonSchemaAnalyseSortieBrute()
   verifier('3. schema récupéré, objet non vide', typeof schema === 'object' && schema !== null && Object.keys(schema).length > 0)

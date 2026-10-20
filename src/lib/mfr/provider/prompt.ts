@@ -18,7 +18,7 @@
 // Version non figée définitivement — alimente schemaVersion/
 // promptVersion (AnalyseMetadata) côté orchestrateur, pas ici.
 
-export const PROMPT_VERSION = 'v1' as const
+export const PROMPT_VERSION = 'v2' as const
 
 export function construirePromptSystemeAnalyseMfr(): string {
   return `Tu es le moteur d'analyse CoachRedo pour Ma Feuille de Route (MFR).
@@ -37,6 +37,8 @@ Les statuts possibles sont DECLARE, ETAYE, INFERE, CONTRADICTOIRE, INCONNU. ATTE
 
 ## 5. Référents
 Tu peux regrouper plusieurs éléments du contexte (SRC_xxx) qui se corroborent dans un même référent. L'identité définitive de ces regroupements est recalculée par le moteur — propose des regroupements honnêtes, sans te soucier de la fusion finale.
+
+Dans \`extraits\`, un même SRC_xxx ne doit apparaître qu'une seule fois à l'intérieur d'un référent. Si une même réponse source contient plusieurs informations pertinentes pour ce référent, sélectionne un seul extrait représentatif de cette source — ne crée jamais deux entrées \`extraits\` avec le même \`src\` dans un même référent. Cette règle ne concerne que la structure interne d'un référent : elle n'interdit pas à un même SRC_xxx d'apparaître dans un autre référent si cela se justifie.
 
 ## 6. Propositions analytiques, ancrages
 Une proposition analytique relie une affirmation (énoncé) à un ou plusieurs référents qui la corroborent. Un ancrage est un élément du dossier qui justifie économiquement une hypothèse — classe-le dans une des familles : CAPACITE, COMPORTEMENT_PASSE, EXPERIENCE_EXPOSITION, RESSOURCE, ACCES_RELATION, PROBLEME_OBSERVE.

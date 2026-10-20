@@ -4,7 +4,9 @@
 // Module server-only minimal — jamais importé côté client. Même
 // discipline que src/lib/mfr/stripe/client.ts : SDK officiel, clé en
 // variable d'environnement, aucun wrapper superflu. Décision 0 fermée,
-// non rouverte ici : OpenAI, Responses API, `gpt-6-astra`, Structured
+// non rouverte ici : OpenAI, Responses API, `gpt-6.1-sol` (modèle
+// validé par le benchmark de décision provider, QG, 2026-10-20 —
+// remplace la référence historique `gpt-6-astra`), Structured
 // Outputs strict, aucun retry automatique, aucune réparation
 // automatique — ce module ne fait qu'UN seul appel et retourne un
 // résultat discriminé ; il ne décide jamais de retry ni n'interprète la
@@ -33,7 +35,7 @@ function obtenirClient(): OpenAI {
   return client
 }
 
-export const MODELE_MFR_V1 = 'gpt-6-astra' as const
+export const MODELE_MFR_V1 = 'gpt-6.1-sol' as const
 
 export interface MetadonneesAppelProvider {
   readonly responseId: string | null
