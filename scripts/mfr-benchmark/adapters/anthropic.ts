@@ -36,9 +36,7 @@ export function construireRequete(params: AppelAdapterParams): RequeteHttp {
     },
     body: {
       model: params.model,
-      // Valeur arbitraire, jamais calibrée empiriquement — à ajuster
-      // avant tout sanity call réel plutôt que supposée correcte ici.
-      max_tokens: 8192,
+      max_tokens: params.maxOutputTokens,
       system: params.promptSysteme,
       messages: [{ role: 'user', content: params.contexteSerialise }],
       output_config: {

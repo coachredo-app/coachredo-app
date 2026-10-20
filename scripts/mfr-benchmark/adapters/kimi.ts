@@ -4,29 +4,33 @@
 // Candidat QG : Kimi K3, classification HANDICAP SCHEMA (aucune
 // garantie closed-world native suffisamment établie dans la
 // documentation trouvée — voir rapport matrice providers 2026-10-17).
-// Point d'accès « chat completions » OpenAI-compatible, mode
-// `response_format:{type:'json_schema', strict:true}` documenté
-// (`platform.kimi.ai`/`platform.moonshot.ai` — NON VÉRIFIÉ lequel des
-// deux domaines est le point d'accès de production actuel, les deux
-// apparaissent dans la documentation trouvée).
 //
-// Contrainte positive déjà satisfaite sans aucune transformation :
+// DOCTRINE VERROUILLÉE (QG, Phase 2B-PRE) : seul le mode OFFICIELLEMENT
+// GARANTI est utilisé — JSON Mode (`response_format:{type:'json_object'}`).
+// Le schéma canonique N'EST PAS transmis comme `json_schema strict:true`
+// (support non établi, jamais simulé artificiellement). Le schéma
+// canonique n'est pas non plus injecté dans le texte du prompt dans
+// cette passe (la consigne QG le permettait « si l'architecture
+// actuelle le permet proprement » — non appliqué ici pour rester
+// strictement chirurgical ; `promptSysteme`/`contexteSerialise`
+// transmis tels quels, identiques aux 5 autres providers). Le pipeline
+// reste : provider → texte → `JSON.parse` → ENGINE validator — AUCUN
+// repair, AUCUN retry, AUCUNE coercion, AUCUNE correction de SRC,
+// AUCUNE tentative de rendre Kimi artificiellement équivalent à un
+// provider à Structured Output strict. Si le JSON retourné ne
+// respecte pas notre contrat, il FAIL/NON_EVALUE selon le point exact
+// d'échec — ce handicap fait partie du benchmark, pas une anomalie à
+// corriger.
+//
 // Kimi n'émet jamais un tableau JSON au niveau racine — notre schéma
-// canonique a déjà un OBJET à la racine (jamais un tableau), donc
-// AUCUNE adaptation n'est nécessaire sur ce point précis.
+// canonique a déjà un OBJET à la racine, cohérent avec JSON Mode.
 //
-// « Handicap schéma » signifie ici une GARANTIE plus faible, pas une
-// incompatibilité syntaxique confirmée : le schéma canonique est donc
-// envoyé SANS transformation (aucune suppression de contrainte
-// proposée). Si Kimi ignore silencieusement `additionalProperties:false`
-// ou `required`, ceci ne constitue PAS un affaiblissement de notre
-// contrat métier réel : `validerEtResoudreSortieBrute` (ENGINE,
-// production, non touché ici) revalide intégralement et
-// indépendamment tout payload reçu, quelle que soit la garantie
-// réellement appliquée côté provider (principe transversal, rapport
-// matrice providers §C). Le risque réel ici est un taux de FAIL ENGINE
-// plus élevé pour ce candidat, jamais une sortie invalide acceptée à
-// tort.
+// K3 reste en thinking mode selon son comportement API réel. K3
+// supporte désormais `reasoning_effort: low|high|max` (défaut `max`)
+// — DÉCISION QG (micro-correctif Phase 2B-PRE) : ce paramètre n'est
+// PAS ajouté dans ce patch, pour ne pas introduire une variable
+// supplémentaire dans le protocole avant le premier sanity ; le
+// comportement par défaut du provider (`max`) est conservé tel quel.
 //
 // `appellerKimiPourBenchmark` n'est appelée NULLE PART dans cette
 // phase — code prêt, dormant, zéro appel réseau exécuté.
@@ -44,14 +48,17 @@ export function construireRequete(params: AppelAdapterParams): RequeteHttp {
     },
     body: {
       model: params.model,
+      // `max_tokens` est deprecated par Moonshot — `max_completion_tokens`
+      // est le champ actuel (consigne QG, micro-correctif Phase 2B-PRE,
+      // doc officielle vérifiée).
+      max_completion_tokens: params.maxOutputTokens,
       messages: [
         { role: 'system', content: params.promptSysteme },
         { role: 'user', content: params.contexteSerialise },
       ],
-      response_format: {
-        type: 'json_schema',
-        json_schema: { name: params.schemaName, strict: true, schema: params.schema },
-      },
+      // JSON Mode uniquement — seul mode officiellement garanti pour
+      // K3 (consigne QG) — jamais `json_schema`/`strict:true`.
+      response_format: { type: 'json_object' },
     },
   }
 }

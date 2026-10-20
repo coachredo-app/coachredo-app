@@ -29,6 +29,25 @@ export interface AppelAdapterParams {
   readonly model: string
   readonly apiKey: string
   readonly timeoutMs: number
+  /** Plafond de sortie RÉELLEMENT transmis au provider (jamais une
+   * valeur illimitée) — verrouillé à 4096 pour les sanity calls, voir
+   * `../sanityConfig.ts` (`MAX_OUTPUT_TOKENS_SANITY`). Chaque adapter
+   * le câble vers le champ exact de son API (nom de champ différent
+   * par provider — voir chaque `construireRequete`). */
+  readonly maxOutputTokens: number
+}
+
+/**
+ * Paramètres spécifiques à l'adapter Qwen (Alibaba) — EN PLUS de
+ * `AppelAdapterParams`. `endpointUrl` est OBLIGATOIRE et ne porte
+ * AUCUNE valeur par défaut : le point d'accès DashScope dépend du
+ * Workspace/région du compte réel (consigne QG, Phase 2B-PRE) —
+ * jamais un fallback silencieux vers une région supposée, jamais une
+ * URL inventée. L'appelant (futur runner réel) doit la fournir
+ * explicitement.
+ */
+export interface AppelQwenAdapterParams extends AppelAdapterParams {
+  readonly endpointUrl: string
 }
 
 export interface RequeteHttp {

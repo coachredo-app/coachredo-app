@@ -31,6 +31,7 @@ export function construireRequete(params: AppelAdapterParams): RequeteHttp {
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: params.schema,
+        maxOutputTokens: params.maxOutputTokens,
       },
     },
   }

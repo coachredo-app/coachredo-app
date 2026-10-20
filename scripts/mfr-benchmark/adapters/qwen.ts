@@ -3,11 +3,14 @@
 // ============================================================
 // Candidat QG : Qwen 3.7 Plus, classification NATIF (Alibaba Cloud
 // Model Studio documente nommément le support JSON Schema pour cette
-// série de modèles — voir rapport matrice providers 2026-10-17). Point
-// d'accès « compatible-mode » OpenAI-compatible — endpoint
-// international choisi par défaut (NON VÉRIFIÉ : l'endpoint mainland
-// `dashscope.aliyuncs.com` existe aussi, à confirmer lequel est
-// pertinent selon la région du compte avant tout sanity call réel).
+// série de modèles — voir rapport matrice providers 2026-10-17).
+//
+// ENDPOINT PARAMÉTRABLE (consigne QG, Phase 2B-PRE) : le point d'accès
+// DashScope dépend du Workspace/région du compte réel — AUCUNE valeur
+// par défaut, AUCUN fallback silencieux, AUCUN endpoint inventé ici.
+// `construireRequete` EXIGE `params.endpointUrl` (`AppelQwenAdapterParams`,
+// voir `./types.ts`) — fourni explicitement par le futur runner réel
+// (non construit dans cette phase), jamais une URL figée dans ce fichier.
 //
 // Détail exact des keywords JSON Schema supportés (additionalProperties,
 // $ref, minItems) NON VÉRIFIÉ au-delà de l'existence confirmée du mode
@@ -17,12 +20,15 @@
 // `appellerQwenPourBenchmark` n'est appelée NULLE PART dans cette
 // phase — code prêt, dormant, zéro appel réseau exécuté.
 
-import type { AppelAdapterParams, RequeteHttp, ResultatAdapterBenchmark } from './types'
+import type { AppelQwenAdapterParams, RequeteHttp, ResultatAdapterBenchmark } from './types'
 import { parserReponseChatCompletionsCompatible } from './chatCompletionsCompatible'
 
-export function construireRequete(params: AppelAdapterParams): RequeteHttp {
+export function construireRequete(params: AppelQwenAdapterParams): RequeteHttp {
+  if (!params.endpointUrl) {
+    throw new Error('Qwen : endpointUrl est obligatoire (dépend du Workspace/région du compte) — aucun fallback silencieux, aucune valeur par défaut.')
+  }
   return {
-    url: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
+    url: params.endpointUrl,
     method: 'POST',
     headers: {
       Authorization: `Bearer ${params.apiKey}`,
@@ -30,6 +36,11 @@ export function construireRequete(params: AppelAdapterParams): RequeteHttp {
     },
     body: {
       model: params.model,
+      // `max_tokens` est deprecated par Alibaba pour les nouvelles
+      // intégrations (Qwen Plus 3.5+) — `max_completion_tokens` limite
+      // la sortie complète, raisonnement inclus (consigne QG,
+      // micro-correctif Phase 2B-PRE, doc officielle vérifiée).
+      max_completion_tokens: params.maxOutputTokens,
       messages: [
         { role: 'system', content: params.promptSysteme },
         { role: 'user', content: params.contexteSerialise },
@@ -47,7 +58,7 @@ export function parserReponse(statusHttp: number, body: unknown): ResultatAdapte
 }
 
 /** Exécuteur réel — JAMAIS invoqué dans cette phase. */
-export async function appellerQwenPourBenchmark(params: AppelAdapterParams): Promise<ResultatAdapterBenchmark> {
+export async function appellerQwenPourBenchmark(params: AppelQwenAdapterParams): Promise<ResultatAdapterBenchmark> {
   const requete = construireRequete(params)
   const controleur = new AbortController()
   const timeout = setTimeout(() => controleur.abort(), params.timeoutMs)

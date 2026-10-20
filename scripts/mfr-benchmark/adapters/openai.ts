@@ -32,6 +32,7 @@ export function construireRequete(params: AppelAdapterParams): RequeteHttp {
     },
     body: {
       model: params.model,
+      max_output_tokens: params.maxOutputTokens,
       input: [
         { role: 'system', content: params.promptSysteme },
         { role: 'user', content: params.contexteSerialise },
