@@ -1,0 +1,12 @@
+[
+  { "cle": "destinataire", "titre": "Pour qui", "requis": true, "max": 120 },
+  { "cle": "relation", "titre": "Relation", "requis": true, "max": 120 },
+  { "cle": "occasion", "titre": "Occasion", "requis": false, "max": 120 },
+  { "cle": "de_la_part", "titre": "De la part de", "requis": true, "max": 300 },
+  { "cle": "histoire", "titre": "Votre histoire et les souvenirs essentiels", "requis": true, "max": 4000 },
+  { "cle": "details", "titre": "Les petits détails importants", "requis": false, "max": 2000 },
+  { "cle": "message", "titre": "Le message central", "requis": true, "max": 2000 },
+  { "cle": "emotions", "titre": "Les émotions recherchées", "requis": true, "max": 500 },
+  { "cle": "direction_musicale", "titre": "La direction musicale", "requis": true, "max": 1500 },
+  { "cle": "points_particuliers", "titre": "Points particuliers à respecter", "requis": false, "max": 2000 }
+]

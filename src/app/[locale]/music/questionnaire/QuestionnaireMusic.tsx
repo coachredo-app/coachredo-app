@@ -112,6 +112,8 @@ export default function QuestionnaireMusic() {
   const relance = useRef(false)
   const minuteur = useRef<ReturnType<typeof setTimeout> | null>(null)
   const verrouille = useRef(false)
+  // Verrou immédiat (avant même le rendu) : plusieurs appuis rapides = un seul envoi.
+  const envoiOccupe = useRef(false)
 
   const prenom = commande?.beneficiaire_prenom ?? ''
 
@@ -212,8 +214,9 @@ export default function QuestionnaireMusic() {
   }
 
   const envoyer = async () => {
-    if (envoiEnCours || !jeton.current) return
+    if (envoiOccupe.current || !jeton.current) return
     if (!consentement) { setErreurEnvoi('Cochez la case pour confirmer votre accord avant d’envoyer.'); return }
+    envoiOccupe.current = true
     setEnvoiEnCours(true)
     setErreurEnvoi('')
     if (minuteur.current) clearTimeout(minuteur.current)
@@ -234,6 +237,7 @@ export default function QuestionnaireMusic() {
     } catch {
       setErreurEnvoi('L’envoi n’a pas abouti. Vos réponses sont conservées : vérifiez votre connexion puis réessayez.')
     } finally {
+      envoiOccupe.current = false
       setEnvoiEnCours(false)
     }
   }

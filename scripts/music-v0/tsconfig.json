@@ -6,9 +6,16 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "outDir": "../../.tmp-music-v0-tests",
-    "rootDir": "../.."
+    "rootDir": "../..",
+    "resolveJsonModule": true
   },
-  "files": ["api.test.ts", "questionnaire.test.ts"]
+  "files": [
+    "api.test.ts",
+    "questionnaire.test.ts",
+    "brief.test.ts"
+  ]
 }

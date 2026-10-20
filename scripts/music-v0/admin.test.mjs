@@ -2,7 +2,9 @@
 // aucune base). Exécution : node scripts/music-v0/admin.test.mjs
 import { randomBytes, createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import { genererJeton, empreinte, construireLien, executer, OCTETS_JETON } from './admin.mjs'
+import { genererJeton, empreinte, construireLien, executer, OCTETS_JETON, afficherQuestionnaire, modeleBrief, parserBrief, cheminHorsDepot, afficherSuivi, dateLisible, SECTIONS_BRIEF, RACINE_DEPOT } from './admin.mjs'
+import { join } from 'node:path'
+import { tmpdir } from 'node:os'
 
 let reussis = 0, echecs = 0
 const ok = (nom, cond, detail = '') => { if (cond) { reussis++; console.log('PASS ', nom) } else { echecs++; console.log('ÉCHEC', nom, detail) } }
@@ -72,6 +74,99 @@ const afficher = (t) => sortie.push(t)
   const c1 = await executer(['confirmer', 'crm-5'], { rpc: f.rpc, afficher })
   const c2 = await executer(['supprimer', 'CRM-00005'], { rpc: f.rpc, afficher })
   ok('référence ou commande invalide : usage affiché, aucun appel à la base', c1 === 2 && c2 === 2 && f.envois.length === 0)
+}
+
+/* ══ LOT 3 — questionnaire, brief, suivi ══ */
+const Q = {
+  reference: 'CRM-00005', statut: 'QUESTIONNAIRE_REÇU', client_prenom: 'Awa', beneficiaire_prenom: 'Fatou', relation: 'Ma mère', relation_autre: null, occasion: 'Anniversaire',
+  envoye_le: '2026-10-20T18:30:00Z', consentement_le: '2026-10-20T18:30:00Z', consentement_version: 'v0-2026-10',
+  responses: {
+    etape_courante: 8,
+    etape1: { de_la_part: 'Plusieurs personnes', de_la_part_qui: 'Ses enfants Awa et Moussa' },
+    etape2: { souvenir_principal: 'Les dimanches au marché de Sandaga.', souvenirs_supplementaires: ['Son thiéboudienne du vendredi.'] },
+    etape3: { expression: '', surnom: 'Yaay', habitude: '', lieu: 'Rufisque', chose_aimee: '', tradition: '', autre: '' },
+    etape4: { message: 'Merci pour ta force.', emotions: ['Se sentir aimé(e)', 'Ressentir de la fierté'], emotion_principale: 'Se sentir aimé(e)', emotion_autre: '' },
+    etape5: { ambiance: 'Douce et émouvante', style: 'Autre', style_autre: 'Mbalax doux', voix: 'Féminine' },
+    etape6: { a_inspiration: 'Oui', titre_artiste: 'Titre — Artiste', lien: 'https://youtu.be/abc', aspects: ['La voix', 'Autre'], aspect_autre: 'les chœurs' },
+  },
+}
+{
+  const t = afficherQuestionnaire(Q)
+  const attendus = ['CRM-00005', 'Fatou', 'Ma mère', 'Anniversaire', 'Ses enfants Awa et Moussa', 'Les dimanches au marché de Sandaga.', 'Son thiéboudienne du vendredi.', 'Surnom : Yaay', 'Lieu important : Rufisque', 'Merci pour ta force.', 'Se sentir aimé(e) (principale), Ressentir de la fierté', 'Douce et émouvante', 'Mbalax doux', 'Féminine', 'Titre — Artiste — https://youtu.be/abc (aime : La voix, les chœurs)']
+  ok('questionnaire : affichage humain de tous les champs demandés', attendus.every((x) => t.includes(x)), attendus.filter((x) => !t.includes(x)).join(' | '))
+  ok('questionnaire : aucun JSON brut', !/[{}[\]"]|etape\d|_qui|souvenir_principal/.test(t))
+  const moi = afficherQuestionnaire({ ...Q, responses: { ...Q.responses, etape1: { de_la_part: 'Moi uniquement', de_la_part_qui: '' } } })
+  ok('questionnaire : « Moi uniquement » → prénom du client', moi.includes('De la part de     : Awa (seul·e)'))
+  sortie.length = 0
+  const f = faux((nom) => ({ data: nom === 'music_admin_questionnaire' ? Q : null, error: null }))
+  ok('commande questionnaire : appelle music_admin_questionnaire(référence) et affiche', (await executer(['questionnaire', 'CRM-00005'], { rpc: f.rpc, afficher })) === 0 && f.envois[0].nom === 'music_admin_questionnaire' && sortie.join('\n').includes('Sandaga'))
+  sortie.length = 0
+  const g = faux(() => ({ data: { error: 'STATUT_INCOMPATIBLE', statut: 'PAYÉE' }, error: null }))
+  ok('commande questionnaire : commande incompatible refusée (code 1, message clair)', (await executer(['questionnaire', 'CRM-00006'], { rpc: g.rpc, afficher })) === 1 && sortie.some((x) => x.includes('STATUT_INCOMPATIBLE') && x.includes('PAYÉE')))
+}
+{
+  const m = modeleBrief(Q)
+  ok('modèle de brief : 10 titres « ## » exacts, avertissement « pas les paroles »', SECTIONS_BRIEF.every((x) => m.includes('\n## ' + x.titre + '\n')) && m.includes('PAS les paroles') && m.includes('Aucune génération automatique'))
+  const p = parserBrief(m)
+  ok('modèle prérempli relu sans modification : brief valide (aller-retour)', !!p.contenu && p.contenu.destinataire === 'Fatou' && p.contenu.de_la_part === 'Ses enfants Awa et Moussa' && p.contenu.histoire.includes('Sandaga') && p.contenu.histoire.includes('thiéboudienne') && p.contenu.direction_musicale.includes('Mbalax doux') && !('points_particuliers' in p.contenu), JSON.stringify(p.erreurs))
+  ok('parser : commentaires « // » ignorés (lien https:// conservé)', !/RÉSUMÉ DE LA DEMANDE|Facultatif — laissez vide|dépôt Git/.test(JSON.stringify(p.contenu)) && p.contenu.direction_musicale.includes('https://youtu.be/abc'))
+  const titres = SECTIONS_BRIEF.map((x) => '## ' + x.titre)
+  const base = titres.map((t, i) => t + '\n' + (SECTIONS_BRIEF[i].requis ? 'Texte ' + i : '')).join('\n')
+  ok('parser : fichier minimal valide (sections facultatives vides)', !!parserBrief(base).contenu)
+  ok('parser : titre inconnu refusé', parserBrief(base + '\n## Paroles\nla la').erreurs?.some((e) => e.includes('Titre inconnu')))
+  ok('parser : section en double refusée', parserBrief(base + '\n## Pour qui\nX').erreurs?.some((e) => e.includes('double')))
+  ok('parser : section manquante refusée', parserBrief(base.replace('## Le message central\nTexte 6', '')).erreurs?.some((e) => e.includes('manquante')))
+  ok('parser : section obligatoire vide refusée', parserBrief(base.replace('Texte 6', '   ')).erreurs?.some((e) => e.includes('obligatoire vide')))
+  ok('parser : texte hors section refusé', parserBrief('Bonjour\n' + base).erreurs?.some((e) => e.includes('hors section')))
+  ok('parser : longueur maximale (mêmes limites que la base)', parserBrief(base.replace('Texte 0', 'a'.repeat(121))).erreurs?.some((e) => e.includes('trop longue')) && !!parserBrief(base.replace('Texte 0', 'a'.repeat(120))).contenu)
+}
+{
+  ok('chemin du brief : refusé dans le dépôt Git, accepté ailleurs', cheminHorsDepot(join(RACINE_DEPOT, 'brief.txt')) === null && cheminHorsDepot(join(RACINE_DEPOT, 'scripts', 'x.txt')) === null && cheminHorsDepot(RACINE_DEPOT) === null && cheminHorsDepot(join(tmpdir(), 'brief.txt')) !== null)
+  const disque = new Map()
+  const fichiers = { lire: (c) => disque.get(c), ecrire: (c, t) => { if (disque.has(c)) throw new Error('EEXIST'); disque.set(c, t) }, existe: (c) => disque.has(c) }
+  const chemin = join(tmpdir(), 'brief-CRM-00005.txt')
+  sortie.length = 0
+  const f = faux((nom) => nom === 'music_admin_questionnaire' ? { data: Q, error: null } : nom === 'music_admin_brief_enregistrer' ? { data: { reference: 'CRM-00005', version: 1, envoye: false }, error: null } : { data: null, error: null })
+  ok('brief-modele : refuse un fichier dans le dépôt (aucun appel)', (await executer(['brief-modele', 'CRM-00005', join(RACINE_DEPOT, 'brief.txt')], { rpc: f.rpc, afficher, fichiers })) === 2 && f.envois.length === 0)
+  ok('brief-modele : écrit le modèle hors dépôt', (await executer(['brief-modele', 'CRM-00005', chemin], { rpc: f.rpc, afficher, fichiers })) === 0 && disque.get(chemin).includes('## Pour qui'))
+  ok('brief-modele : n’écrase jamais un fichier existant', (await executer(['brief-modele', 'CRM-00005', chemin], { rpc: f.rpc, afficher, fichiers })) === 2)
+  ok('brief : refuse un fichier dans le dépôt', (await executer(['brief', 'CRM-00005', join(RACINE_DEPOT, 'b.txt')], { rpc: f.rpc, afficher, fichiers })) === 2)
+  sortie.length = 0
+  const n0 = f.envois.length
+  ok('brief : fichier valide → music_admin_brief_enregistrer(contenu), version affichée, « PAS encore envoyé »', (await executer(['brief', 'CRM-00005', chemin], { rpc: f.rpc, afficher, fichiers })) === 0 && f.envois[n0].nom === 'music_admin_brief_enregistrer' && f.envois[n0].params.p_contenu.destinataire === 'Fatou' && sortie.some((x) => x.includes('version 1') && x.includes('PAS encore envoyé')))
+  disque.set(chemin, '## Pour qui\nFatou')
+  const n1 = f.envois.length
+  sortie.length = 0
+  ok('brief : fichier invalide → rien envoyé à la base, erreurs lisibles', (await executer(['brief', 'CRM-00005', chemin], { rpc: f.rpc, afficher, fichiers })) === 1 && f.envois.length === n1 && sortie.join().includes('Section manquante'))
+}
+{
+  sortie.length = 0
+  const appelsAlea = []
+  const espion2 = (n) => { appelsAlea.push(n); return randomBytes(n) }
+  const f = faux(() => ({ data: { reference: 'CRM-00005', version: 2, envoye_le: '2026-10-21T08:00:00Z', expire_le: '2026-12-20T08:00:00Z', reenvoi: false }, error: null }))
+  const code = await executer(['brief-envoyer', 'CRM-00005'], { rpc: f.rpc, afficher, source: espion2 })
+  const lien = sortie.find((t) => t.includes('#t='))
+  const jeton = lien && lien.split('#t=')[1]
+  ok('brief-envoyer : randomBytes(32), seule l’empreinte envoyée à music_admin_brief_envoyer', code === 0 && appelsAlea.join() === '32' && f.envois[0].nom === 'music_admin_brief_envoyer' && f.envois[0].params.p_empreinte === createHash('sha256').update(jeton, 'utf8').digest('hex') && !JSON.stringify(f.envois).includes(jeton))
+  ok('brief-envoyer : lien /fr/music/resume#t=<jeton 43 car.> affiché une seule fois, version indiquée', lien === 'https://www.coachredo.app/fr/music/resume#t=' + jeton && /^[A-Za-z0-9_-]{43}$/.test(jeton) && sortie.filter((t) => t.includes('#t=')).length === 1 && sortie.some((t) => t.includes('version 2')))
+  sortie.length = 0
+  const g = faux(() => ({ data: { error: 'CORRECTION_EN_ATTENTE' }, error: null }))
+  ok('brief-envoyer refusé (correction en attente) : aucun lien affiché', (await executer(['brief-envoyer', 'CRM-00005'], { rpc: g.rpc, afficher })) === 1 && !sortie.some((t) => t.includes('#t=')) && sortie.some((t) => t.includes('CORRECTION_EN_ATTENTE')))
+}
+{
+  const avant = afficherSuivi({ reference: 'CRM-00005', statut: 'BRIEF_À_VALIDER', paye_le: '2026-10-20T10:00:00Z', questionnaire_envoye_le: '2026-10-20T18:30:00Z',
+    brief: { version: 1, envoye_le: '2026-10-21T08:00:00Z', correction: 'Le prénom est Fatou Binetou.', correction_le: '2026-10-21T09:00:00Z', valide_le: null, version_validee: null },
+    versions: [{ version: 1, envoye_le: '2026-10-21T08:00:00Z', correction: 'Le prénom est Fatou Binetou.', correction_le: '2026-10-21T09:00:00Z', valide_le: null }] })
+  ok('suivi : correction du client lisible (texte, date, version) + prochaine étape', avant.includes('Le prénom est Fatou Binetou.') && avant.includes('Correction demandée') && avant.includes('(version 1)') && avant.includes('Rédigez la version 2'))
+  ok('suivi avant validation : délai de 5 jours ouvrés NON DÉMARRÉ', avant.includes('NON DÉMARRÉ') && !avant.includes('DÉBUT DU DÉLAI'))
+  const apres = afficherSuivi({ reference: 'CRM-00005', statut: 'BRIEF_VALIDÉ', paye_le: '2026-10-20T10:00:00Z', questionnaire_envoye_le: '2026-10-20T18:30:00Z',
+    brief: { version: 2, envoye_le: '2026-10-21T11:00:00Z', correction: null, correction_le: null, valide_le: '2026-10-21T12:15:00Z', version_validee: 2, consentement_version: 'brief-v0-2026-10' },
+    versions: [{ version: 1, envoye_le: '2026-10-21T08:00:00Z', correction: 'Le prénom est Fatou Binetou.', correction_le: '2026-10-21T09:00:00Z', valide_le: null }, { version: 2, envoye_le: '2026-10-21T11:00:00Z', correction: null, correction_le: null, valide_le: '2026-10-21T12:15:00Z' }] })
+  ok('suivi après validation : version validée 2 + DÉBUT DU DÉLAI = date de validation', apres.includes('Version validée         : 2') && apres.includes('DÉBUT DU DÉLAI DE 5 JOURS OUVRÉS : ' + dateLisible('2026-10-21T12:15:00Z')) && apres.includes('v1 — envoyée') && apres.includes('v2 — envoyée') && apres.includes('VALIDÉE'))
+  ok('dates en heure de Dakar, lisibles', dateLisible('2026-10-21T12:15:00Z') === 'mercredi 21 octobre 2026 à 12:15 (heure de Dakar)', dateLisible('2026-10-21T12:15:00Z'))
+  sortie.length = 0
+  const f = faux(() => ({ data: { reference: 'CRM-00005', statut: 'QUESTIONNAIRE_REÇU', brief: null, versions: [] }, error: null }))
+  ok('commande suivi : appelle music_admin_brief_suivi', (await executer(['suivi', 'CRM-00005'], { rpc: f.rpc, afficher })) === 0 && f.envois[0].nom === 'music_admin_brief_suivi' && sortie.join().includes('aucun'))
 }
 
 console.log(`\n${reussis}/${reussis + echecs} PASS`)
