@@ -10,5 +10,5 @@
     "outDir": "../../.tmp-music-v0-tests",
     "rootDir": "../.."
   },
-  "files": ["api.test.ts"]
+  "files": ["api.test.ts", "questionnaire.test.ts"]
 }

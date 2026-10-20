@@ -1,0 +1,190 @@
+/* Questionnaire privé CoachRedo Music V0 — mobile d'abord.
+   Identité alignée sur la landing Music (marine, or, Instrument Serif). */
+
+.fond {
+  --m-marine: #02182F;
+  --m-surface: #0A2440;
+  --m-or: #F4C049;
+  --m-or-hover: #F7CD66;
+  --m-or-press: #D9A836;
+  --m-blanc: #FDFDFD;
+  --m-texte-2: #A9B6C8;
+  --m-texte-3: #7E8FA7;
+  --m-erreur: #EF8A8A;
+  --m-bord: rgba(255, 255, 255, 0.08);
+  --m-bord-champ: rgba(255, 255, 255, 0.16);
+  --m-serif: var(--font-music-serif), Georgia, 'Times New Roman', serif;
+  --m-texte: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --m-ui: var(--font-jakarta), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--m-marine);
+  color: var(--m-blanc);
+  font-family: var(--m-texte);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+.page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: max(16px, env(safe-area-inset-top)) 18px calc(48px + env(safe-area-inset-bottom));
+}
+
+.marque {
+  font-family: var(--m-ui);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  margin: 8px 0 20px;
+  color: var(--m-blanc);
+}
+.marque span { color: var(--m-or); }
+
+.centre { text-align: center; padding-top: 30vh; color: var(--m-texte-2); }
+
+.progression { margin-bottom: 22px; }
+.progressionTexte { font-family: var(--m-ui); font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--m-or); margin: 0 0 8px; }
+.barre { height: 6px; border-radius: 99px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+.barre span { display: block; height: 100%; border-radius: 99px; background: var(--m-or); transition: width 0.3s ease; }
+
+.etape { display: flex; flex-direction: column; gap: 18px; }
+
+.titre {
+  font-family: var(--m-serif);
+  font-weight: 400;
+  font-size: clamp(32px, 8.5vw, 42px);
+  line-height: 1.1;
+  margin: 0 0 4px;
+  outline: none;
+}
+.sousTitre { font-family: var(--m-serif); font-weight: 400; font-size: 28px; margin: 32px 0 12px; }
+
+.texte { margin: 0; color: var(--m-blanc); }
+.aide { margin: 0; color: var(--m-texte-2); font-size: 15px; }
+.aide p { margin: 0 0 6px; }
+.exemples { margin: 4px 0 0; padding-left: 20px; }
+.exemples li { margin: 2px 0; }
+
+.question { display: block; font-family: var(--m-ui); font-weight: 600; font-size: 17px; line-height: 1.4; margin: 0 0 10px; color: var(--m-blanc); }
+.facultatif { font-weight: 400; color: var(--m-texte-3); }
+
+.champ { display: flex; flex-direction: column; }
+.champ .aide { margin-bottom: 10px; }
+
+.saisie {
+  width: 100%;
+  min-height: 54px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--m-bord-champ);
+  background: var(--m-surface);
+  color: var(--m-blanc);
+  font-family: var(--m-texte);
+  font-size: 17px; /* ≥ 16px : pas de zoom automatique sur iPhone */
+  line-height: 1.5;
+  resize: vertical;
+  appearance: none;
+}
+.saisie::placeholder { color: var(--m-texte-3); }
+.saisie:focus { outline: 2px solid var(--m-or); outline-offset: 1px; border-color: transparent; }
+.compteur { margin: 6px 0 0; font-size: 13px; color: var(--m-texte-3); text-align: right; }
+
+.groupe { border: 0; margin: 0; padding: 0; min-width: 0; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 54px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--m-bord-champ);
+  background: var(--m-surface);
+  cursor: pointer;
+  font-size: 17px;
+  -webkit-tap-highlight-color: transparent;
+}
+.option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.option[data-actif='true'] { border-color: var(--m-or); background: rgba(244, 192, 73, 0.12); }
+.option[data-actif='true']::after { content: '✓'; margin-left: auto; padding-left: 12px; color: var(--m-or); font-weight: 700; }
+.option:has(input:focus-visible) { outline: 2px solid var(--m-or); outline-offset: 2px; }
+
+.prerempli { margin: 0; border: 1px solid var(--m-bord); border-radius: 14px; background: var(--m-surface); }
+.prerempli div { display: flex; justify-content: space-between; gap: 16px; padding: 14px 16px; border-top: 1px solid var(--m-bord); }
+.prerempli div:first-child { border-top: 0; }
+.prerempli dt { color: var(--m-texte-2); font-size: 15px; }
+.prerempli dd { margin: 0; font-weight: 600; text-align: right; }
+
+.souvenirSup { display: flex; flex-direction: column; gap: 6px; }
+.btnAjout {
+  min-height: 54px;
+  border-radius: 12px;
+  border: 1px dashed var(--m-or);
+  background: transparent;
+  color: var(--m-or);
+  font-family: var(--m-ui);
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+}
+.lienAction { align-self: flex-start; background: none; border: 0; padding: 8px 0; min-height: 44px; color: var(--m-or); font-family: var(--m-ui); font-weight: 600; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+.encadre { margin: 0; padding: 14px 16px; border-left: 3px solid var(--m-or); border-radius: 4px 12px 12px 4px; background: rgba(244, 192, 73, 0.08); color: var(--m-texte-2); font-size: 15px; }
+
+.consentement { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 12px; border: 1px solid var(--m-bord-champ); background: var(--m-surface); cursor: pointer; font-size: 16px; }
+.consentement input { flex: none; width: 24px; height: 24px; margin: 2px 0 0; accent-color: var(--m-or); }
+
+.erreurs { margin: 0; padding: 12px 14px; border-radius: 12px; background: rgba(239, 138, 138, 0.12); color: var(--m-erreur); font-size: 15px; }
+.erreurs p { margin: 0; }
+.erreurs p + p { margin-top: 4px; }
+
+.navigation { display: flex; gap: 12px; margin-top: 8px; }
+.btnPrincipal, .btnSecondaire, .btnRetour {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-family: var(--m-ui);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.btnPrincipal { flex: 1; border: 0; background: var(--m-or); color: var(--m-marine); }
+.btnPrincipal:hover { background: var(--m-or-hover); }
+.btnPrincipal:active { background: var(--m-or-press); }
+.btnPrincipal[disabled] { opacity: 0.7; cursor: progress; }
+.btnRetour { flex: 0 0 auto; border: 1px solid var(--m-bord-champ); background: transparent; color: var(--m-blanc); }
+.btnSecondaire { margin-top: 18px; width: 100%; border: 1px solid var(--m-or); background: transparent; color: var(--m-or); }
+.btnPrincipal:focus-visible, .btnRetour:focus-visible, .btnSecondaire:focus-visible, .btnAjout:focus-visible, .lienAction:focus-visible { outline: 2px solid var(--m-blanc); outline-offset: 2px; }
+
+.sauvegarde { min-height: 20px; margin: 0; font-size: 13px; color: var(--m-texte-3); text-align: center; }
+
+.carte { padding: 22px 20px; border-radius: 16px; border: 1px solid var(--m-bord); background: var(--m-surface); display: flex; flex-direction: column; gap: 12px; }
+
+.recap { display: flex; flex-direction: column; gap: 14px; }
+.recapSection { padding: 16px; border-radius: 14px; border: 1px solid var(--m-bord); background: var(--m-surface); }
+.recapEntete { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.recapEntete h3 { margin: 0; font-family: var(--m-ui); font-size: 15px; font-weight: 700; color: var(--m-or); letter-spacing: 0.02em; }
+.recapEntete .lienAction { padding: 0 4px; }
+.recapSection dl { margin: 0; }
+.recapLigne { padding: 8px 0; border-top: 1px solid var(--m-bord); }
+.recapLigne:first-child { border-top: 0; }
+.recapLigne dt { font-size: 13px; color: var(--m-texte-2); margin-bottom: 2px; }
+.recapLigne dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.vide { color: var(--m-texte-3); font-style: italic; }
+.lienTexte { overflow-wrap: anywhere; }
+
+@media (min-width: 720px) {
+  .page { padding-top: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .barre span { transition: none; }
+}
