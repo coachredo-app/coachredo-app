@@ -54,6 +54,10 @@ handoff/
 # mémoire versionnée, jamais Supabase — BENCHMARK-MFR V1 Phase 2A).
 scripts/mfr-benchmark/.ledger/
 
+# Résultats locaux des sanity calls réels (BenchmarkRun + raw provider,
+# état d'exécution — benchmark MFR accéléré).
+scripts/mfr-benchmark/.sanity-results/
+
 # Artefacts locaux du CLI Supabase (project-ref lié, versions de services,
 # URL de pooler) — jamais lus par le code applicatif (voir T6.1), ne
 # doivent pas être versionnés (T6.2).
