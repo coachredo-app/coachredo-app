@@ -1215,3 +1215,19 @@ Explicitement non verrouillé : mécanisme de rattachement à un compte, conserv
 **Conséquence :** aucun code, aucune migration, aucune RPC créés par cette décision. Aucun numéro de migration n'est attribué ni réservé au backend Music à ce stade ; il sera déterminé au moment du code selon l'état réel de `supabase/migrations/`.
 
 **Statut :** VERROUILLÉ CONCEPTUELLEMENT — co-décision QG App + QG Music, aucune implémentation engagée.
+
+---
+
+### D-059 — T-MFR.3D : reprise explicite après ÉCHEC et validation du pipeline réel
+
+**Date :** 2026-10-20
+
+**Décision :** Provider MFR V1 verrouillé sur OpenAI `gpt-6.1-sol` (clôture de la sélection BENCHMARK-MFR V1). Prompt de production `v2`. Une analyse MFR en `ECHEC` reste immutable et auditable indéfiniment — jamais réécrite, jamais supprimée. Une nouvelle tentative pour un cycle donné n'est jamais automatique : elle exige un geste explicite distinct, et n'est possible que si la dernière tentative connue pour ce cycle est `ECHEC`. Chaque reprise est append-only : une nouvelle ligne `mfr_analyses`, jamais une mutation de l'ancienne. Primitive portée par la migration 019, RPC `mfr_relancer_analyse_apres_echec` — verrouillage de concurrence par `FOR UPDATE` sur le cycle puis sur la dernière analyse, refus explicite si une analyse est déjà `EN_COURS` ou si la dernière est déjà `SUCCES`. Le moteur de validation (STRUCTURAL/REFERENTIAL/BUSINESS/EPISTEMIC, D-054/D-057) reste seul souverain sur la réussite d'une analyse : aucune réparation, aucune coercition, aucun contournement, quelle que soit l'origine (première tentative ou reprise).
+
+**REAL E2E validé :** première tentative réelle (prompt v1) → `ECHEC` structurel (SRC dupliqué à l'intérieur d'un même référent). Correction du contrat prompt (règle d'unicité SRC par référent, v2) sans aucun affaiblissement du validateur. Seconde tentative réelle, via la RPC de reprise (prompt v2) → `SUCCES`, graphe complet persisté dans les six tables de structure. La première analyse (`ECHEC`) est restée inchangée tout au long de ce cycle.
+
+**Pourquoi :** fermer T-MFR.3D en prouvant, par un run réel de bout en bout (et non une simulation), que le pipeline provider → validateur → persistance fonctionne, et que l'échec d'une tentative n'est jamais une impasse silencieuse : il reste visible, audité, et récupérable par un geste humain explicite.
+
+**Conséquence :** `src/lib/mfr/provider/openai.ts` (modèle verrouillé), `src/lib/mfr/provider/prompt.ts` (v2, règle SRC), `src/lib/mfr/server/analyse.ts` et `src/lib/mfr/orchestration/lancerAnalyseMfr.ts` (discriminant de mode première analyse/reprise) étendus en conséquence. `mfr_finir_analyse_succes`/`mfr_finir_analyse_echec` (017/018) réutilisées sans aucune modification. Aucune table, colonne, policy ou fonction existante modifiée — migration 019 strictement additive.
+
+**Statut :** T-MFR.3D FERMÉE TECHNIQUEMENT — code et migration commités (`c869f2868765c84ad157e60d04978e886fa5b548`), migration 019 exécutée et vérifiée sur le projet réel. Rendu utilisateur / UX finale MFR restent hors périmètre, chantier ultérieur distinct (T-MFR.4, non ouvert).
