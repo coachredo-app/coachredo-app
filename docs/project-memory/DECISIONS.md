@@ -1189,3 +1189,29 @@ Les 6 cas sont intégralement déductibles du texte canon, aucune complétion pa
 **Conséquence :** aucune migration, aucun SQL, aucune mutation Supabase, aucune nouvelle RPC — `AnalyseGrapheResolu`, `mfr_finir_analyse_succes`/`mfr_finir_analyse_echec` (017/018) **strictement inchangés**. **Explicitement hors périmètre, non ouvert par cette décision** : choix du provider IA ; câblage réel de l'orchestration — aucun fichier de `src/lib/mfr/server/{analyse,cycle}.ts` n'appelle encore ce validateur ; FINISH SUCCESS/FAILURE pas encore réellement invoquées depuis cette nouvelle chaîne ; persistance bout-en-bout non testée contre la base réelle ; rendu/UI utilisateur. Le découpage exact des prochaines tranches n'est pas préjugé par cette décision.
 
 **Statut :** CODE ÉCRIT, COMMITÉ ET POUSSÉ (`12661e3aecdc25b64617ba23c4fb0d3ebcee33ab`) — aucune migration, aucune mutation Supabase. La chaîne complète MFR (provider → orchestration → persistance → rendu) reste un chantier ultérieur distinct, non ouvert.
+
+---
+
+### D-058 — Music V0 : commande sans compte CoachRedo (co-décision QG App + QG Music, tranche D-056.M.1) — verrouillée conceptuellement
+
+**Date :** 2026-10-20 (étude du backend minimal Music V0 par QG Music, vérification de compatibilité avec l'architecture App, formulation finale validée conjointement QG App + QG Music)
+
+**Décision :** Une commande de chanson personnalisée peut être créée, payée (Wave manuel, vérifié par Coach Redouane) et suivie sans compte CoachRedo : `music_orders.user_id` est nullable, avec `ON DELETE RESTRICT` (D-035 : pas de suppression en cascade aveugle).
+
+L’accès du client au questionnaire et au résumé se fait par liens privés à jeton, propres à une commande. Seule l’empreinte du jeton est stockée. Ces liens sont des capacités limitées à une commande, ni une identité, ni un registre d’accès (pas de `music_access`, D-056.J).
+
+Contact déclaré ≠ identité vérifiée : aucun rattachement automatique à `auth.users` par email ou téléphone. Le rattachement ultérieur se fera uniquement par un mécanisme de vérification explicite, à concevoir, conforme à D-056.J.
+
+Aucun système d’identité ou de connexion propre à Music. Aucune modification de `profiles`, de l’auth, de `proxy.ts`, de Plan B, de MPD ni de MFR (D-056.A/B/K).
+
+Tables V0 : `music_orders`, `music_order_contacts`, `music_questionnaires`, `music_briefs`, en cloisonnement fort (RLS active sans policy, RPC `SECURITY DEFINER` réservées à `service_role` ; D-056.F/H). Référence `CRM-XXXXX` attribuée par une séquence PostgreSQL commençant à 5, jamais réutilisée.
+
+Seul point d’entrée public : la création de commande depuis `https://www.coachredo.com`. CORS limité à cette origine, appel d’une RPC dédiée uniquement, validation côté serveur, limitation de débit par le pare-feu Vercel.
+
+Explicitement non verrouillé : mécanisme de rattachement à un compte, conservation et suppression des données Music, Wave API, tableau de bord client.
+
+**Pourquoi :** trancher la co-décision D-056.M.1 (commande Music sans compte CoachRedo) avant tout code Music dans `coachredo-app`, afin de permettre un achat fluide (Wave manuel) sans créer d'identité parallèle ni modifier le socle existant.
+
+**Conséquence :** aucun code, aucune migration, aucune RPC créés par cette décision. Aucun numéro de migration n'est attribué ni réservé au backend Music à ce stade ; il sera déterminé au moment du code selon l'état réel de `supabase/migrations/`.
+
+**Statut :** VERROUILLÉ CONCEPTUELLEMENT — co-décision QG App + QG Music, aucune implémentation engagée.
