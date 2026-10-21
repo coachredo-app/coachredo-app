@@ -1,6 +1,6 @@
 ---
 name: coachredo-music
-description: Checkpoint durable CoachRedo Music après finalisation de l'Album 3 — mission, règles artistiques apprises, enseignements Suno, Albums 1-3 (statuts VALIDÉ/VERROUILLÉ/historique), tracklist et arc narratif complet de l'Album 3, business de chansons personnalisées (idée À ÉTUDIER, non validée), hypothèses tarifaires (non validées), garde-fous voix.
+description: Checkpoint durable CoachRedo Music après finalisation de l'Album 3 — mission, règles artistiques apprises, enseignements Suno, Albums 1-3 (statuts VALIDÉ/VERROUILLÉ/historique), tracklist et arc narratif complet de l'Album 3, chansons personnalisées (produit VALIDÉ en V0, marché de lancement Sénégal, phase pré-lancement), tarif V0 Sénégal validé (29 900 FCFA, Wave manuel ; autres marchés post-V0), garde-fous voix, renvoi vers la Méthode officielle V0.1 des chansons personnalisées (D-062, dont MASTER POCHETTE 3000×3000, D-061).
 metadata:
   type: project-memory
 ---
@@ -8,7 +8,7 @@ metadata:
 # COACHREDO MUSIC — Checkpoint QG
 ## État de référence après finalisation de l'Album 3
 
-Dernière synchronisation dans la mémoire durable : 2026-10-14, à partir du checkpoint source intégral transmis par Coach Redouane (reproduit fidèlement ci-dessous — aucune information complétée par supposition, aucun statut dégradé ni surévalué).
+Dernière synchronisation dans la mémoire durable : 2026-10-14, à partir du checkpoint source intégral transmis par Coach Redouane (reproduit fidèlement ci-dessous — aucune information complétée par supposition, aucun statut dégradé ni surévalué). **Mises à jour du 2026-10-21 (arbitrages QG Music) :** §9 — produit « Chansons personnalisées » VALIDÉ en V0 (pré-lancement) ; §10 — tarif V0 Sénégal validé, autres marchés post-V0 ; §13 — renvoi vers la Méthode officielle V0.1, source de vérité de la production (D-062), dont le MASTER POCHETTE (D-061). Les autres sections sont inchangées ; dans §9 et §10, le texte du checkpoint du 2026-10-14 est conservé comme trace historique.
 
 **Principe de lecture impératif :** les statuts VALIDÉ / VERROUILLÉ / À FAIRE / À ÉTUDIER / NON VALIDÉ / historique-à-revérifier ci-dessous sont ceux du checkpoint source. Ne jamais remplacer une décision VALIDÉE par une hypothèse, ni transformer une hypothèse, un statut historique ou une idée À ÉTUDIER en décision définitive. Ne pas rouvrir une chanson ou une décision artistique verrouillée sans raison réelle. Conserver les enseignements Suno — ils servent aux futurs albums, pas seulement à l'Album 3.
 
@@ -334,7 +334,18 @@ Coach Redouane a écouté la version et l'a décrite comme « magnifique ».
 
 ## 9. Nouveau business — chansons personnalisées
 
-**STATUT EXACT : IDÉE À ÉTUDIER — NON VALIDÉE COMME BUSINESS FINAL.** Ne jamais écrire ni laisser entendre que son lancement est décidé.
+**STATUT EXACT (arbitrage QG Music, 2026-10-21) : PRODUIT VALIDÉ EN V0 — PHASE PRÉ-LANCEMENT.** Ne jamais écrire « produit lancé » ni « commercialisé publiquement » tant que le lancement public n'est pas ouvert.
+
+**État V0 au 2026-10-21 :**
+- produit « Chansons personnalisées » validé en V0 ;
+- marché de lancement : **Sénégal** ;
+- parcours technique Lots 1 à 3 construit (commande sans compte → confirmation Wave manuelle → questionnaire privé → brief validé par le client) ;
+- migrations 020/021/022 exécutées en production et PASS (`DECISIONS.md` D-060) ;
+- **premier E2E réel encore à effectuer** ;
+- **lancement public pas encore ouvert** ;
+- **landing pas encore publiée**.
+
+*Statut historique (checkpoint du 2026-10-14, désormais obsolète, conservé comme trace) : « IDÉE À ÉTUDIER — NON VALIDÉE COMME BUSINESS FINAL ». Le texte ci-dessous date de ce checkpoint.*
 
 **Concept :** service de création de chansons personnalisées pour particuliers.
 
@@ -346,7 +357,17 @@ Coach Redouane a écouté la version et l'a décrite comme « magnifique ».
 
 ---
 
-## 10. Hypothèse tarifaire — NON VALIDÉE
+## 10. Tarification — V0 Sénégal VALIDÉE ; autres marchés post-V0
+
+**Tarif officiellement validé pour le lancement V0 Sénégal (arbitrage QG Music, 2026-10-21) : 29 900 FCFA** — paiement V0 : **Wave manuel** (vérifié par Coach Redouane).
+
+**Non lancés / non validés dans la V0 Sénégal (post-V0) :**
+- Maroc : 499 MAD ;
+- international : 59 € / PayPal.
+
+Le statut « tarif validé » ne vaut **que pour la V0 Sénégal** — ne jamais le généraliser aux autres marchés.
+
+*Trace historique (checkpoint du 2026-10-14) — hypothèse de travail initiale, NON VALIDÉE et non retenue pour la V0 :*
 
 **Décision de travail (non un prix final) :** utiliser l'USD comme prix de référence international, avec affichage/équivalent local selon le pays.
 
@@ -381,3 +402,18 @@ Les droits commerciaux des outils IA/Suno doivent être vérifiés selon l'abonn
 Ordre prévu : (1) enregistrer ce checkpoint dans la mémoire durable du repository CoachRedo ; (2) vérifier que les fichiers de mémoire QG pertinents ont été synchronisés ; (3) confirmer à Coach Redouane exactement quels fichiers ont été modifiés ; (4) ensuite seulement, ouvrir le chantier du business de chansons personnalisées.
 
 **Le futur chantier business (non engagé par ce checkpoint) devra étudier notamment :** demande marché, concurrence, nom/marque, positionnement, personas, offres, tarification par pays, coûts réels, consommation crédits IA, temps humain par commande, marge, politique de révisions, voix IA, voix client, consentements, droits commerciaux, workflow de commande, questionnaire client, paiement, livraison, upsell vidéo, page de vente, TikTok, Meta Ads, automatisation, intégration éventuelle à l'écosystème CoachRedo.
+
+---
+
+## 13. Chansons personnalisées — méthode officielle et MASTER POCHETTE (renvoi)
+
+**Source de vérité unique pour la production des chansons personnalisées : Méthode officielle V0.1** (D-062), fichier Markdown `CoachRedo Music HQ/Chansons Personnalisées/00_METHODE_OFFICIELLE/COACHREDO_MUSIC_METHODE_CHANSONS_PERSONNALISEES_V0.1_2026-10-21.md`. Un export DOCX identique sert à la consultation ; la V0 du 2026-10-18 reste conservée comme historique.
+
+Toute session chargée d'une chanson personnalisée applique cette méthode, en particulier :
+
+- **VALIDÉ = VERROUILLÉ** — en cas de doute sur un fichier ou une version : STOP → demander confirmation à Coach Redouane ;
+- pipeline BRIEF VALIDÉ → PRODUCTION ARTISTIQUE → MASTER AUDIO LOCKED → COVER MASTER LOCKED → PACKAGING QA → PRÊTE À LIVRER (checkpoints internes, pas des statuts en base) ;
+- **MASTER POCHETTE 3000×3000 strict** (D-061), logo PNG officiel superposé tel quel, identité réelle préservée ;
+- PDF avec message personnalisé obligatoire.
+
+Les détails opérationnels (règles, checklists, arborescence) ne sont **pas** dupliqués ici : seule la méthode fait foi.

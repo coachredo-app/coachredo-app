@@ -7,7 +7,7 @@ metadata:
 
 # DECISIONS — CoachRedo App
 
-Dernière mise à jour : 2026-09-29 (V17 — D-029 ajoutée, verrouillage de l'architecture logique de persistance MPD V3 → MFR V3, T1→T3)
+Dernière mise à jour : 2026-10-21 (D-060 ajoutée : couche DB Music V0 — migrations 020 → 021 → 022 exécutées et vérifiées en production ; D-061 ajoutée : MASTER POCHETTE 3000×3000 ; D-062 ajoutée : méthode obligatoire de production des chansons personnalisées V0.1 ; D-058 annotée d'un renvoi vers D-060)
 
 Ce registre ne contient que les décisions structurantes — pas les discussions intermédiaires. Chaque entrée : sujet, décision, pourquoi, conséquence, statut. Une décision remplacée reste visible avec `Statut: SUPERSEDED`, jamais supprimée.
 
@@ -1214,7 +1214,7 @@ Explicitement non verrouillé : mécanisme de rattachement à un compte, conserv
 
 **Conséquence :** aucun code, aucune migration, aucune RPC créés par cette décision. Aucun numéro de migration n'est attribué ni réservé au backend Music à ce stade ; il sera déterminé au moment du code selon l'état réel de `supabase/migrations/`.
 
-**Statut :** VERROUILLÉ CONCEPTUELLEMENT — co-décision QG App + QG Music, aucune implémentation engagée.
+**Statut :** VERROUILLÉ CONCEPTUELLEMENT — co-décision QG App + QG Music, aucune implémentation engagée. *(Annotation 2026-10-21 : implémentée par les Lots Music V0 1 à 3 puis déployée en base de production — voir D-060, qui documente aussi les écarts d'implémentation par rapport au texte ci-dessus, notamment une 5ᵉ table `music_brief_versions`. Texte d'origine conservé tel quel.)*
 
 ---
 
@@ -1231,3 +1231,82 @@ Explicitement non verrouillé : mécanisme de rattachement à un compte, conserv
 **Conséquence :** `src/lib/mfr/provider/openai.ts` (modèle verrouillé), `src/lib/mfr/provider/prompt.ts` (v2, règle SRC), `src/lib/mfr/server/analyse.ts` et `src/lib/mfr/orchestration/lancerAnalyseMfr.ts` (discriminant de mode première analyse/reprise) étendus en conséquence. `mfr_finir_analyse_succes`/`mfr_finir_analyse_echec` (017/018) réutilisées sans aucune modification. Aucune table, colonne, policy ou fonction existante modifiée — migration 019 strictement additive.
 
 **Statut :** T-MFR.3D FERMÉE TECHNIQUEMENT — code et migration commités (`c869f2868765c84ad157e60d04978e886fa5b548`), migration 019 exécutée et vérifiée sur le projet réel. Rendu utilisateur / UX finale MFR restent hors périmètre, chantier ultérieur distinct (T-MFR.4, non ouvert).
+
+---
+
+### D-060 — Music V0 : couche base de données déployée et vérifiée en production (migrations 020 → 021 → 022)
+
+**Date :** 2026-10-21
+
+**Décision / constat :** les migrations Music V0 `020_music_v0_commandes.sql`, `021_music_v0_questionnaire.sql` et `022_music_v0_brief.sql` (commits Lots 1 à 3 : `e1bcd0d7206ef9c27e0f8c6d0cc738e39659b9fe`, `8ab629bb8bdd6e030043e7fed0baa2b3f89ae936`, `10369f828f2144cf2d4181a84cc561dfefa1aab6`, poussés sur `origin/main`) ont été exécutées sur le projet réel `ggeohumiyxqhknnftydi` / PlanB App le 2026-10-21, dans l'ordre strict **020 → contrôle → 021 → contrôle → 022 → contrôle**, chaque étape sur GO QG Music distinct.
+
+**Méthode :** `psql -X -1 -v ON_ERROR_STOP=on` (transaction unique, arrêt et annulation complète à la première erreur), `PGOPTIONS='-c lock_timeout=5s'`, Session Pooler 5432, `sslmode=require` — exécuté par Coach Redouane dans son propre Terminal, mot de passe saisi par lui seul et jamais transmis. Registre `supabase_migrations.schema_migrations` non touché (Stratégie B, D-050 — toujours volontairement absent). Fichiers exécutés identiques au préflight (SHA-256 vérifiés avant chaque étape).
+
+**Préflight (lecture seule, 2026-10-20/21) :** 019 confirmée appliquée (MD5 du corps de `mfr_relancer_analyse_apres_echec` identique au fichier) ; aucun objet `music*` préexistant (aucune collision) ; prérequis vérifiés (`postgres` non superuser mais `CREATE` sur `public`, `REFERENCES` sur `auth.users(id)`, `gen_random_uuid()`/`sha256()` natifs, privilèges par défaut du schéma `public` accordant tout à `anon`/`authenticated`/`service_role` — d'où les `REVOKE` explicites des migrations). Aucune sauvegarde de plateforme disponible constatée (liste vide, PITR désactivé).
+
+**Sauvegarde :** sauvegarde logique de `public` réalisée avant 020 (`pg_dump` structure seule + copie complète au format custom), vérifiée (taille non nulle, lisible par `pg_restore --list`, 52 tables), **conservée hors Git** dans un dossier local privé du poste de Coach Redouane (disque chiffré). Elle contient des données personnelles : jamais dans un dépôt, un drive partagé ou une messagerie.
+
+**Résultats :** **020 PASS, 021 PASS, 022 PASS** — contrôles post-migration conformes, aucune section divergente. État final : **5 tables** (`music_orders`, `music_order_contacts`, `music_questionnaires`, `music_briefs`, `music_brief_versions`), **1 séquence** (`music_order_ref_seq`), **17 fonctions** (16 RPC `SECURITY DEFINER`, `search_path = public, pg_temp`, `EXECUTE` réservé à `service_role` ; 1 fonction interne de validation du brief exécutable par aucun rôle) ; MD5 du corps de chaque fonction identique au fichier ; RLS active sur les 5 tables, 0 policy, aucun privilège de table pour `PUBLIC`/`anon`/`authenticated`/`service_role` ; tables vides.
+
+**Aucun impact constaté sur l'existant hors Music :** 019 inchangée ; tables `public` 52 → 57 avec empreinte de la liste des tables hors Music identique ; empreinte des fonctions hors Music identique ; 45 policies hors Music inchangées ; clés étrangères vers `auth.users` 42 → 43 (seule ajoutée : `music_orders.user_id`, `ON DELETE RESTRICT`, `user_id` vide en V0).
+
+**Séquence CRM :** `last_value = 5`, `is_called = false` — **CRM-00005 non consommée, réservée au premier E2E réel**. Interdit en production hors vraie commande ou E2E décidé : appeler `music_creer_commande` ou `nextval` « pour tester » (un `ROLLBACK` ne remet pas la séquence en arrière).
+
+**Anomalie résolue (outillage uniquement) :** le premier postcheck 020 signalait un faux écart sur les contraintes — PostgreSQL 18 (base locale de référence) enregistre les `NOT NULL` dans `pg_constraint`, PostgreSQL 17 (production) non. Les 25 vraies contraintes étaient identiques ; le générateur ignore désormais ces entrées (le caractère NOT NULL reste vérifié par la section colonnes). Aucune action en production.
+
+**Écarts d'implémentation par rapport au texte de D-058 (documentés, non contradictoires) :** (1) 5ᵉ table `music_brief_versions` (instantané immuable de chaque version envoyée et de sa correction) en plus des 4 tables listées ; (2) jetons de lien privé générés uniquement côté serveur Node (`crypto.randomBytes(32)`, base64url), seule l'empreinte SHA-256 stockée ; (3) capacité unique par commande, réémise à chaque envoi d'une version du brief (tout lien antérieur devient invalide) — aucun jeton ni identité supplémentaire ; (4) `validated_at` du brief est le **seul** point de départ du délai de 5 jours ouvrés (ni paiement, ni questionnaire, ni envoi du brief).
+
+**Outillage conservé :** `scripts/music-v0/production/` — `precheck.sql`, `postcheck-020.sql`, `postcheck-021.sql`, `postcheck-022.sql` (SELECT uniquement), `generer.py` et `valider.sh` (régénération et validation sur base locale jetable, jamais Supabase).
+
+**État applicatif :** app Music (`coachredo-app`, routes `/api/music/*`, pages `/fr/music/questionnaire` et `/fr/music/resume`) déjà déployée par Vercel depuis `main`. Landing publique (`coachredo-vitrine`, commit `d0ae070` sur la branche `feat/music-personalized-songs-v0`) **toujours non publiée**.
+
+**Pourquoi :** rendre la couche de données Music V0 opérationnelle en production sans risque pour l'existant, avec une preuve vérifiable à chaque étape plutôt qu'une exécution groupée.
+
+**Conséquence :** restent à faire, chacun sur GO distinct : E2E réel (consommera CRM-00005) ; règles de limitation de débit du pare-feu Vercel sur `/api/music/commandes`, `/api/music/questionnaire` et `/api/music/resume` ; politique de confidentialité et mentions de collecte (bloquantes avant les vrais clients) ; publication de la landing. Dette documentaire non bloquante : les en-têtes des fichiers 020/021/022 affirment encore « MIGRATION CANDIDATE — NON EXÉCUTÉE » — cette décision fait foi, pas ces commentaires.
+
+**Statut :** COUCHE DB MUSIC V0 DÉPLOYÉE ET VÉRIFIÉE EN PRODUCTION — E2E réel non encore réalisé.
+
+---
+
+### D-061 — CoachRedo Music : MASTER POCHETTE 3000×3000 pour toutes les pochettes personnalisées
+
+**Date :** 2026-10-21
+
+**Décision :** à partir de maintenant, toutes les pochettes des chansons personnalisées utilisent un **MASTER POCHETTE 3000×3000**.
+
+- **Identité fixe :** le haut et le bas restent strictement identiques d'une chanson à l'autre — mêmes emplacements, proportions, marges, typographie/signature et éléments de marque.
+- **Logo :** exclusivement le PNG officiel CoachRedo Music fourni par la marque, superposé tel quel ; jamais recréé, redessiné ni interprété par une IA.
+- **Zone centrale variable :** photo/sujet, univers artistique, titre de la chanson.
+- **Photos clients :** préserver le visage et l'identité visuelle de la personne ; ne jamais générer un nouveau visage à sa place.
+- **QA obligatoire avant livraison :** 3000×3000 ; logo officiel exact ; haut/bas conformes au Master ; titre exact ; visage préservé ; aucun texte parasite.
+
+**Pourquoi :** remplacer la pratique précédente, où l'identité graphique pouvait varier d'une pochette à l'autre, par une identité de marque constante et contrôlable.
+
+**Conséquence :** premier dossier concerné opérationnellement : Aicha — « N'OUBLIE JAMAIS ». Ni le fichier Master ni de nouvel asset ne sont ajoutés à Git par cette décision (instruction distincte requise) ; seule la règle est documentée. Le logo officiel existant est celui archivé dans `public/assets/brand/coachredo-music/` (commit `806a932`). Détail opérationnel : méthode officielle V0.1 §13 (source canonique, voir D-062).
+
+**Statut :** RÈGLE OFFICIELLE EN VIGUEUR — QG Music.
+
+---
+
+### D-062 — Méthode obligatoire de production des chansons personnalisées V0.1
+
+**Date :** 2026-10-21 (arbitrage QG Music après le retour d'expérience d'une commande livrée)
+
+**Décision :** la production de toute chanson personnalisée suit obligatoirement la **Méthode officielle V0.1**. Sa **source canonique est un fichier Markdown** : `CoachRedo Music HQ/Chansons Personnalisées/00_METHODE_OFFICIELLE/COACHREDO_MUSIC_METHODE_CHANSONS_PERSONNALISEES_V0.1_2026-10-21.md` (archive privée hors Git, à côté de la V0). Un export DOCX au contenu textuel identique sert à la consultation ; en cas d'écart, le Markdown fait foi. La V0 du 2026-10-18 (DOCX) reste conservée intacte comme historique. Ce n'est pas encore une V1.
+
+- **VALIDÉ = VERROUILLÉ** (principe supérieur) : un élément validé par Coach Redouane n'est plus recréé, remplacé, interprété ni « amélioré » silencieusement ; un fichier explicitement désigné est utilisé exactement. Si le fichier exact n'est plus accessible, si plusieurs versions sont possibles, si la session n'est pas certaine du fichier validé ou si une modification risque d'altérer un élément validé : **STOP → demander confirmation à Coach Redouane**.
+- **Pipeline obligatoire :** BRIEF VALIDÉ → PRODUCTION ARTISTIQUE → MASTER AUDIO LOCKED → COVER MASTER LOCKED → PACKAGING QA → PRÊTE À LIVRER. Les trois étapes intermédiaires sont des **checkpoints internes** du statut `EN_PRODUCTION`, consignés dans le dossier de commande — **pas de nouveaux statuts en base, aucune migration**.
+- **MASTER AUDIO LOCKED / COVER MASTER LOCKED :** fichier exact identifié, nom final non ambigu, SHA-256 calculé et consigné ; toutes les étapes suivantes utilisent ce fichier (ou un dérivé consigné). La **session** vérifie elle-même les empreintes avant livraison — Coach Redouane n'a pas à les comparer.
+- **PACKAGING QA :** checklist obligatoire avant PRÊTE À LIVRER (audio, pochette, MP3 — bon audio, une seule pochette réellement embarquée, titre, artiste CoachRedo Music, lisibilité —, WAV, PDF, cohérence, ouverture réelle des fichiers finaux).
+- **Protection de l'identité réelle :** lorsque le visage réel doit être conservé, l'identité de la personne est préservée ; l'IA peut contribuer à l'univers, au décor ou à d'autres éléments, mais ne remplace ni ne reconstruit le visage réel ; photo originale ou compositing conservant le visage ; toute modification susceptible d'altérer l'identité nécessite la confirmation de Coach Redouane.
+- **PDF :** structure standard obligatoire — pochette officielle, **message personnalisé obligatoire**, paroles propres sans balises de production, identité/signature CoachRedo Music. Le message peut reformuler, relier et embellir les informations validées, jamais inventer un souvenir, un fait familial, une promesse ni une déclaration importante attribuée au client.
+- **Méthode artistique :** FAITS → ÉMOTIONS → IMAGES → PAROLES ; classement A / B / C avec critères ; refrain simple, émotionnel, mémorisable, chantable et personnel ; carte dynamique obligatoire avant Suno (sans structure imposée) ; diagnostic écrit avant chaque nouvelle génération, ne modifiant que les paramètres concernés et comparant à la meilleure version précédente ; goûts du destinataire ≠ direction artistique ; référence musicale traduite en caractéristiques recherchées, jamais en instruction de copie.
+- **MASTER POCHETTE 3000×3000 strict** (D-061) intégré à la méthode.
+- **Contradictions de la V0 corrigées :** offre V0 = Sénégal uniquement (29 900 FCFA, Wave manuel ; Maroc 499 MAD et international 59 €/PayPal post-V0) ; statuts alignés sur la base de production ; arborescence et noms harmonisés avec le README de l'archive.
+
+**Pourquoi :** permettre à toute nouvelle session chargée d'une chanson personnalisée de suivre le même processus sans que Coach Redouane ait à recorriger les mêmes erreurs (visage modifié, mauvaise photo réutilisée, anciennes versions réutilisées, corrections artistiques évitables), en protégeant à la fois la qualité émotionnelle, artistique et opérationnelle.
+
+**Conséquence :** le README de l'archive désigne explicitement le Markdown V0.1 comme source de vérité. Pour les détails opérationnels (dont le MASTER POCHETTE), `COACHREDO_MUSIC.md` renvoie vers la méthode : une seule source de vérité. Aucun code, aucune migration, aucune RPC. L'archivage du dossier de la commande à l'origine de ce retour d'expérience sera traité séparément, sans référence CRM attribuée à ce stade (CRM-00005 reste réservée au premier E2E, D-060).
+
+**Statut :** MÉTHODE OFFICIELLE V0.1 EN VIGUEUR — QG Music.
+
