@@ -90,6 +90,15 @@ const req = (corps: unknown, extra: Partial<{ methode: string; origine: string |
   corps: typeof corps === 'string' ? corps : JSON.stringify(corps),
 })
 
+// ── Rappel CGV / confidentialité à la validation (B+C) ──
+{
+  ok('validation : texte et version de consentement inchangés (brief-v0-2026-10)', VALIDATION_BRIEF_VERSION === 'brief-v0-2026-10')
+  const page = readFileSync(join(process.cwd(), 'src/app/[locale]/music/resume/ResumeMusic.tsx'), 'utf8')
+  ok('page : rappel des conséquences de la validation avec liens CGV et confidentialité',
+    page.includes('data-rappel-cgv') && page.includes('href={URL_CGV}') && page.includes('href={URL_CONFIDENTIALITE}'))
+  ok('page : rappel « changement d’avis » et « nouvelle commande »', page.includes('changement d’avis') && page.includes('nouvelle commande'))
+}
+
 async function testsApi() {
   // Lecture client
   {

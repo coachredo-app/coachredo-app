@@ -11,6 +11,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MAX_CORRECTION, TEXTE_VALIDATION_BRIEF, type EtatBrief } from '@/lib/music/brief'
+import { URL_CGV, URL_CONFIDENTIALITE } from '@/lib/music/legal'
 import s from '../questionnaire/questionnaire.module.css'
 import r from './resume.module.css'
 
@@ -194,6 +195,11 @@ export default function ResumeMusic() {
               <input type="checkbox" checked={accord} onChange={(e) => { setAccord(e.target.checked); setErreur('') }} data-accord />
               <span>{TEXTE_VALIDATION_BRIEF}</span>
             </label>
+            <p className={s.aide} data-rappel-cgv>
+              En validant, vous lancez la création de votre chanson : un changement d’avis ne donne alors plus lieu à remboursement, et une nouvelle demande (souvenir, message, style ou direction) fait l’objet d’une nouvelle commande.
+              Voir les <a className={s.lienLegal} href={URL_CGV} target="_blank" rel="noopener noreferrer">conditions générales de vente</a> et
+              la <a className={s.lienLegal} href={URL_CONFIDENTIALITE} target="_blank" rel="noopener noreferrer">politique de confidentialité</a>.
+            </p>
             {erreur && <p className={s.erreurs} role="alert" data-erreur>{erreur}</p>}
             <button type="button" className={s.btnPrincipal} onClick={valider} disabled={enCours} aria-busy={enCours} data-valider>
               {enCours ? 'Validation en cours…' : 'Valider mon histoire'}

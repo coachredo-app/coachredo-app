@@ -8,9 +8,10 @@
 
 import { createHash, randomBytes } from 'node:crypto'
 import {
-  CONSENT_VERSION, LIMITES, reponsesVides, validerReponses, lienInspirationValide, etapesIncompletes, normaliserTexte,
+  CONSENT_VERSION, LIMITES, TEXTE_CONSENTEMENT, reponsesVides, validerReponses, lienInspirationValide, etapesIncompletes, normaliserTexte,
   type Reponses,
 } from '../../src/lib/music/questionnaire'
+import { CGV_VERSION, URL_CGV, URL_CONFIDENTIALITE } from '../../src/lib/music/legal'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { ORIGINES_QUESTIONNAIRE, traiterQuestionnaire, type DependancesQuestionnaire, type ResultatRpc } from '../../src/lib/music/questionnaireApi'
@@ -161,6 +162,21 @@ const req = (corps: unknown, extra: Partial<{ methode: string; origine: string |
   typeContenu: extra.typeContenu === undefined ? 'application/json' : extra.typeContenu,
   corps: typeof corps === 'string' ? corps : JSON.stringify(corps),
 })
+
+// ── Consentement, version et CGV (B+C) ──
+{
+  ok('consentement : version au format accepté par la base (^[a-z0-9.-]{1,40}$)', /^[a-z0-9.-]{1,40}$/.test(CONSENT_VERSION), CONSENT_VERSION)
+  ok('consentement : version nouvelle, distincte de v0-2026-10', CONSENT_VERSION !== 'v0-2026-10')
+  ok('consentement : la version enregistrée inclut la version des CGV', CONSENT_VERSION.endsWith('.' + CGV_VERSION), CONSENT_VERSION)
+  ok('consentement : le texte affiché cite la version des CGV et la politique de confidentialité',
+    TEXTE_CONSENTEMENT.includes('(version ' + CGV_VERSION + ')') && TEXTE_CONSENTEMENT.includes('politique de confidentialité'))
+  ok('CGV : version au format attendu', /^cgv-music-v[0-9]+-[0-9]{4}-[0-9]{2}$/.test(CGV_VERSION), CGV_VERSION)
+  ok('liens légaux : pages publiques de la vitrine en https', URL_CGV === 'https://www.coachredo.com/music/cgv' && URL_CONFIDENTIALITE === 'https://www.coachredo.com/music/confidentialite')
+  const page = readFileSync(join(process.cwd(), 'src/app/[locale]/music/questionnaire/QuestionnaireMusic.tsx'), 'utf8')
+  ok('page : liens CGV et confidentialité affichés à l’étape du consentement',
+    page.includes('data-liens-legaux') && page.includes('href={URL_CGV}') && page.includes('href={URL_CONFIDENTIALITE}'))
+  ok('page : liens légaux ouverts sans Referer', (page.match(/rel="noopener noreferrer"/g) ?? []).length >= 2)
+}
 
 async function testsApi() {
   // Jeton valide : chargement + préremplissage, sans coordonnée

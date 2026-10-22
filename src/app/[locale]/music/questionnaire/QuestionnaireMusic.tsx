@@ -26,6 +26,7 @@ import {
   type CleDetail,
   type Reponses,
 } from '@/lib/music/questionnaire'
+import { URL_CGV, URL_CONFIDENTIALITE } from '@/lib/music/legal'
 import s from './questionnaire.module.css'
 
 const API = '/api/music/questionnaire'
@@ -321,6 +322,10 @@ export default function QuestionnaireMusic() {
               <input type="checkbox" checked={consentement} onChange={(e) => { setConsentement(e.target.checked); setErreurEnvoi('') }} data-consentement />
               <span>{TEXTE_CONSENTEMENT}</span>
             </label>
+            <p className={s.aide} data-liens-legaux>
+              Consultez la <a className={s.lienLegal} href={URL_CONFIDENTIALITE} target="_blank" rel="noopener noreferrer">politique de confidentialité</a> et
+              les <a className={s.lienLegal} href={URL_CGV} target="_blank" rel="noopener noreferrer">conditions générales de vente</a>.
+            </p>
             <p className={s.aide}>Une fois envoyées, vos réponses ne pourront plus être modifiées depuis ce lien.</p>
           </>
         )}

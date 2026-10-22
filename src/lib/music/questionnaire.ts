@@ -11,11 +11,18 @@
 //   les champs obligatoires peuvent encore être vides ;
 // - envoi : idem + champs obligatoires des 8 étapes.
 
+import { CGV_VERSION } from './legal'
+
 export const FORM_VERSION = 'v0'
-/** Version du texte de consentement affiché à l'étape 8. */
-export const CONSENT_VERSION = 'v0-2026-10'
+/**
+ * Version du texte de consentement affiché à l'étape 8, enregistrée avec
+ * l'envoi (consent_version, format base ^[a-z0-9.-]{1,40}$). Elle inclut la
+ * version des CGV acceptées : la preuve d'acceptation est ainsi stockée et
+ * horodatée avant toute production. Historique : 'v0-2026-10' (sans CGV).
+ */
+export const CONSENT_VERSION = 'v0.1-2026-10.' + CGV_VERSION
 export const TEXTE_CONSENTEMENT =
-  'J’accepte que CoachRedo Music utilise les informations de ce questionnaire, y compris les informations personnelles ou sensibles que je choisis de partager, uniquement pour créer ma chanson.'
+  'J’accepte que CoachRedo Music utilise les informations de ce questionnaire, y compris les informations personnelles ou sensibles que je choisis de partager, uniquement pour créer ma chanson, dans les conditions de la politique de confidentialité. J’accepte les conditions générales de vente CoachRedo Music (version ' + CGV_VERSION + ').'
 
 export const NB_ETAPES = 8
 export const MAX_SOUVENIRS_SUPPLEMENTAIRES = 2
