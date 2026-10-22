@@ -341,7 +341,7 @@ Coach Redouane a écouté la version et l'a décrite comme « magnifique ».
 - marché de lancement : **Sénégal** ;
 - parcours technique Lots 1 à 3 construit (commande sans compte → confirmation Wave manuelle → questionnaire privé → brief validé par le client) ;
 - migrations 020/021/022 exécutées en production et PASS (`DECISIONS.md` D-060) ;
-- **premier E2E réel encore à effectuer** ;
+- **premier E2E réel PASS le 2026-10-22** (CRM-00005, conservée comme commande E2E — `DECISIONS.md` D-064) ;
 - **lancement public pas encore ouvert** ;
 - **landing pas encore publiée**.
 

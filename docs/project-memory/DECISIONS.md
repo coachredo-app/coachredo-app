@@ -1328,3 +1328,28 @@ Explicitement non verrouillé : mécanisme de rattachement à un compte, conserv
 
 **Statut :** T-MFR.4A FERMÉE TECHNIQUEMENT — code et migration commités (`a2a18c394332ce22fa86f5a074706e7d7d8552e2`), migration 023 exécutée et vérifiée sur le projet réel. Prochaine tranche App : **T-MFR.4B — CURATION HUMAINE** (sélection 0-3 directions parmi `PRESENTER_MAINTENANT` + confirmation/retrait de la recommandation IA), non ouverte par cette décision. T-MFR.5 (rédaction) reste après T-MFR.4B.
 
+---
+
+### D-064 — Music V0 : E2E réel CRM-00005 PASS et postcheck global de production PASS
+
+**Date :** 2026-10-22
+
+**Constat :** premier E2E réel de bout en bout exécuté en production sur la commande **CRM-00005**, étape par étape, chaque écriture sur GO QG Music distinct, chaque contrôle en lecture seule garantie (`SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY` + garde `transaction_read_only = on` ; `PGOPTIONS` n'est pas transmis par le pooler Supabase, voir Dette).
+
+**Parcours réellement testé :** commande par l'endpoint public (`curl`, `Origin: https://www.coachredo.com`, HTTP 201, CRM-00005) → rejeu idempotent (même `cle_idempotence`, HTTP 200, aucune nouvelle ligne, séquence non avancée) → paiement **simulé** (`admin.mjs confirmer`, `ref_wave = E2E-SIMULATION-SANS-PAIEMENT`, aucun Wave réel) → questionnaire privé sans compte dans le navigateur (8 étapes, soumission, verrouillage en lecture seule) → lecture admin fidèle, sans coordonnées → brief V1 rédigé à la main puis envoyé → **correction client** sur la V1 → V2 → envoi → **validation finale client** → `BRIEF_VALIDÉ`.
+
+**Résultat final (contrôlé en lecture seule) :** compteurs commandes / contacts / questionnaires / briefs / versions = 1/1/1/1/2 ; séquence `last_value = 5`, `is_called = true` (CRM-00006 non consommée) ; brief courant version 2, `validated_version = 2`, consentement `brief-v0-2026-10` ; V1 figée avec sa correction, jamais validée ; V2 figée et validée ; aucune V3 ; questionnaire et paiement inchangés ; `user_id` null ; délai de 5 jours ouvrés démarré le **2026-10-22 à 12:41:53 UTC (heure de Dakar)** — `validated_at` du brief, de la V2 figée et de la commande identiques.
+
+**Incident maîtrisé :** le premier lien questionnaire a été recopié par erreur dans une conversation QG. Il a été considéré comme exposé, jamais ouvert, et invalidé par `admin.mjs regenerer` (seule l'empreinte a été remplacée ; référence, paiement et séquence prouvés inchangés). Règle confirmée : un lien privé ne quitte jamais le poste local.
+
+**Postcheck global :** 020/021/022 `conforme: true` (seuls écarts attendus : tables non vides, séquence consommée). Hors Music : la migration MFR **024** (T-MFR.4B) avait été appliquée en production pendant l'E2E, avant que le gel Music prenne effet. La chronologie a été corrigée par le QG App/MFR, qui avait d'abord indiqué « 024 non appliquée ». Attribution établie objet par objet : 2 tables, 2 fonctions (MD5 identiques au fichier local `024_mfr_curation_humaine.sql`), 1 trigger, index, contraintes et grants. Aucun objet préexistant modifié, aucune policy, aucune FK vers `auth.users`. Une fois exclus ces seuls objets 024, les empreintes hors Music retrouvent exactement les baselines du précheck (`ef51260412fca08053edd760904eff65` / `72f4380cf227f4e076f8a2306a892635`) ; 59 tables, 45 policies hors Music, 43 FK vers `auth.users`, 93 objets Music, Music 5/1/17. Limite : ces empreintes ne mesurent que les noms de tables et le corps des fonctions hors Music.
+
+**Décisions QG :** E2E CRM-00005 **VALIDÉ ET CLÔTURÉ** ; CRM-00005 **conservée définitivement** en production comme commande E2E (aucun nettoyage) ; aucun rollback de la 024 ; **gel de la production MFR levé** à compter du 2026-10-22, après ce postcheck. La prochaine vraie commande recevra **CRM-00006**.
+
+**Non couvert par cet E2E (par construction) :** formulaire de la landing et transfert WhatsApp (landing non publiée, commande créée par `curl`), vrai paiement Wave (paiement simulé, décision QG), limitation de débit (règles du pare-feu Vercel non encore posées).
+
+**Dette et constats consignés, non corrigés par cette décision :** (1) `PGOPTIONS='-c …'` n'est pas transmis par le pooler Supabase : le `lock_timeout` 5 s annoncé par D-060 n'a probablement pas été appliqué (résultats 020/021/022 non remis en cause ; méthode à corriger dans la documentation) ; (2) UX : l'étape 5 du questionnaire est trop dense, la scinder en « ambiance » puis « style + voix » (9 étapes) avant le lancement ; (3) la fonction de trigger de la 024 garde les privilèges `EXECUTE` par défaut (non exploitable ; à signaler au QG App/MFR).
+
+**Conséquence :** aucune nouvelle architecture Music. Le prochain travail Music porte uniquement sur les blockers avant lancement public : limitation de débit par le pare-feu Vercel (`/api/music/commandes`, `/questionnaire`, `/resume`), politique de confidentialité et mentions de collecte, alignement CGV et juridique, publication de la landing.
+
+**Statut :** E2E MUSIC V0 PASS — LANCEMENT PUBLIC NON OUVERT.
