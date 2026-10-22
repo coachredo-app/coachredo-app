@@ -8,7 +8,7 @@
 
 import { createHash, randomBytes } from 'node:crypto'
 import {
-  CONSENT_VERSION, LIMITES, TEXTE_CONSENTEMENT, reponsesVides, validerReponses, lienInspirationValide, etapesIncompletes, normaliserTexte,
+  CONSENT_VERSION, ETAPE_ENVOI, ETAPE_RECAPITULATIF, FORM_VERSION, LIMITES, NB_ETAPES, TEXTE_CONSENTEMENT, ecranDuChamp, reponsesVides, validerReponses, lienInspirationValide, etapesIncompletes, normaliserTexte,
   type Reponses,
 } from '../../src/lib/music/questionnaire'
 import { CGV_VERSION, URL_CGV, URL_CONFIDENTIALITE } from '../../src/lib/music/legal'
@@ -54,7 +54,8 @@ const erreurs = (v: ReturnType<typeof validerReponses>) => (v.ok ? [] : v.erreur
   ok('émotion hors liste refusée', !validerReponses({ etape4: { emotions: ['Colère'] } }, 'brouillon').ok)
   ok('émotion en double refusée', !validerReponses({ etape4: { emotions: ['Sourire', 'Sourire'] } }, 'brouillon').ok)
   ok('aspect d’inspiration hors liste refusé', !validerReponses({ etape6: { a_inspiration: 'Oui', aspects: ['Le clip'] } }, 'brouillon').ok)
-  ok('étape courante hors bornes refusée', !validerReponses({ etape_courante: 9 }, 'brouillon').ok && !validerReponses({ etape_courante: 1.5 }, 'brouillon').ok)
+  ok('étape courante 9 (dernier écran) acceptée', validerReponses({ etape_courante: 9 }, 'brouillon').ok)
+  ok('étape courante hors bornes refusée', !validerReponses({ etape_courante: 10 }, 'brouillon').ok && !validerReponses({ etape_courante: 0 }, 'brouillon').ok && !validerReponses({ etape_courante: 1.5 }, 'brouillon').ok)
   const norm = validerReponses({ etape2: { souvenir_principal: '  Ligne 1\r\n\r\n\r\n\r\nLigne\u0000 2‮  ' } }, 'brouillon')
   ok('normalisation : retours unifiés, caractères de contrôle et de direction retirés', norm.ok && norm.reponses.etape2.souvenir_principal === 'Ligne 1\n\nLigne 2')
   ok('normaliserTexte : espaces multiples réduits', normaliserTexte('a \t  b') === 'a b')
@@ -88,7 +89,50 @@ const erreurs = (v: ReturnType<typeof validerReponses>) => (v.ok ? [] : v.erreur
   ok('étape 5 : voix obligatoire', erreurs(validerReponses(avec((r) => { r.etape5.voix = '' }), 'envoi')).includes('etape5.voix:requis'))
   ok('étape 5 : style facultatif', validerReponses(avec((r) => { r.etape5.style = '' }), 'envoi').ok)
   ok('étape 5 : style « Autre » exige une précision', erreurs(validerReponses(avec((r) => { r.etape5.style = 'Autre' }), 'envoi')).includes('etape5.style_autre:requis'))
-  ok('étapes incomplètes identifiées pour guider le client', JSON.stringify(etapesIncompletes(reponsesVides())) === '[1,2,4,5]')
+  ok('écrans incomplets identifiés pour guider le client (ambiance = 5, voix = 6)', JSON.stringify(etapesIncompletes(reponsesVides())) === '[1,2,4,5,6]', JSON.stringify(etapesIncompletes(reponsesVides())))
+}
+
+// ── Blocker D : 9 écrans, mêmes données ──
+{
+  ok('9 écrans : NB_ETAPES = 9, récapitulatif = 8, envoi = 9', NB_ETAPES === 9 && ETAPE_RECAPITULATIF === 8 && ETAPE_ENVOI === 9)
+  ok('données inchangées : FORM_VERSION v0, clés etape1…etape6', FORM_VERSION === 'v0' && JSON.stringify(Object.keys(reponsesVides())) === '["etape_courante","etape1","etape2","etape3","etape4","etape5","etape6"]')
+  ok('données inchangées : etape5 garde ambiance, style, style_autre, voix', JSON.stringify(Object.keys(reponsesVides().etape5)) === '["ambiance","style","style_autre","voix"]')
+  ok('CONSENT_VERSION B+C inchangée', CONSENT_VERSION === 'v0.1-2026-10.cgv-music-v0-2026-10')
+  const attendu: [string, number | null][] = [
+    ['etape1.de_la_part:requis', 1], ['etape2.souvenir_principal:requis', 2], ['etape3.surnom:longueur', 3],
+    ['etape4.message:requis', 4], ['etape4.emotion_principale:incoherente', 4],
+    ['etape5.ambiance:requis', 5], ['etape5.ambiance:choix', 5], ['etape5:structure', 5],
+    ['etape5.style:choix', 6], ['etape5.style_autre:requis', 6], ['etape5.voix:requis', 6], ['etape5.inconnu:inconnu', 6],
+    ['etape6.titre_ou_lien:requis', 7], ['etape6.lien:format', 7], ['etape6:structure', 7],
+    ['structure', null], ['etape_courante:type', null], ['etape7.x:requis', null],
+  ]
+  const ko = attendu.filter(([c, n]) => ecranDuChamp(c) !== n)
+  ok('erreurs : chaque code renvoie vers le bon écran', ko.length === 0, JSON.stringify(ko.map(([c]) => [c, ecranDuChamp(c)])))
+  const vide = (e: string[]) => e.map((c) => ecranDuChamp(c))
+  const sansAmbiance = validerReponses(avec((r) => { r.etape5.ambiance = '' }), 'envoi')
+  ok('écran 5 : seule l’ambiance y est validée', !sansAmbiance.ok && vide(erreurs(sansAmbiance)).every((n) => n === 5))
+  const sansVoix = validerReponses(avec((r) => { r.etape5.voix = ''; r.etape5.style = 'Autre' }), 'envoi')
+  ok('écran 6 : voix et précision du style y sont validées', !sansVoix.ok && vide(erreurs(sansVoix)).every((n) => n === 6) && erreurs(sansVoix).length === 2)
+  const sansTitre = validerReponses(avec((r) => { r.etape6.a_inspiration = 'Oui' }), 'envoi')
+  ok('écran 7 : inspiration', !sansTitre.ok && vide(erreurs(sansTitre)).every((n) => n === 7))
+  ok('soumission finale inchangée : réponses complètes acceptées à l’envoi', validerReponses(completes(), 'envoi').ok)
+
+  const page = readFileSync(join(process.cwd(), 'src/app/[locale]/music/questionnaire/QuestionnaireMusic.tsx'), 'utf8')
+  ok('page : écran 5 ambiance seule, écran 6 style + voix, écran 7 inspiration',
+    page.includes('{etape === 5 && <EtapeAmbiance') && page.includes('{etape === 6 && <EtapeStyleVoix') && page.includes('{etape === 7 && <EtapeInspiration'))
+  const ambiance = page.slice(page.indexOf('function EtapeAmbiance'), page.indexOf('function EtapeStyleVoix'))
+  const styleVoix = page.slice(page.indexOf('function EtapeStyleVoix'), page.indexOf('function EtapeInspiration'))
+  ok('page : écran Ambiance sans style ni voix', ambiance.includes('nom="ambiance"') && !ambiance.includes('nom="style"') && !ambiance.includes('nom="voix"'))
+  ok('page : écran Style et voix sans ambiance, options existantes', styleVoix.includes('options={STYLES}') && styleVoix.includes('options={VOIX}') && !styleVoix.includes('nom="ambiance"'))
+  ok('page : récapitulatif à l’écran 8, consentement et envoi à l’écran 9',
+    page.includes('{etape === ETAPE_RECAPITULATIF && (') && page.includes('{etape === ETAPE_ENVOI && (') && page.includes("etape === ETAPE_RECAPITULATIF ? 'Tout est correct'"))
+  const modif = [...page.matchAll(/<Section modifier=\{modifier\} n=\{(\d)\} titre="?([^">]+)/g)].map((m) => m[1] + ':' + m[2])
+  ok('récapitulatif : « Modifier » renvoie vers les écrans 1 à 7 (ambiance 5, style et voix 6, inspiration 7)',
+    JSON.stringify(modif.map((x) => x.split(':')[0])) === '["1","2","3","4","5","6","7"]' && modif[4].endsWith('Ambiance') && modif[5].endsWith('Style et voix') && modif[6].endsWith('Inspiration'), JSON.stringify(modif))
+  ok('erreurs : validation par écran et retour d’erreur serveur via ecranDuChamp (plus de numéro de clé)',
+    page.includes('ecranDuChamp(e) === etape') && page.includes('const ecran = ecranDuChamp(champs[0]') && !/etape\(\\d\)/.test(page))
+  ok('protection double envoi conservée (verrou immédiat + bouton désactivé)',
+    page.includes('if (envoiOccupe.current || !jeton.current) return') && page.includes('envoiOccupe.current = true') && page.includes('disabled={envoiEnCours}'))
 }
 
 /* ── Étape 6 facultative ── */

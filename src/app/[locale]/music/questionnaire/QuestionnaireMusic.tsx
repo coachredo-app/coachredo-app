@@ -1,6 +1,7 @@
 'use client'
 
-// Questionnaire privé CoachRedo Music V0 — 8 étapes (LOT 2, D-058).
+// Questionnaire privé CoachRedo Music V0 — 9 écrans (LOT 2, D-058 ; blocker D :
+// ambiance puis style + voix sur deux écrans, données inchangées).
 // - Jeton lu dans le fragment #t= ; conservé en mémoire uniquement ; envoyé
 //   seulement dans le CORPS des requêtes (jamais dans une URL, jamais stocké).
 // - Brouillon sauvegardé sur le serveur à chaque changement d'étape, après
@@ -14,6 +15,8 @@ import {
   ASPECTS_INSPIRATION,
   DE_LA_PART,
   EMOTIONS,
+  ETAPE_ENVOI,
+  ETAPE_RECAPITULATIF,
   LIMITES,
   MAX_SOUVENIRS_SUPPLEMENTAIRES,
   NB_ETAPES,
@@ -21,6 +24,7 @@ import {
   STYLES,
   TEXTE_CONSENTEMENT,
   VOIX,
+  ecranDuChamp,
   reponsesVides,
   validerReponses,
   type CleDetail,
@@ -43,7 +47,8 @@ const TITRES = [
   'Un souvenir important',
   'Les petits détails',
   'Ce que vous voulez vraiment lui dire',
-  'Imaginez la chanson',
+  'Quelle ambiance imaginez-vous ?',
+  'Le style et la voix',
   'Une chanson qui vous inspire ?',
   'Vérification',
   'Votre histoire est prête ❤️',
@@ -71,11 +76,11 @@ function messageErreur(code: string): string {
   return 'Une réponse n’est pas valide.'
 }
 
-/** Erreurs bloquantes d'une étape (champs obligatoires, format). */
+/** Erreurs bloquantes d'un écran de saisie (champs obligatoires, format). */
 function erreursEtape(r: Reponses, etape: number): string[] {
-  if (etape < 1 || etape > 6) return []
+  if (etape < 1 || etape >= ETAPE_RECAPITULATIF) return []
   const v = validerReponses(r, 'envoi')
-  return v.ok ? [] : v.erreurs.filter((e) => e.startsWith('etape' + etape + '.'))
+  return v.ok ? [] : v.erreurs.filter((e) => ecranDuChamp(e) === etape)
 }
 
 async function appeler(corps: Record<string, unknown>, keepalive = false) {
@@ -231,8 +236,8 @@ export default function QuestionnaireMusic() {
       if (statut === 404) { setPhase('lien-invalide'); return }
       if (statut === 400 && Array.isArray(json.champs)) {
         const champs = json.champs as string[]
-        const m = /^etape(\d)\./.exec(champs[0] ?? '')
-        if (m) { allerA(Number(m[1])); setErreurs(champs.filter((c) => c.startsWith('etape' + m[1] + '.'))); return }
+        const ecran = ecranDuChamp(champs[0] ?? '')
+        if (ecran !== null) { allerA(ecran); setErreurs(champs.filter((c) => ecranDuChamp(c) === ecran)); return }
       }
       setErreurEnvoi('L’envoi n’a pas abouti. Vos réponses sont conservées : vérifiez votre connexion puis réessayez.')
     } catch {
@@ -307,15 +312,16 @@ export default function QuestionnaireMusic() {
         {etape === 2 && <Etape2 r={r} maj={maj} prenom={prenom} />}
         {etape === 3 && <Etape3 r={r} maj={maj} prenom={prenom} />}
         {etape === 4 && <Etape4 r={r} maj={maj} prenom={prenom} />}
-        {etape === 5 && <Etape5 r={r} maj={maj} />}
-        {etape === 6 && <Etape6 r={r} maj={maj} />}
-        {etape === 7 && (
+        {etape === 5 && <EtapeAmbiance r={r} maj={maj} />}
+        {etape === 6 && <EtapeStyleVoix r={r} maj={maj} />}
+        {etape === 7 && <EtapeInspiration r={r} maj={maj} />}
+        {etape === ETAPE_RECAPITULATIF && (
           <>
             <p className={s.texte}>Relisez tranquillement. Vous pouvez encore tout modifier : rien n’est envoyé pour l’instant.</p>
             <Recapitulatif r={r} commande={commande} modifier={allerA} />
           </>
         )}
-        {etape === 8 && (
+        {etape === ETAPE_ENVOI && (
           <>
             <p className={s.texte}>Merci d’avoir partagé tout cela. Dernière étape : votre accord, puis l’envoi.</p>
             <label className={s.consentement}>
@@ -342,7 +348,7 @@ export default function QuestionnaireMusic() {
             <button type="button" className={s.btnRetour} onClick={() => allerA(etape - 1)} data-precedent>Précédent</button>
           )}
           {etape < NB_ETAPES ? (
-            <button type="submit" className={s.btnPrincipal} data-continuer>{etape === 7 ? 'Tout est correct' : 'Continuer'}</button>
+            <button type="submit" className={s.btnPrincipal} data-continuer>{etape === ETAPE_RECAPITULATIF ? 'Tout est correct' : 'Continuer'}</button>
           ) : (
             <button type="submit" className={s.btnPrincipal} disabled={envoiEnCours} aria-busy={envoiEnCours} data-envoyer>
               {envoiEnCours ? 'Envoi en cours…' : 'Envoyer mon histoire à CoachRedo Music'}
@@ -546,13 +552,24 @@ function Etape4({ r, maj, prenom }: PropsEtape & { prenom: string }) {
   )
 }
 
-function Etape5({ r, maj }: PropsEtape) {
+// Écrans 5 et 6 : mêmes données (etape5), présentation répartie sur deux écrans.
+function EtapeAmbiance({ r, maj }: PropsEtape) {
   const e = r.etape5
   const majE = (p: Partial<Reponses['etape5']>) => maj((x) => ({ ...x, etape5: { ...x.etape5, ...p } }))
   return (
     <>
       <p className={s.aide}>Aucune connaissance musicale n’est nécessaire. Dans le doute, laissez-nous choisir.</p>
       <Choix nom="ambiance" legende="Quelle ambiance pour la chanson ?" options={AMBIANCES} valeur={e.ambiance} onChange={(v) => majE({ ambiance: v })} />
+    </>
+  )
+}
+
+function EtapeStyleVoix({ r, maj }: PropsEtape) {
+  const e = r.etape5
+  const majE = (p: Partial<Reponses['etape5']>) => maj((x) => ({ ...x, etape5: { ...x.etape5, ...p } }))
+  return (
+    <>
+      <p className={s.aide}>Aucune connaissance musicale n’est nécessaire. Dans le doute, laissez-nous choisir.</p>
       <Choix nom="style" legende="Un style de musique ?" facultatif options={STYLES} valeur={e.style} onChange={(v) => majE({ style: v })} />
       {e.style === 'Autre' && (
         <Texte id="style-autre" label="Quel style ?" max={LIMITES.court} valeur={e.style_autre} onChange={(v) => majE({ style_autre: v })} />
@@ -562,7 +579,7 @@ function Etape5({ r, maj }: PropsEtape) {
   )
 }
 
-function Etape6({ r, maj }: PropsEtape) {
+function EtapeInspiration({ r, maj }: PropsEtape) {
   const e = r.etape6
   const majE = (p: Partial<Reponses['etape6']>) => maj((x) => ({ ...x, etape6: { ...x.etape6, ...p } }))
   return (
@@ -589,7 +606,7 @@ function Etape6({ r, maj }: PropsEtape) {
   )
 }
 
-/* ── Récapitulatif (étape 7 et lecture seule) ── */
+/* ── Récapitulatif (écran 8 et lecture seule) ── */
 
 function Section({ n, titre, modifier, children }: { n: number; titre: string; modifier?: (n: number) => void; children: React.ReactNode }) {
   return (
@@ -649,14 +666,18 @@ function Recapitulatif({ r, commande, modifier }: { r: Reponses; commande: Comma
           {emotions.length > 1 && <Ligne t="La plus importante">{val(principale)}</Ligne>}
         </dl>
       </Section>
-      <Section modifier={modifier} n={5} titre="La chanson">
+      <Section modifier={modifier} n={5} titre="Ambiance">
         <dl>
           <Ligne t="Ambiance">{val(r.etape5.ambiance)}</Ligne>
+        </dl>
+      </Section>
+      <Section modifier={modifier} n={6} titre="Style et voix">
+        <dl>
           <Ligne t="Style">{val(style)}</Ligne>
           <Ligne t="Voix">{val(r.etape5.voix)}</Ligne>
         </dl>
       </Section>
-      <Section modifier={modifier} n={6} titre="Inspiration">
+      <Section modifier={modifier} n={7} titre="Inspiration">
         {r.etape6.a_inspiration === 'Oui' ? (
           <dl>
             {r.etape6.titre_artiste && <Ligne t="Titre et artiste">{r.etape6.titre_artiste}</Ligne>}

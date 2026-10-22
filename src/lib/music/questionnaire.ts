@@ -9,13 +9,18 @@
 // Deux niveaux :
 // - brouillon : structure, types, choix, longueurs, nombres maximaux ;
 //   les champs obligatoires peuvent encore être vides ;
-// - envoi : idem + champs obligatoires des 8 étapes.
+// - envoi : idem + champs obligatoires.
+//
+// Écrans (NB_ETAPES = 9) ≠ clés de données (etape1 … etape6, inchangées) :
+// l'écran 5 présente etape5.ambiance, l'écran 6 etape5.style/style_autre/voix,
+// l'écran 7 etape6 (inspiration), l'écran 8 le récapitulatif, l'écran 9 le
+// consentement et l'envoi. Voir ecranDuChamp().
 
 import { CGV_VERSION } from './legal'
 
 export const FORM_VERSION = 'v0'
 /**
- * Version du texte de consentement affiché à l'étape 8, enregistrée avec
+ * Version du texte de consentement affiché à l'étape 9, enregistrée avec
  * l'envoi (consent_version, format base ^[a-z0-9.-]{1,40}$). Elle inclut la
  * version des CGV acceptées : la preuve d'acceptation est ainsi stockée et
  * horodatée avant toute production. Historique : 'v0-2026-10' (sans CGV).
@@ -24,7 +29,26 @@ export const CONSENT_VERSION = 'v0.1-2026-10.' + CGV_VERSION
 export const TEXTE_CONSENTEMENT =
   'J’accepte que CoachRedo Music utilise les informations de ce questionnaire, y compris les informations personnelles ou sensibles que je choisis de partager, uniquement pour créer ma chanson, dans les conditions de la politique de confidentialité. J’accepte les conditions générales de vente CoachRedo Music (version ' + CGV_VERSION + ').'
 
-export const NB_ETAPES = 8
+export const NB_ETAPES = 9
+/** Écran du récapitulatif (relecture avant l'accord). */
+export const ETAPE_RECAPITULATIF = 8
+/** Écran du consentement et de l'envoi définitif. */
+export const ETAPE_ENVOI = 9
+
+/**
+ * Écran (1 à 7) où se corrige un code d'erreur de champ (« etape5.voix:requis »,
+ * « etape6:structure »…). Les clés de données ne changent pas : seule leur
+ * présentation est répartie sur plusieurs écrans. null si le code ne vise
+ * aucune étape (ex. « structure »).
+ */
+export function ecranDuChamp(code: string): number | null {
+  const m = /^etape([1-6])(?:\.([a-z_]+))?/.exec(code)
+  if (!m) return null
+  const n = Number(m[1])
+  if (n <= 4) return n
+  if (n === 5) return m[2] === undefined || m[2] === 'ambiance' ? 5 : 6
+  return 7
+}
 export const MAX_SOUVENIRS_SUPPLEMENTAIRES = 2
 
 export const DE_LA_PART = ['Moi uniquement', 'Plusieurs personnes'] as const
@@ -270,14 +294,14 @@ export function validerReponses(entree: unknown, niveau: Niveau): ResultatValida
   return erreurs.length ? { ok: false, erreurs } : { ok: true, reponses: r }
 }
 
-/** Étapes obligatoires incomplètes (pour guider le client vers l'étape à compléter). */
+/** Écrans contenant une réponse obligatoire incomplète (pour guider le client vers l'écran à compléter). */
 export function etapesIncompletes(r: Reponses): number[] {
   const v = validerReponses(r, 'envoi')
   if (v.ok) return []
   const etapes = new Set<number>()
   for (const e of v.erreurs) {
-    const m = /^etape(\d)\./.exec(e)
-    if (m) etapes.add(Number(m[1]))
+    const n = ecranDuChamp(e)
+    if (n !== null) etapes.add(n)
   }
-  return [...etapes].sort()
+  return [...etapes].sort((a, b) => a - b)
 }
