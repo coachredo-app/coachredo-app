@@ -23,6 +23,7 @@
 
 import OpenAI from 'openai'
 import { construireJsonSchemaAnalyseSortieBrute, NOM_SCHEMA_ANALYSE_SORTIE_BRUTE } from './schema'
+import { construireJsonSchemaRedactionSortieBrute, NOM_SCHEMA_REDACTION_SORTIE_BRUTE } from './redactionSchema'
 
 // Instancié paresseusement — jamais au chargement du module, pour ne
 // jamais exiger OPENAI_API_KEY dans un contexte qui n'appelle pas
@@ -96,28 +97,38 @@ function extraireMetadonnees(response: OpenAI.Responses.Response): MetadonneesAp
 }
 
 /**
- * Un seul appel Responses API, Structured Outputs strict. Aucun retry,
- * aucune réparation — Décision 0 fermée. Ne lève jamais : toute erreur
- * (réseau, timeout, HTTP) est capturée et retournée comme
- * `{type:'erreur_reseau'}`, jamais une exception non typée.
+ * Mécanique générique d'un seul appel Responses API, Structured
+ * Outputs strict — partagée par l'analyse et la rédaction (T-MFR.5A,
+ * extraction minimale, aucun changement de comportement pour l'appel
+ * d'analyse déjà en production). Aucun retry, aucune réparation —
+ * Décision 0 fermée. Ne lève jamais : toute erreur (réseau, timeout,
+ * HTTP) est capturée et retournée comme `{type:'erreur_reseau'}`,
+ * jamais une exception non typée.
  */
-export async function appellerOpenAiPourAnalyseMfr(params: AppelProviderParams): Promise<ResultatAppelProvider> {
+async function appellerOpenAiResponsesApi(args: {
+  readonly promptSysteme: string
+  readonly contexteSerialise: string
+  readonly etiquetteContexte: string
+  readonly nomSchema: string
+  readonly schema: Record<string, unknown>
+  readonly timeoutMs: number
+}): Promise<ResultatAppelProvider> {
   let response: OpenAI.Responses.Response
   try {
     response = await obtenirClient().responses.create(
       {
         model: MODELE_MFR_V1,
-        input: `${params.promptSysteme}\n\n---\n\nMfrAnalysisContext (JSON) :\n${params.contexteSerialise}`,
+        input: `${args.promptSysteme}\n\n---\n\n${args.etiquetteContexte} (JSON) :\n${args.contexteSerialise}`,
         text: {
           format: {
             type: 'json_schema',
-            name: NOM_SCHEMA_ANALYSE_SORTIE_BRUTE,
+            name: args.nomSchema,
             strict: true,
-            schema: construireJsonSchemaAnalyseSortieBrute(),
+            schema: args.schema,
           },
         },
       },
-      { timeout: params.timeoutMs }
+      { timeout: args.timeoutMs }
     )
   } catch (erreur) {
     return { type: 'erreur_reseau', erreur: erreur instanceof Error ? erreur.message : 'Erreur réseau inconnue.' }
@@ -167,6 +178,34 @@ export async function appellerOpenAiPourAnalyseMfr(params: AppelProviderParams):
     // normal à attendre.
     return { type: 'payload_non_json', texteBrut: texte.text, metadonnees }
   }
+}
+
+/** Appel d'analyse — comportement strictement inchangé par rapport à
+ * avant l'extraction T-MFR.5A (même modèle, même schéma, même
+ * étiquette de contexte). */
+export async function appellerOpenAiPourAnalyseMfr(params: AppelProviderParams): Promise<ResultatAppelProvider> {
+  return appellerOpenAiResponsesApi({
+    promptSysteme: params.promptSysteme,
+    contexteSerialise: params.contexteSerialise,
+    etiquetteContexte: 'MfrAnalysisContext',
+    nomSchema: NOM_SCHEMA_ANALYSE_SORTIE_BRUTE,
+    schema: construireJsonSchemaAnalyseSortieBrute(),
+    timeoutMs: params.timeoutMs,
+  })
+}
+
+/** Appel de rédaction — T-MFR.5A. Même mécanique HTTP/Structured
+ * Outputs que l'analyse, schéma et étiquette de contexte propres à la
+ * rédaction. */
+export async function appellerOpenAiPourRedactionMfr(params: AppelProviderParams): Promise<ResultatAppelProvider> {
+  return appellerOpenAiResponsesApi({
+    promptSysteme: params.promptSysteme,
+    contexteSerialise: params.contexteSerialise,
+    etiquetteContexte: 'MfrWritingContext',
+    nomSchema: NOM_SCHEMA_REDACTION_SORTIE_BRUTE,
+    schema: construireJsonSchemaRedactionSortieBrute(),
+    timeoutMs: params.timeoutMs,
+  })
 }
 
 /** Fragment best-effort en cas de troncature — jamais une tentative de
