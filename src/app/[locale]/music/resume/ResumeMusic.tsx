@@ -8,6 +8,8 @@
 //   toute version qui n'est plus la version courante envoyée.
 // - Après validation : lecture seule. La validation démarre le délai de
 //   5 jours ouvrés.
+// - Si le résumé comporte un récit client, seul ce récit est affiché (en
+//   paragraphes) ; sinon, les sections du résumé (comportement historique).
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MAX_CORRECTION, TEXTE_VALIDATION_BRIEF, type EtatBrief } from '@/lib/music/brief'
@@ -20,7 +22,7 @@ const WHATSAPP = 'https://wa.me/221710491314'
 const RE_JETON = /^[A-Za-z0-9_-]{43}$/
 
 type Section = { cle: string; titre: string; texte: string }
-type Brief = { etat: EtatBrief; version?: number; sections?: Section[]; correction?: string | null; valide_le?: string | null }
+type Brief = { etat: EtatBrief; version?: number; sections?: Section[]; recit?: string; correction?: string | null; valide_le?: string | null }
 type Phase = 'chargement' | 'lien-invalide' | 'erreur' | 'pret'
 
 async function appeler(corps: Record<string, unknown>) {
@@ -144,8 +146,6 @@ export default function ResumeMusic() {
     )
   }
 
-  const sections = brief.sections ?? []
-
   if (brief.etat === 'valide') {
     return (
       <main className={s.page}>
@@ -157,7 +157,7 @@ export default function ResumeMusic() {
           <p className={s.aide}>Votre résumé est désormais verrouillé. Pour toute question, écrivez-nous sur WhatsApp.</p>
         </section>
         <h2 className={s.sousTitre}>Votre histoire validée</h2>
-        <Sections sections={sections} />
+        <Contenu brief={brief} />
       </main>
     )
   }
@@ -173,7 +173,7 @@ export default function ResumeMusic() {
           <p className={s.aide}>La création de votre chanson ne commence qu’après votre validation.</p>
         </section>
         <h2 className={s.sousTitre}>Résumé en cours de correction</h2>
-        <Sections sections={sections} />
+        <Contenu brief={brief} />
       </main>
     )
   }
@@ -185,7 +185,7 @@ export default function ResumeMusic() {
       <h1 className={s.titre} ref={titreRef} tabIndex={-1}>Vérifiez votre histoire</h1>
       <p className={`${s.texte} ${r.intro}`}>Nous avons préparé ce résumé à partir de vos réponses. Relisez-le attentivement avant que nous commencions la création de votre chanson.</p>
 
-      <Sections sections={sections} />
+      <Contenu brief={brief} />
 
       <section className={r.actions} data-actions>
         {mode === 'choix' ? (
@@ -235,6 +235,20 @@ export default function ResumeMusic() {
 
 function Marque() {
   return <p className={s.marque}>CoachRedo <span>Music</span></p>
+}
+
+function Contenu({ brief }: { brief: Brief }) {
+  return brief.recit ? <Recit texte={brief.recit} /> : <Sections sections={brief.sections ?? []} />
+}
+
+/** Récit client : paragraphes séparés par une ligne vide, retours à la ligne conservés. */
+function Recit({ texte }: { texte: string }) {
+  const paragraphes = texte.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean)
+  return (
+    <section className={`${s.recapSection} ${r.recit}`} data-recit>
+      {paragraphes.map((x, i) => <p key={i} className={r.paragraphe}>{x}</p>)}
+    </section>
+  )
 }
 
 function Sections({ sections }: { sections: Section[] }) {

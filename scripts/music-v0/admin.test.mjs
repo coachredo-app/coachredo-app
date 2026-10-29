@@ -2,7 +2,7 @@
 // aucune base). Exécution : node scripts/music-v0/admin.test.mjs
 import { randomBytes, createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import { genererJeton, empreinte, construireLien, executer, OCTETS_JETON, afficherQuestionnaire, modeleBrief, parserBrief, cheminHorsDepot, afficherSuivi, dateLisible, SECTIONS_BRIEF, RACINE_DEPOT } from './admin.mjs'
+import { genererJeton, empreinte, construireLien, executer, OCTETS_JETON, afficherQuestionnaire, modeleBrief, parserBrief, cheminHorsDepot, afficherSuivi, dateLisible, SECTIONS_BRIEF, RECIT_BRIEF, afficherBrief, RACINE_DEPOT } from './admin.mjs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 
@@ -119,6 +119,17 @@ const Q = {
   ok('parser : section obligatoire vide refusée', parserBrief(base.replace('Texte 6', '   ')).erreurs?.some((e) => e.includes('obligatoire vide')))
   ok('parser : texte hors section refusé', parserBrief('Bonjour\n' + base).erreurs?.some((e) => e.includes('hors section')))
   ok('parser : longueur maximale (mêmes limites que la base)', parserBrief(base.replace('Texte 0', 'a'.repeat(121))).erreurs?.some((e) => e.includes('trop longue')) && !!parserBrief(base.replace('Texte 0', 'a'.repeat(120))).contenu)
+  // Récit client (migration 029)
+  ok('récit : définition partagée (brief-recit.json)', RECIT_BRIEF.cle === 'recit' && RECIT_BRIEF.titre === 'Récit client' && RECIT_BRIEF.requis === false && RECIT_BRIEF.max === 6000)
+  ok('modèle : section « ## Récit client » facultative et vide, après les 10 sections', m.includes('\n## Récit client\n') && m.indexOf('## Récit client') > m.indexOf('## Points particuliers à respecter') && !('recit' in p.contenu))
+  const avecRecit = base + '\n## Récit client\n// commentaire ignoré\nPremier paragraphe.\n\nSecond paragraphe.\n'
+  const pr = parserBrief(avecRecit)
+  ok('parser : récit lu (paragraphes conservés, commentaires ignorés), sections inchangées', pr.contenu?.recit === 'Premier paragraphe.\n\nSecond paragraphe.' && pr.contenu?.destinataire === 'Texte 0', JSON.stringify(pr.erreurs))
+  ok('parser : récit absent ou vide → pas de clé recit', !('recit' in parserBrief(base).contenu) && !('recit' in parserBrief(base + '\n## Récit client\n   \n').contenu))
+  ok('parser : récit à la limite accepté, au-delà refusé', parserBrief(base + '\n## Récit client\n' + 'a'.repeat(6000)).contenu?.recit.length === 6000
+    && parserBrief(base + '\n## Récit client\n' + 'a'.repeat(6001)).erreurs?.some((e) => e.includes('Récit client') && e.includes('trop longue')))
+  ok('parser : récit en double refusé', parserBrief(avecRecit + '\n## Récit client\nEncore').erreurs?.some((e) => e.includes('double')))
+  ok('affichage console : récit signalé comme seul texte montré au client', afficherBrief(pr.contenu).includes('Récit client (seul texte montré au client)'))
 }
 {
   ok('chemin du brief : refusé dans le dépôt Git, accepté ailleurs', cheminHorsDepot(join(RACINE_DEPOT, 'brief.txt')) === null && cheminHorsDepot(join(RACINE_DEPOT, 'scripts', 'x.txt')) === null && cheminHorsDepot(RACINE_DEPOT) === null && cheminHorsDepot(join(tmpdir(), 'brief.txt')) !== null)

@@ -10,7 +10,7 @@
 // lien → même réponse 404 LIEN_INVALIDE. Origines fixes (lot 2).
 
 import { empreinteJeton, jetonBienForme } from './jeton'
-import { ETATS_BRIEF, VALIDATION_BRIEF_VERSION, sectionsAffichables, validerCorrection, type EtatBrief } from './brief'
+import { ETATS_BRIEF, VALIDATION_BRIEF_VERSION, recitAffichable, sectionsAffichables, validerCorrection, type EtatBrief } from './brief'
 import { ORIGINES_QUESTIONNAIRE, TAILLE_MAX_CORPS_QUESTIONNAIRE, type ResultatRpc } from './questionnaireApi'
 
 /** Origines acceptées : exactement celles du questionnaire (liste fixe, jamais dérivée de la requête). */
@@ -116,14 +116,17 @@ export async function traiterBrief(req: RequeteBrief, deps: DependancesBrief): P
     const etat = d.etat as EtatBrief
     if (!ETATS_BRIEF.includes(etat)) { log('reponse_inattendue'); return ERREUR_SERVEUR }
     if (etat === 'en_preparation') return { statut: 200, corps: { etat } }
+    // La fiche interne est toujours vérifiée ; si un récit client existe, seul
+    // le récit est renvoyé au navigateur (la fiche ne quitte pas le serveur).
     const sections = sectionsAffichables(d.contenu)
     if (!sections || !versionValide(d.version)) { log('reponse_inattendue'); return ERREUR_SERVEUR }
+    const recit = recitAffichable(d.contenu)
     return {
       statut: 200,
       corps: {
         etat,
         version: d.version,
-        sections,
+        ...(recit !== null ? { recit } : { sections }),
         correction: etat === 'correction_demandee' ? texteOuNull(d.correction) : null,
         correction_le: etat === 'correction_demandee' ? texteOuNull(d.correction_le) : null,
         valide_le: etat === 'valide' ? texteOuNull(d.valide_le) : null,

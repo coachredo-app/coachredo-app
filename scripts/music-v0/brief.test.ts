@@ -10,7 +10,7 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { SECTIONS_BRIEF, TEXTE_VALIDATION_BRIEF, VALIDATION_BRIEF_VERSION, sectionsAffichables, validerCorrection } from '../../src/lib/music/brief'
+import { RECIT_BRIEF, SECTIONS_BRIEF, TEXTE_VALIDATION_BRIEF, VALIDATION_BRIEF_VERSION, recitAffichable, sectionsAffichables, validerCorrection } from '../../src/lib/music/brief'
 import { ORIGINES_RESUME, traiterBrief, type DependancesBrief } from '../../src/lib/music/briefApi'
 import type { ResultatRpc } from '../../src/lib/music/questionnaireApi'
 
@@ -38,6 +38,14 @@ const CONTENU = {
   ok('sections affichables : ordre officiel, sections vides omises, titres humains', !!aff && aff.length === 9 && aff[0].titre === 'Pour qui' && !aff.some((x) => x.cle === 'points_particuliers'))
   ok('sections affichables : clé inconnue jamais affichée', !JSON.stringify(sectionsAffichables({ ...CONTENU, paroles: 'secret' })).includes('secret'))
   ok('sections affichables : section obligatoire manquante → rien affiché', sectionsAffichables({ ...CONTENU, message: '' }) === null && sectionsAffichables('x') === null)
+  // Récit client (migration 029)
+  const recitJson = JSON.parse(readFileSync(join(process.cwd(), 'src/lib/music/brief-recit.json'), 'utf8')) as { cle: string; requis: boolean; max: number }
+  ok('récit : brief-recit.json = RECIT_BRIEF (clé recit, facultatif, 6000)', RECIT_BRIEF.cle === 'recit' && RECIT_BRIEF.requis === false && RECIT_BRIEF.max === 6000 && JSON.stringify(recitJson) === JSON.stringify(RECIT_BRIEF))
+  const m029 = readFileSync(join(process.cwd(), 'supabase/migrations/029_music_brief_recit_narratif.sql'), 'utf8')
+  ok('migration 029 : miroir exact des 10 sections + récit', [...SECTIONS_BRIEF, RECIT_BRIEF].every((x) => m029.includes(`{"cle": "${x.cle}", "requis": ${x.requis}, "max": ${x.max}}`)) && (m029.match(/"cle":/g) ?? []).length === 11)
+  ok('récit : absent, vide, non textuel → null (sections affichées)', recitAffichable(CONTENU) === null && recitAffichable({ ...CONTENU, recit: '   ' }) === null && recitAffichable({ ...CONTENU, recit: 42 }) === null && recitAffichable('x') === null && recitAffichable(null) === null)
+  ok('récit : texte rogné, jamais plus long que la limite', recitAffichable({ ...CONTENU, recit: '  Il était une fois.  ' }) === 'Il était une fois.' && recitAffichable({ ...CONTENU, recit: 'a'.repeat(7000) })?.length === 6000)
+  ok('sections affichables : le récit n’est jamais une section', !sectionsAffichables({ ...CONTENU, recit: 'Récit' })!.some((x) => x.cle === 'recit') && sectionsAffichables({ ...CONTENU, recit: 'Récit' })!.length === 9)
   ok('correction : texte normalisé 1–2000 caractères', validerCorrection('  Le prénom est Fatou Binetou.  ') === 'Le prénom est Fatou Binetou.' && validerCorrection('   ') === null && validerCorrection('a'.repeat(2001)) === null && validerCorrection(42) === null)
 }
 
@@ -47,7 +55,7 @@ const JETON = randomBytes(32).toString('base64url')
 const EMPREINTE = createHash('sha256').update(JETON, 'utf8').digest('hex')
 
 type Appel = { fn: string; empreinte: string; version?: number; texte?: string }
-function fausseBase(initial: Partial<{ etat: string; version: number; correction: string | null }> = {}, opts: { lever?: boolean; reponse?: ResultatRpc } = {}) {
+function fausseBase(initial: Partial<{ etat: string; version: number; correction: string | null }> = {}, opts: { lever?: boolean; reponse?: ResultatRpc; contenu?: Record<string, unknown> } = {}) {
   const e = { etat: 'a_valider', version: 2, correction: null as string | null, valide_le: null as string | null, ...initial }
   const appels: Appel[] = []
   const logs: string[] = []
@@ -60,7 +68,7 @@ function fausseBase(initial: Partial<{ etat: string; version: number; correction
       if (opts.reponse) return opts.reponse
       if (empreinte !== EMPREINTE) return { erreur: 'LIEN_INVALIDE' }
       if (e.etat === 'en_preparation') return { data: { etat: 'en_preparation' } }
-      return { data: { etat: e.etat, version: e.version, contenu: { ...CONTENU, paroles_internes: 'x' }, correction: e.correction, correction_le: e.correction ? '2026-10-21T09:00:00Z' : null, valide_le: e.valide_le, reference: 'CRM-00005', email: 'fuite@exemple.sn' } }
+      return { data: { etat: e.etat, version: e.version, contenu: { ...(opts.contenu ?? CONTENU), paroles_internes: 'x' }, correction: e.correction, correction_le: e.correction ? '2026-10-21T09:00:00Z' : null, valide_le: e.valide_le, reference: 'CRM-00005', email: 'fuite@exemple.sn' } }
     },
     corriger: async (empreinte, version, texte) => {
       appels.push({ fn: 'corriger', empreinte, version, texte })
@@ -113,6 +121,27 @@ async function testsApi() {
     ok('charger : brief non envoyé → « en préparation », aucun contenu', rp.statut === 200 && JSON.stringify(rp.corps) === '{"etat":"en_preparation"}')
     const inattendu = fausseBase({}, { reponse: { data: { etat: 'a_valider', version: 1, contenu: { destinataire: 'x' } } } })
     ok('charger : contenu incomplet inattendu → 500 générique, jamais affiché', (await traiterBrief(req({ action: 'charger', jeton: JETON }), inattendu.deps)).statut === 500)
+  }
+  // Récit client : seul le récit est envoyé, la fiche interne ne quitte pas le serveur
+  {
+    const RECIT = 'Il était une fois une maman.\n\nElle aimait le marché du dimanche.'
+    for (const etat of ['a_valider', 'correction_demandee', 'valide']) {
+      const b = fausseBase({ etat, correction: etat === 'correction_demandee' ? 'Plus court.' : null }, { contenu: { ...CONTENU, recit: RECIT } })
+      const r = await traiterBrief(req({ action: 'charger', jeton: JETON }), b.deps)
+      const c = r.corps as Record<string, unknown>
+      const brut = JSON.stringify(r.corps)
+      const fuite = Object.entries(CONTENU).filter(([, v]) => v !== '' && brut.includes(JSON.stringify(v).slice(1, -1)))
+      ok(`récit (${etat}) : 200, récit seul, aucune section`, r.statut === 200 && c.recit === RECIT && !('sections' in c) && c.etat === etat && c.version === 2)
+      ok(`récit (${etat}) : aucun texte de la fiche interne dans la réponse`, fuite.length === 0 && !brut.includes('paroles_internes') && !/CRM-|fuite@|email/.test(brut), JSON.stringify(fuite))
+    }
+    const vide = fausseBase({}, { contenu: { ...CONTENU, recit: '   ' } })
+    const rv = await traiterBrief(req({ action: 'charger', jeton: JETON }), vide.deps)
+    ok('récit vide → comportement historique (sections, pas de récit)', rv.statut === 200 && !('recit' in (rv.corps as object)) && ((rv.corps as { sections: unknown[] }).sections.length === 9))
+    const sansFiche = fausseBase({}, { contenu: { recit: 'Récit seul' } })
+    ok('récit sans fiche interne complète → 500 générique, rien affiché', (await traiterBrief(req({ action: 'charger', jeton: JETON }), sansFiche.deps)).statut === 500)
+    const b = fausseBase({}, { contenu: { ...CONTENU, recit: RECIT } })
+    ok('récit : correction et validation inchangées (même version)', (await traiterBrief(req({ action: 'corriger', jeton: JETON, version: 2, correction: 'Plus court.' }), b.deps)).statut === 200
+      && b.appels.some((a) => a.fn === 'corriger' && a.version === 2) && (await traiterBrief(req({ action: 'valider', jeton: JETON, version: 2, consentement: true }), b.deps)).statut === 409)
   }
   // Jetons et CRM refusés
   {

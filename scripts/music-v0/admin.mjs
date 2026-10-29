@@ -22,9 +22,13 @@
 // crypto.randomBytes(32) (256 bits, base64url), seule son empreinte SHA-256
 // est envoyée à la base, et le lien complet est affiché UNE SEULE FOIS.
 //
-// Brief = RÉSUMÉ DE LA DEMANDE du client, rédigé à la main (aucune IA) —
-// pas les paroles. « brief-modele » écrit un fichier texte prérempli avec les
-// réponses du questionnaire ; Coach Redouane le réécrit, puis « brief »
+// Brief = RÉSUMÉ DE LA DEMANDE du client — pas les paroles. Fiche interne
+// (10 sections) préparée par Coach Redouane ; récit client facultatif
+// (« ## Récit client »), rédigé avec un outil d'IA à partir de la fiche puis
+// relu et validé par Coach Redouane (décision QG App, 2026-10-28) : s'il
+// existe, le client ne voit que le récit.
+// « brief-modele » écrit un fichier texte prérempli avec les réponses du
+// questionnaire ; Coach Redouane le réécrit, puis « brief »
 // l'enregistre (brouillon), puis « brief-envoyer » l'envoie : nouveau lien
 // privé (l'ancien ne fonctionne plus), affiché une seule fois.
 // Le fichier du brief contient des données personnelles : il doit rester
@@ -45,6 +49,8 @@ const RE_REFERENCE = /^CRM-\d{5}$/
 export const RACINE_DEPOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 /** Sections du brief : source unique partagée avec la page et la migration 022. */
 export const SECTIONS_BRIEF = JSON.parse(readFileSync(resolve(RACINE_DEPOT, 'src/lib/music/brief-sections.json'), 'utf8'))
+/** Récit client facultatif : source unique partagée avec la page et la migration 029. */
+export const RECIT_BRIEF = JSON.parse(readFileSync(resolve(RACINE_DEPOT, 'src/lib/music/brief-recit.json'), 'utf8'))
 
 const COMMANDES = ['confirmer', 'regenerer', 'revoquer', 'annuler', 'questionnaire', 'brief-modele', 'brief', 'brief-envoyer', 'suivi']
 const USAGE = 'Usage : node scripts/music-v0/admin.mjs <' + COMMANDES.join('|') + '> CRM-XXXXX [référence Wave | motif | fichier]'
@@ -168,13 +174,17 @@ export function modeleBrief(q) {
     if (!s.requis) l.push('// Facultatif — laissez vide si rien à signaler.')
     if (prerempli[s.cle]) l.push(prerempli[s.cle])
   }
+  l.push('', '## ' + RECIT_BRIEF.titre,
+    '// Facultatif — récit narratif montré au client À LA PLACE des sections ci-dessus.',
+    '// Rédigé à partir de la fiche ci-dessus uniquement (sans coordonnées), relu et validé par Coach Redouane.',
+    '// Paragraphes séparés par une ligne vide. ' + RECIT_BRIEF.max + ' caractères au maximum. Vide = le client voit les sections.')
   return l.join('\n') + '\n'
 }
 
 /** Fichier texte → contenu du brief, ou liste d'erreurs lisibles. */
 export function parserBrief(texte) {
   const erreurs = []
-  const parTitre = new Map(SECTIONS_BRIEF.map((s) => [s.titre, s]))
+  const parTitre = new Map([...SECTIONS_BRIEF, RECIT_BRIEF].map((s) => [s.titre, s]))
   const valeurs = {}
   let courante = null
   const lignes = String(texte).replace(/\r\n?/g, '\n').split('\n')
@@ -203,6 +213,10 @@ export function parserBrief(texte) {
     if (t.length > s.max) { erreurs.push('Section trop longue : « ' + s.titre + ' » (' + t.length + ' / ' + s.max + ' caractères)'); continue }
     contenu[s.cle] = t
   }
+  // Récit client : section facultative (absente ou vide = pas de récit).
+  const recit = (valeurs[RECIT_BRIEF.cle] ?? []).join('\n').replace(/\n{3,}/g, '\n\n').trim()
+  if (recit.length > RECIT_BRIEF.max) erreurs.push('Section trop longue : « ' + RECIT_BRIEF.titre + ' » (' + recit.length + ' / ' + RECIT_BRIEF.max + ' caractères)')
+  else if (recit !== '') contenu[RECIT_BRIEF.cle] = recit
   return erreurs.length ? { erreurs } : { contenu }
 }
 
@@ -212,6 +226,7 @@ export function afficherBrief(contenu) {
     if (!contenu[s.cle]) continue
     l.push('', '── ' + s.titre + ' ──', contenu[s.cle])
   }
+  if (contenu[RECIT_BRIEF.cle]) l.push('', '── ' + RECIT_BRIEF.titre + ' (seul texte montré au client) ──', contenu[RECIT_BRIEF.cle])
   return l.join('\n')
 }
 

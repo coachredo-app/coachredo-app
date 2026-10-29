@@ -9,6 +9,21 @@
   line-height: 1.6;
 }
 
+.recit {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+}
+
+.paragraphe {
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+  font-size: 17px;
+}
+
 .actions {
   display: flex;
   flex-direction: column;
