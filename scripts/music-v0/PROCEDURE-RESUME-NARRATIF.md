@@ -74,13 +74,13 @@ node scripts/music-v0/admin.mjs suivi CRM-XXXXX
 - Aucune donnée de contact dans ChatGPT ni dans le récit.
 - Le récit est un résumé de la demande, **pas les paroles** de la chanson.
 
-## CRM-00006 (commande de test) — V2 narrative, après autorisation uniquement
+## Ajouter un récit à une commande dont une version a déjà été envoyée
 
-État actuel : V1 envoyée le 28/10, sans réponse. **Ne pas valider la V1.**
+Cas : une version (sans récit) a été envoyée et le client n'a pas encore validé. **Ne pas valider l'ancienne version.**
 
-1. Copier `CoachRedo Music HQ/E2E-CRM-00006/brief_v1.txt` en `brief_v2.txt` dans le même dossier.
+1. Copier `<dossier>/brief_vN.txt` en `<dossier>/brief_vN+1.txt`.
 2. Ajouter à la fin `## Récit client`, suivi du récit validé (étapes 3 et 4).
-3. Après mise en production de la migration 029 et du code (sinon l'enregistrement est refusé : `recit:inconnu`) :
-   `node scripts/music-v0/admin.mjs brief CRM-00006 "…/E2E-CRM-00006/brief_v2.txt"` → **version 2** créée ; la V1 reste dans l'historique.
-4. `node scripts/music-v0/admin.mjs brief-envoyer CRM-00006` dans votre Terminal → nouveau lien ; le lien V1 cesse de fonctionner.
-5. `node scripts/music-v0/admin.mjs suivi CRM-00006` → « version 2 — envoyé, en attente du client » et, dans l'historique, la v1.
+3. Prérequis : migration 029 et code en production (sinon l'enregistrement est refusé : `recit:inconnu`).
+   `node scripts/music-v0/admin.mjs brief CRM-XXXXX "<dossier>/brief_vN+1.txt"` → nouvelle version créée ; la précédente reste dans l'historique.
+4. `node scripts/music-v0/admin.mjs brief-envoyer CRM-XXXXX` dans votre Terminal → nouveau lien ; l'ancien lien cesse de fonctionner.
+5. `node scripts/music-v0/admin.mjs suivi CRM-XXXXX` → nouvelle version « envoyé, en attente du client » ; l'ancienne figure dans l'historique.
