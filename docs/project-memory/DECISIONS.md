@@ -1413,3 +1413,32 @@ Explicitement non verrouillé : mécanisme de rattachement à un compte, conserv
 **Conséquence :** `supabase/migrations/025_mfr_redaction.sql` et `026_mfr_relancer_redaction_apres_echec.sql` additives strictes, aucune table/colonne/policy/fonction préexistante modifiée hors `CREATE OR REPLACE` explicite de `mfr_demarrer_redaction` (signature inchangée). T-MFR.5B (révision humaine, validation, publication, affichage réel sur `plan-b/feuille-de-route`) reste entièrement à ouvrir — non commencé par cette décision.
 
 **Statut :** T-MFR.5A FERMÉE TECHNIQUEMENT — code et migrations commités (`557fa7cef8ec9e3bae2f94a3714159e7635d098a`), migrations 025 et 026 exécutées et vérifiées sur le projet réel, commit en attente de push manuel par Coach Redouane. Prochaine tranche App : **T-MFR.5B — révision/validation/publication** (non ouverte).
+
+---
+
+### D-067 — Music V0 : récit client du brief, rédaction assistée par ChatGPT (co-décision QG App + QG Music)
+
+**Date :** 2026-10-28 (décision) ; 2026-10-29 (implémentation, mise en Production et démonstration) ; 2026-10-30 (texte définitif accepté par le QG Music et enregistré).
+
+**Objet et périmètre :** D-067 encadre **uniquement** l'assistance de ChatGPT (OpenAI) pour la **rédaction du récit client** du brief. Les éventuels autres usages de ChatGPT ou d'un outil d'IA (paroles, pochette) ne relèvent pas de D-067 : ils sont encadrés séparément par la méthode officielle de production.
+
+**Décision :**
+1. **Fiche interne :** le brief conserve ses 10 sections structurées (pour qui, relation, occasion, de la part de, histoire et souvenirs, petits détails, message central, émotions, direction musicale, points particuliers), préparées et relues par Coach Redouane. Elle reste la référence de la production.
+2. **Récit client :** une clé facultative `recit` (6 000 caractères au maximum) porte une version narrative de la fiche. Lorsqu'elle existe, le client voit uniquement le récit.
+3. **Assistance ChatGPT :** autorisée pour la rédaction du récit, à partir des **seuls éléments de la fiche interne nécessaires** à cette rédaction, selon la procédure `scripts/music-v0/PROCEDURE-RESUME-NARRATIF.md`. **Jamais transmis :** téléphone, email, référence CRM, lien privé ou jeton, questionnaire brut, photo, message vocal.
+4. **Validation humaine obligatoire :** Coach Redouane relit et valide chaque récit avant son enregistrement et son envoi ; toute formulation éditoriale (sans fait nouveau) est relue comme telle.
+5. **Aucune invention :** aucun souvenir, fait, lieu, prénom, émotion, promesse ou déclaration absent de la fiche. Le récit est un résumé de la demande, jamais les paroles.
+6. **Confidentialité :** la fiche interne n'est **jamais exposée au client** ; l'application ne renvoie au navigateur que `etat`, `version`, `recit` (ou les sections si le brief n'a pas de récit), `correction`, `correction_le`, `valide_le` (`src/lib/music/briefApi.ts`). La transmission à ChatGPT des éléments nécessaires au récit (point 3) est le seul partage autorisé par D-067.
+7. **Traçabilité :** le récit validé figure dans le fichier de brief de sa version ; l'outil, la date et la nature des éléments transmis sont consignés dans `production.md` de la commande.
+8. **Versionnement commun :** fiche et récit sont figés, corrigés et validés ensemble (même instantané dans `music_brief_versions`) ; une version remplacée n'est plus validable ; chaque envoi invalide les liens antérieurs.
+9. **Compatibilité historique :** un brief sans récit s'affiche comme avant (10 sections) ; les données existantes restent valides.
+
+**Pourquoi :** offrir au client un résumé lisible et fidèle de son histoire, sans lui exposer la fiche interne de production, et permettre à Coach Redouane de gérer les commandes sans Claude Code.
+
+**Implémentation et preuves :** commits `6b5008dfeba708d263577bd01e03ef794eea9d37` (code + migration `029_music_brief_recit_narratif.sql` : le validateur `music_brief_contenu_erreur` accepte une 11ᵉ clé facultative `recit`, seul objet modifié) et `e0afc571789f3023a10413feccf93a246e4f19fb` (procédure générique `CRM-XXXXX`), poussés sur `main` le 2026-10-29 par Coach Redouane (`287c121..e0afc57`) ; déploiement Vercel de Production de `e0afc57` au statut Ready. Migration 029 appliquée sur le projet réel avant le 2026-10-29 23:32 (première V2 narrative acceptée en base) ; contrôle transmis par le QG : `md5(prosrc)` = `6752441685b54ba5e330a3881a2b38b7` (empreinte attendue de la définition complète : `f654773b2addfc84747e985dd189d1ad`). Tests locaux sur base jetable : `scripts/music-v0/run-db-test-029.sh`.
+
+**Démonstration :** CRM-00006 (simulation, hors chiffre d'affaires, aucun engagement de livraison) — V1 en sections → V2 narrative → correction client (2026-10-29 23:38) → V3 → validation le 2026-10-29 à 23:50:44 UTC. Observation réseau réelle : aucune section interne exposée au client.
+
+**Conséquence :** remplace, **pour le récit client uniquement**, le principe « brief rédigé à la main, sans IA » (Lots 1-3, D-064). La politique de confidentialité publique doit nommer OpenAI (ChatGPT) avant le premier encaissement. Retour arrière : le validateur de 022 ne peut être rétabli que si aucun brief (courant ou versionné) ne contient `recit`.
+
+**Statut :** EN VIGUEUR TECHNIQUEMENT (code et migration 029 en Production). Intégration à la méthode V0.2 consolidée : candidate, non adoptée. Mise à jour de la politique de confidentialité publique : projet candidat, non publié. Premier encaissement : NO-GO.

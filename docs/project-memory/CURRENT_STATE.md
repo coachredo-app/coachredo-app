@@ -7,7 +7,7 @@ metadata:
 
 # CURRENT_STATE — CoachRedo App
 
-Dernière mise à jour : 2026-10-27 (V39 — D-066 ajoutée : **T-MFR.5A FERMÉE TECHNIQUEMENT** — pipeline de rédaction MFR implémenté, migrations 025 (`mfr_demarrer_redaction`/`mfr_finir_redaction_*`) et 026 (`mfr_relancer_redaction_apres_echec`, reprise explicite après échec, même doctrine que D-059) exécutées et vérifiées sur le projet réel. REAL E2E : #1 ÉCHEC technique propre (schéma Structured Outputs corrigé, v2), #2 SUCCES via reprise sur la même curation `cdf773f0-...` → première `mfr_versions` réelle (`d9dde670-...`, brouillon, non publiée), ENGINE PASS sans réparation, grounding tracé et cohérent, qualité produit acceptée pour la V1 (dette non bloquante consignée). 312/312 tests PASS, `tsc` PASS. Commit technique `557fa7c` (en attente de push manuel). Détail canonique : `DECISIONS.md` D-066. Prochaine tranche App : **T-MFR.5B — révision/validation/publication** (non ouverte).) *(V38, 2026-10-22 : D-065 — T-MFR.4B FERMÉE TECHNIQUEMENT, curation humaine ; détail : D-065.)*
+Dernière mise à jour : 2026-10-30 (V40 — Music : D-067 enregistrée, EN VIGUEUR TECHNIQUEMENT ; état documentaire V0.2 distingué validé / candidat / bloquant — voir §8 « Music V0 — état au 2026-10-30 ». Le reste du document n'est pas resynchronisé par cette mise à jour.) *(V39, 2026-10-27 : D-066 ajoutée : **T-MFR.5A FERMÉE TECHNIQUEMENT** — pipeline de rédaction MFR implémenté, migrations 025 (`mfr_demarrer_redaction`/`mfr_finir_redaction_*`) et 026 (`mfr_relancer_redaction_apres_echec`, reprise explicite après échec, même doctrine que D-059) exécutées et vérifiées sur le projet réel. REAL E2E : #1 ÉCHEC technique propre (schéma Structured Outputs corrigé, v2), #2 SUCCES via reprise sur la même curation `cdf773f0-...` → première `mfr_versions` réelle (`d9dde670-...`, brouillon, non publiée), ENGINE PASS sans réparation, grounding tracé et cohérent, qualité produit acceptée pour la V1 (dette non bloquante consignée). 312/312 tests PASS, `tsc` PASS. Commit technique `557fa7c` (en attente de push manuel). Détail canonique : `DECISIONS.md` D-066. Prochaine tranche App : **T-MFR.5B — révision/validation/publication** (non ouverte).)* *(V38, 2026-10-22 : D-065 — T-MFR.4B FERMÉE TECHNIQUEMENT, curation humaine ; détail : D-065.)*
 
 **Ce document est vivant.** Il doit être mis à jour à chaque incrément fonctionnel significatif validé (cf. règle dans `CLAUDE.md`). S'il contredit le repo réel au moment où vous le lisez, faites confiance au repo et signalez la contradiction au QG.
 
@@ -127,6 +127,29 @@ Fichiers présents dans `supabase/migrations/` : `001_schema`, `001_trading_boot
 **Chantiers dédiés futurs identifiés, mentionnés mais non ouverts :** nettoyage des surfaces coaching legacy dans l'admin ; nettoyage du module Trading legacy ; redesign du suivi coaching (post-P3) ; audit de l'usage réel de `stripe` ; chantier Privacy / Data Governance pour le futur patrimoine de données et l'apprentissage collectif (D-034, `PROJECT_BIBLE.md` §20) — requis avant toute production de cette couche, non ouvert à ce stade.
 
 ## 8. Prochaine action exacte
+
+**Music V0 — état au 2026-10-30 (prévaut sur le paragraphe Music ci-dessous, conservé comme historique).**
+
+*Validé / en vigueur :*
+- Méthode officielle **V0.1** (D-062) : seule méthode en vigueur.
+- **D-067** (récit client du brief assisté par ChatGPT) : enregistrée le 2026-10-30, EN VIGUEUR TECHNIQUEMENT — code `6b5008d` + `e0afc57` poussés le 2026-10-29, migration 029 appliquée en Production.
+- Arbitrages QG Music (2026-10-30) : registre administratif privé du pilote sur Google Drive autorisé (aucune livraison par Drive) ; règle impérative de fidélité des visages ; OpenAI (ChatGPT) à nommer dans la politique ; autorisation photo écrite par WhatsApp avant toute utilisation.
+- Commandes CRM-00005 et CRM-00006 : simulations, hors chiffre d'affaires et hors pilote.
+
+*Candidat (non adopté, non publié, non mis en service) — archive privée `CoachRedo Music HQ`, hors Git :*
+- Méthode `V0.2-CONSOLIDEE_CANDIDATE-R2_2026-10-30.md` (fidélité des visages, autorisation photo, périmètre D-067, conservation archives ≠ prestataires) ; les candidats du 22/10 et du 30/10 sont conservés intacts.
+- Annexe `COACHREDO_MUSIC_ANNEXE_AUTORISATION_PHOTO_CANDIDATE_2026-10-30.md`.
+- Projet de politique `00_JURIDIQUE_CANDIDATS/CONFIDENTIALITE_MUSIC_V0_CANDIDATE_2026-11.md` ; la page publique `confidentialite-music-v0-2026-10` reste en ligne, inchangée.
+
+*Bloquant avant adoption, publication et premier encaissement :*
+- Vérifications juridiques à mener : données personnelles au Sénégal (loi 2008-12, CDP), transferts hors du Sénégal, droit à l'image, mineurs et tiers identifiables, valeur d'une autorisation WhatsApp, identité juridique du vendeur, fiscalité.
+- Conditions OpenAI à vérifier selon l'outil et le type de compte (entraînement, conservation, usage commercial, images de personnes réelles et de mineurs) ; aucune procédure de suppression chez un fournisseur établie, donc aucune promesse de suppression.
+- Montage conservant les pixels du visage original : faisabilité à tester sur une image non réelle.
+- Droits de partage du registre Google Drive à vérifier avant toute donnée réelle.
+- Abonnement Suno payant et preuve associée à confirmer.
+- **Premier encaissement : NO-GO.**
+
+*Prochaine action :* décision du QG Music sur ces livrables candidats ; aucun commit, push, déploiement ni changement en Production sans GO distinct.
 
 **Music V0 (D-060, D-064) :** couche DB en production et **E2E réel PASS** (CRM-00005, 2026-10-22) ; postcheck global PASS ; gel MFR levé. **Prochaine action Music, chacune sur GO QG distinct, sans nouvelle architecture :** blockers avant lancement public — limitation de débit par le pare-feu Vercel (`/api/music/commandes`, `/api/music/questionnaire`, `/api/music/resume`), politique de confidentialité et mentions de collecte, alignement CGV et juridique, publication de la landing (`coachredo-vitrine`, branche `feat/music-personalized-songs-v0`). Amélioration UX avant lancement : scinder l'étape 5 du questionnaire (9 étapes). Production des chansons personnalisées : **Méthode officielle V0.1 obligatoire** (D-062), dont MASTER POCHETTE 3000×3000 (D-061). Archivage du dossier Aicha — « N'OUBLIE JAMAIS » : arbitrage QG séparé, aucune référence CRM attribuée.
 
