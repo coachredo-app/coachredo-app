@@ -1308,7 +1308,7 @@ Explicitement non verrouillé : mécanisme de rattachement à un compte, conserv
 
 **Conséquence :** le README de l'archive désigne explicitement le Markdown V0.1 comme source de vérité. Pour les détails opérationnels (dont le MASTER POCHETTE), `COACHREDO_MUSIC.md` renvoie vers la méthode : une seule source de vérité. Aucun code, aucune migration, aucune RPC. L'archivage du dossier de la commande à l'origine de ce retour d'expérience sera traité séparément, sans référence CRM attribuée à ce stade (CRM-00005 reste réservée au premier E2E, D-060).
 
-**Statut :** MÉTHODE OFFICIELLE V0.1 EN VIGUEUR — QG Music.
+**Statut :** MÉTHODE OFFICIELLE V0.1 EN VIGUEUR jusqu'au 2026-10-30 — QG Music. *(Mise à jour 2026-10-30 : remplacée par la Méthode officielle V0.2, voir D-068 ; la V0.1 est conservée intacte comme archive historique.)*
 
 ---
 
@@ -1442,3 +1442,21 @@ Explicitement non verrouillé : mécanisme de rattachement à un compte, conserv
 **Conséquence :** remplace, **pour le récit client uniquement**, le principe « brief rédigé à la main, sans IA » (Lots 1-3, D-064). La politique de confidentialité publique doit nommer OpenAI (ChatGPT) avant le premier encaissement. Retour arrière : le validateur de 022 ne peut être rétabli que si aucun brief (courant ou versionné) ne contient `recit`.
 
 **Statut :** EN VIGUEUR TECHNIQUEMENT (code et migration 029 en Production). Intégration à la méthode V0.2 consolidée : candidate, non adoptée. Mise à jour de la politique de confidentialité publique : projet candidat, non publié. Premier encaissement : NO-GO.
+
+---
+
+### D-068 — Music V0 : Méthode officielle V0.2 adoptée et politique de confidentialité v0-2026-11 publiée (QG Music)
+
+**Date :** 2026-10-30 (adoption de la méthode) ; 2026-11-01 (publication de la politique).
+
+**Décision :**
+1. **Méthode officielle V0.2** adoptée par le QG Music le 2026-10-30 ; elle **remplace la V0.1** (D-062) pour toute production. Source de vérité : `CoachRedo Music HQ/Chansons Personnalisées/00_METHODE_OFFICIELLE/COACHREDO_MUSIC_METHODE_CHANSONS_PERSONNALISEES_V0.2_OFFICIELLE_2026-10-30.md` (export DOCX de consultation au contenu identique) et son annexe officielle `COACHREDO_MUSIC_ANNEXE_AUTORISATION_PHOTO_V0.2_OFFICIELLE_2026-10-30.md`. Les versions V0, V0.1, V0.2 du 22/10 et les candidates du 30/10 sont conservées intactes comme archives. Le README de l'archive désigne la V0.2.
+2. Apports principaux par rapport à la V0.1 : brief en fiche interne de 10 sections + récit client (D-067) ; minimisation des données transmises à Suno et aux outils d'IA ; Link Only / remix désactivé et preuve commerciale de chaque master Suno ; contrôle de l'acceptation des CGV avant toute instruction Wave ; **règle impérative de fidélité des visages** (le visage original est conservé par montage, jamais modifié, remplacé ni régénéré ; toute altération visible = STOP et rejet) ; **autorisation photo écrite** sur WhatsApp, message complet et réponse archivés, vigilance mineurs et tiers ; statuts manuels EN_PRODUCTION / PRÊTE_À_LIVRER / LIVRÉE ; commandes de simulation exclues ; pilote limité à cinq commandes commerciales.
+3. Arbitrages QG Music associés (2026-10-30) : registre administratif privé du pilote sur Google Drive autorisé (accès limité, aucune livraison par Drive) ; OpenAI (ChatGPT) nommé dans la politique de confidentialité.
+4. **Politique de confidentialité `confidentialite-music-v0-2026-11`** du 1er novembre 2026 publiée sur la vitrine (`music/confidentialite.html`, commit `721ef2baf17f7d718ca9ca22f6193b3ce68a8dce`, poussé manuellement par Coach Redouane, vérifiée en ligne le 2026-11-03). Responsable : Redouane AGAJA, exploitant à titre personnel ; nom commercial CoachRedo Music ; aucune société. Nomme Wave, Vercel, Supabase, WhatsApp, Google Drive, OpenAI (ChatGPT) et Suno ; photos, mineurs, conservation (archives ≠ prestataires), droit d'opposition et recours CDP. CGV `cgv-music-v0-2026-10` inchangées.
+
+**Pourquoi :** disposer d'une méthode de production unique, complète et à jour avant les premières commandes réelles, et d'une politique de confidentialité conforme aux traitements réellement effectués (D-067).
+
+**Conséquence :** aucun code, aucune migration. **Cette adoption ne vaut pas autorisation de lancement commercial : premier encaissement NON AUTORISÉ** jusqu'à décision explicite du QG Music (condition posée : avis professionnel sur les formalités CDP et les transferts hors du Sénégal).
+
+**Statut :** EN VIGUEUR — QG Music.

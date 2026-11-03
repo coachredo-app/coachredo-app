@@ -1,6 +1,6 @@
 ---
 name: coachredo-music
-description: Checkpoint durable CoachRedo Music après finalisation de l'Album 3 — mission, règles artistiques apprises, enseignements Suno, Albums 1-3 (statuts VALIDÉ/VERROUILLÉ/historique), tracklist et arc narratif complet de l'Album 3, chansons personnalisées (produit VALIDÉ en V0, marché de lancement Sénégal, phase pré-lancement), tarif V0 Sénégal validé (29 900 FCFA, Wave manuel ; autres marchés post-V0), garde-fous voix, renvoi vers la Méthode officielle V0.1 des chansons personnalisées (D-062, dont MASTER POCHETTE 3000×3000, D-061).
+description: Checkpoint durable CoachRedo Music après finalisation de l'Album 3 — mission, règles artistiques apprises, enseignements Suno, Albums 1-3 (statuts VALIDÉ/VERROUILLÉ/historique), tracklist et arc narratif complet de l'Album 3, chansons personnalisées (produit VALIDÉ en V0, marché de lancement Sénégal, phase pré-lancement), tarif V0 Sénégal validé (29 900 FCFA, Wave manuel ; autres marchés post-V0), garde-fous voix, renvoi vers la Méthode officielle V0.2 des chansons personnalisées (D-068, qui remplace la V0.1 / D-062 ; dont MASTER POCHETTE 3000×3000, D-061) et vers l'état vivant du pilote (ETAT_PILOTE_MUSIC.md).
 metadata:
   type: project-memory
 ---
@@ -345,6 +345,8 @@ Coach Redouane a écouté la version et l'a décrite comme « magnifique ».
 - **lancement public pas encore ouvert** ;
 - **landing pas encore publiée**.
 
+*(Mise à jour 2026-11-03 — état du pilote :)* landing, CGV (`cgv-music-v0-2026-10`) et politique de confidentialité (`confidentialite-music-v0-2026-11`, D-068) en ligne sur `www.coachredo.com/music/…` (pages en `noindex`) ; récit client assisté par ChatGPT en production (D-067) ; E2E technique validé sur CRM-00006 (simulation) ; Page Facebook et compte Instagram Business créés, contenu organique uniquement, aucune publicité payante ; pilote de cinq commandes au Sénégal préparé ; **premier encaissement NON AUTORISÉ** à cette date. Exploitation à titre personnel par Redouane AGAJA, nom commercial CoachRedo Music. État vivant : `CoachRedo Music HQ/ETAT_PILOTE_MUSIC.md` (hors Git).
+
 *Statut historique (checkpoint du 2026-10-14, désormais obsolète, conservé comme trace) : « IDÉE À ÉTUDIER — NON VALIDÉE COMME BUSINESS FINAL ». Le texte ci-dessous date de ce checkpoint.*
 
 **Concept :** service de création de chansons personnalisées pour particuliers.
@@ -407,13 +409,13 @@ Ordre prévu : (1) enregistrer ce checkpoint dans la mémoire durable du reposit
 
 ## 13. Chansons personnalisées — méthode officielle et MASTER POCHETTE (renvoi)
 
-**Source de vérité unique pour la production des chansons personnalisées : Méthode officielle V0.1** (D-062), fichier Markdown `CoachRedo Music HQ/Chansons Personnalisées/00_METHODE_OFFICIELLE/COACHREDO_MUSIC_METHODE_CHANSONS_PERSONNALISEES_V0.1_2026-10-21.md`. Un export DOCX identique sert à la consultation ; la V0 du 2026-10-18 reste conservée comme historique.
+**Source de vérité unique pour la production des chansons personnalisées : Méthode officielle V0.2** (D-068, adoptée le 2026-10-30), fichier Markdown `CoachRedo Music HQ/Chansons Personnalisées/00_METHODE_OFFICIELLE/COACHREDO_MUSIC_METHODE_CHANSONS_PERSONNALISEES_V0.2_OFFICIELLE_2026-10-30.md`, avec son annexe officielle d'autorisation photo. Un export DOCX identique sert à la consultation ; les versions V0 et V0.1 (D-062) sont conservées comme historique.
 
 Toute session chargée d'une chanson personnalisée applique cette méthode, en particulier :
 
 - **VALIDÉ = VERROUILLÉ** — en cas de doute sur un fichier ou une version : STOP → demander confirmation à Coach Redouane ;
 - pipeline BRIEF VALIDÉ → PRODUCTION ARTISTIQUE → MASTER AUDIO LOCKED → COVER MASTER LOCKED → PACKAGING QA → PRÊTE À LIVRER (checkpoints internes, pas des statuts en base) ;
-- **MASTER POCHETTE 3000×3000 strict** (D-061), logo PNG officiel superposé tel quel, identité réelle préservée ;
-- PDF avec message personnalisé obligatoire.
+- **MASTER POCHETTE 3000×3000 strict** (D-061), logo PNG officiel superposé tel quel ; **règle impérative de fidélité des visages** (visage original conservé par montage, jamais modifié, remplacé ni régénéré) et autorisation photo écrite préalable ;
+- PDF avec message personnalisé obligatoire (gabarit : `CoachRedo Music HQ/PDF_MASTER_V1/`, voir l'état du pilote pour son statut de validation).
 
 Les détails opérationnels (règles, checklists, arborescence) ne sont **pas** dupliqués ici : seule la méthode fait foi.
