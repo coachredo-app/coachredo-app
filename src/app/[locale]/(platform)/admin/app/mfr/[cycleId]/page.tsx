@@ -1,6 +1,8 @@
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import type { ContenuVersion } from '@/lib/mfr/contenu'
+import { ContenuVersionAffichage } from '@/components/mfr/ContenuVersionAffichage'
 
 interface AdminMfrDetailPageProps {
   params: Promise<{ locale: string; cycleId: string }>
@@ -31,56 +33,6 @@ const STATUT_CLASSES: Record<StatutMfr, string> = {
   BROUILLON: 'bg-amber-50 text-amber-700 border-amber-200',
   VALIDE: 'bg-blue-50 text-blue-700 border-blue-200',
   PUBLIE: 'bg-green-50 text-green-700 border-green-200',
-}
-
-// Forme réelle de mfr_versions.contenu — vérifiée en lecture seule contre
-// la base live avant d'écrire cette page (identité stricte avec la sortie
-// validée par l'ENGINE, T-MFR.5A/D-066). Rien ici n'est inventé : chaque
-// champ ci-dessous correspond à une clé réellement présente.
-interface AffirmationSourcee {
-  readonly texte: string
-  readonly sources: readonly string[]
-}
-interface DirectionResolue {
-  readonly position: number
-  readonly titre: string
-  readonly pourquoi: AffirmationSourcee
-  readonly forces: AffirmationSourcee
-  readonly limites: AffirmationSourcee
-  readonly planAction: AffirmationSourcee
-  readonly hypotheseId: string
-  readonly estRecommandee: boolean
-}
-interface ContenuVersion {
-  readonly cycleId: string
-  readonly analyseId: string
-  readonly curationId: string
-  readonly recommandationConfirmee: boolean
-  readonly directions: readonly DirectionResolue[]
-  readonly aucuneDirectionMessage: AffirmationSourcee | null
-}
-
-function Sources({ sources }: { sources: readonly string[] }) {
-  if (sources.length === 0) {
-    return <span className="text-cr-text-muted text-xs italic">Aucune source citée</span>
-  }
-  return (
-    <span className="text-cr-text-muted text-xs">
-      Sources : {sources.join(', ')}
-    </span>
-  )
-}
-
-function BlocAffirmation({ titre, affirmation }: { titre: string; affirmation: AffirmationSourcee }) {
-  return (
-    <div>
-      <h4 className="text-sm font-semibold text-cr-text">{titre}</h4>
-      <p className="text-sm text-cr-text-secondary mt-1 whitespace-pre-wrap">{affirmation.texte}</p>
-      <div className="mt-1">
-        <Sources sources={affirmation.sources} />
-      </div>
-    </div>
-  )
 }
 
 export default async function AdminMfrDetailPage({ params }: AdminMfrDetailPageProps) {
@@ -215,43 +167,7 @@ export default async function AdminMfrDetailPage({ params }: AdminMfrDetailPageP
           <p className="text-sm text-cr-text-muted">Aucune version disponible pour ce cycle pour l&apos;instant.</p>
         </div>
       ) : (
-        (() => {
-          const contenu = version.contenu as unknown as ContenuVersion
-          if (contenu.directions.length === 0) {
-            return (
-              <div className="bg-surface rounded-xl border border-cr-border p-6">
-                <h2 className="font-semibold text-cr-text mb-2">Aucune direction retenue</h2>
-                {contenu.aucuneDirectionMessage ? (
-                  <BlocAffirmation titre="Message" affirmation={contenu.aucuneDirectionMessage} />
-                ) : (
-                  <p className="text-sm text-cr-text-muted">Aucun message associé.</p>
-                )}
-              </div>
-            )
-          }
-          return (
-            <div className="space-y-4">
-              {[...contenu.directions].sort((a, b) => a.position - b.position).map(direction => (
-                <div key={direction.position} className="bg-surface rounded-xl border border-cr-border p-6 space-y-4">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <h2 className="font-semibold text-cr-text text-lg">
-                      {direction.position}. {direction.titre}
-                    </h2>
-                    {direction.estRecommandee && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-                        Recommandée
-                      </span>
-                    )}
-                  </div>
-                  <BlocAffirmation titre="Pourquoi (diagnostic)" affirmation={direction.pourquoi} />
-                  <BlocAffirmation titre="Forces" affirmation={direction.forces} />
-                  <BlocAffirmation titre="Limites" affirmation={direction.limites} />
-                  <BlocAffirmation titre="Plan d'action" affirmation={direction.planAction} />
-                </div>
-              ))}
-            </div>
-          )
-        })()
+        <ContenuVersionAffichage contenu={version.contenu as unknown as ContenuVersion} />
       )}
     </div>
   )
