@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import type { ContenuVersion } from '@/lib/mfr/contenu'
 import { ContenuVersionAffichage } from '@/components/mfr/ContenuVersionAffichage'
+import { ValidationPublicationActions } from './ValidationPublicationActions'
 
 interface AdminMfrDetailPageProps {
   params: Promise<{ locale: string; cycleId: string }>
@@ -160,6 +161,18 @@ export default async function AdminMfrDetailPage({ params }: AdminMfrDetailPageP
             </div>
           )}
         </dl>
+
+        {version && (
+          <div className="pt-3 border-t border-cr-border">
+            <ValidationPublicationActions
+              cycleId={cycle.id as string}
+              versionId={version.id as string}
+              estValidee={Boolean(version.valide_le)}
+              estPubliee={Boolean(publication)}
+              locale={locale}
+            />
+          </div>
+        )}
       </div>
 
       {!version ? (
