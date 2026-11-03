@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { requireAdminService } from '@/lib/admin'
 
 function revalidateFiche(locale: string, userId: string) {
-  revalidatePath(`/${locale}/admin/users/${userId}`)
+  revalidatePath(`/${locale}/admin/app/users/${userId}`)
 }
 
 export async function upsertDiagnostic(
