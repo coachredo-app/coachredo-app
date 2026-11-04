@@ -9,7 +9,7 @@
 // double (`already_publiee`/`cycle_deja_publie_autre_version`), et
 // l'idempotence de la validation (`already_valide`).
 
-import { validerVersionMfr, publierVersionMfr, LIBELLES_ERREUR_VALIDATION_PUBLICATION } from './validationPublication'
+import { validerVersionMfr, publierVersionMfr, actionsMfrAdminActivees, LIBELLES_ERREUR_VALIDATION_PUBLICATION } from './validationPublication'
 
 let total = 0
 let echecs = 0
@@ -31,6 +31,32 @@ function serviceFictif(reponse: { data: unknown; error: unknown }) {
 }
 
 async function main(): Promise<void> {
+  // ── Verrou MFR_ADMIN_ACTIONS_ENABLED — fail-closed par construction ──
+  // Seule la valeur exacte 'true' active ; absente, 'false' ou toute
+  // autre valeur (y compris une casse différente) => désactivé.
+  {
+    const original = process.env.MFR_ADMIN_ACTIONS_ENABLED
+    try {
+      delete process.env.MFR_ADMIN_ACTIONS_ENABLED
+      verifier('Verrou — variable absente => désactivé (fail-closed)', actionsMfrAdminActivees() === false)
+
+      process.env.MFR_ADMIN_ACTIONS_ENABLED = 'false'
+      verifier("Verrou — 'false' => désactivé", actionsMfrAdminActivees() === false)
+
+      process.env.MFR_ADMIN_ACTIONS_ENABLED = 'TRUE'
+      verifier("Verrou — valeur invalide ('TRUE', casse différente) => désactivé", actionsMfrAdminActivees() === false)
+
+      process.env.MFR_ADMIN_ACTIONS_ENABLED = '1'
+      verifier("Verrou — valeur invalide ('1') => désactivé", actionsMfrAdminActivees() === false)
+
+      process.env.MFR_ADMIN_ACTIONS_ENABLED = 'true'
+      verifier("Verrou — exactement 'true' => activé", actionsMfrAdminActivees() === true)
+    } finally {
+      if (original === undefined) delete process.env.MFR_ADMIN_ACTIONS_ENABLED
+      else process.env.MFR_ADMIN_ACTIONS_ENABLED = original
+    }
+  }
+
   // ── mfr_valider_version ──────────────────────────────────────
 
   {
@@ -104,7 +130,7 @@ async function main(): Promise<void> {
   for (const code of [
     'cycle_introuvable', 'version_introuvable_pour_ce_cycle', 'cycle_deja_publie', 'cycle_deja_publie_autre_version',
     'version_non_validee', 'aucune_analyse_retenue', 'analyse_retenue_a_change', 'aucune_curation', 'curation_non_officielle', 'operateur_introuvable',
-    'identifiant_invalide', 'erreur_technique',
+    'identifiant_invalide', 'erreur_technique', 'fonctionnalite_desactivee',
   ]) {
     verifier(`Libellé présent pour ${code}`, typeof LIBELLES_ERREUR_VALIDATION_PUBLICATION[code] === 'string')
   }

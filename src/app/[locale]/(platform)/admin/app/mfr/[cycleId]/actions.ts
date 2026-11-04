@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAdminServiceWithUser } from '@/lib/admin'
-import { validerVersionMfr, publierVersionMfr } from '@/lib/mfr/server/validationPublication'
+import { validerVersionMfr, publierVersionMfr, actionsMfrAdminActivees } from '@/lib/mfr/server/validationPublication'
 import type { ValiderVersionResultat, PublierVersionResultat } from '@/lib/mfr/server/validationPublication'
 
 // Next.js expose toute fonction exportée d'un fichier 'use server' comme
@@ -26,6 +26,15 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 export async function validerVersion(versionId: string, cycleId: string, locale: string): Promise<ValiderVersionResultat> {
   const { service, adminUserId } = await requireAdminServiceWithUser()
 
+  // Verrou serveur additif (`MFR_ADMIN_ACTIONS_ENABLED`) — fail-closed,
+  // vérifié avant tout autre contrôle ou effet de bord. Indépendant du
+  // déploiement du code : le bouton peut être présent sans que l'action
+  // sous-jacente ne produise jamais d'effet réel tant que la variable
+  // n'est pas explicitement `'true'`.
+  if (!actionsMfrAdminActivees()) {
+    return { statut: 'ERREUR', code: 'fonctionnalite_desactivee' }
+  }
+
   // Forme des identifiants contrôlée avant toute utilisation — jamais
   // une valeur non-UUID transmise telle quelle à la RPC (027 échouerait
   // de façon sûre côté Postgres, mais jamais sur la seule foi de ce
@@ -43,6 +52,10 @@ export async function validerVersion(versionId: string, cycleId: string, locale:
 
 export async function publierVersion(versionId: string, cycleId: string, locale: string): Promise<PublierVersionResultat> {
   const { service, adminUserId } = await requireAdminServiceWithUser()
+
+  if (!actionsMfrAdminActivees()) {
+    return { statut: 'ERREUR', code: 'fonctionnalite_desactivee' }
+  }
 
   if (!UUID_REGEX.test(versionId) || !UUID_REGEX.test(cycleId)) {
     return { statut: 'ERREUR', code: 'identifiant_invalide' }

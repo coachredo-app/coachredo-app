@@ -19,6 +19,20 @@ import type { createServiceClient } from '@/lib/supabase/server'
 
 type SupabaseServiceClient = ReturnType<typeof createServiceClient>
 
+/**
+ * Verrou serveur additif, indépendant du déploiement du code — les
+ * actions de validation/publication restent désactivées tant que cette
+ * variable d'environnement n'est pas exactement `'true'`. Fail-closed
+ * par défaut : absente, vide, `'false'`, ou toute autre valeur (y
+ * compris une casse différente type `'TRUE'`) => désactivé. N'affecte
+ * ni les RPC 027 ni la lecture client (033) — un verrou purement
+ * applicatif, sans effet sur la base en cas de retour arrière (il
+ * suffit de retirer l'appel à `actionsMfrAdminActivees()` ci-dessous).
+ */
+export function actionsMfrAdminActivees(): boolean {
+  return process.env.MFR_ADMIN_ACTIONS_ENABLED === 'true'
+}
+
 export type ValiderVersionResultat =
   | { readonly statut: 'OK'; readonly dejaValidee: boolean; readonly valideLe: string }
   | { readonly statut: 'ERREUR'; readonly code: string }
@@ -72,6 +86,7 @@ export async function publierVersionMfr(
 export const LIBELLES_ERREUR_VALIDATION_PUBLICATION: Readonly<Record<string, string>> = {
   erreur_technique: 'Erreur technique lors de la communication avec le serveur.',
   identifiant_invalide: 'Identifiant invalide.',
+  fonctionnalite_desactivee: 'Cette action est actuellement désactivée.',
   cycle_introuvable: 'Cycle introuvable.',
   version_introuvable_pour_ce_cycle: "Cette version n'appartient pas à ce cycle.",
   cycle_deja_publie: 'Ce cycle est déjà publié — cette version ne peut plus être validée.',
