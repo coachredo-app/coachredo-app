@@ -19,5 +19,5 @@ export async function deleteUser(userId: string, locale: string) {
   const { error } = await service.auth.admin.deleteUser(userId)
   if (error) throw new Error(error.message)
 
-  revalidatePath(`/${locale}/admin`)
+  revalidatePath(`/${locale}/admin/app`)
 }
