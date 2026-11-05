@@ -177,11 +177,19 @@ export default async function AdminMfrPage({ params, searchParams }: AdminMfrPag
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-cr-text">Feuilles de Route — Administration</h1>
-        <p className="text-cr-text-secondary mt-1 text-sm">
-          {lignes.length} cycle{lignes.length > 1 ? 's' : ''} MFR{curseurValide ? ' (page suivante)' : ''}
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-cr-text">Feuilles de Route — Administration</h1>
+          <p className="text-cr-text-secondary mt-1 text-sm">
+            {lignes.length} cycle{lignes.length > 1 ? 's' : ''} MFR{curseurValide ? ' (page suivante)' : ''}
+          </p>
+        </div>
+        <Link
+          href={`/${locale}/admin/app/mfr/testeurs`}
+          className="text-sm font-medium text-cr-accent hover:underline whitespace-nowrap"
+        >
+          Gérer les testeurs →
+        </Link>
       </div>
 
       <div className="bg-surface rounded-xl border border-cr-border overflow-hidden">

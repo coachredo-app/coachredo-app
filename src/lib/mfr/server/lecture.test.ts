@@ -66,6 +66,14 @@ async function main(): Promise<void> {
     verifier('aucune_publication => AUCUNE_PUBLICATION (pas ERREUR)', r.statut === 'AUCUNE_PUBLICATION')
   }
 
+  // 3bis. acces_restreint (GO QG APP 2026-11-05) — état attendu et
+  // fréquent pendant la fermeture par défaut, jamais une erreur,
+  // jamais confondu avec AUCUNE_PUBLICATION.
+  {
+    const r = await lireVersionPublieeMfr(clientFictif({ data: { error: 'acces_restreint' }, error: null }), 'fictif')
+    verifier('acces_restreint => ACCES_RESTREINT (pas ERREUR, pas AUCUNE_PUBLICATION)', r.statut === 'ACCES_RESTREINT')
+  }
+
   // 4. Toute autre erreur métier (cas structurellement inattendus en usage
   // normal — cycle_introuvable/acces_refuse/non_authentifie/incoherence) —
   // remontée fidèlement, jamais masquée.

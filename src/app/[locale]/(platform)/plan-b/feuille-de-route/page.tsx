@@ -120,6 +120,18 @@ export default async function FeuilleDeRoutePage({ params }: FeuilleDeRoutePageP
               // État E — erreur de lecture : jamais un statut inventé,
               // jamais confondu avec « aucune publication encore ».
               <p className="text-sm text-error">{lecture.erreur}</p>
+            ) : lecture?.statut === 'ACCES_RESTREINT' ? (
+              // État F (GO QG APP 2026-11-05) — MFR fermé par défaut :
+              // message d'attente honnête, jamais confondu avec l'état
+              // C (aucune publication) ni avec une erreur technique.
+              // Le Livre, la Carte de parcours et le MPD restent
+              // strictement inchangés — ce message n'apparaît qu'ici.
+              <>
+                <p className="text-sm text-cr-text-secondary">Ton Point de Départ est finalisé.</p>
+                <p className="text-sm text-cr-text-secondary">
+                  Ta Feuille de Route est en cours de finalisation avant son ouverture. Reviens consulter cette page un peu plus tard.
+                </p>
+              </>
             ) : (
               // État C — MPD consommé, aucune publication encore :
               // comportement T7.11 inchangé, aucune fausse MFR.

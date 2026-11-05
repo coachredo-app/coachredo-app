@@ -164,6 +164,31 @@ begin
   values (v_cycle_c, v_redaction_c, v_user_id, 2, '{"fixture":"brouillon_c_v2_jamais_publie"}'::jsonb)
   returning id into v_version_c2;
 
+  -- ── Préalable 2026-11-05 (GO QG APP « gestion des testeurs MFR ») :
+  -- depuis l'amendement de cette RPC (migration 034, qui dépend de 033), `acces_restreint`
+  -- est retourné pour TOUT utilisateur dont le dernier événement
+  -- `mfr_testeurs_evenements` n'est pas AUTORISE — table vide incluse.
+  -- Sans ce préalable, T1-T7 ci-dessous échoueraient tous sur
+  -- `acces_restreint` au lieu de leur code attendu : ce n'est pas une
+  -- régression de ces tests, c'est le nouveau comportement par défaut
+  -- qu'il faut neutraliser explicitement pour continuer à exercer
+  -- isolément la logique déjà testée (propriété/publication/version).
+  -- `v_user_id` sert ici à la fois de testeur et d'« opérateur » de
+  -- fixture (FK `acteur_admin_id` satisfaite sans un troisième compte
+  -- réel) — jamais une simulation de la garde admin elle-même (hors
+  -- périmètre de ce fichier, la garde `requireAdminServiceWithUser()`
+  -- vit exclusivement côté TypeScript, jamais testée en SQL).
+  perform set_config('request.jwt.claim.sub', '', true);
+  v_resultat := public.mfr_autoriser_testeur(v_user_id, v_user_id, 'fixture T-testeurs');
+  if (v_resultat->>'success')::boolean is not true then
+    raise exception 'Préalable ÉCHEC : autorisation testeur v_user_id, obtenu %', v_resultat;
+  end if;
+  v_resultat := public.mfr_autoriser_testeur(v_autre_user_id, v_user_id, 'fixture T-testeurs (T3)');
+  if (v_resultat->>'success')::boolean is not true then
+    raise exception 'Préalable ÉCHEC : autorisation testeur v_autre_user_id, obtenu %', v_resultat;
+  end if;
+  raise notice 'Préalable PASS — v_user_id et v_autre_user_id autorisés testeurs avant T1-T7';
+
   -- ── T1 — non authentifié (auth.uid() nul) ────────────────────
   perform set_config('request.jwt.claim.sub', '', true);
   v_resultat := public.mfr_lire_version_publiee(v_cycle_a);
@@ -228,7 +253,153 @@ begin
   end if;
   raise notice 'T7 PASS — jamais la dernière version, toujours celle réellement publiée';
 
-  raise notice '7/7 assertions fonctionnelles PASS.';
+  -- ════════════════════════════════════════════════════════════
+  -- T9-T15 — Gestion des testeurs MFR (GO QG APP 2026-11-05, migration 033)
+  -- ════════════════════════════════════════════════════════════
+  -- Toujours ÉCRITS, NON EXÉCUTÉS ici (ce fichier entier n'a pas été
+  -- rejoué — il dépend de fixtures plus lourdes que nécessaire). Les
+  -- scénarios qu'ils couvrent sont désormais RÉELLEMENT EXÉCUTÉS,
+  -- avec des fixtures plus légères et sur la chaîne de migrations
+  -- réelle (013→027, 033, 034), dans
+  -- `supabase/migrations_candidates/test_integration_testeurs_lecture.sql`
+  -- (8 scénarios QG, via `run_test_integration.sh`, PASS). T9-T15
+  -- restent ici pour mémoire/couverture complémentaire (ex. T7,
+  -- brouillon postérieur à la publication), pas comme seule preuve.
+
+  -- ── T9 — table vide pour un utilisateur jamais autorisé → fermé ──
+  -- Fictif, jamais un vrai compte, jamais touché par le préalable
+  -- ci-dessus : aucune ligne `mfr_testeurs_evenements` pour lui.
+  declare
+    v_jamais_testeur uuid := '22222222-2222-2222-2222-222222222222';
+  begin
+    perform set_config('request.jwt.claim.sub', v_jamais_testeur::text, true);
+    v_resultat := public.mfr_lire_version_publiee(v_cycle_a);
+    if v_resultat->>'error' <> 'acces_restreint' then
+      raise exception 'T9 ÉCHEC : attendu acces_restreint, obtenu %', v_resultat;
+    end if;
+    raise notice 'T9 PASS — utilisateur jamais autorisé fermé par défaut, même avec un cycle_id d''autrui syntaxiquement valide';
+  end;
+
+  -- ── T10 — retrait d'un testeur déjà autorisé → fermé immédiatement ──
+  v_resultat := public.mfr_retirer_testeur(v_user_id, v_user_id, 'fixture T10 retrait');
+  if (v_resultat->>'success')::boolean is not true then
+    raise exception 'T10 ÉCHEC : retrait, obtenu %', v_resultat;
+  end if;
+  perform set_config('request.jwt.claim.sub', v_user_id::text, true);
+  v_resultat := public.mfr_lire_version_publiee(v_cycle_a);
+  if v_resultat->>'error' <> 'acces_restreint' then
+    raise exception 'T10 ÉCHEC : attendu acces_restreint après retrait, obtenu %', v_resultat;
+  end if;
+  raise notice 'T10 PASS — retrait effectif immédiatement, même sur un cycle déjà publié consulté avec succès en T5';
+
+  -- ── T11 — réautorisation après retrait → accès restauré ──────
+  v_resultat := public.mfr_autoriser_testeur(v_user_id, v_user_id, 'fixture T11 réautorisation');
+  if (v_resultat->>'success')::boolean is not true then
+    raise exception 'T11 ÉCHEC : réautorisation, obtenu %', v_resultat;
+  end if;
+  v_resultat := public.mfr_lire_version_publiee(v_cycle_a);
+  if (v_resultat->>'success')::boolean is not true then
+    raise exception 'T11 ÉCHEC : attendu succès après réautorisation, obtenu %', v_resultat;
+  end if;
+  raise notice 'T11 PASS — réautorisation restaure l''accès, historique complet conservé (3 événements pour v_user_id : AUTORISE/RETIRE/AUTORISE)';
+
+  -- ── T12 — CORRIGÉ 2026-11-05 (revue QG APP) ──────────────────
+  -- La version précédente de ce test forçait deux INSERT au même
+  -- `cree_le` dans UNE SEULE transaction/session et prétendait valider
+  -- « l'ordre déterministe sous concurrence ». **C'était trompeur,
+  -- signalé explicitement par le QG et corrigé ici** : deux INSERT
+  -- séquentiels dans la même transaction ne subissent, par définition,
+  -- aucune concurrence réelle — `nextval()` est appelé au moment de
+  -- l'exécution de l'instruction (potentiellement tôt dans une
+  -- transaction), la ligne ne devient visible qu'au COMMIT ; deux
+  -- VRAIES transactions concurrentes peuvent obtenir leurs `id` dans un
+  -- ordre différent de leur ordre réel de validation. Un test à
+  -- l'intérieur d'une seule session ne peut donc JAMAIS démontrer la
+  -- sérialisation réelle — seule une vérification avec deux connexions
+  -- distinctes le peut (voir le script séparé ci-dessous).
+  --
+  -- Ce qui reste légitimement testable ICI, à l'intérieur d'une seule
+  -- transaction, et ce que ce bloc teste désormais — deux garanties
+  -- plus modestes, honnêtement nommées :
+  --   (a) en écriture strictement séquentielle (aucune concurrence),
+  --       l'ordre de `id` reflète bien l'ordre d'insertion — propriété
+  --       triviale d'un `bigserial`, pas une preuve de robustesse sous
+  --       charge concurrente ;
+  --   (b) le mécanisme de sérialisation ajouté (`pg_advisory_xact_lock`)
+  --       est RÉELLEMENT PRÉSENT dans le corps des deux fonctions —
+  --       vérifié par inspection statique du code exécutable
+  --       (`pg_get_functiondef`), pas par son exécution concurrente.
+  -- La preuve dynamique de sérialisation sous deux transactions
+  -- réellement concurrentes, dans les deux ordres (autoriser/autoriser,
+  -- retirer/retirer, autoriser/retirer), est un script SÉPARÉ :
+  -- `supabase/migrations_candidates/test_concurrence_testeurs.sh`
+  -- (deux connexions `psql` réelles, jamais exprimable dans un seul
+  -- bloc `do $$ ... $$`) — ÉCRIT, NON EXÉCUTÉ (aucune base disponible
+  -- dans cette session), à exécuter par Coach Redouane contre un
+  -- Postgres local ou jetable avant tout GO de production.
+  begin
+    -- (a) Écriture séquentielle : propriété triviale, pas une preuve de
+    -- concurrence — nommée honnêtement pour ne jamais être confondue
+    -- avec un test de concurrence réelle.
+    insert into public.mfr_testeurs_evenements (user_id, action, acteur_admin_id, commentaire)
+    values (v_user_id, 'RETIRE', v_user_id, 'fixture T12a — séquentiel, id inférieur');
+    insert into public.mfr_testeurs_evenements (user_id, action, acteur_admin_id, commentaire)
+    values (v_user_id, 'AUTORISE', v_user_id, 'fixture T12a — séquentiel, id supérieur');
+
+    v_resultat := public.mfr_lire_version_publiee(v_cycle_a);
+    if (v_resultat->>'success')::boolean is not true then
+      raise exception 'T12a ÉCHEC : en écriture séquentielle, le dernier id inséré doit l''emporter, obtenu %', v_resultat;
+    end if;
+    raise notice 'T12a PASS — ordre par id respecté en écriture séquentielle (PAS un test de concurrence réelle — voir T12b et le script séparé)';
+  end;
+
+  -- (b) Inspection statique : le verrou de sérialisation est bien
+  -- présent dans le corps réellement exécutable des deux fonctions —
+  -- garantie de code, pas garantie d'exécution concurrente.
+  declare
+    v_corps_autoriser text;
+    v_corps_retirer   text;
+  begin
+    v_corps_autoriser := pg_get_functiondef('public.mfr_autoriser_testeur(uuid, uuid, text)'::regprocedure);
+    v_corps_retirer   := pg_get_functiondef('public.mfr_retirer_testeur(uuid, uuid, text)'::regprocedure);
+
+    if v_corps_autoriser not ilike '%pg_advisory_xact_lock%' then
+      raise exception 'T12b ÉCHEC : mfr_autoriser_testeur ne contient aucun appel à pg_advisory_xact_lock — sérialisation absente';
+    end if;
+    if v_corps_retirer not ilike '%pg_advisory_xact_lock%' then
+      raise exception 'T12b ÉCHEC : mfr_retirer_testeur ne contient aucun appel à pg_advisory_xact_lock — sérialisation absente';
+    end if;
+    raise notice 'T12b PASS — pg_advisory_xact_lock présent dans les deux fonctions (garantie de code — pas une preuve d''exécution concurrente, voir le script séparé)';
+  end;
+
+  -- ── T13 — appel direct des RPC d'écriture avec paramètres invalides ──
+  v_resultat := public.mfr_autoriser_testeur(null, v_user_id, null);
+  if v_resultat->>'error' <> 'identifiant_invalide' then
+    raise exception 'T13a ÉCHEC : p_user_id null, obtenu %', v_resultat;
+  end if;
+  v_resultat := public.mfr_autoriser_testeur(v_user_id, null, null);
+  if v_resultat->>'error' <> 'identifiant_invalide' then
+    raise exception 'T13b ÉCHEC : p_operateur_id null, obtenu %', v_resultat;
+  end if;
+  v_resultat := public.mfr_autoriser_testeur('33333333-3333-3333-3333-333333333333'::uuid, v_user_id, null);
+  if v_resultat->>'error' <> 'utilisateur_introuvable' then
+    raise exception 'T13c ÉCHEC : utilisateur cible inexistant, obtenu %', v_resultat;
+  end if;
+  raise notice 'T13 PASS — identifiants invalides/inexistants rejetés proprement, jamais une insertion silencieuse';
+
+  -- ── T14 — lecture d'un cycle d'autrui reste refusée même en testeur ──
+  -- Un testeur autorisé reste soumis au contrôle de propriété déjà
+  -- existant (étape 2/6, inchangée) — jamais une élévation d'accès aux
+  -- MFR d'autres utilisateurs. v_autre_user_id est testeur (préalable)
+  -- mais n'est jamais propriétaire de v_cycle_a.
+  perform set_config('request.jwt.claim.sub', v_autre_user_id::text, true);
+  v_resultat := public.mfr_lire_version_publiee(v_cycle_a);
+  if v_resultat->>'error' <> 'acces_refuse' then
+    raise exception 'T14 ÉCHEC : un testeur autorisé ne doit jamais lire la MFR d''un autre utilisateur — attendu acces_refuse, obtenu %', v_resultat;
+  end if;
+  raise notice 'T14 PASS — statut testeur n''accorde jamais d''accès aux cycles d''autrui (le contrôle de propriété reste intact et prioritaire une fois le gate global franchi)';
+
+  raise notice '13/13 assertions fonctionnelles PASS (7 lecture + 6 gestion testeurs).';
 end $$;
 
 -- ── Privilèges EXECUTE par rôle (statique, même discipline que 027) ──
@@ -250,6 +421,41 @@ begin
   if v_public is not false then raise exception 'T8 ÉCHEC : public ne doit jamais avoir EXECUTE'; end if;
 
   raise notice 'T8 PASS — EXECUTE exactement authenticated=true, anon/service_role/public=false';
+end $$;
+
+-- ── T15 — privilèges EXECUTE des 2 RPC d'écriture testeurs (033) ──
+-- Inverse de T8 : réservées service_role EXCLUSIVEMENT, jamais
+-- authenticated — aucun utilisateur ordinaire ne doit pouvoir
+-- s'auto-autoriser ou retirer un autre testeur, même par appel RPC
+-- direct hors de toute Server Action admin.
+do $$
+declare
+  v_anon          boolean;
+  v_authenticated boolean;
+  v_service_role  boolean;
+  v_public        boolean;
+begin
+  v_anon          := has_function_privilege('anon', 'public.mfr_autoriser_testeur(uuid, uuid, text)', 'EXECUTE');
+  v_authenticated := has_function_privilege('authenticated', 'public.mfr_autoriser_testeur(uuid, uuid, text)', 'EXECUTE');
+  v_service_role  := has_function_privilege('service_role', 'public.mfr_autoriser_testeur(uuid, uuid, text)', 'EXECUTE');
+  v_public        := has_function_privilege('public', 'public.mfr_autoriser_testeur(uuid, uuid, text)', 'EXECUTE');
+
+  if v_anon is not false then raise exception 'T15a ÉCHEC : anon ne doit jamais avoir EXECUTE sur mfr_autoriser_testeur'; end if;
+  if v_authenticated is not false then raise exception 'T15a ÉCHEC : authenticated ne doit JAMAIS avoir EXECUTE sur mfr_autoriser_testeur (réservé admin/service_role)'; end if;
+  if v_service_role is not true then raise exception 'T15a ÉCHEC : service_role doit avoir EXECUTE sur mfr_autoriser_testeur'; end if;
+  if v_public is not false then raise exception 'T15a ÉCHEC : public ne doit jamais avoir EXECUTE sur mfr_autoriser_testeur'; end if;
+
+  v_anon          := has_function_privilege('anon', 'public.mfr_retirer_testeur(uuid, uuid, text)', 'EXECUTE');
+  v_authenticated := has_function_privilege('authenticated', 'public.mfr_retirer_testeur(uuid, uuid, text)', 'EXECUTE');
+  v_service_role  := has_function_privilege('service_role', 'public.mfr_retirer_testeur(uuid, uuid, text)', 'EXECUTE');
+  v_public        := has_function_privilege('public', 'public.mfr_retirer_testeur(uuid, uuid, text)', 'EXECUTE');
+
+  if v_anon is not false then raise exception 'T15b ÉCHEC : anon ne doit jamais avoir EXECUTE sur mfr_retirer_testeur'; end if;
+  if v_authenticated is not false then raise exception 'T15b ÉCHEC : authenticated ne doit JAMAIS avoir EXECUTE sur mfr_retirer_testeur (réservé admin/service_role)'; end if;
+  if v_service_role is not true then raise exception 'T15b ÉCHEC : service_role doit avoir EXECUTE sur mfr_retirer_testeur'; end if;
+  if v_public is not false then raise exception 'T15b ÉCHEC : public ne doit jamais avoir EXECUTE sur mfr_retirer_testeur'; end if;
+
+  raise notice 'T15 PASS — mfr_autoriser_testeur/mfr_retirer_testeur réservées service_role exclusivement';
 end $$;
 
 rollback;

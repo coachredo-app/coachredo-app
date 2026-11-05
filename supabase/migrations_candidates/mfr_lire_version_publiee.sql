@@ -82,13 +82,39 @@ security definer
 set search_path = public
 as $$
 declare
-  v_cycle       record;
-  v_publication record;
-  v_version     record;
+  v_cycle               record;
+  v_publication         record;
+  v_version             record;
+  v_dernier_statut_test text;
 begin
   -- 1. Identité serveur réelle, inconditionnelle, avant toute lecture.
   if auth.uid() is null then
     return json_build_object('error', 'non_authentifie');
+  end if;
+
+  -- 1bis. Fermeture par défaut MFR (AMENDEMENT 2026-11-05, GO QG APP
+  -- « gestion des testeurs MFR ») — vérifiée avant toute lecture de
+  -- cycle, jamais une question de propriété : un gate global, pas
+  -- par-utilisateur-sur-son-propre-cycle (ce second contrôle, déjà
+  -- existant ci-dessous, reste inchangé et s'applique ensuite,
+  -- inconditionnellement, même pour un testeur). Statut = événement le
+  -- plus récent par `id` (migration 033, `mfr_testeurs_evenements`,
+  -- append-only, jamais `cree_le` seul) — table vide ou dernier
+  -- événement ≠ AUTORISE => fermé. Source d'autorité UNIQUE
+  -- (Postgres) : aucun flag applicatif/Vercel parallèle pour cette
+  -- décision (GO QG §3). Même amendement appliqué identiquement dans
+  -- `supabase/migrations/033_mfr_lire_version_publiee.sql` — ce
+  -- fichier candidat reste la source conservée, les deux copies restent
+  -- synchronisées par construction, jamais divergentes.
+  select action
+  into v_dernier_statut_test
+  from public.mfr_testeurs_evenements
+  where user_id = auth.uid()
+  order by id desc
+  limit 1;
+
+  if v_dernier_statut_test is distinct from 'AUTORISE' then
+    return json_build_object('error', 'acces_restreint');
   end if;
 
   -- Cycle : existence puis propriété, dans cet ordre, jamais inversé
